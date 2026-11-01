@@ -22,5 +22,6 @@ run 'other mail services: what is asked, actions, the reader' node tools/test/se
 for t in tools/test/services/*.test.js; do
   run "mail service $(basename "$t" .test.js)" node "$t"
 done
+run 'AI assistant: providers, streaming, summaries, waiting for reply' node tools/test/ai.test.js
 run 'panel in headless Chrome' node tools/test/panel.test.js
 exit $status
