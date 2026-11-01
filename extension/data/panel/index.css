@@ -738,9 +738,13 @@ h1 {
   align-items: center;
   gap: 6px;
 }
-/* a mailbox of another service may have no stars or no archive */
+/* a mailbox of another service may have no stars or no archive; with the assistant off, or for
+   mail the panel cannot show, there is no summary */
 .no-star .keys > span:has([data-i18n="keyStar"]),
-.no-archive .keys > span:has([data-i18n="keyArchive"]) {
+.no-archive .keys > span:has([data-i18n="keyArchive"]),
+.no-ai .keys > span:has([data-i18n="summaryKey"]),
+.no-ai .reader-bar .ai-btn,
+.no-ai .ai-card {
   display: none;
 }
 kbd {
@@ -899,14 +903,14 @@ kbd {
   width: 13px;
   height: 13px;
   margin-block: 0 -1px;
-  margin-inline: 0 5px;
+  margin-inline: 2px 4px;
   color: #e8a317;
   fill: currentColor;
 }
 /* a one-time code found in a mail: a click copies it. Digits read left to right in any language */
 .code {
   display: inline-block;
-  margin-inline: 0 6px;
+  margin-inline: 2px 6px;
   padding: 0 6px;
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -936,6 +940,239 @@ kbd {
   font-size: 13px;
   line-height: 20px;
   vertical-align: 3px;
+}
+
+/* the assistant's summary: a card over the message, tinted with the accent, its own scroll */
+.ai-card {
+  --ai: var(--accent);
+  flex: none;
+  max-height: 46%;
+  overflow-y: auto;
+  margin-block: 14px 2px;
+  margin-inline: 16px;
+  padding-block: 10px 12px;
+  padding-inline: 14px;
+  border: 1px solid color-mix(in srgb, var(--ai) 22%, var(--line));
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--ai) 5%, var(--card));
+  font-size: 13px;
+  line-height: 1.45;
+  scrollbar-width: thin;
+}
+.ai-card[hidden] {
+  display: none;
+}
+.ai-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-block: -4px 4px;
+  margin-inline-end: -8px;
+}
+.ai-head h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 650;
+}
+.ai-mark {
+  display: grid;
+  color: var(--ai);
+}
+.ai-mark svg {
+  width: 16px;
+  height: 16px;
+  fill: color-mix(in srgb, var(--ai) 18%, transparent);
+}
+.ai-state {
+  color: var(--muted);
+  font-size: 12px;
+}
+.ai-card.busy .ai-mark svg {
+  animation: glow 1.2s ease-in-out infinite alternate;
+}
+@keyframes glow {
+  to {
+    opacity: .35;
+  }
+}
+.ai-head .grow {
+  flex: 1;
+}
+.ai-head .icon-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+.ai-head .icon-btn svg {
+  width: 15px;
+  height: 15px;
+}
+.ai-head .icon-btn.copied {
+  color: var(--ok);
+}
+/* Copy and Regenerate wait for a summary to be done: an icon button's grid would show them */
+.ai-head .icon-btn[hidden] {
+  display: none;
+}
+/* waiting for the first words: three lines that breathe */
+.ai-wait {
+  display: grid;
+  gap: 7px;
+  padding-block: 6px 2px;
+}
+.ai-wait[hidden] {
+  display: none;
+}
+.ai-wait span {
+  height: 9px;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--ai) 14%, var(--card));
+  animation: glow 1s ease-in-out infinite alternate;
+}
+.ai-wait span:nth-child(2) {
+  width: 82%;
+  animation-delay: .15s;
+}
+.ai-wait span:nth-child(3) {
+  width: 58%;
+  animation-delay: .3s;
+}
+.ai-part + .ai-part {
+  margin-top: 8px;
+}
+.ai-part h4 {
+  margin: 4px 0 2px;
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.ai-part ul {
+  margin: 0;
+  padding-inline-start: 18px;
+}
+/* a line in another direction than the panel's keeps its order, and stays by its bullet */
+.ai-part li {
+  margin-block: 2px;
+  color: var(--soft);
+  unicode-bidi: plaintext;
+  text-align: var(--start);
+}
+.ai-part li::marker {
+  color: color-mix(in srgb, var(--ai) 70%, var(--muted));
+}
+.ai-part li.enter {
+  animation: arrive .22s var(--ease);
+}
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+}
+.ai-events ul {
+  padding-inline-start: 0;
+  list-style: none;
+}
+.ai-events li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 8px;
+  unicode-bidi: normal;
+}
+.ai-when {
+  color: var(--ink);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.ai-what {
+  flex: 1 1 140px;
+  min-width: 0;
+  unicode-bidi: plaintext;
+}
+.ai-cal {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--focus);
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.ai-cal svg {
+  width: 13px;
+  height: 13px;
+}
+.ai-cal:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.ai-note,
+.ai-error {
+  margin: 8px 0 0;
+  font-size: 12px;
+}
+.ai-note {
+  color: var(--muted);
+}
+.ai-error {
+  color: var(--danger);
+}
+.ai-settings {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--focus);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.ai-cal:focus-visible,
+.ai-settings:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.reader-bar .ai-btn.on {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+}
+
+/* waiting for your reply: the chip first, a mark on the lines */
+.chip.reply-chip svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.2;
+}
+.chip.reply-chip:not(.on) svg {
+  color: var(--accent);
+}
+.err-dot {
+  width: 7px;
+  height: 7px;
+  margin-inline-start: -2px;
+  border-radius: 50%;
+  background: var(--danger);
+}
+/* a subject may run the other way than the panel (plaintext): what stands before it (this mark,
+   the star, a code) keeps a gap on both sides, so one of them faces the text either way */
+.reply-mark {
+  display: inline-grid;
+  vertical-align: -2px;
+  margin-inline: 2px 4px;
+  color: var(--accent);
+}
+.reply-mark svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.2;
+}
+[dir="rtl"] .reply-mark svg,
+[dir="rtl"] .reply-chip svg {
+  transform: scaleX(-1);
 }
 
 /* mail from the site of the page the panel opened over: first in the list, its code large */

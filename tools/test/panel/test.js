@@ -673,6 +673,196 @@
       out.ms = (performance.now() - t0) / 20;
     }
 
+    if (scenario.startsWith('ai')) {
+      // the assistant, with self.AI stubbed (stub.js, ?ai=on|off) or the real ai.js (?ai=real)
+      const $ = id => document.getElementById(id);
+      const id = link => link.match(/message_id=([^&]*)/)[1];
+      const rowOf = x => [...document.querySelectorAll('#list .row')].find(r => id(r.dataset.link) === x);
+      const ai = window.__ai;
+      const calls = fn => (ai?.calls || []).filter(c => c.fn === fn);
+      const card = () => $('ai-card');
+      const shown = el => Boolean(el) && !el.hidden && getComputedStyle(el).display !== 'none';
+      const items = cls => [...card().querySelectorAll(`.${cls} li`)].map(li => li.textContent);
+      const keyOf = x => {
+        const e = state.objs.flatMap(o => o.xml.entries).find(e => id(e.link) === x);
+        return e.link + '#' + e.modified;
+      };
+      const open = async x => {
+        rowOf(x).click();
+        await wait(60);
+      };
+      const done = () => until(() => card().getAttribute('aria-busy') === 'false');
+      const msg = code => chrome.i18n.getMessage('ai_err_' + code.replace(/-/g, '_'));
+
+      if (scenario === 'ai') {
+        // nothing of the assistant before the list is on screen; waiting for a reply 800 ms later
+        await until(() => $('chips').querySelector('.reply-chip'));
+        out.afterPaint = ai.calls[0]?.t > window.__firstRow;
+        out.times = {firstRow: window.__firstRow, firstCall: ai.calls[0], script: window.__aiScriptAt};
+        out.replyWaited = calls('needsReply')[0]?.t - window.__firstRow >= 750;
+        out.chip = $('chips').firstElementChild?.classList.contains('reply-chip') && $('chips').querySelector('.reply-chip').textContent === t('replyChip', 2);
+        out.asked = {calls: calls('needsReply').length, n: calls('needsReply')[0]?.n, own: calls('needsReply')[0]?.accounts.includes('work@arbitron.example')};
+        out.marks = [...document.querySelectorAll('#list .row')].filter(r => r.querySelector('.reply-mark'))
+          .map(r => id(r.dataset.link) + ':' + r.querySelector('.reply-mark').title);
+        // the chip narrows the list to that mail; Esc lets go
+        $('chips').querySelector('.reply-chip').click();
+        await wait(50);
+        out.narrowed = [...document.querySelectorAll('#list .row')].map(r => id(r.dataset.link));
+        key(document, 'Escape');
+        await wait(50);
+        out.letGo = !$('chips').querySelector('.reply-chip.on') && document.querySelectorAll('#list .row').length === 3;
+        // a check with nothing new asks nothing; new mail is asked about, alone
+        const copy = () => JSON.parse(JSON.stringify(state.objs));
+        update(copy());
+        await wait(1000);
+        out.quietCheck = calls('needsReply').length === 1;
+        const more = copy();
+        more[1].xml.entries.unshift({...more[1].xml.entries[0], link: more[1].xml.entries[0].link.replace('message_id=b1&', 'message_id=n1&'),
+          id: 'tag:n1', author_name: 'Lena', author_email: 'lena@example.net', title: 'Quick question', summary: 'Can you send it today?', modified: new Date().toISOString()});
+        more[1].xml.fullcount += 1;
+        update(more);
+        await until(() => calls('needsReply').length === 2, 2000);
+        await wait(50);
+        out.newMail = calls('needsReply')[1]?.n === 1 && $('chips').querySelector('.reply-chip').textContent === t('replyChip', 3);
+
+        // the summary: a button and I, nothing asked before
+        await open('a1');
+        out.button = shown($('reader-bar').querySelector('.ai-btn')) && !shown(card()) && calls('summarize').length === 0;
+        key(document, 'KeyI');
+        await wait(10);
+        out.waiting = shown(card()) && shown(card().querySelector('.ai-wait')) && card().getAttribute('aria-busy') === 'true';
+        await until(() => items('ai-points').length > 0);
+        out.streams = items('ai-points').length < 3 && card().getAttribute('aria-busy') === 'true' && !shown(card().querySelector('.ai-wait'));
+        await done();
+        const asked = calls('summarize')[0];
+        out.summary = {points: items('ai-points').length, todo: items('ai-todo').length, events: items('ai-events').length,
+          key: asked?.key === keyOf('a1'), messages: asked?.messages, fresh: asked?.fresh};
+        const links = [...card().querySelectorAll('.ai-cal')];
+        out.calendar = links.length === 2 && links.every(a => a.href.includes('authuser=evgeny%40example.com') && a.target === '_blank' &&
+          a.textContent === t('addToCalendar')) && links[0].getAttribute('aria-label') === t('addToCalendar') + ': Design review';
+        card().querySelector('.ai-copy').click();
+        await wait(30);
+        out.copied = String(window.__copied).includes('Anna sent the final mockups') && String(window.__copied).includes(t('summaryTodo'));
+        // Hide; I again shows it from the session's summaries; Regenerate asks anew
+        card().querySelector('.ai-hide').click();
+        await wait(30);
+        out.hidden = !shown(card()) && $('reader-bar').querySelector('.ai-btn').getAttribute('aria-expanded') === 'false';
+        key(document, 'KeyI');
+        await wait(30);
+        out.again = shown(card()) && items('ai-points').length === 3 && card().getAttribute('aria-busy') === 'false';
+        card().querySelector('.ai-again').click();
+        await wait(10);
+        out.regenerating = card().getAttribute('aria-busy') === 'true' && calls('summarize').at(-1).fresh === true;
+        await done();
+        key(document, 'Escape');
+        await wait(50);
+        out.backHides = !shown(card());
+        // opened again, the summary is there without a click
+        await open('a1');
+        await until(() => shown(card()), 1000);
+        out.keptShown = shown(card()) && items('ai-points').length === 3;
+        key(document, 'Escape');
+        await wait(50);
+
+        // back, and J, stop a summary underway; nothing goes wrong unseen
+        await open('b1');
+        key(document, 'KeyI');
+        await until(() => items('ai-points').length > 0);
+        key(document, 'Escape');
+        await wait(50);
+        out.backStops = calls('aborted').some(c => c.key === keyOf('b1')) && !shown(card());
+        await open('a2');
+        key(document, 'KeyI');
+        await until(() => items('ai-points').length > 0);
+        key(document, 'KeyJ');
+        await wait(80);
+        out.jStops = calls('aborted').some(c => c.key === keyOf('a2')) && id(state.reading.e.link) !== 'a2' && !shown(card());
+
+        // every error says what it is, with the way to the AI settings
+        const codes = ['auth', 'quota', 'rate', 'network', 'model', 'refusal', 'too-long', 'unavailable', 'bad-output', 'server', 'no-access'];
+        out.errors = [];
+        for (const code of codes) {
+          ai.fail = code;
+          if (shown(card())) {
+            card().querySelector('.ai-again').click();
+          }
+          else {
+            key(document, 'KeyI');
+          }
+          await until(() => shown(card().querySelector('.ai-error')) && card().getAttribute('aria-busy') === 'false');
+          const el = card().querySelector('.ai-error');
+          out.errors.push(el.textContent.startsWith(msg(code)) && Boolean(el.querySelector('.ai-settings')) ? 'ok' : code + ': ' + el.textContent);
+        }
+        ai.fail = null;
+        card().querySelector('.ai-settings').click();
+        out.settings = (window.__tabsCreated || []).at(-1)?.endsWith('/data/settings/index.html#ai');
+        // a thread cut to its latest messages says so
+        ai.truncated = true;
+        card().querySelector('.ai-again').click();
+        await done();
+        out.truncated = shown(card().querySelector('.ai-note')) && card().querySelector('.ai-note').textContent === t('summaryTruncated') &&
+          !shown(card().querySelector('.ai-error'));
+        ai.truncated = false;
+        key(document, 'Escape');
+        await wait(50);
+        // no summary where the panel shows no mail (Proton)
+        out.proton = !canSummarize({xml: {service: 'proton'}}) && canSummarize({xml: {}});
+
+        // waiting for a reply fails: a dot on the chip says why, what was found stays
+        ai.replyFail = 'quota';
+        const later = JSON.parse(JSON.stringify(state.objs));
+        later[0].xml.entries.unshift({...later[0].xml.entries[0], link: later[0].xml.entries[0].link.replace('message_id=a1&', 'message_id=n2&'),
+          id: 'tag:n2', author_name: 'Oleg', author_email: 'oleg@example.net', title: 'Lunch?', summary: 'Are you free on Friday?', modified: new Date().toISOString()});
+        update(later);
+        await until(() => $('chips').querySelector('.reply-chip .err-dot'), 2500);
+        const chip = $('chips').querySelector('.reply-chip');
+        out.errorDot = Boolean(chip?.querySelector('.err-dot')) && chip.title === msg('quota') && chip.textContent === t('replyChip', 4);
+        out.consoleClean = window.__errors.length === 0 ? true : window.__errors;
+      }
+
+      if (scenario === 'aiauto') {
+        // "automatically for long mail": a short thread waits for a click, a long one does not
+        await open('a1');
+        await wait(400);
+        out.shortWaits = calls('summarize').length === 0 && !shown(card());
+        key(document, 'Escape');
+        await wait(50);
+        window.__printLong = true;
+        await open('b1');
+        await until(() => calls('summarize').length > 0, 2000);
+        out.longStarts = calls('summarize')[0]?.key === keyOf('b1') && calls('summarize')[0].chars > 1500 && shown(card());
+        await done();
+        out.longDone = items('ai-points').length === 3;
+      }
+
+      if (scenario === 'aioff') {
+        // the engine off: no ai.js, no button, no key, no chip, no call
+        await wait(1200);
+        await open('a1');
+        key(document, 'KeyI');
+        await wait(300);
+        out.off = {calls: ai.calls.length, button: shown($('reader-bar').querySelector('.ai-btn')), card: shown(card()),
+          chip: Boolean($('chips').querySelector('.reply-chip')), script: Boolean(document.querySelector('script[src*="/ai/ai.js"]')),
+          hint: shown(document.querySelector('.keys > span:has([data-i18n="summaryKey"])'))};
+        out.firstRow = window.__firstRow;
+      }
+
+      if (scenario === 'aireal') {
+        // the real ai.js, with no key: loaded after the list's first frame, its error in the card
+        await until(() => self.AI, 3000);
+        out.loadedAfter = window.__aiScriptAt > window.__firstRow;
+        out.times = {script: window.__aiScriptAt};
+        out.firstRow = window.__firstRow;
+        await open('a1');
+        key(document, 'KeyI');
+        await until(() => shown(card().querySelector('.ai-error')), 3000);
+        out.noKey = card().querySelector('.ai-error').textContent.startsWith(msg('auth'));
+        await wait(1000);
+        out.noChip = !$('chips').querySelector('.reply-chip');
+        out.consoleClean = window.__errors.length === 0 ? true : window.__errors;
+      }
+    }
+
     if (scenario === 'narrow') {
       // a side panel 320px wide: the mailbox line keeps its buttons whole and its address
       // readable, the reader's bar stays inside

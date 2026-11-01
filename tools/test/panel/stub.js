@@ -59,13 +59,100 @@
   const local = {accounts: services ? {'evgeny@example.com': {}, 'ev@yahoo.com': {service: 'yahoo'}, 'ev@proton.me': {service: 'proton'}, 'gone@yahoo.com': {service: 'yahoo'}} :
     q.get('s') === 'nine' ? Object.fromEntries(nine.map(m => [m, {}])) : {'evgeny@example.com': {}, 'work@arbitron.example': {}, 'old@example.org': {}, 'gone@example.com': {}},
     accountOrder: [], panelScale: Number(q.get('scale') || 1), readOnOpen: q.get('read') === '1', 'remind.links': [],
-    autoAdvance: q.get('advance') === '1', 'badge.count': q.get('badge') || 'all'};
+    autoAdvance: q.get('advance') === '1', 'badge.count': q.get('badge') || 'all',
+    // ?ai=on|off|real: the assistant's engine (real: the real ai.js, loaded by the panel, with no key)
+    ...(q.get('ai') ? {'ai.engine': q.get('ai') === 'off' ? 'off' : 'openai', 'ai.summary': q.get('summary') || 'click', 'ai.reply': q.get('reply') !== '0'} : {})};
   window.__sent = []; window.__set = [];
   window.__tabUrl = q.get('url') || ''; window.__tabEvents = {};
   // what the panel copies (__copied): a page under test has no clipboard of its own to ask
   Object.defineProperty(navigator, 'clipboard', {configurable: true, value: {writeText: async s => { window.__copied = s; }}});
   // a link opened from the panel closes it; the page under test has to stay
   window.close = () => {};
+  // when the list showed its first line, and when the panel added ai.js; what went wrong unseen
+  window.__errors = [];
+  addEventListener('error', e => window.__errors.push(String(e.message)));
+  addEventListener('unhandledrejection', e => window.__errors.push(String(e.reason?.stack || e.reason)));
+  // watched from the first line parsed: the panel draws its list before DOMContentLoaded
+  new MutationObserver(() => {
+    if (!window.__firstRow && document.querySelector('#list .row, #list .acc')) {
+      window.__firstRow = performance.now();
+    }
+    if (!window.__aiScriptAt && document.querySelector('script[src*="/ai/ai.js"]')) {
+      window.__aiScriptAt = performance.now();
+    }
+  }).observe(document.documentElement, {childList: true, subtree: true});
+  // ?ai=on|off: self.AI as the panel uses it, recording each call (__ai.calls). A summary streams in
+  // five steps of __ai.step ms, is kept by key, stops on its signal; __ai.fail makes it fail with
+  // that code, __ai.truncated cut; __ai.replyFail makes needsReply fail, with what it found.
+  if (q.get('ai') === 'on' || q.get('ai') === 'off') {
+    const ai = window.__ai = {calls: [], fail: null, truncated: false, step: 60, replyFail: null};
+    const err = code => Object.assign(new Error(msgs['ai_err_' + code.replace(/-/g, '_')]?.message || code), {name: 'AIError', code});
+    const kept = new Map();
+    const call = (fn, o = {}) => ai.calls.push({fn, t: performance.now(), ...o});
+    const full = subject => ({
+      points: ['Anna sent the final mockups', 'She asks for feedback by Friday', 'The draft is in Figma'],
+      todo: ['Review the mockups before Friday'],
+      events: [{title: 'Design review', start: '2026-11-06T10:00:00Z', end: '2026-11-06T11:00:00Z', allDay: false, details: subject},
+        {title: 'Offsite', start: '2026-11-10', end: '2026-11-11', allDay: true, details: subject}],
+      truncated: ai.truncated, engine: 'openai', model: 'gpt-test'
+    });
+    window.AI = {
+      state: async () => {
+        call('state');
+        return {ok: true, lang: 'en'};
+      },
+      cached: async key => {
+        call('cached', {key});
+        return kept.has(key) ? {...kept.get(key), cached: true} : null;
+      },
+      summarize: ({key, fresh, signal, onUpdate, subject, messages}) => new Promise((resolve, reject) => {
+        call('summarize', {key, fresh: Boolean(fresh), subject, messages: messages.length, chars: messages.reduce((n, m) => n + m.text.length, 0)});
+        if (!fresh && kept.has(key)) {
+          resolve({...kept.get(key), cached: true});
+          return;
+        }
+        const s = full(subject);
+        const steps = [{points: s.points.slice(0, 1)}, {points: s.points.slice(0, 2)}, {points: s.points}, {points: s.points, todo: s.todo}, s];
+        let i = 0;
+        let timer;
+        const stop = () => {
+          clearTimeout(timer);
+          call('aborted', {key});
+          reject(err('aborted'));
+        };
+        signal?.addEventListener('abort', stop, {once: true});
+        const next = () => {
+          if (ai.fail) {
+            signal?.removeEventListener('abort', stop);
+            reject(err(ai.fail));
+            return;
+          }
+          if (i < steps.length) {
+            onUpdate?.({todo: [], events: [], truncated: false, engine: 'openai', model: 'gpt-test', ...steps[i], partial: true});
+            i += 1;
+            timer = setTimeout(next, ai.step);
+            return;
+          }
+          signal?.removeEventListener('abort', stop);
+          kept.set(key, s);
+          resolve(s);
+        };
+        timer = setTimeout(next, ai.fail ? 20 : ai.step);
+      }),
+      needsReply: async ({items, accounts}) => {
+        call('needsReply', {n: items.length, ids: items.map(it => it.id), accounts});
+        await new Promise(r => setTimeout(r, 20));
+        const out = new Map(items.map(it => [it.id, /\?|пожалуйста/.test(it.snippet) ?
+          {reply: true, why: it.snippet.includes('?') ? 'asks a question' : 'asks for the mockups'} : {reply: false, why: ''}]));
+        if (ai.replyFail) {
+          throw Object.assign(err(ai.replyFail), {results: out});
+        }
+        return out;
+      },
+      calendarUrl: (ev, {account} = {}) => 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(ev.title) +
+        (account ? '&authuser=' + encodeURIComponent(account) : '')
+    };
+  }
   const row = (thread, subject, from, text, mins, labels) => ({subject, thread, labels, date: now - mins * 60000, from, text});
   const search = ({url, query}) => {
     // the site's mail is all in the feeds
@@ -109,14 +196,17 @@
   };
   const store = (area, d) => (defaults, cb) => {
     const out = {};
-    const keys = typeof defaults === 'string' ? [defaults] : Object.keys(defaults || {});
-    for (const k of keys) out[k] = k in area ? area[k] : defaults[k];
+    // a key, a list of keys (what is missing stays out), or keys with their defaults
+    const keys = typeof defaults === 'string' ? [defaults] : Array.isArray(defaults) ? defaults : Object.keys(defaults || {});
+    for (const k of keys) {
+      if (k in area || (defaults && !Array.isArray(defaults) && typeof defaults === 'object')) out[k] = k in area ? area[k] : defaults[k];
+    }
     cb && cb(out);
     return Promise.resolve(out);
   };
   window.chrome = {
     i18n: {getUILanguage: () => lang, getMessage: (k, subs = []) => { const m = msgs[k]; return m ? m.message.replace(/\$(\d)/g, (_, i) => subs[i - 1] ?? '') : ''; }},
-    runtime: {sendMessage: respond, onMessage: {addListener() {}}, openOptionsPage() {}},
+    runtime: {sendMessage: respond, onMessage: {addListener() {}}, openOptionsPage() {}, getURL: p => location.origin + p},
     storage: {
       session: (() => { const area = {'cached-objects': objs, 'resolved.links': []}; return {get: store(area), set: o => { Object.assign(area, o); return Promise.resolve(); }, remove: k => { [k].flat().forEach(x => delete area[x]); return Promise.resolve(); }, area}; })(),
       local: {get: store(local), set: (o) => { window.__set.push(o); Object.assign(local, o); return Promise.resolve(); }},
@@ -128,7 +218,7 @@
     // __tabUrl and calls __tabEvents.updated or .activated as Chrome would
     tabs: {
       query: () => Promise.resolve([{id: 7, active: true, windowId: 1, ...(window.__tabUrl ? {url: window.__tabUrl} : {})}]),
-      create() {},
+      create: o => { (window.__tabsCreated ||= []).push(o.url); },
       onActivated: {addListener: f => { window.__tabEvents.activated = f; }},
       onUpdated: {addListener: f => { window.__tabEvents.updated = f; }}
     }
@@ -145,6 +235,8 @@
     msg('Anna Petrova', 'anna@figma.com', 'Fri, Oct 30 at 19:51', '', 'Привет! Макеты во вложении, посмотри, пожалуйста, до пятницы.<br><br>— Аня' +
       `<img width=1 height=1 src="${location.origin}/__pixel?k=${q.get('scenario')}-gmail">`, att)
   ].join('<hr>') + `</body></html>`;
+  // __printLong: the same thread with a long newest message, a summary's work
+  const long = page.replace('— Аня', '— Аня<br>' + 'The final layout keeps the cards, the reader and the settings in one grid. '.repeat(30));
   // a newsletter 700px wide, with its picture loading a moment later
   const wide = `<html><body><table width=100% cellpadding=0 cellspacing=0 border=0 class="message">
 <tr><td><font size=-1><b>Московский транспорт </b>&lt;deptrans@transport.mos.ru&gt;</font></td><td align=right><font size=-1>Fri, Oct 30 at 20:32</font></td></tr>
@@ -154,5 +246,5 @@
 </font></div></td></tr></table></td></tr></table></body></html>`;
   const realFetch = window.fetch;
   window.__prints = 0;
-  window.fetch = (url, o) => String(url).includes('view=pt') && ++window.__prints ? Promise.resolve(new Response(q.get('wide') ? wide : page, {status: window.__printStatus || 200})) : realFetch(url, o);
+  window.fetch = (url, o) => String(url).includes('view=pt') && ++window.__prints ? Promise.resolve(new Response(q.get('wide') ? wide : window.__printLong ? long : page, {status: window.__printStatus || 200})) : realFetch(url, o);
 })();

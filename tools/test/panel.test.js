@@ -10,6 +10,9 @@ const {spawn} = require('child_process');
 
 const EXT = path.join(__dirname, '../../extension');
 const HERE = path.join(__dirname, 'panel');
+// the panel's English strings, for checks that compare what it says
+const EN = JSON.parse(fs.readFileSync(path.join(EXT, '_locales/en/messages.json'), 'utf8'));
+const T = (key, ...subs) => (EN['panel_' + key]?.message || key).replace(/\$(\d)/g, (_, i) => subs[i - 1] ?? '');
 const MAC = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const CHROME = process.env.CHROME || (fs.existsSync(MAC) ? MAC : 'google-chrome');
 const TYPES = {'.js': 'text/javascript', '.html': 'text/html', '.css': 'text/css', '.json': 'application/json',
@@ -192,6 +195,38 @@ const checks = {
     'a brand under another ending matches; a generic one, or another brand that starts alike, does not': JSON.stringify(r.brands) === '[true,false,false,null]',
     'matching nine mailboxes of twenty takes under 2 ms, from memory': r.ms < 2
   }),
+  ai: r => ({
+    'the assistant starts after the list is on screen; waiting for a reply asks 800 ms later': r.afterPaint && r.replyWaited,
+    'Reply · N comes first among the chips; the lines get ↩ with the reason': r.chip && r.asked?.calls === 1 && r.asked.n >= 3 && r.asked.own &&
+      JSON.stringify(r.marks) === JSON.stringify(['a1:' + T('replyWhy', 'asks for the mockups'), 'b1:' + T('replyWhy', 'asks a question')]),
+    'the chip narrows the list to that mail; Esc lets go': JSON.stringify(r.narrowed) === '["a1","b1"]' && r.letGo,
+    'a check with nothing new asks nothing; new mail is asked about, alone': r.quietCheck && r.newMail,
+    'the reader has a Summary button; nothing is asked before a click': r.button,
+    'I asks: the card waits, then the points stream in': r.waiting && r.streams,
+    'the summary: points, to do, dates, for that mail and its version, from the whole thread':
+      JSON.stringify(r.summary) === '{"points":3,"todo":1,"events":2,"key":true,"messages":3,"fresh":false}',
+    'each date links to Google Calendar in the mail\'s own account': r.calendar,
+    'Copy copies the summary with its headings': r.copied,
+    'Hide hides it; I shows it again from the session, Regenerate asks anew': r.hidden && r.again && r.regenerating,
+    'back hides the card; the mail opened again shows its summary without a click': r.backHides && r.keptShown,
+    'back, and J, stop a summary underway': r.backStops && r.jStops,
+    'every error says what it is, with the way to the AI settings': r.errors?.length === 11 && r.errors.every(e => e === 'ok') && r.settings,
+    'a thread cut to its latest messages says so': r.truncated,
+    'no summary where the panel shows no mail (Proton)': r.proton,
+    'waiting for a reply failing puts a dot on the chip, with why; what was found stays': r.errorDot,
+    'nothing goes wrong unseen (no errors, no unhandled rejections)': r.consoleClean === true
+  }),
+  aiauto: r => ({
+    '"automatically for long mail": a short thread waits for a click, a long one summarizes itself': r.shortWaits && r.longStarts && r.longDone
+  }),
+  aioff: r => ({
+    'the assistant off: no ai.js, no button, no I, no card, no chip, not one call': JSON.stringify(r.off) ===
+      '{"calls":0,"button":false,"card":false,"chip":false,"script":false,"hint":false}'
+  }),
+  aireal: r => ({
+    'the real ai.js comes after the list\'s first frame; with no key the card says so, and nothing is classified':
+      r.loadedAfter && r.noKey && r.noChip && r.consoleClean === true
+  }),
   narrow: r => ({
     'a 320px side panel: the mailbox line keeps whole buttons, without copy and Meet, and a readable address':
       r.width === 320 && JSON.stringify(r.buttons) === '["readAll:32","archive:32","open:32"]' && r.addr >= 60,
@@ -204,7 +239,8 @@ server.listen(0, '127.0.0.1', async () => {
   let failed = 0;
   for (const [scenario, query, frame] of [['main', ''], ['speed', ''], ['services', '&s=services'], ['wide', '&wide=1'], ['keys', ''], ['narrow', '&side', 320],
     ['codes', '&s=codes'], ['advance', '&advance=1'], ['readnext', '&read=1'], ['seen', '&badge=new'],
-    ['site', '&s=site&url=' + encodeURIComponent('https://github.com/login?return_to=%2Fsettings')]]) {
+    ['site', '&s=site&url=' + encodeURIComponent('https://github.com/login?return_to=%2Fsettings')],
+    ['ai', '&ai=on'], ['aiauto', '&ai=on&summary=auto'], ['aioff', '&ai=off'], ['aireal', '&ai=real']]) {
     const r = await run(port, scenario, query, frame);
     if (r.error) {
       failed += 1;

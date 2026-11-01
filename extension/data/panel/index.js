@@ -27,7 +27,9 @@ const ICONS = {
   addUser: ['M10 11a3.5 3.5 0 1 0 0-7a3.5 3.5 0 0 0 0 7Z', 'M3.5 20c.7-3.4 3.3-5.5 6.5-5.5 1.5 0 2.9.4 4 1.2', 'M18.5 14v6', 'M15.5 17h6'],
   clock: ['M12 20.5a8.5 8.5 0 1 0 0-17a8.5 8.5 0 0 0 0 17Z', 'M12 7.5V12l3 2'],
   side: ['M4.5 4h15A1.5 1.5 0 0 1 21 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5v-13A1.5 1.5 0 0 1 4.5 4Z', 'M15 4v16'],
-  grip: ['M9 6h.01', 'M9 12h.01', 'M9 18h.01', 'M15 6h.01', 'M15 12h.01', 'M15 18h.01']
+  grip: ['M9 6h.01', 'M9 12h.01', 'M9 18h.01', 'M15 6h.01', 'M15 12h.01', 'M15 18h.01'],
+  sparkle: ['M11 3.5l1.9 4.6 4.6 1.9-4.6 1.9L11 16.5l-1.9-4.6L4.5 10l4.6-1.9Z', 'M18.5 14.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9Z'],
+  calendar: ['M5.5 5.5h13A1.5 1.5 0 0 1 20 7v11.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5V7a1.5 1.5 0 0 1 1.5-1.5Z', 'M4 10h16', 'M8.5 3.5v4', 'M15.5 3.5v4']
 };
 // the strings live in _locales as panel_*; a language without one falls back to English
 const t = (key, ...subs) => chrome.i18n.getMessage('panel_' + key, subs.map(String)) || key;
@@ -68,6 +70,11 @@ const state = {
   // the site of the page the panel opened over, {domain, brand}; its address is never kept
   site: null,
   siteOnly: false, // the list narrowed to the site's mail ("N more")
+  // the assistant (Settings → AI): its engine and features; ok once AI.state() said it is ready
+  ai: {engine: 'off', summary: 'click', reply: true, ok: false},
+  replies: new Map(), // replyId -> {reply, why}: the mail waiting for a reply, as the assistant sees it
+  replyOnly: false, // the list narrowed to that mail ("Reply · N")
+  replyError: null, // the assistant's last failure in that, shown as a dot on its chip
   rows: new Map(), // link -> {e, o}
   pending: null, // the action waiting for its Undo: {cmd, links, ready, timer}
   // threads with a star; the feed does not tell, Gmail's search does
@@ -425,6 +432,7 @@ const loadExtra = async () => {
     await Promise.all(asks);
     render();
     paintStar();
+    scheduleReplies();
   }
   if (extraLoaded === true) {
     chrome.storage.session.set({[EXTRA]: kept});
@@ -694,7 +702,7 @@ const renderChips = objs => {
       render();
     }
   }, state.site.domain, icon('close'));
-  $('chips').replaceChildren(...[site, ...(busy.length < 2 || state.search ? [] : [
+  $('chips').replaceChildren(...[replyChip(objs), site, ...(busy.length < 2 || state.search ? [] : [
     chip(null, t('all'), busy.reduce((p, o) => p + o.xml.fullcount, 0)),
     ...busy.map(o => chip(o, short(o, busy) + (o.xml.label ? ` [${o.xml.label}]` : ''), o.xml.fullcount))
   ])].filter(Boolean));
@@ -810,6 +818,7 @@ const row = (e, o) => {
   h('span', {class: 'from'}, e.author_name),
   h('time', {class: 'when', dateTime: e.modified, title: fullDate(e.modified)}, when(e.modified)),
   h('span', {class: 'subject'},
+    replyMark(e, o),
     state.starred.has(thread(e.link)) && h('span', {class: 'starred', title: t('starred')}, icon('star')),
     // before the subject: a long one ends in an ellipsis, the code must not
     code && codePill(code),
@@ -822,14 +831,14 @@ const row = (e, o) => {
     btn('open', openIn(o) + ' (O)', ev => openEntry(e, o, ev))
   ));
 };
-// every signed-in mailbox gets its line, with its unread mail under it; keep(e), when given,
-// narrows it to that mail, all of it at once (the site's)
+// every signed-in mailbox gets its line, with its unread mail under it; keep(e, o), when given,
+// narrows it to that mail, all of it at once (the site's, the mail waiting for a reply)
 const section = (o, keep) => {
   // the mail past the feed's 20, from the search; what was acted on here leaves the count as well
   const all = state.extra.get(o.xml.link) || [];
   const extra = all.filter(e => !state.hidden.has(e.link));
   const open = Boolean(keep) || state.expanded.has(o.xml.link);
-  const entries = (open ? [...o.xml.entries, ...extra] : o.xml.entries).filter(e => !keep || keep(e));
+  const entries = (open ? [...o.xml.entries, ...extra] : o.xml.entries).filter(e => !keep || keep(e, o));
   const n = keep ? entries.length : Math.max(0, o.xml.fullcount - (all.length - extra.length));
   const links = entries.map(e => e.link);
   const rest = n - entries.length;
@@ -1017,6 +1026,7 @@ const siteBlock = (site, found) => {
       'data-focus': 'site-more',
       'onclick': () => {
         state.siteOnly = true;
+        state.replyOnly = false;
         state.focus = FIRST;
         render();
       }
@@ -1080,7 +1090,7 @@ const renderList = objs => {
   state.rows.clear();
 
   const shown = state.only ? objs.filter(o => o.xml.link === state.only) : objs;
-  const keep = state.siteOnly && (e => ofSite(e, state.site));
+  const keep = state.siteOnly ? e => ofSite(e, state.site) : state.replyOnly ? (e, o) => replyOf(e, o)?.reply === true : null;
   list.replaceChildren(...(state.search ? searchList() : keep ? shown.map(o => section(o, keep)).filter(s => s.querySelector('.row')) : [
     ...(!objs.length ? [signIn()] : objs.some(o => o.xml.fullcount) ? shown.map(o => section(o)) : [caughtUp(objs)]),
     !state.only && signedOut()
@@ -1176,6 +1186,10 @@ const render = () => {
   if (state.siteOnly && !(state.site && siteMail(state.site, objs).length)) {
     state.siteOnly = false;
   }
+  // and so does the list narrowed to the mail waiting for a reply
+  if (state.replyOnly && !replyCount(objs)) {
+    state.replyOnly = false;
+  }
   // the chips drop a choice whose mailbox has no mail left; the bar's compose follows the choice
   renderChips(objs);
   renderBar(objs);
@@ -1212,6 +1226,8 @@ const update = objs => {
     render();
   }
   loadExtra();
+  // new mail may wait for a reply; mail asked about before is not asked again
+  scheduleReplies();
 };
 
 /* reader */
@@ -1315,8 +1331,13 @@ const read = async (e, o) => {
   if (!state.reading) {
     state.trail = new Map(state.rows);
   }
+  // the summary of the mail before (J, K) stops with it
+  state.reading?.ai.ctl?.abort();
+  // the thread's text for a summary: the messages as the reader shows them, once it does
+  let gotTexts;
+  const texts = new Promise(resolve => gotTexts = resolve);
   // next: the line back() focuses should this mail's own leave the list meanwhile (read on open)
-  state.reading = {e, o, next: neighbour([e.link])?.dataset.link, code: codeOf(e.title + ' ' + e.summary)};
+  const r = state.reading = {e, o, next: neighbour([e.link])?.dataset.link, code: codeOf(e.title + ' ' + e.summary), ai: {ctl: null}, texts};
   closeMenu();
   const trail = [...state.trail.keys()].filter(k => k === e.link || !state.hidden.has(k));
   $('reader-bar').replaceChildren(
@@ -1329,6 +1350,7 @@ const read = async (e, o) => {
     remindBtn([e.link]),
     h('span', {class: 'sep'}),
     !serviceOf(o) && btn('star', t('star') + ' (S)', () => star(e), 'star'),
+    summaryBtn(),
     btn('reply', t('reply'), () => openUrl(replyUrl(e, o))),
     btn('open', openIn(o) + ' (O)', ev => openEntry(e, o, ev))
   );
@@ -1338,6 +1360,7 @@ const read = async (e, o) => {
   // the key hints say only what this mailbox can do
   $('reader').classList.toggle('no-star', Boolean(serviceOf(o)));
   $('reader').classList.toggle('no-archive', !can(o, 'archive'));
+  resetSummary(r);
   $('reader-account').style.setProperty('--c', o.color);
   $('reader-account').lastChild.textContent = accountName(o);
   $('reader-subject').textContent = e.title || t('noSubject');
@@ -1379,6 +1402,7 @@ const read = async (e, o) => {
     }
     fit(doc);
     shown = true;
+    gotTexts(messagesOf(doc, e));
     // a code the snippet did not reach, from the newest message only: a thread of codes from one
     // sender would offer an older one
     if (!state.reading.code) {
@@ -1401,6 +1425,12 @@ const read = async (e, o) => {
   }
   finally {
     $('reader').classList.remove('loading');
+    // a body that did not load leaves the snippet to summarize
+    gotTexts([{from: e.author_name || e.author_email || '', date: e.modified || '', text: e.summary || ''}]);
+  }
+  // a summary kept from before shows at once; a long thread may summarize itself
+  if (shown && state.reading === r) {
+    texts.then(m => autoSummary(r, m));
   }
   // the settings may ask for a mail read here to count as read, once it did show: one that
   // did not load stays unread. Gmail's print view has set the cookie by now
@@ -1414,6 +1444,9 @@ const back = () => {
   const r = state.reading;
   state.reading = null;
   state.trail = null;
+  // a summary underway stops: no one waits for it any more
+  r?.ai.ctl?.abort();
+  $('ai-card').hidden = true;
   shade(false);
   $('app').classList.remove('reading');
   if (r) {
@@ -1422,6 +1455,398 @@ const back = () => {
       $('list').querySelector('.row, .acc'))?.focus({preventScroll: true});
   }
 };
+
+/* the assistant (Settings → AI): ai.js comes once the list is up, and only with an engine on */
+let aiModule = null;
+const loadAI = () => aiModule ||= self.AI ? Promise.resolve(self.AI) : new Promise(resolve => {
+  const s = document.createElement('script');
+  s.src = '/data/ai/ai.js';
+  s.onload = () => resolve(self.AI || null);
+  s.onerror = () => resolve(null);
+  document.head.append(s);
+});
+const aiOn = () => state.ai.engine !== 'off';
+// a summary is for mail the panel shows (not Proton's), with the feature on
+const canSummarize = o => aiOn() && state.ai.summary !== 'off' && can(o, 'body');
+// a thread this long summarizes itself, when the settings say so
+const AUTO_CHARS = 1500;
+// a summary is a mail's at a version: new mail in the thread makes another
+const summaryKey = e => e.link + '#' + (e.modified || '');
+// the summaries hidden here: a mail opened again keeps its summary hidden
+const aiHidden = new Set();
+const summaryBtn = () => {
+  const el = btn('sparkle', t('summary') + ' (I)', () => toggleSummary(), 'ai-btn');
+  el.setAttribute('aria-controls', 'ai-card');
+  el.setAttribute('aria-expanded', 'false');
+  return el;
+};
+const paintSummaryBtn = () => {
+  const el = $('reader-bar').querySelector('.ai-btn');
+  el?.setAttribute('aria-expanded', String(!$('ai-card').hidden));
+  el?.classList.toggle('on', !$('ai-card').hidden);
+};
+// the thread as the reader shows it, oldest first: who, when, what
+const messagesOf = (doc, e) => {
+  const cards = [...doc.querySelectorAll('details.msg')];
+  const whole = () => [...doc.body.children].filter(c => !c.matches('.pictures')).map(c => c.innerText).join('\n').trim();
+  return cards.length ? cards.map(d => ({
+    from: d.querySelector(':scope > summary .who')?.textContent.trim() || '',
+    date: d.querySelector(':scope > summary .date')?.textContent.trim() || '',
+    text: [...d.children].filter(c => c.tagName !== 'SUMMARY').map(c => c.innerText).join('\n').trim()
+  })) : [{from: e.author_name || e.author_email || '', date: e.modified || '', text: whole()}];
+};
+// The card, made once for each open mail, its lists filled as the summary streams in: the
+// lines already there stay, the new ones come in
+const resetSummary = r => {
+  const card = $('ai-card');
+  card.hidden = true;
+  card.removeAttribute('aria-busy');
+  $('reader').classList.toggle('no-ai', !canSummarize(r.o));
+  const part = (cls, title) => h('div', {class: 'ai-part ' + cls, hidden: true}, h('h4', {}, title), h('ul', {}));
+  card.replaceChildren(
+    h('header', {class: 'ai-head'},
+      h('span', {class: 'ai-mark'}, icon('sparkle')),
+      h('h3', {id: 'ai-title'}, t('summary')),
+      h('span', {class: 'ai-state'}),
+      h('span', {class: 'grow'}),
+      btn('copy', t('copySummary'), ev => copySummary(r, ev.currentTarget), 'ai-copy'),
+      btn('refresh', t('regenerate'), () => runSummary(r, true), 'ai-again'),
+      btn('close', t('hideSummary') + ' (I)', () => hideSummary(r), 'ai-hide')),
+    h('div', {class: 'ai-wait', 'aria-hidden': 'true'}, h('span', {}), h('span', {}), h('span', {})),
+    part('ai-points', t('summaryPoints')),
+    part('ai-todo', t('summaryTodo')),
+    part('ai-events', t('summaryEvents')),
+    h('p', {class: 'ai-note', hidden: true}, t('summaryTruncated')),
+    h('p', {class: 'ai-error', role: 'alert', hidden: true})
+  );
+  paintSummaryBtn();
+};
+// an event's moment as the panel writes dates: a day (all day), or a day and its hours
+const eventWhen = ev => {
+  if (ev.allDay || /^\d{4}-\d{2}-\d{2}$/.test(ev.start || '')) {
+    const day = s => new Date(s + 'T00:00:00Z').toLocaleDateString(LANG, {timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short'});
+    return ev.end && ev.end > ev.start ? day(ev.start) + ' – ' + day(ev.end) : day(ev.start);
+  }
+  const a = new Date(ev.start);
+  const b = new Date(ev.end);
+  if (isNaN(a)) {
+    return '';
+  }
+  const at = a.toLocaleString(LANG, {weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit'});
+  if (isNaN(b) || b <= a) {
+    return at;
+  }
+  return at + ' – ' + (b.toDateString() === a.toDateString() ? b.toLocaleTimeString(LANG, {hour: 'numeric', minute: '2-digit'}) :
+    b.toLocaleString(LANG, {weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit'}));
+};
+// a list in the card takes the summary's lines: the same stay, a changed one is redrawn, a new
+// one comes in
+const fill = (part, items, make) => {
+  const ul = part.querySelector('ul');
+  items.forEach((it, i) => {
+    const v = JSON.stringify(it);
+    const old = ul.children[i];
+    if (old?.dataset.v === v) {
+      return;
+    }
+    const li = make(it);
+    li.dataset.v = v;
+    if (old) {
+      old.replaceWith(li);
+    }
+    else {
+      li.classList.add('enter');
+      ul.append(li);
+    }
+  });
+  while (ul.children.length > items.length) {
+    ul.lastChild.remove();
+  }
+  part.hidden = items.length === 0;
+};
+// the card as the summary stands: streaming (busy), done, or failed
+const paintCard = (r, {summary: s, busy = false, error} = {}) => {
+  const card = $('ai-card');
+  if (state.reading !== r) {
+    return;
+  }
+  const empty = !s || !(s.points.length || s.todo.length || s.events.length);
+  card.setAttribute('aria-busy', String(busy));
+  card.classList.toggle('busy', busy);
+  card.querySelector('.ai-state').textContent = busy ? t('summarizing') : '';
+  card.querySelector('.ai-wait').hidden = !(busy && empty);
+  card.querySelector('.ai-copy').hidden = busy || empty || Boolean(error);
+  card.querySelector('.ai-again').hidden = busy;
+  // the Google account the mail came to: its calendar takes the event
+  const account = serviceOf(r.o) ? undefined : r.o.xml.title;
+  const line = text => h('li', {}, text);
+  fill(card.querySelector('.ai-points'), s?.points || [], line);
+  fill(card.querySelector('.ai-todo'), s?.todo || [], line);
+  fill(card.querySelector('.ai-events'), s?.events || [], ev => h('li', {},
+    h('span', {class: 'ai-when'}, eventWhen(ev)),
+    h('span', {class: 'ai-what'}, ev.title),
+    h('a', {
+      'class': 'ai-cal',
+      'href': self.AI?.calendarUrl(ev, {account}) || '#',
+      'target': '_blank',
+      'rel': 'noopener noreferrer',
+      'aria-label': t('addToCalendar') + ': ' + ev.title
+    }, icon('calendar'), t('addToCalendar'))));
+  card.querySelector('.ai-note').hidden = !s?.truncated;
+  const err = card.querySelector('.ai-error');
+  err.hidden = !error;
+  err.replaceChildren(...(error ? [error.message || t('bodyFailed'), ' ',
+    h('button', {type: 'button', class: 'ai-settings', onclick: openAISettings}, t('aiSettings'))] : []));
+};
+const openAISettings = () => {
+  chrome.tabs.create({url: chrome.runtime.getURL('/data/settings/index.html#ai')});
+  if (!SIDE) {
+    window.close();
+  }
+};
+// the summary of the open mail: one at a time, stopped by back, J, K, Hide and the panel closing
+const runSummary = async (r, fresh = false) => {
+  r.ai.ctl?.abort();
+  const ctl = r.ai.ctl = new AbortController();
+  $('ai-card').hidden = false;
+  paintSummaryBtn();
+  paintCard(r, {busy: true});
+  try {
+    const [AI, messages] = await Promise.all([loadAI(), r.texts]);
+    if (ctl.signal.aborted) {
+      return;
+    }
+    const s = await AI.summarize({key: summaryKey(r.e), fresh, signal: ctl.signal, subject: r.e.title || '', messages,
+      onUpdate: p => !ctl.signal.aborted && paintCard(r, {summary: p, busy: true})});
+    if (!ctl.signal.aborted) {
+      paintCard(r, {summary: s});
+    }
+  }
+  catch (err) {
+    if (ctl.signal.aborted) {
+      return;
+    }
+    // stopped elsewhere: the engine changed in the settings
+    if (err?.code === 'aborted') {
+      $('ai-card').hidden = true;
+      paintSummaryBtn();
+      return;
+    }
+    paintCard(r, {error: err});
+  }
+};
+const hideSummary = r => {
+  const inside = $('ai-card').contains(document.activeElement);
+  r.ai.ctl?.abort();
+  aiHidden.add(summaryKey(r.e));
+  $('ai-card').hidden = true;
+  paintSummaryBtn();
+  // the card's own Hide: the focus goes to the button that shows it again
+  if (inside) {
+    $('reader-bar').querySelector('.ai-btn')?.focus();
+  }
+};
+// the button and I: the summary shows (kept, or asked for) or hides
+const toggleSummary = () => {
+  const r = state.reading;
+  if (!r || !canSummarize(r.o)) {
+    return;
+  }
+  if (!$('ai-card').hidden) {
+    hideSummary(r);
+    return;
+  }
+  aiHidden.delete(summaryKey(r.e));
+  runSummary(r);
+};
+// once the mail shows: a summary kept from before shows at once, without a click; with the
+// setting at "automatically", a long thread asks for one
+const autoSummary = async (r, messages) => {
+  if (!canSummarize(r.o) || aiHidden.has(summaryKey(r.e))) {
+    return;
+  }
+  const AI = await loadAI();
+  const hit = AI && await AI.cached(summaryKey(r.e)).catch(() => null);
+  if (state.reading !== r || !$('ai-card').hidden) {
+    return;
+  }
+  if (hit) {
+    $('ai-card').hidden = false;
+    paintSummaryBtn();
+    paintCard(r, {summary: hit});
+  }
+  else if (state.ai.summary === 'auto' && messages.reduce((n, m) => n + m.text.length, 0) > AUTO_CHARS) {
+    runSummary(r);
+  }
+};
+const copySummary = (r, el) => {
+  const card = $('ai-card');
+  const part = cls => {
+    const p = card.querySelector('.' + cls);
+    return p.hidden ? [] : [p.querySelector('h4').textContent, ...[...p.querySelectorAll('li')].map(li => '• ' +
+      (cls === 'ai-events' ? li.querySelector('.ai-when').textContent + ' — ' + li.querySelector('.ai-what').textContent : li.textContent)), ''];
+  };
+  const text = [r.e.title || t('noSubject'), '', ...part('ai-points'), ...part('ai-todo'), ...part('ai-events')].join('\n').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    el.replaceChildren(icon('done'));
+    el.classList.add('copied');
+    setTimeout(() => {
+      el.replaceChildren(icon('copy'));
+      el.classList.remove('copied');
+    }, 1200);
+  }, () => toast(t('copyFailed'), true));
+};
+
+/* waiting for your reply: the assistant reads who, what and the preview of unread mail */
+// once the list has shown, never at each check: only mail not asked about yet is sent
+const REPLY_WAIT = 800;
+let replyTimer = 0;
+let replyCtl = null;
+let replyAgain = false;
+const replySeen = new Set();
+// a mail asked about: its mailbox, its thread, its version
+const replyId = (e, o) => o.xml.title + '|' + thread(e.link) + '|' + (e.modified || '');
+const replyOf = (e, o) => state.replies.get(replyId(e, o));
+// the mail the list shows, with what Gmail's search added past the feed's 20
+const shownMail = objs => objs.flatMap(o => [...o.xml.entries, ...(state.extra.get(o.xml.link) || [])
+  .filter(e => !state.hidden.has(e.link))].map(e => ({e, o})));
+const replyCount = objs => shownMail(objs).filter(({e, o}) => replyOf(e, o)?.reply === true).length;
+const replyMark = (e, o) => {
+  const v = replyOf(e, o);
+  return v?.reply === true && h('span', {'class': 'reply-mark', 'role': 'img', 'title': t('replyWhy', v.why), 'aria-label': t('replyWhy', v.why)}, icon('reply'));
+};
+// first among the chips: a click narrows the list to that mail; with an error and nothing found
+// it opens the AI settings, the error being the dot's tooltip
+const replyChip = objs => {
+  const n = replyCount(objs);
+  const err = state.replyError;
+  if (!aiOn() || !state.ai.reply || state.search || (!n && !err)) {
+    return null;
+  }
+  const label = t('replyChip', n) + (err ? ' · ' + err.message : '');
+  return h('button', {
+    'class': 'chip reply-chip' + (state.replyOnly ? ' on' : ''),
+    'type': 'button',
+    'aria-pressed': String(state.replyOnly),
+    'aria-label': label,
+    'title': err ? err.message : '',
+    'data-focus': 'chip:reply',
+    'onclick': () => {
+      if (!n) {
+        openAISettings();
+        return;
+      }
+      state.replyOnly = !state.replyOnly;
+      state.siteOnly = false;
+      state.focus = FIRST;
+      render();
+    }
+  }, icon('reply'), t('replyChip', n), err && h('span', {class: 'err-dot', 'aria-hidden': 'true'}));
+};
+// the answers on the lines as they are, and on the chip: the list is not drawn again for them
+const paintReplies = () => {
+  const path = focusPath();
+  renderChips(view());
+  for (const el of $('list').querySelectorAll('.row')) {
+    const r = state.rows.get(el.dataset.link);
+    const mark = r && replyMark(r.e, r.o);
+    const old = el.querySelector('.reply-mark');
+    if (mark && !old) {
+      el.querySelector('.subject').prepend(mark);
+    }
+    else if (!mark && old) {
+      old.remove();
+    }
+  }
+  if (path && document.activeElement === document.body) {
+    document.querySelector(path)?.focus({preventScroll: true});
+  }
+};
+const runReplies = async () => {
+  if (replyCtl) {
+    replyAgain = true;
+    return;
+  }
+  const items = shownMail(view()).filter(({e, o}) => e.unread !== false && !replySeen.has(replyId(e, o))).map(({e, o}) => ({
+    id: replyId(e, o), from: e.author_name || '', email: e.author_email || '', subject: e.title || '', snippet: e.summary || '',
+    date: e.modified || '', account: o.xml.title
+  }));
+  if (items.length === 0) {
+    return;
+  }
+  // asked once a panel: a failure is not asked again until new mail comes
+  items.forEach(it => replySeen.add(it.id));
+  const AI = await loadAI();
+  if (!AI || !aiOn()) {
+    return;
+  }
+  const ctl = replyCtl = new AbortController();
+  const accounts = [...new Set([...state.objs.map(o => o.xml.title), ...Object.keys(state.accounts)])].filter(a => a.includes('@'));
+  try {
+    const found = await AI.needsReply({items, accounts, signal: ctl.signal});
+    found.forEach((v, id) => state.replies.set(id, v));
+    state.replyError = null;
+  }
+  catch (err) {
+    if (ctl.signal.aborted || err?.code === 'aborted') {
+      return;
+    }
+    err?.results?.forEach?.((v, id) => state.replies.set(id, v));
+    state.replyError = err;
+  }
+  finally {
+    if (replyCtl === ctl) {
+      replyCtl = null;
+    }
+  }
+  paintReplies();
+  if (replyAgain) {
+    replyAgain = false;
+    scheduleReplies();
+  }
+};
+const scheduleReplies = () => {
+  if (aiOn() && state.ai.reply && state.ai.ok) {
+    clearTimeout(replyTimer);
+    replyTimer = setTimeout(runReplies, REPLY_WAIT);
+  }
+};
+// after the list's first frame: the assistant's state, then the mail waiting for a reply
+const startAI = async () => {
+  const AI = aiOn() && await loadAI();
+  if (!AI || !aiOn()) {
+    return;
+  }
+  try {
+    state.ai.ok = (await AI.state()).ok === true;
+  }
+  catch (e) {
+    state.ai.ok = false;
+  }
+  scheduleReplies();
+};
+// another engine, key or feature in the settings: what ran for the old ones stops and goes
+const aiChanged = () => {
+  state.ai.ok = false;
+  replyCtl?.abort();
+  replyCtl = null;
+  clearTimeout(replyTimer);
+  replySeen.clear();
+  state.replies.clear();
+  state.replyError = null;
+  state.replyOnly = false;
+  if (state.reading) {
+    state.reading.ai.ctl?.abort();
+    resetSummary(state.reading);
+  }
+  render();
+  startAI();
+};
+// a panel closing stops what it asked for
+addEventListener('pagehide', () => {
+  state.reading?.ai.ctl?.abort();
+  replyCtl?.abort();
+});
 
 /* keyboard: layout independent, so it works with the Russian layout too */
 // Alt+↑/↓ moves the mailbox of the focused line, the keyboard's way to drag it
@@ -1507,10 +1932,14 @@ const onKey = ev => {
   else if (ev.code === 'Escape' && state.search) {
     closeSearch();
   }
-  else if (ev.code === 'Escape' && state.siteOnly) {
-    state.siteOnly = false;
+  else if (ev.code === 'Escape' && (state.siteOnly || state.replyOnly)) {
+    state.siteOnly = state.replyOnly = false;
     state.focus = FIRST;
     render();
+  }
+  // the summary of the open mail
+  else if (ev.code === 'KeyI' && state.reading && canSummarize(state.reading.o)) {
+    toggleSummary();
   }
   else if (ev.code === 'KeyZ' && state.pending) {
     undo();
@@ -1653,7 +2082,18 @@ const prefsChanged = prefs => {
   if ('badge.count' in prefs) {
     state.badgeNew = prefs['badge.count'] === 'new';
   }
+  if ('ai.engine' in prefs) {
+    state.ai.engine = ['builtin', 'openai', 'anthropic'].includes(prefs['ai.engine']) ? prefs['ai.engine'] : 'off';
+  }
+  if ('ai.summary' in prefs) {
+    state.ai.summary = ['off', 'click', 'auto'].includes(prefs['ai.summary']) ? prefs['ai.summary'] : 'click';
+  }
+  if ('ai.reply' in prefs) {
+    state.ai.reply = prefs['ai.reply'] !== false;
+  }
 };
+// what the panel reads of Settings → AI (the keys stay with ai.js)
+const AI_PREFS = {'ai.engine': 'off', 'ai.summary': 'click', 'ai.reply': true};
 // With the toolbar count at "mail since the panel was last opened", opening the panel starts it
 // again, and so does a side panel coming back into view. Never a list update: the background
 // sends one for the very redraw this asks for.
@@ -1670,6 +2110,11 @@ chrome.storage.onChanged.addListener((ps, area) => {
     prefsChanged(changed);
     render();
   }
+  // the assistant's engine, key, model or features
+  if (area === 'local' && Object.keys(ps).some(k => /^ai\.(engine|summary|reply|openai\.|anthropic\.)/.test(k))) {
+    prefsChanged(Object.fromEntries(Object.keys(AI_PREFS).filter(k => k in ps).map(k => [k, ps[k].newValue])));
+    aiChanged();
+  }
 });
 chrome.windows?.getCurrent().then(w => state.windowId = w.id);
 // the page the panel opened over, and in the side panel each page after it: another tab, or
@@ -1683,7 +2128,7 @@ if (chrome.tabs?.query) {
 
 Promise.all([
   chrome.storage.local.get({panelScale: 1, readOnOpen: false, accounts: {}, accountOrder: [], senderLogos: true, avatars: {},
-    autoAdvance: false, 'badge.count': 'all', [Remind.KEY]: []}),
+    autoAdvance: false, 'badge.count': 'all', [Remind.KEY]: [], ...AI_PREFS}),
   chrome.storage.session.get({'cached-objects': [], [Resolved.KEY]: [], logos: {}})
 ]).then(([local, session]) => {
   prefsChanged(local);
@@ -1691,4 +2136,8 @@ Promise.all([
   Object.entries(session.logos).forEach(([domain, has]) => logos.set(domain, has));
   // the background hides the mail waiting for its reminder at the next check; until then this does
   update(Resolved.apply(Resolved.apply(session['cached-objects'], session[Resolved.KEY]), Remind.waiting(local[Remind.KEY])));
+  // the assistant, once the list is on screen: a frame drawn, then the next task
+  if (aiOn()) {
+    requestAnimationFrame(() => setTimeout(startAI));
+  }
 });
