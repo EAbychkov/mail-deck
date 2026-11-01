@@ -369,7 +369,7 @@
     "message": "Feladók logóinak mutatása"
   },
   "opt_senderLogosText": {
-    "message": "A logók a Google ikonszolgáltatásától jönnek, amely csak a feladó domainjét látja."
+    "message": "A Gmail-feladók logói a Google ikonszolgáltatásától jönnek, amely megkapja a feladó domainjét."
   },
   "opt_opening": {
     "message": "Levelek megnyitása"
@@ -1396,5 +1396,14 @@
   },
   "label_15": {
     "message": "Postafiókok"
+  },
+  "opt_quietSame": {
+    "message": "A kezdés és a vége azonos, így nincsenek csendes órák."
+  },
+  "opt_ruleField": {
+    "message": "Hol keressen"
+  },
+  "opt_serviceAccess": {
+    "message": "Kapcsold be újra, hogy hozzáférést kapjon."
   }
 }

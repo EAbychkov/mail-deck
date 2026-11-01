@@ -369,7 +369,7 @@
     "message": "送信者のロゴを表示"
   },
   "opt_senderLogosText": {
-    "message": "ロゴは Google のアイコン サービスから取得します。サービスにわかるのは送信者のドメインだけです。"
+    "message": "Gmail の送信者のロゴは Google のアイコン サービスから取得します。サービスには送信者のドメインが送られます。"
   },
   "opt_opening": {
     "message": "メールを開く"
@@ -1408,5 +1408,14 @@
   },
   "label_15": {
     "message": "受信トレイ"
+  },
+  "opt_quietSame": {
+    "message": "開始と終了が同じため、おやすみ時間は設定されません。"
+  },
+  "opt_ruleField": {
+    "message": "検索する場所"
+  },
+  "opt_serviceAccess": {
+    "message": "アクセスを許可するには、もう一度オンにしてください。"
   }
 }

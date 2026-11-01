@@ -369,7 +369,7 @@
         "message": "Gönderen logolarını göster"
     },
     "opt_senderLogosText": {
-        "message": "Logolar, yalnızca gönderenin alan adını gören Google simge hizmetinden gelir."
+        "message": "Gmail gönderenlerinin logoları, gönderenin alan adının iletildiği Google simge hizmetinden gelir."
     },
     "opt_opening": {
         "message": "Postayı açma"
@@ -1576,5 +1576,14 @@
     },
     "label_15": {
         "message": "Gelen kutuları"
+    },
+    "opt_quietSame": {
+        "message": "Başlangıç ve bitiş aynı, bu yüzden sessiz saat yok."
+    },
+    "opt_ruleField": {
+        "message": "Aranacak yer"
+    },
+    "opt_serviceAccess": {
+        "message": "Erişim vermek için yeniden etkinleştirin."
     }
 }

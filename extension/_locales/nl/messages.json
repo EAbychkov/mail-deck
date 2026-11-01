@@ -369,7 +369,7 @@
         "message": "Logo’s van afzenders tonen"
     },
     "opt_senderLogosText": {
-        "message": "De logo’s komen van de pictogramdienst van Google, die alleen het domein van de afzender ziet."
+        "message": "De logo’s van Gmail-afzenders komen van de pictogramdienst van Google, die het domein van de afzender ontvangt."
     },
     "opt_opening": {
         "message": "Mail openen"
@@ -1580,5 +1580,14 @@
     },
     "label_15": {
         "message": "Postvakken"
+    },
+    "opt_quietSame": {
+        "message": "Begin en einde zijn gelijk, dus er zijn geen stille uren."
+    },
+    "opt_ruleField": {
+        "message": "Zoeken in"
+    },
+    "opt_serviceAccess": {
+        "message": "Zet hem opnieuw aan om hem toegang te geven."
     }
 }

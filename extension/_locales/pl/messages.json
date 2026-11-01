@@ -369,7 +369,7 @@
         "message": "Pokazuj logo nadawców"
     },
     "opt_senderLogosText": {
-        "message": "Logo pochodzi z usługi ikon Google, która widzi tylko domenę nadawcy."
+        "message": "Logo nadawców z Gmaila pochodzi z usługi ikon Google, która otrzymuje domenę nadawcy."
     },
     "opt_opening": {
         "message": "Otwieranie poczty"
@@ -1580,5 +1580,14 @@
     },
     "label_15": {
         "message": "Skrzynki"
+    },
+    "opt_quietSame": {
+        "message": "Początek i koniec są takie same, więc nie ma godzin ciszy."
+    },
+    "opt_ruleField": {
+        "message": "Gdzie szukać"
+    },
+    "opt_serviceAccess": {
+        "message": "Włącz ją ponownie, aby dać jej dostęp."
     }
 }

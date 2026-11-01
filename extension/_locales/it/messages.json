@@ -369,7 +369,7 @@
     "message": "Mostra i loghi dei mittenti"
   },
   "opt_senderLogosText": {
-    "message": "I loghi arrivano dal servizio di icone di Google, che vede solo il dominio del mittente."
+    "message": "I loghi dei mittenti Gmail arrivano dal servizio di icone di Google, che riceve il dominio del mittente."
   },
   "opt_opening": {
     "message": "Apertura della posta"
@@ -1408,5 +1408,14 @@
   },
   "label_15": {
     "message": "Caselle"
+  },
+  "opt_quietSame": {
+    "message": "Inizio e fine coincidono, quindi non ci sono ore di silenzio."
+  },
+  "opt_ruleField": {
+    "message": "Cerca in"
+  },
+  "opt_serviceAccess": {
+    "message": "Attivalo di nuovo per dargli accesso."
   }
 }

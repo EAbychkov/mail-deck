@@ -117,11 +117,11 @@
           <input type="checkbox" role="switch" data-key="quiet.hours">
         </label>
         <div class="row" data-needs="quiet.hours">
-          <span class="text"><b data-i18n="quietBetween">Every day</b></span>
+          <span class="text"><b data-i18n="quietBetween">Every day</b><small class="note" id="quiet-same" data-i18n="quietSame" hidden>Start and end are the same, so this sets no quiet hours.</small></span>
           <span class="inline">
-            <input type="time" data-key="quiet.from" data-i18n-label="quietFrom" aria-label="Start">
+            <input type="time" data-key="quiet.from" data-i18n-label="quietFrom" aria-label="Start" aria-describedby="quiet-same">
             <span class="dash">–</span>
-            <input type="time" data-key="quiet.to" data-i18n-label="quietTo" aria-label="End">
+            <input type="time" data-key="quiet.to" data-i18n-label="quietTo" aria-label="End" aria-describedby="quiet-same">
           </span>
         </div>
         <label class="row" data-needs="quiet.hours">
@@ -272,7 +272,7 @@
           <input type="checkbox" role="switch" data-key="readOnOpen">
         </label>
         <label class="row">
-          <span class="text"><b data-i18n="senderLogos">Show sender logos</b><small data-i18n="senderLogosText">Logos come from Google's icon service, which sees only the sender's domain.</small></span>
+          <span class="text"><b data-i18n="senderLogos">Show sender logos</b><small data-i18n="senderLogosText">Logos of Gmail senders come from Google's icon service, which is sent the sender's domain.</small></span>
           <input type="checkbox" role="switch" data-key="senderLogos">
         </label>
         <div class="row">

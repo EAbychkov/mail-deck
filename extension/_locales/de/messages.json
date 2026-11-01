@@ -369,7 +369,7 @@
         "message": "Logos der Absender anzeigen"
     },
     "opt_senderLogosText": {
-        "message": "Die Logos kommen von Googles Symboldienst, der nur die Domain des Absenders sieht."
+        "message": "Die Logos von Gmail-Absendern kommen von Googles Symboldienst, an den die Domain des Absenders geht."
     },
     "opt_opening": {
         "message": "Mail öffnen"
@@ -1576,5 +1576,14 @@
     },
     "label_15": {
         "message": "Postfächer"
+    },
+    "opt_quietSame": {
+        "message": "Beginn und Ende sind gleich, so ergibt sich keine Ruhezeit."
+    },
+    "opt_ruleField": {
+        "message": "Suchen in"
+    },
+    "opt_serviceAccess": {
+        "message": "Schalte ihn erneut ein, um ihm Zugriff zu geben."
     }
 }

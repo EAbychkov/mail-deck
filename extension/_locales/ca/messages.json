@@ -369,7 +369,7 @@
         "message": "Mostra els logotips dels remitents"
     },
     "opt_senderLogosText": {
-        "message": "Els logotips vénen del servei d’icones de Google, que només veu el domini del remitent."
+        "message": "Els logotips dels remitents de Gmail vénen del servei d’icones de Google, que rep el domini del remitent."
     },
     "opt_opening": {
         "message": "Obrir el correu"
@@ -1580,5 +1580,14 @@
     },
     "label_15": {
         "message": "Safates"
+    },
+    "opt_quietSame": {
+        "message": "L’inici i el final coincideixen, així que no es defineixen hores de silenci."
+    },
+    "opt_ruleField": {
+        "message": "On buscar"
+    },
+    "opt_serviceAccess": {
+        "message": "Torna’l a activar per donar-li accés."
     }
 }

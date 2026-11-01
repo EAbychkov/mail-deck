@@ -369,7 +369,7 @@
         "message": "Mostrar los logotipos de los remitentes"
     },
     "opt_senderLogosText": {
-        "message": "Los logotipos vienen del servicio de iconos de Google, que solo ve el dominio del remitente."
+        "message": "Los logotipos de los remitentes de Gmail vienen del servicio de iconos de Google, que recibe el dominio del remitente."
     },
     "opt_opening": {
         "message": "Abrir el correo"
@@ -1576,5 +1576,14 @@
     },
     "label_15": {
         "message": "Bandejas"
+    },
+    "opt_quietSame": {
+        "message": "El inicio y el final coinciden, así que no se fijan horas de silencio."
+    },
+    "opt_ruleField": {
+        "message": "Buscar en"
+    },
+    "opt_serviceAccess": {
+        "message": "Actívalo de nuevo para darle acceso."
     }
 }

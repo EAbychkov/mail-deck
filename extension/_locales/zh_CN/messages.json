@@ -369,7 +369,7 @@
         "message": "显示发件人徽标"
     },
     "opt_senderLogosText": {
-        "message": "徽标来自 Google 的图标服务，该服务只能看到发件人的域名。"
+        "message": "Gmail 发件人的徽标来自 Google 的图标服务，发件人的域名会发送给该服务。"
     },
     "opt_opening": {
         "message": "打开邮件"
@@ -1580,5 +1580,14 @@
     },
     "label_15": {
         "message": "邮箱"
+    },
+    "opt_quietSame": {
+        "message": "开始和结束时间相同，因此不会设置免打扰时段。"
+    },
+    "opt_ruleField": {
+        "message": "查找位置"
+    },
+    "opt_serviceAccess": {
+        "message": "请重新开启以授予其访问权限。"
     }
 }

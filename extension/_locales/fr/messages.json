@@ -369,7 +369,7 @@
     "message": "Afficher les logos des expéditeurs"
   },
   "opt_senderLogosText": {
-    "message": "Les logos viennent du service d’icônes de Google, qui ne voit que le domaine de l’expéditeur."
+    "message": "Les logos des expéditeurs Gmail viennent du service d’icônes de Google, qui reçoit le domaine de l’expéditeur."
   },
   "opt_opening": {
     "message": "Ouverture du courrier"
@@ -1408,5 +1408,14 @@
   },
   "label_15": {
     "message": "Boîtes de réception"
+  },
+  "opt_quietSame": {
+    "message": "Le début et la fin sont identiques : aucune heure calme n’est définie."
+  },
+  "opt_ruleField": {
+    "message": "Chercher dans"
+  },
+  "opt_serviceAccess": {
+    "message": "Activez-le de nouveau pour lui donner accès."
   }
 }

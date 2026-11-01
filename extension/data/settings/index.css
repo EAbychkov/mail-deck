@@ -142,6 +142,11 @@ label.row {
 .text small a:hover {
   text-decoration: underline;
 }
+/* a word about a setting that does not do what it seems to: quiet hours that quiet nothing,
+   a service on without its sites */
+.text small.note {
+  color: var(--danger);
+}
 .tag {
   margin-inline-start: 8px;
   padding: 1px 7px;

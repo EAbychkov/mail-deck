@@ -366,7 +366,7 @@
     "message": "Show sender logos"
   },
   "opt_senderLogosText": {
-    "message": "Logos come from Google’s icon service, which sees only the sender’s domain."
+    "message": "Logos of Gmail senders come from Google’s icon service, which is sent the sender’s domain."
   },
   "opt_opening": {
     "message": "Opening mail"
@@ -1438,5 +1438,14 @@
   },
   "panel_keyBack": {
     "message": "back"
+  },
+  "opt_quietSame": {
+    "message": "Start and end are the same, so this sets no quiet hours."
+  },
+  "opt_ruleField": {
+    "message": "Look in"
+  },
+  "opt_serviceAccess": {
+    "message": "Turn it on again to give it access."
   }
 }
