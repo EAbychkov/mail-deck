@@ -99,12 +99,16 @@
     if (r.status === 400 || r.status === 401) {
       return {stale: r.status};
     }
+    // any other refusal may be of the tokens too (another account signed in, say): the next call
+    // reads the page again rather than send them forever
     if (!r.ok) {
+      await forget();
       throw Error('yahoo batch ' + r.status);
     }
     const j = await r.json().catch(() => null);
     const responses = j?.result?.responses;
     if (!Array.isArray(responses)) {
+      await forget();
       throw Error('yahoo batch: unreadable answer');
     }
     if (responses.some(x => x.httpCode === 429)) {
@@ -227,6 +231,7 @@
       const folders = result(s.res, 'GetFolders')?.folders;
       const messages = result(s.res, 'GetMessageGroupList')?.messages;
       if (!Array.isArray(folders) || !Array.isArray(messages)) {
+        await forget();
         throw Error('yahoo: unreadable answer');
       }
       const types = byType(folders);

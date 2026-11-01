@@ -31,14 +31,25 @@
     return got[SESSION_KEY] || {};
   };
   const saveStore = store => chrome.storage.session.set({[SESSION_KEY]: store});
-  const patchAccount = async (uid, patch) => {
-    const store = await loadStore();
-    store[uid] = {...(store[uid] || {}), ...patch};
-    await saveStore(store);
-    return store[uid];
+  // one write after another: accounts read in parallel would otherwise save over each other's
+  let saving = Promise.resolve();
+  const patchAccount = (uid, patch) => {
+    const run = saving.then(async () => {
+      const store = await loadStore();
+      store[uid] = {...(store[uid] || {}), ...patch};
+      await saveStore(store);
+      return store[uid];
+    });
+    saving = run.catch(() => {});
+    return run;
   };
 
-  const toMs = ts => (ts > 0 && ts < 1e12 ? ts * 1000 : ts || 0); // seconds -> ms, just in case
+  // seconds -> ms, just in case; a string or an out-of-range value would make an Invalid Date
+  const toMs = ts => {
+    const n = Number(ts) || 0;
+    const ms = n > 0 && n < 1e12 ? n * 1000 : n;
+    return ms > 0 && ms < 8.64e15 ? ms : 0;
+  };
 
   // ---- the ckey + uid + email scraped from a mailbox page ----
   const parsePage = html => {
@@ -65,8 +76,12 @@
       redirect: 'manual',
       signal
     });
-    if (res.type === 'opaqueredirect' || res.status === 0 || res.status >= 300) {
+    if (res.type === 'opaqueredirect' || res.status === 0 || (res.status >= 300 && res.status < 400)) {
       return null;
+    }
+    // a server error is not a sign-out: thrown, the check keeps the last answer
+    if (res.status >= 500 || res.status === 429) {
+      throw new Error(`Yandex page HTTP ${res.status}`);
     }
     if (!res.ok) {
       return null;
@@ -117,12 +132,14 @@
     return res.json();
   };
 
-  const getModel = (json, name) => (json.models || []).find(m => m.name === name);
+  const models = json => (json && Array.isArray(json.models) ? json.models : []).filter(Boolean);
+  const getModel = (json, name) => models(json).find(m => m.name === name);
   // A stale or foreign ckey comes back as status "error", error "ckey". VERIFIED
   // (pulsar, yandex-mail-proxy).
-  const isCkeyError = json => (json.models || []).some(m => m.error === 'ckey');
+  const isCkeyError = json => models(json).some(m => m.error === 'ckey');
 
   // Run a models call for one account, refreshing the ckey once if it is stale.
+  // {json, acc}: the answer and the account as cached; null: the page did not resolve here.
   const callForAccount = async (uid, host, calls, signal) => {
     let acc = await ensureCkey(uid, host, signal, false);
     if (!acc) {
@@ -136,7 +153,7 @@
       }
       json = await callModels(host, uid, acc.ckey, calls, signal);
     }
-    return json;
+    return {json, acc};
   };
 
   // ---- accounts signed in to the browser session, default first ----
@@ -178,22 +195,26 @@
     const order = known ? [known, ...HOSTS.filter(h => h !== known)] : HOSTS;
 
     for (const host of order) {
-      const json = await callForAccount(acc.uid, host, [
+      const got = await callForAccount(acc.uid, host, [
         {name: 'messages', params: {current_folder: '1', first: 0, last: 20, sort_type: 'date', extra_cond: 'only_new'}},
         {name: 'app-badge-counter', params: {}}
       ], signal);
-      if (!json) {
+      if (!got) {
         continue; // page would not resolve on this host: try the next
       }
+      const {json} = got;
       const list = getModel(json, 'messages');
+      // the page resolved on this host, so an error here is this mailbox's, not the host's
       if (!list || list.status !== 'ok') {
-        continue;
+        throw new Error(`Yandex messages: ${(list && (list.error || list.status)) || 'no answer'}`);
       }
 
-      const email = (store[acc.uid] && store[acc.uid].email) || acc.email;
-      const raw = (list.data && list.data.message || []).filter(m => m.new && m.mid).slice(0, 20);
+      // the address of the page just read, the same on every check
+      const email = got.acc.email || acc.email;
+      const raw = (Array.isArray(list.data && list.data.message) ? list.data.message : [])
+        .filter(m => m && m.new && m.mid).slice(0, 20);
       const entries = raw.map(m => {
-        const from = (m.field || []).find(f => f.type === 'from') || {};
+        const from = (Array.isArray(m.field) ? m.field : []).find(f => f && f.type === 'from') || {};
         return {
           id: `yandex:${acc.uid}:${m.mid}`,
           link: messageLink(host, acc.uid, m.mid),
@@ -211,7 +232,7 @@
         ? counter.data.counters.unread : undefined;
 
       return {
-        email: email.toLowerCase(),
+        email: String(email).toLowerCase(),
         inbox: inboxLink(host, acc.uid),
         unread: typeof unread === 'number' ? Math.max(unread, entries.length) : entries.length,
         entries
@@ -228,8 +249,8 @@
     if (store[uid] && store[uid].folders) {
       return store[uid].folders;
     }
-    const json = await callForAccount(uid, host, [{name: 'folders', params: {}}], signal);
-    const model = json && getModel(json, 'folders');
+    const got = await callForAccount(uid, host, [{name: 'folders', params: {}}], signal);
+    const model = got && getModel(got.json, 'folders');
     if (!model || model.status !== 'ok') {
       throw new Error('Yandex: could not read the folder list');
     }
@@ -272,17 +293,23 @@
   };
 
   // ====================== MIME parser (service-worker safe) ======================
+  // Forgiving, as atob is not: padding inside the text (lines encoded one by one) starts a new
+  // chunk, and a stray last character of a chunk is dropped rather than thrown on.
   const decodeBase64 = s => {
-    const clean = s.replace(/[^A-Za-z0-9+/=]/g, '');
-    const bin = atob(clean);
-    const out = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i += 1) {
-      out[i] = bin.charCodeAt(i);
+    const chunks = s.replace(/[^A-Za-z0-9+/=]/g, '').split(/=+/).filter(Boolean);
+    const bins = chunks.map(c => atob(c.length % 4 === 1 ? c.slice(0, -1) : c));
+    const out = new Uint8Array(bins.reduce((n, b) => n + b.length, 0));
+    let at = 0;
+    for (const bin of bins) {
+      for (let i = 0; i < bin.length; i += 1) {
+        out[at++] = bin.charCodeAt(i);
+      }
     }
     return out;
   };
   const decodeQuotedPrintable = s => {
-    const text = s.replace(/=\r?\n/g, ''); // soft line breaks
+    // whitespace at a line's end was added on the way (RFC 2045), then soft line breaks
+    const text = s.replace(/[ \t]+(?=\r?\n)/g, '').replace(/=\r?\n/g, '');
     const out = [];
     for (let i = 0; i < text.length; i += 1) {
       if (text[i] === '=' && i + 2 < text.length && /[0-9A-Fa-f]{2}/.test(text.slice(i + 1, i + 3))) {
@@ -309,16 +336,36 @@
     }
   };
 
-  // RFC 2047 encoded-words in header values (=?charset?B/Q?...?=).
-  const decodeWords = value => value.replace(
-    /=\?([^?]+)\?([BbQq])\?([^?]*)\?=/g,
-    (_, charset, enc, data) => {
-      const bytes = enc.toUpperCase() === 'B'
-        ? decodeBase64(data)
-        : decodeQuotedPrintable(data.replace(/_/g, ' '));
-      return decodeText(bytes, charset.toLowerCase());
-    }
-  ).replace(/\?=\s+=\?/g, '?==?'); // join adjacent words separated by whitespace
+  // RFC 2047 encoded-words in header values (=?charset?B/Q?...?=). The whitespace between two
+  // words goes, and the bytes of adjacent words in one charset are decoded together, since an
+  // encoder may split a character between them. A charset may carry a *language (RFC 2231).
+  const WORD = /=\?([^?]+)\?([BbQq])\?([^?]*)\?=/g;
+  const decodeWords = value => value
+    .replace(/(=\?[^?]+\?[BbQq]\?[^?]*\?=)\s+(?==\?[^?]+\?[BbQq]\?[^?]*\?=)/g, '$1')
+    .replace(/(?:=\?[^?]+\?[BbQq]\?[^?]*\?=)+/g, run => {
+      let out = '';
+      let charset = null;
+      let bytes = [];
+      const flush = () => {
+        if (bytes.length) {
+          out += decodeText(Uint8Array.from(bytes), charset);
+        }
+        bytes = [];
+      };
+      for (const [, cs, enc, data] of run.matchAll(WORD)) {
+        const c = cs.toLowerCase().split('*')[0];
+        if (c !== charset) {
+          flush();
+          charset = c;
+        }
+        const b = enc.toUpperCase() === 'B' ? decodeBase64(data) : decodeQuotedPrintable(data.replace(/_/g, ' '));
+        for (let i = 0; i < b.length; i += 1) {
+          bytes.push(b[i]);
+        }
+      }
+      flush();
+      return out;
+    });
 
   const parseHeaders = block => {
     const unfolded = block.replace(/\r?\n[ \t]+/g, ' ');
@@ -371,19 +418,22 @@
       };
     }
 
-    const bytes = cte === 'base64' ? decodeBase64(body)
-      : cte === 'quoted-printable' ? decodeQuotedPrintable(body)
-        : latinBytes(body);
     const filename = disp.params.filename || ctype.params.name || '';
     const isAttachment = disp.value === 'attachment' ||
       (!ctype.value.startsWith('text/') && !!filename);
+    // only a body is decoded: an attachment's bytes are never shown, and may be large
+    const shown = ctype.value.startsWith('text/') && !isAttachment;
+    const bytes = !shown ? null
+      : cte === 'base64' ? decodeBase64(body)
+        : cte === 'quoted-printable' ? decodeQuotedPrintable(body)
+          : latinBytes(body);
     return {
       type: ctype.value,
       charset: ctype.params.charset,
       filename,
       isAttachment,
       // drop the single trailing CRLF the transport adds, so a body does not gain a stray line
-      text: ctype.value.startsWith('text/') ? decodeText(bytes, (ctype.params.charset || 'utf-8').toLowerCase()).replace(/\r?\n$/, '') : ''
+      text: shown ? decodeText(bytes, (ctype.params.charset || 'utf-8').toLowerCase()).replace(/\r?\n$/, '') : ''
     };
   };
 
@@ -413,9 +463,10 @@
 
   // bytes: the raw .eml as a Uint8Array. Returns one message object for the panel.
   const parseEml = bytes => {
+    // byte for byte, in chunks (TextDecoder's latin1 is windows-1252, which is not)
     let raw = '';
-    for (let i = 0; i < bytes.length; i += 1) {
-      raw += String.fromCharCode(bytes[i]);
+    for (let i = 0; i < bytes.length; i += 0x8000) {
+      raw += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
     }
     const tree = parsePart(raw);
     const html = {v: ''};
@@ -488,6 +539,10 @@
         return true;
       }
       const {uid, host} = refs[0];
+      // the refs of one mailbox share its uid: anything else is refused, never sent to refs[0]'s account
+      if (refs.some(r => !r || r.uid !== uid || r.host !== host)) {
+        throw new Error('Yandex: messages of more than one account');
+      }
       const ids = refs.map(r => r.mid);
       const idsParam = ids.length === 1 ? ids[0] : ids;
 

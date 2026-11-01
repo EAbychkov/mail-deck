@@ -104,6 +104,27 @@ const tests = [
     const t = aol(req => req.path === '/ws/v3/batch' ? res('', {status: 429}) : undefined);
     await assert.rejects(t.aol.collect({signal}), /rate limited/);
   }],
+  ['a refusal other than 400/401 drops the tokens, so the next check reads the page again', async () => {
+    for (const refused of [
+      () => res({result: {responses: [{id: 'ListFolders', httpCode: 403}, {id: 'ListMessages1', httpCode: 404}]}}),
+      () => res('', {status: 403}),
+      () => res('<html>maintenance</html>')
+    ]) {
+      let refuse = false;
+      const t = aol(req => refuse && req.path === '/ws/v3/batch' ? refused() : undefined);
+      await t.aol.collect({signal});
+      refuse = true;
+      t.sent.length = 0;
+      await assert.rejects(t.aol.collect({signal}));
+      assert.deepStrictEqual(t.sent.map(r => r.path), ['/ws/v3/batch']);
+      assert.strictEqual(t.store['service.aol'], undefined);
+      refuse = false;
+      t.sent.length = 0;
+      const [box] = await t.aol.collect({signal});
+      assert.strictEqual(box.email, 'cy@aol.com');
+      assert.deepStrictEqual(t.sent.map(r => r.path), ['/', '/ws/v3/mailboxes', '/ws/v3/batch']);
+    }
+  }],
   ['delete moves the conversation to the trash', async () => {
     const t = aol(req => req.params.name ? res(written) : undefined);
     await t.aol.collect({signal});

@@ -215,6 +215,18 @@ check('collect: a mailbox the session lost is left out', async () => {
   assert.strictEqual(calls.filter(c => c.url.startsWith(STATUS)).length, 1);
 });
 
+check('collect: an error status where the token should be throws, the mailbox is not taken for signed out', async () => {
+  for (const code of [500, 429]) {
+    const {service} = load(signedIn([['GET', SHORT + '?email=bob', () => ({status: code, body: 'error'})]]));
+    await assert.rejects(service.collect({signal: signal()}), new RegExp('user/short: ' + code));
+  }
+  // an answer without a token, or noauth, still means the session lost the mailbox
+  for (const reply of [() => ({status: 200, body: {}}), () => ({status: 'noauth'})]) {
+    const {service} = load(signedIn([['GET', SHORT + '?email=bob', reply]]));
+    assert.deepStrictEqual(plain((await service.collect({signal: signal()})).map(b => b.email)), ['ann@mail.ru']);
+  }
+});
+
 check('collect: a stale token is replaced once', async () => {
   const seen = [];
   const {service, calls, storage} = load([

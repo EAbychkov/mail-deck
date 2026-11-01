@@ -270,6 +270,48 @@ const rejects = async (promise, re) => {
     assert.strictEqual(other.count('POST auth/refresh'), 1);
   });
 
+  await check('collect: a session left to an open tab does not take the other sessions with it', async () => {
+    // after a browser start nothing is known: bob's token has expired, a tab shows ann's /u/0
+    const {service, count} = setup({tabs: ['https://mail.proton.me/u/0/inbox'], routes: {
+      'GET mail/v4/messages/count': r => r.uid === 'cB' ? json({Code: 401}, 401) :
+        json({Code: 1000, Counts: [{LabelID: '0', Total: 3, Unread: 3}]})
+    }});
+    const boxes = plain(await service.collect({}));
+    assert.deepStrictEqual(boxes.map(b => [b.email, b.unread]), [['ann@proton.me', 3]]);
+    assert.strictEqual(count('POST auth/refresh'), 0);
+  });
+
+  await check('collect: a known session that fails shows its last mailbox, the others their new one', async () => {
+    let down = false;
+    const {service} = setup({routes: {
+      'GET mail/v4/messages/count': r => down && r.uid === 'cB' ? json({Code: 500}, 500) :
+        json({Code: 1000, Counts: [{LabelID: '0', Total: 10, Unread: r.uid === 'cA' ? (down ? 4 : 3) : 1}]})
+    }});
+    const before = plain(await service.collect({}));
+    down = true;
+    const after = plain(await service.collect({}));
+    assert.deepStrictEqual(after.map(b => [b.email, b.unread]), [['ann@proton.me', 4], ['bob@pm.me', 1]]);
+    assert.deepStrictEqual(after[1], before[1]);
+  });
+
+  await check('collect: the sessions are asked at once, with one version.json', async () => {
+    let open = 0;
+    let most = 0;
+    const {service, count} = setup({routes: {
+      'GET mail/v4/messages/count': () => {
+        open += 1;
+        most = Math.max(most, open);
+        return new Promise(resolve => setTimeout(() => {
+          open -= 1;
+          resolve(json({Code: 1000, Counts: [{LabelID: '0', Total: 0, Unread: 0}]}));
+        }, 10));
+      }
+    }});
+    await service.collect({});
+    assert.strictEqual(most, 2);
+    assert.strictEqual(count('GET version.json'), 1);
+  });
+
   await check('collect: an old app version is renewed once, then the request repeated', async () => {
     const {service, calls, store, count} = setup({cookies: ['AUTH-cA'],
       session: {'service.proton': {version: '5.0.100.1'}},
@@ -319,7 +361,7 @@ const rejects = async (promise, re) => {
     await rejects(counts.service.collect({}), /unreadable count/);
     const page = setup({routes: {'GET mail/v4/messages/count': () => new Response('<html>maintenance</html>', {status: 200})}});
     await rejects(page.service.collect({}), /unreadable answer/);
-    const list = setup({routes: {'GET mail/v4/messages': () => json({Code: 1000})}});
+    const list = setup({cookies: ['AUTH-cA'], routes: {'GET mail/v4/messages': () => json({Code: 1000})}});
     await rejects(list.service.collect({}), /unreadable list/);
   });
 
@@ -410,6 +452,12 @@ const rejects = async (promise, re) => {
     const t = setup({routes: {'PUT mail/v4/messages/read': () => ok(['m9'])}});
     assert.strictEqual(await t.service.action({cmd: 'rd', email: 'bob@pm.me', refs: [{id: 'm9'}], prefs: {}}), true);
     assert.deepStrictEqual(t.calls.filter(c => c.method === 'PUT').map(c => c.uid), ['cB']);
+  });
+
+  await check('action: a session that could not be asked is the error when its mailbox is not found', async () => {
+    const t = setup({routes: {'GET core/v4/users': r => r.uid === 'cB' ? json({Code: 500}, 500) : json({Code: 1000, User: USERS[r.uid]})}});
+    await rejects(t.service.action({cmd: 'rd', email: 'bob@pm.me', refs: [{id: 'm9'}], prefs: {}}), /HTTP 500/);
+    assert.strictEqual(t.calls.filter(c => c.method === 'PUT').length, 0);
   });
 
   await check('action: unknown mailbox, unknown command and no refs throw', async () => {

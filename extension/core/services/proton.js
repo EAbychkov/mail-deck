@@ -25,6 +25,7 @@
   const DEAD = [400, 401, 422];
   const SINGLE = 1; // MailSettings.ViewMode: 0 groups conversations, 1 shows single messages
   const FRESH = 60 * 60 * 1000; // how long a session's identity, slot and view mode are reused
+  const STALE = 30 * 60 * 1000; // a session that fails a check shows its last mailbox this long, as the runner does
   const PAGE = 20;
 
   const signedOut = () => Object.assign(new Error('Proton: signed out'), {signedOut: true});
@@ -45,22 +46,29 @@
   };
 
   // The web app sends its own build in x-pm-appversion and Proton refuses unknown or old ones.
+  // Sessions asked at once wait for one answer.
+  let asking = null;
   const version = async (state, signal, renew = false) => {
     if (state.version && !renew) {
       return state.version;
     }
-    const r = await fetch(ORIGIN + '/assets/version.json', {credentials: 'omit', cache: 'no-store', signal});
-    if (!r.ok) {
-      throw new Error('Proton: no app version (HTTP ' + r.status + ')');
+    if (!asking) {
+      asking = (async () => {
+        const r = await fetch(ORIGIN + '/assets/version.json', {credentials: 'omit', cache: 'no-store', signal});
+        if (!r.ok) {
+          throw new Error('Proton: no app version (HTTP ' + r.status + ')');
+        }
+        const j = await r.json().catch(() => ({}));
+        // {"branch": "proton-mail@5.0.138.11", "version": "5.0.138.11", ...}
+        const v = /^\d+(\.\d+)+$/.test(j.version || '') ? j.version : (/@(\d+(?:\.\d+)+)$/.exec(j.branch || '') || [])[1];
+        if (!v) {
+          throw new Error('Proton: unreadable app version');
+        }
+        return v;
+      })().finally(() => asking = null);
     }
-    const j = await r.json().catch(() => ({}));
-    // {"branch": "proton-mail@5.0.138.11", "version": "5.0.138.11", ...}
-    const v = /^\d+(\.\d+)+$/.test(j.version || '') ? j.version : (/@(\d+(?:\.\d+)+)$/.exec(j.branch || '') || [])[1];
-    if (!v) {
-      throw new Error('Proton: unreadable app version');
-    }
-    state.version = v;
-    return v;
+    state.version = await asking;
+    return state.version;
   };
 
   const headers = async (state, uid, signal) => ({
@@ -157,48 +165,65 @@
     return j;
   };
 
+  // Runs run(uid) for every session at once. A session signed out is forgotten; any other failure
+  // goes to failed and leaves the other sessions their answer. Resolves the uids that answered.
+  const each = async (state, list, failed, run) => (await Promise.all(list.map(async uid => {
+    try {
+      await run(uid);
+      return uid;
+    }
+    catch (e) {
+      if (e.signedOut) {
+        delete state.users[uid];
+      }
+      else {
+        failed.push({uid, e});
+      }
+    }
+  }))).filter(Boolean);
+
   /*
    * Who each session is, the /u/<LocalID>/ slot the web app shows it under, and its view mode
    * (links differ). The uid of the AUTH cookie is not the UID that sessions/local lists, so sessions
-   * are matched by user id. Kept for FRESH; a sign-in again gets a new uid anyway.
+   * are matched by user id. Kept for FRESH; a sign-in again gets a new uid anyway. A session it
+   * could not ask keeps what it had, if anything.
    */
-  const identify = async (state, list, signal) => {
-    const stale = list.filter(uid => !(state.users[uid] && Date.now() - state.users[uid].at < FRESH));
-    if (stale.length === 0) {
-      return;
-    }
+  const identify = async (state, list, signal, failed) => {
+    let stale = list.filter(uid => !(state.users[uid] && Date.now() - state.users[uid].at < FRESH));
+    // the list of sessions, asked through the first one that answers
     let slots;
-    for (const uid of stale) {
-      try {
-        if (!slots) {
-          slots = (await call(state, uid, 'GET', 'auth/v4/sessions/local', {signal})).Sessions;
-          if (!Array.isArray(slots)) {
-            throw new Error('Proton: unreadable sessions');
-          }
+    while (!slots && stale.length) {
+      const [uid] = stale;
+      const ok = await each(state, [uid], failed, async () => {
+        slots = (await call(state, uid, 'GET', 'auth/v4/sessions/local', {signal})).Sessions;
+        if (!Array.isArray(slots)) {
+          slots = undefined;
+          throw new Error('Proton: unreadable sessions');
         }
-        const {User: u} = await call(state, uid, 'GET', 'core/v4/users', {signal});
-        if (!u || !u.ID) {
-          throw new Error('Proton: unreadable user');
-        }
-        const {MailSettings: settings} = await call(state, uid, 'GET', 'mail/v4/settings', {signal});
-        const slot = slots.find(s => s.UserID === u.ID) || slots.find(s => u.Name && s.Username === u.Name);
-        const old = state.users[uid];
-        state.users[uid] = {
-          id: u.ID,
-          email: (u.Email || (slot && slot.PrimaryEmail) || u.Name || '').toLowerCase(),
-          // without a listed slot, the last known one, else the first
-          slot: slot && Number.isInteger(slot.LocalID) ? slot.LocalID : (old ? old.slot : 0),
-          view: settings && settings.ViewMode === SINGLE ? SINGLE : 0,
-          at: Date.now()
-        };
-      }
-      catch (e) {
-        if (!e.signedOut) {
-          throw e;
-        }
-        delete state.users[uid];
+      });
+      if (ok.length === 0) {
+        stale = stale.slice(1);
       }
     }
+    await each(state, stale, failed, async uid => {
+      const [{User: u}, {MailSettings: settings}] = await Promise.all([
+        call(state, uid, 'GET', 'core/v4/users', {signal}),
+        call(state, uid, 'GET', 'mail/v4/settings', {signal})
+      ]);
+      if (!u || !u.ID) {
+        throw new Error('Proton: unreadable user');
+      }
+      const slot = slots.find(s => s.UserID === u.ID) || slots.find(s => u.Name && s.Username === u.Name);
+      const old = state.users[uid];
+      state.users[uid] = {
+        id: u.ID,
+        email: (u.Email || (slot && slot.PrimaryEmail) || u.Name || '').toLowerCase(),
+        // without a listed slot, the last known one, else the first
+        slot: slot && Number.isInteger(slot.LocalID) ? slot.LocalID : (old ? old.slot : 0),
+        view: settings && settings.ViewMode === SINGLE ? SINGLE : 0,
+        at: Date.now()
+      };
+    });
   };
 
   const unread = async (state, uid, signal) => {
@@ -268,40 +293,56 @@
       }
       const state = await load();
       try {
-        const live = [];
-        for (const uid of list) {
-          try {
-            live.push({uid, count: await unread(state, uid, signal)});
-          }
-          catch (e) {
-            if (!e.signedOut) {
-              throw e;
-            }
-            delete state.users[uid];
-          }
-        }
-        await identify(state, live.map(o => o.uid), signal);
+        // every session at once: one that fails (say, its refresh left to an open tab) does not
+        // take the others' mailboxes with it
+        const failed = [];
+        const counts = new Map();
+        const counted = await each(state, list, failed, async uid => counts.set(uid, await unread(state, uid, signal)));
+        await identify(state, counted, signal, failed);
 
+        // signed out meanwhile, or two cookies of one account (an older session left behind)
         const seen = new Set();
-        const boxes = [];
-        state.mailboxes = {};
-        for (const {uid, count} of live) {
+        const live = counted.filter(uid => {
           const user = state.users[uid];
-          // signed out meanwhile, or two cookies of one account (an older session left behind)
           if (!user || seen.has(user.id)) {
-            continue;
+            return false;
           }
           seen.add(user.id);
-          const found = count > 0 ? await messages(state, uid, signal) : [];
-          const entries = found
+          return true;
+        });
+        const found = new Map();
+        const listed = await each(state, live, failed,
+          async uid => found.set(uid, counts.get(uid) > 0 ? await messages(state, uid, signal) : []));
+
+        const last = state.last || {};
+        state.last = {};
+        state.mailboxes = {};
+        const boxes = [];
+        const add = (uid, user, box) => {
+          state.mailboxes[user.email] = uid;
+          boxes.push({slot: user.slot, box});
+        };
+        for (const uid of listed) {
+          const user = state.users[uid];
+          const entries = found.get(uid)
             .sort((a, b) => (Number(b.Time) || 0) - (Number(a.Time) || 0))
             .slice(0, PAGE)
             .map(m => entry(m, user));
-          state.mailboxes[user.email] = uid;
-          boxes.push({
-            slot: user.slot,
-            box: {email: user.email, inbox: ORIGIN + '/u/' + user.slot + '/inbox', unread: count, entries}
-          });
+          const box = {email: user.email, inbox: ORIGIN + '/u/' + user.slot + '/inbox', unread: counts.get(uid), entries};
+          state.last[user.id] = {at: Date.now(), box};
+          add(uid, user, box);
+        }
+        // a known session that failed shows its last mailbox for a while
+        for (const {uid} of failed) {
+          const user = state.users[uid];
+          const old = user && last[user.id];
+          if (old && !state.last[user.id] && Date.now() - old.at < STALE) {
+            state.last[user.id] = old;
+            add(uid, user, old.box);
+          }
+        }
+        if (boxes.length === 0 && failed.length) {
+          throw failed[0].e;
         }
         return boxes.sort((a, b) => a.slot - b.slot).map(o => o.box);
       }
@@ -320,8 +361,13 @@
         const signedIn = await uids();
         let uid = state.mailboxes[email];
         if (!signedIn.includes(uid)) {
-          await identify(state, signedIn, signal);
+          const failed = [];
+          await identify(state, signedIn, signal, failed);
           uid = signedIn.find(u => state.users[u] && state.users[u].email === email);
+          // not found, and a session could not be asked: that is the error to show
+          if (!uid && failed.length) {
+            throw failed[0].e;
+          }
         }
         if (!uid) {
           throw new Error('Proton: mailbox not signed in');

@@ -30,6 +30,10 @@
     return on.filter((s, i) => granted[i]);
   };
 
+  // what a rule does, to tell whether the session still has it
+  const sig = r => JSON.stringify([r.id, r.condition?.urlFilter, r.condition?.initiatorDomains, r.condition?.tabIds,
+    r.condition?.resourceTypes, (r.action?.requestHeaders || []).map(h => [h.header, h.operation, h.value])]);
+
   // Some services answer only requests that carry their own Origin. The rules touch nothing
   // but this extension's own requests.
   const rules = async () => {
@@ -54,9 +58,14 @@
         resourceTypes: ['xmlhttprequest']
       }
     }));
-    const old = await dnr.getSessionRules();
+    const old = (await dnr.getSessionRules()).filter(r => r.id >= RULE).sort((a, b) => a.id - b.id);
+    // session rules outlive the worker but not the browser or an update: a worker that starts
+    // finds them in place and leaves them
+    if (old.length === addRules.length && old.every((r, i) => sig(r) === sig(addRules[i]))) {
+      return;
+    }
     await dnr.updateSessionRules({
-      removeRuleIds: old.map(r => r.id).filter(id => id >= RULE),
+      removeRuleIds: old.map(r => r.id),
       addRules
     });
   };
@@ -73,7 +82,7 @@
       ...e,
       title: e.title || '',
       summary: e.summary || '',
-      author_name: e.author_name || e.author_email || chrome.i18n.getMessage('msg_1'),
+      author_name: e.author_name || e.author_email || '',
       author_email: e.author_email || ''
     }));
     const key = 'ids.account.' + email;
@@ -124,6 +133,10 @@
     }
     await ready;
     const {[LAST]: last = {}, [REFS]: refs = {}} = await chrome.storage.session.get([LAST, REFS]);
+    // aborted meanwhile: its 'abort' event has passed and would not reach the services
+    if (signal.aborted) {
+      return [];
+    }
     const answers = await Promise.all(on.map(async s => {
       const controller = new AbortController();
       const stop = () => controller.abort();
@@ -196,18 +209,23 @@
       }
       groups.get(key).refs.push(r.ref);
     }
-    for (const {s, email, refs} of groups.values()) {
-      if ((request.cmd === 'rc_^i' && !s.can?.archive) || (request.cmd === 'sp' && !s.can?.spam)) {
-        return fail(s, 'not supported');
-      }
+    // nothing is sent while one of the mailboxes cannot take the command
+    const unable = [...groups.values()].find(({s}) =>
+      (request.cmd === 'rc_^i' && !s.can?.archive) || (request.cmd === 'sp' && !s.can?.spam));
+    if (unable) {
+      return fail(unable.s, 'not supported');
+    }
+    // the mailboxes are asked at once, so one that fails does not keep the others from theirs
+    const results = await Promise.all([...groups.values()].map(async ({s, email, refs}) => {
       try {
         await s.action({cmd: request.cmd, email, refs, prefs: request.prefs || {}, signal: AbortSignal.timeout(WAIT)});
+        return true;
       }
       catch (e) {
         return fail(s, e);
       }
-    }
-    return true;
+    }));
+    return results.find(r => r !== true) || true;
   };
 
   self.Services = {

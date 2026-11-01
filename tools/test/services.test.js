@@ -8,7 +8,7 @@ const assert = require('assert');
 
 const EXT = path.join(__dirname, '../../extension');
 
-const setup = ({on = ['fake'], granted = true, fake = {}} = {}) => {
+const setup = ({on = ['fake'], granted = true, fake = {}, rules: start = []} = {}) => {
   const local = {services: on};
   const session = {};
   const area = store => ({
@@ -27,8 +27,10 @@ const setup = ({on = ['fake'], granted = true, fake = {}} = {}) => {
     },
     set: async o => Object.assign(store, structuredClone(o))
   });
-  let rules = [];
-  const sent = {offscreen: [], collect: 0, action: [], body: []};
+  // the session rules the browser holds already (they outlive the worker)
+  let rules = structuredClone(start);
+  const changed = [];
+  const sent = {offscreen: [], collect: 0, action: [], body: [], rules: 0};
   const service = {
     id: 'fake',
     name: 'Fake Mail',
@@ -74,11 +76,12 @@ const setup = ({on = ['fake'], granted = true, fake = {}} = {}) => {
     runtime: {id: 'extid'},
     tabs: {TAB_ID_NONE: -1},
     i18n: {getMessage: k => k === 'msg_1' ? '(unknown sender)' : ''},
-    storage: {local: area(local), session: area(session), onChanged: {addListener() {}}},
+    storage: {local: area(local), session: area(session), onChanged: {addListener: f => changed.push(f)}},
     permissions: {contains: async () => granted, onAdded: {addListener() {}}, onRemoved: {addListener() {}}},
     declarativeNetRequest: {
       getSessionRules: async () => rules,
       updateSessionRules: async ({removeRuleIds, addRules}) => {
+        sent.rules += 1;
         rules = [...rules.filter(r => !removeRuleIds.includes(r.id)), ...addRules];
       }
     }
@@ -93,7 +96,14 @@ const setup = ({on = ['fake'], granted = true, fake = {}} = {}) => {
   ctx.MailServices = {fake: service};
   vm.createContext(ctx);
   vm.runInContext(fs.readFileSync(EXT + '/core/services.js', 'utf8'), ctx, {filename: 'services.js'});
-  return {Services: ctx.Services, service, local, session, sent, rules: () => rules};
+  // turns services on or off as the settings do
+  const turn = async ids => {
+    local.services = ids;
+    changed.forEach(f => f({services: {newValue: ids}}, 'local'));
+    // the diagnostics wait for the rules, as a check does
+    await ctx.Services.check('fake');
+  };
+  return {Services: ctx.Services, ctx, service, local, session, sent, turn, rules: () => rules};
 };
 const signal = () => new AbortController().signal;
 // values made in the context are of its realm: compared as plain data
@@ -126,6 +136,13 @@ const tests = [
     assert.strictEqual(o.xml.entries[1].summary, '');
     assert.strictEqual(o.xml.entries[1].author_name, 'cy@x.test');
   }],
+  ['a sender without a name or an address is left blank', async () => {
+    const t = setup();
+    t.service.boxes[0].entries[1].author_email = '';
+    const [o] = await t.Services.collect(signal(), 9000);
+    assert.strictEqual(o.xml.entries[1].author_name, '');
+    assert.strictEqual(o.xml.entries[0].author_name, 'Bo');
+  }],
   ['the count is never below what is listed', async () => {
     const t = setup();
     t.service.boxes[0].unread = 0;
@@ -150,6 +167,28 @@ const tests = [
     eq([...rule.condition.initiatorDomains], ['extid']);
     eq([...rule.condition.tabIds], [-1]);
     eq(rule.action.requestHeaders.map(h => h.value), ['https://mail.fake.test', 'https://mail.fake.test/']);
+  }],
+  ['a worker that starts finds the rules in place and leaves them', async () => {
+    const first = setup();
+    await first.Services.collect(signal(), 9000);
+    assert.strictEqual(first.sent.rules, 1); // a browser start: none were there
+    const kept = JSON.parse(JSON.stringify(first.rules()));
+    const t = setup({rules: kept});
+    await t.Services.collect(signal(), 9000);
+    assert.strictEqual(t.sent.rules, 0);
+    eq(t.rules(), kept);
+    // a rule that differs is put right
+    const changed = setup({rules: [{...kept[0], condition: {...kept[0].condition, urlFilter: '||old.test/'}}]});
+    await changed.Services.collect(signal(), 9000);
+    assert.strictEqual(changed.sent.rules, 1);
+    eq(changed.rules(), kept);
+  }],
+  ['a service turned off takes its rule with it', async () => {
+    const t = setup();
+    await t.Services.collect(signal(), 9000);
+    assert.strictEqual(t.rules().length, 1);
+    await t.turn([]);
+    eq(t.rules(), []);
   }],
   ['a failed check keeps the last answer, without telling its mail again', async () => {
     const t = setup();
@@ -178,6 +217,17 @@ const tests = [
     c.abort();
     eq(await p, []);
   }],
+  ['a check aborted before the services are asked asks none of them', async () => {
+    const t = setup();
+    t.service.hang = true;
+    const c = new AbortController();
+    const p = t.Services.collect(c.signal, 5000);
+    c.abort();
+    const t0 = Date.now();
+    eq(await p, []);
+    assert.ok(Date.now() - t0 < 500);
+    assert.strictEqual(t.sent.collect, 0);
+  }],
   ['an action reaches the service with the refs of its mailbox', async () => {
     const t = setup();
     await t.Services.collect(signal(), 9000);
@@ -194,6 +244,36 @@ const tests = [
     t.service.refuse = true;
     const r = await t.Services.action({cmd: 'tr', links: ['https://mail.fake.test/m/1']});
     assert.strictEqual(r.message, 'Fake Mail: refused');
+  }],
+  ['one mailbox that fails does not keep the others from theirs', async () => {
+    const t = setup();
+    t.service.boxes.push({email: 'bob@fake.test', inbox: 'https://mail.fake.test/inbox?b', unread: 1, entries: [
+      {id: 'fake:3', link: 'https://mail.fake.test/m/3', ref: {mid: '3'}, title: 'x', modified: new Date().toISOString(), author_email: 'dee@x.test'}
+    ]});
+    await t.Services.collect(signal(), 9000);
+    const asked = [];
+    t.service.action = async o => {
+      asked.push(o.email);
+      if (o.email === 'ann@fake.test') {
+        throw Error('refused');
+      }
+      return true;
+    };
+    const r = await t.Services.action({cmd: 'rd', links: ['https://mail.fake.test/m/1', 'https://mail.fake.test/m/3']});
+    assert.strictEqual(r.message, 'Fake Mail: refused');
+    eq(asked.sort(), ['ann@fake.test', 'bob@fake.test']);
+  }],
+  ['nothing is sent while one of the mailboxes cannot take the command', async () => {
+    const t = setup({on: ['fake', 'plain']});
+    t.ctx.MailServices.plain = {...t.service, id: 'plain', name: 'Plain Mail', hosts: ['https://mail.plain.test/'], rewrite: [],
+      can: {archive: false, spam: false, body: false},
+      collect: async () => [{email: 'cy@plain.test', inbox: 'https://mail.plain.test/inbox', unread: 1, entries: [
+        {id: 'plain:1', link: 'https://mail.plain.test/m/1', ref: {mid: 'p1'}, title: 'x', modified: new Date().toISOString(), author_email: 'e@x.test'}
+      ]}]};
+    await t.Services.collect(signal(), 9000);
+    const r = await t.Services.action({cmd: 'rc_^i', links: ['https://mail.fake.test/m/1', 'https://mail.plain.test/m/1'], prefs: {}});
+    assert.strictEqual(r.message, 'Plain Mail: not supported');
+    assert.strictEqual(t.sent.action.length, 0);
   }],
   ['archive is not sent to a service without one', async () => {
     const t = setup({fake: {can: {archive: false, spam: true, body: true}}});

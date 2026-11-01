@@ -78,7 +78,9 @@
       await keep(email, token);
       return token;
     }
-    if (a.login || stale(a) || (a.ok && a.json)) {
+    // only a refusal, or an answer that is fine but has no token, means the mailbox is gone; an
+    // error status in the JSON (500, 429...) is a failure, not a sign-out
+    if (a.login || stale(a) || a.json?.status === 'noauth' || (a.ok && a.json?.status === 200)) {
       return '';
     }
     throw fail('user/short', a);

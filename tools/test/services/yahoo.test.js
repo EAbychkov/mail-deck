@@ -145,6 +145,28 @@ const tests = [
     const t = yahoo(req => req.path === '/ws/v3/batch' ? res({result: {}}) : undefined);
     await assert.rejects(t.yahoo.collect({signal}), /unreadable/);
   }],
+  ['a refusal other than 400/401 drops the tokens, so the next check reads the page again', async () => {
+    for (const refused of [
+      () => res({result: {responses: [{id: 'GetFolders', httpCode: 403, response: {error: {code: 'EC-4003'}}}, {id: 'GetMessageGroupList', httpCode: 403}]}}),
+      () => res('', {status: 403}),
+      () => res('', {status: 503})
+    ]) {
+      let refuse = false;
+      const t = yahoo(req => refuse && req.path === '/ws/v3/batch' ? refused() : undefined);
+      await t.yahoo.collect({signal});
+      refuse = true;
+      t.sent.length = 0;
+      await assert.rejects(t.yahoo.collect({signal}));
+      // no second try in the same call
+      assert.deepStrictEqual(t.sent.map(r => r.path), ['/ws/v3/batch']);
+      assert.strictEqual(t.store['service.yahoo'], undefined);
+      refuse = false;
+      t.sent.length = 0;
+      const [box] = await t.yahoo.collect({signal});
+      assert.strictEqual(box.email, 'ann@yahoo.com');
+      assert.deepStrictEqual(t.sent.map(r => r.path), ['/', '/ws/v3/batch']);
+    }
+  }],
   ['mark read: every unread message of the conversation, with the write token', async () => {
     const t = yahoo(req => req.params.name ? res(written('UnifiedUpdateMessage_0')) : undefined);
     await t.yahoo.collect({signal});
