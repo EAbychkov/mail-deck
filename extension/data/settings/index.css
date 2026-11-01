@@ -676,7 +676,7 @@ a:focus-visible,
   text-align: end;
 }
 #ai-model {
-  max-width: 260px;
+  max-width: 340px;
 }
 /* a status with its buttons: on a narrow page the buttons go under the words, not beside a sliver */
 #ai-connected > .text,
