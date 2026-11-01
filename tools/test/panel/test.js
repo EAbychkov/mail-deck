@@ -564,6 +564,115 @@
       out.seenOnUpdate = window.__set.some(o => 'badge.seen' in o);
     }
 
+    if (scenario === 'site') {
+      // mail from the site of the page the panel opened over (?url=https://github.com/login)
+      const $ = id => document.getElementById(id);
+      const block = () => $('list').querySelector(':scope > .site');
+      const id = link => link.match(/message_id=([^&]*)/)[1];
+      const pins = () => [...(block()?.querySelectorAll('.pin') || [])].map(p => id(p.dataset.focus));
+      const goTo = async url => {
+        window.__tabUrl = url;
+        window.__tabEvents.updated?.(7, {url, status: 'complete'}, {id: 7, active: true, windowId: 1});
+        await wait(80);
+      };
+      await until(() => block());
+      out.first = $('list').firstElementChild === block();
+      out.head = block().querySelector('.site-head').textContent === t('fromSite', 'github.com');
+      // newest first, three of the five, the bulk sender's and the other mailbox's among them
+      out.pins = pins();
+      out.more = block().querySelector('.site-more')?.textContent === t('siteMore', 2);
+      out.pinsNamed = [...block().querySelectorAll('.pin')].every(p => p.tagName === 'BUTTON' && p.textContent.trim() && p.title);
+      out.noRows = block().querySelectorAll('.row, [data-link]').length === 0;
+      // the code, large and grouped; a click copies its digits, says so, and leaves the mail as it was
+      const code = block().querySelector('.site-code');
+      out.codeShown = code?.querySelector('.digits').textContent === '482 913';
+      const acted = window.__sent.filter(m => m.method === 'gmail.action').length;
+      code?.click();
+      await wait(50);
+      out.codeCopied = window.__copied === '482913' && $('toast').textContent === t('codeCopied');
+      // C copies it: with no line focused, and from a line without a code of its own
+      window.__copied = null;
+      document.activeElement.blur();
+      key(document, 'KeyC');
+      await wait(30);
+      out.keyNoFocus = window.__copied === '482913';
+      window.__copied = null;
+      [...document.querySelectorAll('#list .row')].find(r => id(r.dataset.link) === 'f1').focus();
+      key(document, 'KeyC');
+      await wait(30);
+      out.keyPlainLine = window.__copied === '482913';
+      // a line with its own code keeps C for it
+      window.__copied = null;
+      [...document.querySelectorAll('#list .row')].find(r => id(r.dataset.link) === 'f2').focus();
+      key(document, 'KeyC');
+      await wait(30);
+      out.keyOwnCode = window.__copied === '7310';
+      // and typing in the search copies nothing
+      window.__copied = null;
+      key(document, 'Slash');
+      await wait(30);
+      key($('search-input'), 'KeyC');
+      await wait(30);
+      out.keyInSearch = window.__copied === null && !block();
+      key($('search-input'), 'Escape');
+      await wait(50);
+      out.backAfterSearch = Boolean(block());
+      out.noAction = window.__sent.filter(m => m.method === 'gmail.action').length === acted;
+
+      // a pin opens its mail in the reader; back, the pin has the focus again
+      block().querySelector('.pin').click();
+      await wait(50);
+      out.pinReads = state.reading && id(state.reading.e.link) === 'g1';
+      key(document, 'Escape');
+      await wait(50);
+      out.pinFocusBack = document.activeElement?.dataset?.focus === block()?.querySelector('.pin').dataset.focus;
+
+      // "2 more" narrows the list to the site's mail, in its mailboxes; Esc lets go
+      block().querySelector('.site-more').click();
+      await wait(50);
+      out.narrowed = [...document.querySelectorAll('#list .row')].map(r => id(r.dataset.link)).sort();
+      out.narrowChip = $('chips').querySelector('.site-chip')?.textContent === 'github.com' && !block();
+      key(document, 'Escape');
+      await wait(50);
+      out.letGo = Boolean(block()) && !$('chips').querySelector('.site-chip') && document.querySelectorAll('#list .row').length === 10;
+
+      // the side panel follows its tab: chrome://, Gmail itself and a site without mail show nothing;
+      // another ending of the brand does (its code too old to show); a generic brand does not
+      await goTo('chrome://extensions/');
+      out.chromePage = !block();
+      await goTo('https://github.com/settings/keys');
+      out.backOnGithub = Boolean(block());
+      await goTo('https://mail.google.com/mail/u/0/#inbox');
+      out.gmailHost = !block();
+      await goTo('https://www.amazon.co.uk/gp/your-account');
+      out.amazon = {pins: pins(), code: Boolean(block()?.querySelector('.site-code')), head: block()?.querySelector('.site-head').textContent === t('fromSite', 'amazon.co.uk')};
+      await goTo('https://www.store.com/checkout');
+      out.generic = !block();
+      await goTo('https://example.org/');
+      out.noMatch = !block();
+      window.__tabUrl = 'https://github.com/';
+      window.__tabEvents.activated?.({tabId: 7, windowId: 1});
+      await wait(80);
+      out.onActivated = Boolean(block());
+
+      // the keys of a site: endings, webmail, people's own mail
+      const of = url => siteOf(url)?.domain ?? null;
+      out.sites = ['https://www.bbc.co.uk/news', 'https://www.bmw.de/', 'https://shop.example.com.br/x', 'https://e.mail.ru/inbox',
+        'https://outlook.live.com/mail/', 'http://192.168.1.1/', 'https://gmail.com/', 'file:///tmp/x.html'].map(of);
+      const brand = (email, url) => siteOf(url) ? ofSite({author_email: email}, siteOf(url)) : null;
+      out.brands = [brand('service@paypal.de', 'https://www.paypal.com/signin'), brand('news@apps.de', 'https://apps.com/'),
+        brand('hi@mail.de', 'https://mail-shop.com/'), brand('x@gmail.com', 'https://gmail.co.uk/')];
+
+      // what it costs, from data in memory: nine mailboxes of twenty
+      const many = Array.from({length: 9}, (_, i) => ({...state.objs[0], xml: {...state.objs[0].xml, link: 'm' + i,
+        entries: Array.from({length: 20}, (_, j) => ({...state.objs[0].xml.entries[j % 9], link: `l${i}-${j}`}))}}));
+      const t0 = performance.now();
+      for (let i = 0; i < 20; i += 1) {
+        siteMail(state.site, many);
+      }
+      out.ms = (performance.now() - t0) / 20;
+    }
+
     if (scenario === 'narrow') {
       // a side panel 320px wide: the mailbox line keeps its buttons whole and its address
       // readable, the reader's bar stays inside

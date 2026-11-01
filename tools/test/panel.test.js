@@ -174,6 +174,24 @@ const checks = {
   seen: r => ({
     'with the count at mail since the panel was opened, opening it marks the time, a list update does not': r.seen && !r.seenOnUpdate
   }),
+  site: r => ({
+    'over github.com, its mail comes first: newest three, from both mailboxes, a bulk sender\'s in its name counted, "2 more"':
+      r.first && r.head && JSON.stringify(r.pins) === '["g1","g6","g2"]' && r.more,
+    'its pins are named buttons, not lines of the list': r.pinsNamed && r.noRows,
+    'a fresh code shows large and grouped; a click copies its digits, says so, and acts on no mail': r.codeShown && r.codeCopied && r.noAction,
+    'C copies it with no line focused and from a line without a code; a line with its own code keeps C': r.keyNoFocus && r.keyPlainLine && r.keyOwnCode,
+    'typing in the search copies nothing, and the search hides the block until it closes': r.keyInSearch && r.backAfterSearch,
+    'a pin opens its mail in the reader, and back gives it the focus again': r.pinReads && r.pinFocusBack,
+    '"N more" narrows the list to the site\'s mail behind a chip; Esc lets go': JSON.stringify(r.narrowed) === '["g1","g2","g3","g4","g6"]' && r.narrowChip && r.letGo,
+    'no block over chrome://, over Gmail itself, for a generic brand, or with no mail from the site': r.chromePage && r.gmailHost && r.generic && r.noMatch && r.backOnGithub,
+    'the brand matches across endings (amazon.de and .com on amazon.co.uk); a code past half an hour does not show':
+      JSON.stringify(r.amazon) === '{"pins":["z1","z0"],"code":false,"head":true}',
+    'the block follows the tab: another one activated': r.onActivated,
+    'a site is its registrable domain, never webmail, an address, people\'s mail or a file':
+      JSON.stringify(r.sites) === '["bbc.co.uk","bmw.de","example.com.br",null,null,null,null,null]',
+    'a brand under another ending matches; a generic one, or another brand that starts alike, does not': JSON.stringify(r.brands) === '[true,false,false,null]',
+    'matching nine mailboxes of twenty takes under 2 ms, from memory': r.ms < 2
+  }),
   narrow: r => ({
     'a 320px side panel: the mailbox line keeps whole buttons, without copy and Meet, and a readable address':
       r.width === 320 && JSON.stringify(r.buttons) === '["readAll:32","archive:32","open:32"]' && r.addr >= 60,
@@ -185,7 +203,8 @@ server.listen(0, '127.0.0.1', async () => {
   const {port} = server.address();
   let failed = 0;
   for (const [scenario, query, frame] of [['main', ''], ['speed', ''], ['services', '&s=services'], ['wide', '&wide=1'], ['keys', ''], ['narrow', '&side', 320],
-    ['codes', '&s=codes'], ['advance', '&advance=1'], ['readnext', '&read=1'], ['seen', '&badge=new']]) {
+    ['codes', '&s=codes'], ['advance', '&advance=1'], ['readnext', '&read=1'], ['seen', '&badge=new'],
+    ['site', '&s=site&url=' + encodeURIComponent('https://github.com/login?return_to=%2Fsettings')]]) {
     const r = await run(port, scenario, query, frame);
     if (r.error) {
       failed += 1;

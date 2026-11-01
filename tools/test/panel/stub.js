@@ -31,8 +31,24 @@
     entry(0, 'c4', 'GitHub', 'noreply@github.com', '[GitHub] Please verify your device', 'Verification code: 123-456', 4),
     entry(0, 'c5', 'Anna', 'anna@figma.com', 'Встреча', 'В 10:30, комната 4815', 5)
   ])];
+  // ?s=site: mail of github.com (one with a fresh code, one sent through a bulk sender, one in
+  // another mailbox), of Amazon under two endings (its code too old), of a generic brand, and others
+  const site = q.get('s') === 'site' && [
+    acc(0, 'evgeny@example.com', [
+      entry(0, 'g1', 'GitHub', 'noreply@github.com', '[GitHub] Please verify your device', 'Verification code: 482913', 2),
+      entry(0, 'f1', 'Anna Petrova', 'anna@figma.com', 'Макеты на ревью', 'Посмотри, пожалуйста', 4),
+      entry(0, 'f2', 'Банк', 'alerts@bank.test', 'Код подтверждения', 'Ваш код: 7310. Никому его не сообщайте.', 6),
+      entry(0, 'z1', 'Amazon.de', 'shipment-tracking@amazon.de', 'Your order has shipped', 'Arriving Tuesday', 10),
+      entry(0, 'x1', 'Shop', 'orders@store.de', 'Order confirmation', 'Thank you for your order', 15),
+      entry(0, 'g2', 'GitHub', 'notifications@github.com', 'Re: [deck] Fix the build (#12)', 'Merged.', 30),
+      entry(0, 'z0', 'Amazon', 'account-update@amazon.com', 'Your Amazon one-time password', 'Your one-time password is 551234', 45),
+      entry(0, 'g3', 'GitHub', 'noreply@github.com', '[GitHub] A new SSH key was added', 'A new public key was added', 60),
+      entry(0, 'g4', 'GitHub', 'bounces+1@sendgrid.net', 'Your weekly digest', 'Trending repositories', 120)
+    ]),
+    acc(1, 'work@arbitron.example', [entry(1, 'g6', 'GitHub', 'noreply@github.com', '[GitHub] Sign-in from a new device', 'We noticed a new sign-in.', 5)])
+  ];
   const nine = ['bychkovea@gmail.com', 'evgeny@arbitron.app', 'abrahamlincolncrypto@gmail.com', 'georgewashingtoncypto@gmail.com', 'knivesmagician@gmail.com', 'thomasjeffersoncrypto@gmail.com', 'codewithevgeny@gmail.com', 'cryptobychkov@gmail.com', 'eco.toplivo.msk@gmail.com'];
-  const objs = services || codes || (q.get('s') === 'nine' ? nine.map((m, i) => acc(i, m, [])) : caught ? [acc(0, 'evgeny@example.com', []), acc(1, 'work@arbitron.example', [])] : [
+  const objs = services || codes || site || (q.get('s') === 'nine' ? nine.map((m, i) => acc(i, m, [])) : caught ? [acc(0, 'evgeny@example.com', []), acc(1, 'work@arbitron.example', [])] : [
     acc(0, 'evgeny@example.com', [
       entry(0, 'a1', 'Anna Petrova', 'anna@figma.com', 'Макеты на ревью', 'Посмотри, пожалуйста, до пятницы', 4),
       entry(0, 'a2', 'GitHub', 'noreply@github.com', 'New sign-in', 'A new sign-in to your account', 95)
@@ -45,12 +61,17 @@
     accountOrder: [], panelScale: Number(q.get('scale') || 1), readOnOpen: q.get('read') === '1', 'remind.links': [],
     autoAdvance: q.get('advance') === '1', 'badge.count': q.get('badge') || 'all'};
   window.__sent = []; window.__set = [];
+  window.__tabUrl = q.get('url') || ''; window.__tabEvents = {};
   // what the panel copies (__copied): a page under test has no clipboard of its own to ask
   Object.defineProperty(navigator, 'clipboard', {configurable: true, value: {writeText: async s => { window.__copied = s; }}});
   // a link opened from the panel closes it; the page under test has to stay
   window.close = () => {};
   const row = (thread, subject, from, text, mins, labels) => ({subject, thread, labels, date: now - mins * 60000, from, text});
   const search = ({url, query}) => {
+    // the site's mail is all in the feeds
+    if (site) {
+      return [];
+    }
     const n = Number(url.match(/u\/(\d+)/)[1]);
     if (query.includes('is:unread')) {
       return n === 0 ? [
@@ -102,7 +123,15 @@
       onChanged: {addListener() {}}
     },
     sidePanel: {open: () => Promise.resolve()},
-    windows: {getCurrent: () => Promise.resolve({id: 1})}
+    windows: {getCurrent: () => Promise.resolve({id: 1})},
+    // the active tab: its address is ?url= (none: a tab the panel may not read); a test changes
+    // __tabUrl and calls __tabEvents.updated or .activated as Chrome would
+    tabs: {
+      query: () => Promise.resolve([{id: 7, active: true, windowId: 1, ...(window.__tabUrl ? {url: window.__tabUrl} : {})}]),
+      create() {},
+      onActivated: {addListener: f => { window.__tabEvents.activated = f; }},
+      onUpdated: {addListener: f => { window.__tabEvents.updated = f; }}
+    }
   };
   // the print view of a three-message thread with a recipient line and one attachment
   const msg = (name, email, date, to, body, att) => `<table width=100% cellpadding=0 cellspacing=0 border=0 class="message">

@@ -65,6 +65,9 @@ const state = {
   badgeNew: false, // the toolbar count shows the mail since the panel was last opened
   focus: null, // the line the next drawing gives the focus to: a link, or FIRST
   only: null, // the mailbox the chips narrowed the list to
+  // the site of the page the panel opened over, {domain, brand}; its address is never kept
+  site: null,
+  siteOnly: false, // the list narrowed to the site's mail ("N more")
   rows: new Map(), // link -> {e, o}
   pending: null, // the action waiting for its Undo: {cmd, links, ready, timer}
   // threads with a star; the feed does not tell, Gmail's search does
@@ -151,10 +154,14 @@ const codeOf = text => {
   const pick = found.find(s => s.replace(/\D/g, '').length === 6) || found[0];
   return pick ? {shown: pick, copy: pick.replace(/\D/g, '')} : null;
 };
-// copying marks nothing read and deletes nothing: the mail stays as it was
-const copyCode = (code, el) => navigator.clipboard.writeText(code.copy).then(() => {
+// copying marks nothing read and deletes nothing: the mail stays as it was. said: a toast to show
+// once copied, for a code copied away from its mail
+const copyCode = (code, el, said) => navigator.clipboard.writeText(code.copy).then(() => {
   el?.classList.add('copied');
   setTimeout(() => el?.classList.remove('copied'), 1200);
+  if (said) {
+    toast(said);
+  }
 }, () => toast(t('copyCodeFailed'), true));
 const codePill = code => h('button', {
   'class': 'code',
@@ -214,6 +221,16 @@ const mark = email => {
     onerror: ev => ev.target.replaceWith(h('span', {class: 'dot'}))
   }) : h('span', {class: 'dot'});
 };
+// The registrable part of a host, what its owner bought: news.binance.com -> binance.com,
+// mail.example.co.uk -> example.co.uk, www.bmw.de -> bmw.de. A two-part public suffix is a
+// country's second level of this kind (co.uk, com.au, com.br, co.jp, ne.jp...).
+const SUFFIX2 = new Set(['co', 'com', 'net', 'org', 'gov', 'edu', 'ac', 'or', 'ne', 'go', 'gob', 'ltd', 'plc', 'nic', 'mil', 'sch', 'gen', 'nom', 'biz']);
+const registrable = host => {
+  const parts = String(host || '').toLowerCase().replace(/\.$/, '').split('.');
+  return parts.slice(parts.length > 2 && parts.at(-1).length === 2 && SUFFIX2.has(parts.at(-2)) ? -3 : -2).join('.');
+};
+// a sender address's registrable domain
+const senderDomain = e => registrable((e.author_email || '').split('@')[1]);
 // domain -> whether it has a logo, kept for the browser session
 const logos = new Map();
 // The icon service is Google's, and it answers without CORS, so the request carries the
@@ -224,9 +241,7 @@ const avatar = (e, o) => {
   const hash = [...(e.author_email || name)].reduce((p, c) => (p * 31 + c.charCodeAt(0)) >>> 0, 0);
   const el = h('span', {class: 'avatar', style: `--c:${PALETTE[hash % PALETTE.length]}`},
     (name.match(/[\p{L}\p{N}]/u) || ['?'])[0].toUpperCase());
-  const parts = ((e.author_email || '').split('@')[1] || '').toLowerCase().split('.');
-  // keep the registrable part: news.binance.com -> binance.com, mail.example.co.uk -> example.co.uk
-  const root = parts.slice(parts.length > 2 && parts.at(-2).length <= 3 && parts.at(-1).length === 2 ? -3 : -2).join('.');
+  const root = senderDomain(e);
   if (state.senderLogos && !serviceOf(o) && root.includes('.') && !FREEMAIL.test(root) && logos.get(root) !== false) {
     const img = h('img', {alt: '', referrerPolicy: 'no-referrer'});
     // the service answers an unknown domain with a 16px globe
@@ -666,10 +681,23 @@ const renderChips = objs => {
       render();
     }
   }, o && h('span', {class: 'dot'}), label, h('span', {class: 'count'}, n > 999 ? '999+' : n));
-  $('chips').replaceChildren(...(busy.length < 2 || state.search ? [] : [
+  // the list narrowed to the site's mail says so first; a click lets go
+  const site = state.siteOnly && !state.search && h('button', {
+    'class': 'chip on site-chip',
+    'type': 'button',
+    'aria-pressed': 'true',
+    'aria-label': t('fromSite', state.site.domain),
+    'title': t('all') + ' (Esc)',
+    'data-focus': 'chip:site',
+    'onclick': () => {
+      state.siteOnly = false;
+      render();
+    }
+  }, state.site.domain, icon('close'));
+  $('chips').replaceChildren(...[site, ...(busy.length < 2 || state.search ? [] : [
     chip(null, t('all'), busy.reduce((p, o) => p + o.xml.fullcount, 0)),
     ...busy.map(o => chip(o, short(o, busy) + (o.xml.label ? ` [${o.xml.label}]` : ''), o.xml.fullcount))
-  ]));
+  ])].filter(Boolean));
 };
 
 /* search: every mailbox at once, or the one the chips chose */
@@ -794,14 +822,15 @@ const row = (e, o) => {
     btn('open', openIn(o) + ' (O)', ev => openEntry(e, o, ev))
   ));
 };
-// every signed-in mailbox gets its line, with its unread mail under it
-const section = o => {
+// every signed-in mailbox gets its line, with its unread mail under it; keep(e), when given,
+// narrows it to that mail, all of it at once (the site's)
+const section = (o, keep) => {
   // the mail past the feed's 20, from the search; what was acted on here leaves the count as well
   const all = state.extra.get(o.xml.link) || [];
   const extra = all.filter(e => !state.hidden.has(e.link));
-  const n = Math.max(0, o.xml.fullcount - (all.length - extra.length));
-  const open = state.expanded.has(o.xml.link);
-  const entries = open ? [...o.xml.entries, ...extra] : o.xml.entries;
+  const open = Boolean(keep) || state.expanded.has(o.xml.link);
+  const entries = (open ? [...o.xml.entries, ...extra] : o.xml.entries).filter(e => !keep || keep(e));
+  const n = keep ? entries.length : Math.max(0, o.xml.fullcount - (all.length - extra.length));
   const links = entries.map(e => e.link);
   const rest = n - entries.length;
   return h('section', {'class': 'section' + (n ? '' : ' idle'), 'style': `--c:${o.color}`, 'data-key': accountName(o)},
@@ -879,6 +908,167 @@ const signedOut = () => {
     )))
   );
 };
+/* mail from this site: the page the panel opened over, its mail first, its code ready */
+// webmail itself: the section would only repeat the list
+const WEBMAIL = /^(mail|webmail|inbox|e\.mail|octavius\.mail)\.|^outlook\.(live|office|office365)\.com$/;
+// a brand of this kind names no one: store.com is not store.de
+const GENERIC = new Set(['mail', 'email', 'info', 'news', 'shop', 'store', 'online', 'app', 'apps', 'web', 'site', 'cloud', 'service',
+  'services', 'support', 'account', 'accounts', 'secure', 'notify', 'notifications', 'login', 'auth', 'home', 'my', 'go', 'get']);
+// mail sent for many sites at once: only the sender's name tells whose it is
+const BULK = new Set(['sendgrid.net', 'mailchimpapp.net', 'amazonses.com', 'mailgun.org', 'sparkpostmail.com', 'mandrillapp.com', 'postmarkapp.com']);
+// a code this young is the one the page waits for
+const SITE_CODE_MS = 30 * 60 * 1000;
+// the site of a page, {domain, brand}: web pages only, not webmail, not a mailbox of people
+const siteOf = url => {
+  let u;
+  try {
+    u = new URL(url);
+  }
+  catch (e) {
+    return null;
+  }
+  const host = u.hostname.toLowerCase();
+  if (!/^https?:$/.test(u.protocol) || WEBMAIL.test(host) || /^[\d.]+$|^\[/.test(host)) {
+    return null;
+  }
+  const domain = registrable(host);
+  return domain.includes('.') && !FREEMAIL.test(domain) ? {domain, brand: domain.split('.')[0]} : null;
+};
+// mail of the site: its own domain, the same brand under another ending (amazon.de on
+// amazon.com), or a bulk sender in its name
+const ofSite = (e, site) => {
+  const d = senderDomain(e);
+  if (!d.includes('.')) {
+    return false;
+  }
+  if (d === site.domain) {
+    return true;
+  }
+  const brand = site.brand;
+  if (brand.length < 4 || GENERIC.has(brand)) {
+    return false;
+  }
+  if (d.split('.')[0] === brand && !FREEMAIL.test(d)) {
+    return true;
+  }
+  const name = (e.author_name || '').toLowerCase();
+  return BULK.has(d) && name.split(/[^\p{L}\p{N}-]+/u).includes(brand);
+};
+// the site's mail among what the list shows, newest first: [{e, o}]
+const siteMail = (site, objs) => {
+  const seen = new Set();
+  const found = [];
+  for (const o of objs) {
+    const extra = (state.extra.get(o.xml.link) || []).filter(e => !state.hidden.has(e.link));
+    for (const e of [...o.xml.entries, ...extra]) {
+      // a mailbox watched through labels lists a mail twice
+      if (!seen.has(e.link) && ofSite(e, site)) {
+        seen.add(e.link);
+        found.push({e, o});
+      }
+    }
+  }
+  return found.sort((a, b) => (Date.parse(b.e.modified) || 0) - (Date.parse(a.e.modified) || 0));
+};
+// 482913 reads 482 913; it is copied as it came
+const grouped = digits => digits.length === 6 || digits.length === 7 ? digits.slice(0, 3) + ' ' + digits.slice(3) :
+  digits.length === 8 ? digits.slice(0, 4) + ' ' + digits.slice(4) : digits;
+// a mail of the site: opens as its line in the list does
+const pin = (e, o) => h('button', {
+  'class': 'pin',
+  'type': 'button',
+  'style': `--c:${o.color}`,
+  'title': e.title || t('noSubject'),
+  'data-focus': 'pin:' + e.link,
+  'onclick': ev => {
+    if (ev.metaKey || ev.ctrlKey || !can(o, 'body')) {
+      openEntry(e, o, ev);
+      return;
+    }
+    read(e, o);
+    // back from it, the focus comes back here
+    state.reading.from = 'pin:' + e.link;
+  },
+  'onauxclick': ev => ev.button === 1 && openEntry(e, o, ev),
+  'onmouseenter': () => prefetch(e, o),
+  'onfocus': () => prefetch(e, o)
+},
+h('span', {class: 'dot'}),
+h('span', {class: 'pin-from'}, e.author_name || e.author_email),
+h('span', {class: 'pin-subject'}, e.title || t('noSubject')),
+h('time', {class: 'when', dateTime: e.modified, title: fullDate(e.modified)}, when(e.modified)));
+const siteBlock = (site, found) => {
+  // the code of the newest mail young enough to be the one the page waits for
+  const code = found.map(({e}) => Date.now() - Date.parse(e.modified) < SITE_CODE_MS && codeOf(e.title + ' ' + e.summary)).find(Boolean);
+  return h('section', {'class': 'site', 'aria-label': t('fromSite', site.domain)},
+    h('p', {class: 'site-head'}, t('fromSite', site.domain)),
+    code && h('button', {
+      'class': 'site-code',
+      'type': 'button',
+      'title': t('copyCode') + ' (C)',
+      'aria-label': t('copyCode') + ' ' + code.copy,
+      'data-focus': 'site-code',
+      'onclick': ev => copyCode(code, ev.currentTarget, t('codeCopied'))
+    }, h('span', {class: 'digits'}, grouped(code.copy)), h('span', {class: 'copy-word'}, t('copyCode'))),
+    found.slice(0, 3).map(({e, o}) => pin(e, o)),
+    found.length > 3 && h('button', {
+      'class': 'site-more',
+      'type': 'button',
+      'data-focus': 'site-more',
+      'onclick': () => {
+        state.siteOnly = true;
+        state.focus = FIRST;
+        render();
+      }
+    }, t('siteMore', found.length - 3))
+  );
+};
+// The block is the list's first child. Drawn alone (not with the whole list), a tab switch in
+// the side panel or a code growing old redraws nothing else, and a list scrolled down keeps
+// showing what it showed. Searching, and the list narrowed to the site, go without.
+const paintSite = (objs = view(), alone = true) => {
+  const list = $('list');
+  const path = alone && focusPath();
+  const old = list.querySelector(':scope > .site');
+  const site = !state.search && !state.siteOnly ? state.site : null;
+  const found = site ? siteMail(site, state.only ? objs.filter(o => o.xml.link === state.only) : objs) : [];
+  const block = found.length ? siteBlock(site, found) : null;
+  const before = alone && list.scrollTop > 0 ? old?.offsetHeight || 0 : null;
+  if (old) {
+    old.replaceWith(...[block].filter(Boolean));
+  }
+  else if (block) {
+    list.prepend(block);
+  }
+  if (before !== null) {
+    list.scrollTop += (block?.offsetHeight || 0) - before;
+  }
+  if (path && document.activeElement === document.body) {
+    document.querySelector(path)?.focus({preventScroll: true});
+  }
+};
+// the open page's site, read again when the tab changes; an address the panel may not read
+// (another tab of the side panel, chrome://) shows nothing
+const followTab = async () => {
+  let url = '';
+  try {
+    const [tab] = await chrome.tabs.query(SIDE ? {active: true, currentWindow: true} : {active: true, lastFocusedWindow: true});
+    url = tab?.url || '';
+  }
+  catch (e) {}
+  const site = siteOf(url);
+  if (site?.domain === state.site?.domain) {
+    return;
+  }
+  state.site = site;
+  if (state.siteOnly) {
+    state.siteOnly = false;
+    render();
+  }
+  else {
+    paintSite();
+  }
+};
 const renderList = objs => {
   const list = $('list');
   const top = list.scrollTop;
@@ -890,10 +1080,12 @@ const renderList = objs => {
   state.rows.clear();
 
   const shown = state.only ? objs.filter(o => o.xml.link === state.only) : objs;
-  list.replaceChildren(...(state.search ? searchList() : [
-    ...(!objs.length ? [signIn()] : objs.some(o => o.xml.fullcount) ? shown.map(section) : [caughtUp(objs)]),
+  const keep = state.siteOnly && (e => ofSite(e, state.site));
+  list.replaceChildren(...(state.search ? searchList() : keep ? shown.map(o => section(o, keep)).filter(s => s.querySelector('.row')) : [
+    ...(!objs.length ? [signIn()] : objs.some(o => o.xml.fullcount) ? shown.map(o => section(o)) : [caughtUp(objs)]),
     !state.only && signedOut()
   ].filter(Boolean)));
+  paintSite(objs, false);
   list.scrollTop = top;
   const el = focused === FIRST ? list.querySelector('.row, .acc') : focused && rowOf(focused);
   el?.focus({preventScroll: true});
@@ -980,6 +1172,10 @@ const render = () => {
   const path = focusPath();
   const objs = view();
   drawn = sig(state.objs);
+  // the list narrowed to the site lets go once none of the site's mail is left
+  if (state.siteOnly && !(state.site && siteMail(state.site, objs).length)) {
+    state.siteOnly = false;
+  }
   // the chips drop a choice whose mailbox has no mail left; the bar's compose follows the choice
   renderChips(objs);
   renderBar(objs);
@@ -1009,6 +1205,8 @@ const update = objs => {
     for (const el of $('list').querySelectorAll('time.when')) {
       el.textContent = when(el.dateTime);
     }
+    // a code past its half hour leaves the site's block
+    paintSite();
   }
   else if (performance.now() >= foldUntil) {
     render();
@@ -1219,7 +1417,9 @@ const back = () => {
   shade(false);
   $('app').classList.remove('reading');
   if (r) {
-    (rowOf(r.e.link) || (r.next && rowOf(r.next)) || $('list').querySelector('.row, .acc'))?.focus({preventScroll: true});
+    // the site's pin it opened from, its line, or the line next to it
+    (r.from && $('list').querySelector(`[data-focus="${CSS.escape(r.from)}"]`) || rowOf(r.e.link) || (r.next && rowOf(r.next)) ||
+      $('list').querySelector('.row, .acc'))?.focus({preventScroll: true});
   }
 };
 
@@ -1307,6 +1507,11 @@ const onKey = ev => {
   else if (ev.code === 'Escape' && state.search) {
     closeSearch();
   }
+  else if (ev.code === 'Escape' && state.siteOnly) {
+    state.siteOnly = false;
+    state.focus = FIRST;
+    render();
+  }
   else if (ev.code === 'KeyZ' && state.pending) {
     undo();
   }
@@ -1320,13 +1525,20 @@ const onKey = ev => {
   else if (ev.code === 'Slash' && !state.reading) {
     openSearch();
   }
-  // the one-time code of the open mail or the focused line
-  else if (ev.code === 'KeyC' && target) {
-    const code = state.reading ? state.reading.code : codeOf(target.e.title + ' ' + target.e.summary);
-    if (!code) {
+  // The one-time code of the open mail, or of the focused line; a line without one leaves C to
+  // the code of the site's block. The reader, over the block, copies its mail's code only.
+  else if (ev.code === 'KeyC' && (target || !state.reading)) {
+    const code = state.reading ? state.reading.code : target && codeOf(target.e.title + ' ' + target.e.summary);
+    const site = !state.reading && $('list').querySelector(':scope > .site .site-code');
+    if (code) {
+      copyCode(code, (state.reading ? $('reader-subject') : rowEl).querySelector('.code'));
+    }
+    else if (site) {
+      site.click();
+    }
+    else {
       return;
     }
-    copyCode(code, (state.reading ? $('reader-subject') : rowEl).querySelector('.code'));
   }
   // in the reader J and K go to the next and the previous mail; the arrows scroll the message
   else if (state.reading && (ev.code === 'KeyJ' || ev.code === 'KeyK')) {
@@ -1460,6 +1672,14 @@ chrome.storage.onChanged.addListener((ps, area) => {
   }
 });
 chrome.windows?.getCurrent().then(w => state.windowId = w.id);
+// the page the panel opened over, and in the side panel each page after it: another tab, or
+// another address in the same one
+if (chrome.tabs?.query) {
+  const ours = windowId => !state.windowId || windowId === state.windowId;
+  chrome.tabs.onActivated?.addListener(info => ours(info.windowId) && followTab());
+  chrome.tabs.onUpdated?.addListener((id, change, tab) => tab?.active && ours(tab.windowId) && (change.url || change.status === 'complete') && followTab());
+  followTab();
+}
 
 Promise.all([
   chrome.storage.local.get({panelScale: 1, readOnOpen: false, accounts: {}, accountOrder: [], senderLogos: true, avatars: {},
