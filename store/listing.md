@@ -63,7 +63,15 @@ It is not made by or affiliated with any mail provider. Gmail is a trademark of 
 
 **Store icon:** `extension/data/icons/red/128.png` (128×128)
 
-**Screenshots** (1280×800, in this order): `store/screenshot-1-inbox.png`, `screenshot-2-read.png`, `screenshot-3-search.png`, `screenshot-4-later.png`, `screenshot-5-empty.png`, `screenshot-6-settings.png`. Remove the old third and fourth images (light inbox, settings) in the dashboard. **Small promo tile:** `store/promo-440x280.png`.
+**Screenshots** (1280×800, in this order; each carries its caption, title / line under it):
+
+1. `store/screenshot-1-inbox.png`: Every inbox in one panel / Each account you are signed in to, with its own colour and unread count, and the mail waiting for your reply.
+2. `store/screenshot-2-summary.png`: The gist before you read / An AI summary with what it asks of you and its dates, on your computer or with your own key.
+3. `store/screenshot-3-site.png`: Mail from the site you’re on / Open the panel on a site and its mail is on top, with the sign-in code ready to copy.
+4. `store/screenshot-4-later.png`: Remind me later / Put a message away until this evening, tomorrow or next week. It comes back with a notification.
+5. `store/screenshot-5-ai-settings.png`: Your AI, your choice / Chrome’s built-in model, or your own API key. Nothing goes through servers of ours.
+
+In the dashboard, remove the five screenshots of 1.3 (inbox, settings, read, all caught up, later) and upload these five in this order. **Small promo tile:** `store/promo-440x280.png`.
 
 **Other languages:** translated summaries and descriptions are in `store/listing-translations.md`.
 

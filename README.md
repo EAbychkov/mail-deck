@@ -17,7 +17,7 @@ Gmail, Yahoo Mail, AOL Mail, Proton Mail, Yandex Mail and Mail.ru. Read, archive
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/hero-dark.png">
-  <img src="docs/images/hero-light.png" alt="The Mail Deck panel: Gmail, Yahoo Mail and Yandex Mail mailboxes and an open message" width="860">
+  <img src="docs/images/hero-light.png" alt="The Mail Deck panel: Gmail, Yandex Mail and Yahoo Mail mailboxes with a sign-in code and two messages waiting for a reply, and an open message with its AI summary" width="860">
 </picture>
 
 </div>
@@ -47,6 +47,13 @@ Gmail, Yahoo Mail, AOL Mail, Proton Mail, Yandex Mail and Mail.ru. Read, archive
 
 Open the panel on a web page, with its toolbar button or <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd>, and the unread mail from that site is at the top: the newest three, from every inbox, and "N more" to narrow the list to the site (<kbd>Esc</kbd> widens it again). A sign-in code that came in the last 30 minutes shows big above them, ready to copy with a click or <kbd>C</kbd>. It is for the moment a page says "we sent you a code", for an order you just placed, a password reset, or GitHub's mail while you are on github.com.
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/site-dark.png">
+    <img src="docs/images/site-light.png" alt="The panel opened over a website: that site's mail on top, from two inboxes, with its sign-in code ready to copy" width="420">
+  </picture>
+</p>
+
 A mail is the site's when its sender's domain is the site's (`github.com`, `noreply.github.com`), the same name under another ending (`amazon.de` on `amazon.com`, but not for short or generic names such as `shop` or `app`), or a bulk mail sender whose sender name is the site's. Webmail sites, free mail domains, IP addresses and `chrome://` pages show nothing.
 
 Chrome lets the panel read the tab's address when you open it (the `activeTab` permission, which asks nothing at install). Mail Deck takes the site's domain from it inside the panel; the address is not stored or sent. In the side panel this works for tabs on which you used the toolbar button.
@@ -57,6 +64,13 @@ Off until you turn it on in **Settings → AI**. It does two things:
 
 - **Summary.** In an open message, **Summary** (or <kbd>I</kbd>) puts a card above the conversation: its key points, what it asks of you, and its dates, each with an **Add to Google Calendar** link. It fills in as the answer arrives, can be copied, asked again or hidden, and is kept for the session, so the same mail shows it at once next time. A long conversation is summarized from its newest messages, and the card says so. Summaries come on click (the default) or by themselves for long mail. Proton mail, which opens on Proton's site, has none.
 - **Waiting for your reply.** Unread mail from people who expect an answer from you gets a mark, with the reason in its tooltip, and a **Reply** chip, first among the chips, narrows the list to it. Mail from no-reply and other automated addresses or from your own, and mail older than 14 days, are left out. Each answer is kept on this computer for 30 days, so a mail is asked about once.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/ai-dark.png">
+    <img src="docs/images/ai-light.png" alt="Settings → AI: Off, On this computer (chosen, and ready), or your own OpenAI or Anthropic API key; the summary comes on click, and Waiting for your reply is on" width="520">
+  </picture>
+</p>
 
 Choose where it runs:
 
@@ -97,16 +111,16 @@ None of these services has a public interface for this, so Mail Deck follows the
     <td width="50%" align="center">
       <picture>
         <source media="(prefers-color-scheme: dark)" srcset="docs/images/inbox-dark.png">
-        <img src="docs/images/inbox-light.png" alt="Inbox with mail from Gmail, Yahoo Mail and Yandex Mail">
+        <img src="docs/images/inbox-light.png" alt="Inbox with mail from Gmail, Yandex Mail and Yahoo Mail: a sign-in code, and two messages marked as waiting for a reply">
       </picture>
-      <br><b>Inbox</b><br><sub>One card per mailbox, actions on hover</sub>
+      <br><b>Inbox</b><br><sub>One card per mailbox, actions on hover, the mail waiting for your reply marked</sub>
     </td>
     <td width="50%" align="center">
       <picture>
         <source media="(prefers-color-scheme: dark)" srcset="docs/images/read-dark.png">
-        <img src="docs/images/read-light.png" alt="An open message with its actions">
+        <img src="docs/images/read-light.png" alt="An open message with its AI summary above it: the key points, a thing to do, and two dates with Add to Google Calendar">
       </picture>
-      <br><b>Message</b><br><sub>The full text, with every action one click or key away</sub>
+      <br><b>Message</b><br><sub>The conversation with its summary, and every action one click or key away</sub>
     </td>
   </tr>
   <tr>
@@ -182,7 +196,7 @@ extension/            the extension (load this folder unpacked)
   data/settings/      the settings page
   _locales/           translations
 store/                Chrome Web Store listing text and images
-tools/build-icons.sh  renders the icons from tools/icons.html
+tools/icon/           the icon's SVG sources; render.py renders every PNG
 tools/package.sh      zips the extension for the store into dist/
 tools/publish.py      uploads that zip to the Chrome Web Store and submits it for review
 tools/test/run.sh     runs the tests: scripts, locales, settings, the background check, the mail services, the AI module, the panel in headless Chrome
