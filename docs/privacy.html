@@ -30,9 +30,9 @@
 
   <main class="doc wrap">
     <h1>Privacy policy</h1>
-    <p class="date">Last updated: 2026-10-31</p>
+    <p class="date">Last updated: 2026-11-01</p>
 
-    <p>Mail Deck has no servers, no analytics and no tracking. Nothing it reads leaves your browser except the requests it sends to the mail services themselves: to Google for Gmail, and to each other mail service you turn on.</p>
+    <p>Mail Deck has no servers, no analytics and no tracking. Nothing it reads leaves your browser except the requests it sends to the mail services themselves: to Google for Gmail, and to each other mail service you turn on. If you turn on the AI assistant with your own OpenAI or Anthropic key, the mail you ask about also goes to that provider, as described below.</p>
 
     <h2>What it reads from Gmail</h2>
     <ul>
@@ -57,14 +57,24 @@
     </ul>
     <p>The interfaces of Yahoo Mail, AOL Mail, Yandex Mail and Mail.ru expect requests that come from their own web page. For each of these services you turn on, Mail Deck adds a Chrome rule (<code>declarativeNetRequest</code>, kept for the browser session) that sets the <code>Origin</code> and <code>Referer</code> headers to the service’s own address, only on Mail Deck’s own requests to that interface: <code>mail.yahoo.com/ws/</code>, <code>mail.aol.com/ws/</code>, <code>mail.yandex.ru/web-api</code>, <code>mail.360.yandex.ru/web-api</code> and <code>e.mail.ru/api/</code>. The rule matches only requests the extension itself sends in the background, never a request from a tab, and it does not read, block or change anything else. Turning the service off removes its rule. Proton Mail needs no such rule.</p>
 
-    <h2>Where it goes</h2>
-    <p>To the mail services themselves: <code>mail.google.com</code> for Gmail, and the sites above for each other service you turn on. A service’s mail, addresses and tokens go only to that service. And to Google in two more cases:</p>
+    <h2>The page you are on</h2>
+    <p>When you open the panel with its toolbar button or its keyboard shortcut, Chrome lets Mail Deck read the address of the tab you are on, for that tab only (the <code>activeTab</code> permission). Mail Deck takes the site’s domain from it and shows, at the top of the panel, the unread mail whose sender is that site, with a one-time code ready to copy. The comparison happens inside the panel. The address is not stored and is not sent anywhere. In the side panel this works only for tabs on which you used the toolbar button.</p>
+    <h2>AI assistant</h2>
+    <p>The AI assistant is off until you turn it on in Settings → AI. It can summarize the conversation you are reading, with its key points, what it asks of you and its dates (with links that open Google Calendar’s own “new event” page), and it can mark unread mail that waits for your reply. You choose where it runs:</p>
     <ul>
-      <li><strong>Sender icons.</strong> The panel shows a sender’s site icon, for mail from any service, loaded from Google’s icon service (<code>www.google.com/s2/favicons</code>), which receives the sender’s domain, such as <code>github.com</code>, never an address or a message. “Show sender logos” in settings turns this off.</li>
+      <li><strong>On this computer.</strong> Chrome’s built-in model runs on your device, and nothing is sent anywhere. Chrome downloads the model from Google once, when you press Download.</li>
+      <li><strong>OpenAI or Anthropic, with your own API key.</strong> When you connect a provider, Chrome asks you to allow its site (<code>api.openai.com</code> or <code>api.anthropic.com</code>); until then Mail Deck sends it nothing. Requests go from your browser straight to that provider, with your key; Mail Deck has no servers in between. A summary sends the text of that conversation (sender names, dates and message text) with its subject, and the current date, time and time zone so that dates such as “tomorrow at 3” can be read. It is sent when you press Summary, or by itself for long mail if you chose that. “Waiting for your reply” sends the sender, subject and preview of unread mail from the last 14 days, up to 20 messages at a time, and leaves out mail from automated senders such as no-reply addresses. The provider handles this data under its own terms for API use: <a href="https://openai.com/policies/row-privacy-policy/">OpenAI</a>, <a href="https://www.anthropic.com/legal/privacy">Anthropic</a>.</li>
+    </ul>
+    <p>Your API key is kept only in this browser’s extension storage on your device (<code>chrome.storage.local</code>). It is never part of a settings backup or of Chrome sync, and it is sent only to its own provider. Disconnect removes the key and Chrome’s access to the provider. Summaries are kept in session storage, in memory only, until the browser closes. Whether a mail waits for your reply (yes or no, and a few words why) is kept on your device for 30 days, so the same mail is not sent again.</p>
+
+    <h2>Where it goes</h2>
+    <p>To the mail services themselves: <code>mail.google.com</code> for Gmail, and the sites above for each other service you turn on. A service’s mail, addresses and tokens go only to that service. To the AI provider you connected, if you did, as described above. And to Google in two more cases:</p>
+    <ul>
+      <li><strong>Sender icons.</strong> For mail in your Gmail inboxes, the panel shows the sender’s site icon from Google’s icon service (<code>www.google.com/s2/favicons</code>), which receives the sender’s domain, such as <code>github.com</code>, never an address or a message. Like any request your browser makes to Google, it may carry your Google cookies. Mail of the other services gets no icon from Google. “Show sender logos” in settings turns this off.</li>
       <li><strong>Chrome sync.</strong> If you turn on the settings copy in Chrome sync, your Mail Deck settings are stored with <code>chrome.storage.sync</code>, which Chrome keeps in your Google account like your other synced data. It is off by default.</li>
     </ul>
     <p>A Gmail message you open in the panel shows its pictures through Google’s image proxy, as Gmail does. In a message of another service, pictures from the internet stay hidden until you press Show pictures, since loading them can tell the sender that the message was opened.</p>
-    <p>Mail Deck does not send your mail, addresses, cookies or settings to its author or to any other party. It does not sell or share data, and it does not use your data for advertising or credit decisions.</p>
+    <p>Mail Deck does not send your mail, addresses, cookies or settings to its author, or to anyone other than the services named above. It does not sell or share data, and it does not use your data for advertising or credit decisions.</p>
 
     <h2>What it stores</h2>
     <p>Your settings (including which mail services you turned on), the order of your inboxes, the reminders you set and the current unread counts are kept in the browser’s extension storage (<code>chrome.storage</code>) on your device. So that a message opens at once, the last dozen messages you opened (or, in Gmail, pointed at), from any service, and Gmail’s answers to the panel’s searches, are kept in the session part of that storage: in memory only, never written to disk, and gone when the browser closes. The same session storage holds what the other services need between checks: the tokens their pages hand out, which Proton session is which account, each service’s last answer, shown for up to 30 minutes when a check fails, and which listed message belongs to which mailbox. Reminders never reach Gmail or any other service. Removing the extension deletes all of it, except a settings copy you chose to keep in Chrome sync, which you can turn off in settings.</p>
