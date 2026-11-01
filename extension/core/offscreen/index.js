@@ -28,12 +28,13 @@ const play = request => new Promise((resolve, reject) => {
 
   const {index, media, prefs} = request;
 
-  const type = index === null ? media.default.type : media['custom' + index].type;
-  let path = '/data/sounds/' + type + '.mp4';
-  if (type === 4) {
-    path = index === null ? media.default.file : media['custom' + index].file;
-  }
-  audio.src = path;
+  // 0-3: a built-in sound; 4: the user's own file, a data: URL of audio or video read by the
+  // settings page (data/settings/index.js checks the same). Anything else, an address to fetch
+  // above all, plays the first built-in sound.
+  const {type, file} = index === null ? media.default : media['custom' + index];
+  const own = type === 4 && typeof file === 'string' && file.length <= 10 * 1024 * 1024 &&
+    /^data:(audio|video)\/[\w.+-]+(;\s*[\w.+-]+=[\w.+"-]+)*;base64,/i.test(file.slice(0, 200));
+  audio.src = own ? file : '/data/sounds/' + ([0, 1, 2, 3].includes(type) ? type : 0) + '.mp4';
   audio.volume = prefs.soundVolume / 100;
   audio.play().then(() => resolve(true), e => reject(e));
 });

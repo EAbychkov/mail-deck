@@ -60,10 +60,16 @@
     if (m.method === 'gmail.search') r = search(m);
     if (m.method === 'get-at') r = 'AT';
     // what a service answers: markup that must not run in the reader
+    // and markup that must not load before Show pictures, nor open a link over the panel
+    const px = k => `${location.origin}/__pixel?k=services-svc-${k}`;
     if (m.method === 'services.body') r = {messages: [
       {name: 'Bo', email: 'bo@x.test', date: '2026-10-30T09:00:00Z', to: 'ev@yahoo.com', html: '<p>first</p>'},
       {name: 'Cy', email: 'cy@x.test', date: '2026-10-31T09:00:00Z', to: 'ev@yahoo.com',
-        html: '<html><head><style>p{color:red}</style></head><body><p id="safe">second <a href="javascript:alert(1)">x</a><a href="/rel">rel</a></p><script>window.parent.__ran=1</script><img src="x.png" onerror="window.parent.__ran=1"><iframe src="https://evil.test"></iframe><form action="https://evil.test"><input></form></body></html>'}
+        html: '<html><head><style>p{color:red}</style></head><body><p id="safe">second <a href="javascript:alert(1)">x</a><a href="/rel">rel</a></p><script>window.parent.__ran=1</script><img src="x.png" onerror="window.parent.__ran=1"><iframe src="https://evil.test"></iframe><form action="https://evil.test"><input></form>' +
+          `<div style="width:9px;height:9px;background:URL(${px('css')})"></div><svg width="9" height="9"><image href="${px('svg')}" width="9" height="9"/></svg>` +
+          `<video src="${px('video')}" poster="${px('poster')}" width="9" height="9"></video>` +
+          `<a id="top" href="https://evil.test/top" target="_top" ping="${px('ping')}">top</a> <a id="hash" href="#safe">hash</a> <a id="data" href="data:text/plain,x">data</a>` +
+          '<div id="editable" contenteditable>edit</div></body></html>'}
     ]};
     cb && setTimeout(() => cb(r), 10);
     return new Promise(res => setTimeout(() => res(r), 10));
@@ -95,7 +101,8 @@
   const page = `<html><body>` + [
     msg('Evgeny', 'evgeny@example.com', 'Mon, Oct 26 at 10:02', '', 'Аня, пришли, пожалуйста, макеты к пятнице.'),
     msg('Anna Petrova', 'anna@figma.com', 'Tue, Oct 27 at 18:40', '<div>Cc: design@figma.com</div>', 'Почти готово, завтра пришлю. <a href="https://www.google.com/url?q=https://figma.com/file/x&sa=D">Черновик</a>'),
-    msg('Anna Petrova', 'anna@figma.com', 'Fri, Oct 30 at 19:51', '', 'Привет! Макеты во вложении, посмотри, пожалуйста, до пятницы.<br><br>— Аня', att)
+    msg('Anna Petrova', 'anna@figma.com', 'Fri, Oct 30 at 19:51', '', 'Привет! Макеты во вложении, посмотри, пожалуйста, до пятницы.<br><br>— Аня' +
+      `<img width=1 height=1 src="${location.origin}/__pixel?k=${q.get('scenario')}-gmail">`, att)
   ].join('<hr>') + `</body></html>`;
   // a newsletter 700px wide, with its picture loading a moment later
   const wide = `<html><body><table width=100% cellpadding=0 cellspacing=0 border=0 class="message">

@@ -16,8 +16,25 @@ const TYPES = {'.js': 'text/javascript', '.html': 'text/html', '.css': 'text/css
   '.png': 'image/png', '.svg': 'image/svg+xml', '.gif': 'image/gif', '.woff2': 'font/woff2'};
 
 const waiting = new Map();
+// the pictures, videos and pings a mail of the stub asks for, counted by name: what the
+// reader loads, and when
+const pixels = new Map();
+const GIF = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://x');
+  if (url.pathname === '/__pixel') {
+    const k = url.searchParams.get('k') || '';
+    pixels.set(k, (pixels.get(k) || 0) + 1);
+    res.writeHead(200, {'Content-Type': 'image/gif', 'Cache-Control': 'no-store'});
+    res.end(GIF);
+    return;
+  }
+  if (url.pathname === '/__pixels') {
+    const prefix = url.searchParams.get('prefix') || '';
+    res.writeHead(200, {'Content-Type': 'application/json', 'Cache-Control': 'no-store'});
+    res.end(JSON.stringify(Object.fromEntries([...pixels].filter(([k]) => k.startsWith(prefix)))));
+    return;
+  }
   if (req.method === 'POST' && url.pathname === '/__result') {
     let body = '';
     req.on('data', c => body += c);
@@ -80,6 +97,7 @@ const checks = {
     'the reader shows the whole thread, newest open': r.thread?.messages === 3 && r.thread.lastOpen && r.thread.olderClosed && r.thread.to,
     'an attachment becomes a chip, Gmail\'s table goes': r.thread?.chips >= 1 && r.thread.attTableGone,
     'Google\'s redirect is taken off links': r.thread?.redirectUnwrapped,
+    'a Gmail mail\'s links and chips open in a tab of their own, without a ping': r.thread?.linksExternal,
     'Esc inside the message goes back': r.reading && r.escInFrameBack,
     'search every mailbox': r.searchFocused && r.searchCalls >= 2 && r.searchSections >= 1 && r.searchSeen >= 1
   }),
@@ -87,16 +105,25 @@ const checks = {
     'the first panel asks the search': r.firstOpenSearches >= 1 && r.cached >= 1,
     'a second panel asks nothing and shows the same': r.secondOpenSearches === 0 && r.extraBack >= 3,
     'pointing at a mail fetches it': r.printsAfterHover === 1,
+    'pointing at a mail loads none of its pictures': r.picturesAfterHover === 0,
     'opening it then needs no second request': r.printsAfterOpen === 1 && r.keptForSession >= 1,
+    'opening it loads its pictures, as Gmail shows them': r.picturesAfterOpen >= 1,
     'an action drops the kept answers': r.cacheDroppedAfterAction
   }),
   services: r => ({
     'Meet is Gmail\'s alone': JSON.stringify(r.meet) === '[true,false,false]',
+    'sender logos, asked of Google, show for Gmail mailboxes only': JSON.stringify(r.logos) === '[1,0]',
     'a service mail says where it opens': r.openTitle?.includes('Yahoo Mail'),
     'a signed-out service mailbox signs in on its own site': r.signedOut?.some(s => s.includes('gone@yahoo.com')) && r.signInOpened?.startsWith('https://login.yahoo.com/'),
     'a service mail reads in the panel, older messages folded': r.bodyAsked?.startsWith('https://mail.yahoo.com/') && r.messages === 2,
     'nothing of the service\'s markup can run or leave': r.safeText.startsWith('second') && r.dangerous === 0 && !r.ran && r.relative.startsWith('https://mail.yahoo.com/'),
     'a service mail\'s pictures load only when asked for': r.heldBefore === 1 && r.loadedBefore === 0 && r.loadedAfter === 1 && r.barGone,
+    'nothing of a service mail loads before Show pictures: SVG, video, poster, URL() styles': JSON.stringify(r.pixelsBefore) === '{}' && JSON.stringify(r.heldOther) === '[1,1,1]',
+    'Show pictures brings back its SVG images and posters; a style that fetches never does': r.pixelsAfter?.['services-svc-svg'] >= 1 && r.pixelsAfter?.['services-svc-poster'] >= 1 && !r.pixelsAfter?.['services-svc-css'],
+    'a service mail\'s links open in a tab, never over the panel; no ping, nothing editable': r.links?.target === '_blank' && r.links.rel === 'noopener noreferrer' && !r.links.ping && !r.links.editable,
+    'a click opens a web link in front, Ctrl and the middle button behind, Shift in a window; other links open nothing':
+      JSON.stringify(r.opened) === JSON.stringify([['https://evil.test/top', true, 3], ['https://evil.test/top', false, 3], ['https://evil.test/top', false, 3]]) &&
+      JSON.stringify(r.windowOpened) === '["https://evil.test/top"]' && r.panelStayed && !r.pingAfterClicks,
     'no star where the service has none': r.star === false && r.noStarHint,
     'a mail the panel cannot read opens on its site': r.protonReader === false && r.protonOpened?.startsWith('https://mail.proton.me/'),
     'pointing at a service mail fetches nothing': r.hoverFetched === 0,

@@ -8,6 +8,8 @@
   const rows = () => document.querySelectorAll('#list .row').length;
   const out = {};
   const report = () => fetch('/__result?scenario=' + scenario, {method: 'POST', body: JSON.stringify(out)});
+  // what the stub's mail has loaded so far, by name (panel.test.js counts it)
+  const pixels = prefix => fetch('/__pixels?prefix=' + encodeURIComponent(prefix), {cache: 'no-store'}).then(r => r.json());
   const until = async (test, ms = 3000) => {
     for (const end = Date.now() + ms; Date.now() < end; await wait(25)) {
       if (test()) {
@@ -87,7 +89,9 @@
         to: Boolean(doc.querySelector('details[open] .to')?.textContent.trim()),
         chips: [...doc.querySelectorAll('.files a')].filter(a => a.getAttribute('href').includes('view=att')).length,
         attTableGone: !doc.querySelector('table.att'),
-        redirectUnwrapped: [...doc.querySelectorAll('a')].some(a => a.getAttribute('href') === 'https://figma.com/file/x')
+        redirectUnwrapped: [...doc.querySelectorAll('a')].some(a => a.getAttribute('href') === 'https://figma.com/file/x'),
+        linksExternal: doc.querySelectorAll('a[href]').length >= 3 && [...doc.querySelectorAll('a[href]')]
+          .every(a => a.getAttribute('target') === '_blank' && a.getAttribute('rel') === 'noopener noreferrer' && !a.hasAttribute('ping'))
       };
       out.reading = document.getElementById('app').classList.contains('reading');
       // the keys work from inside the message too
@@ -124,10 +128,16 @@
       row.dispatchEvent(new MouseEvent('mouseenter'));
       await until(() => window.__prints > 0, 1500);
       out.printsAfterHover = window.__prints;
+      // it is built ahead of the click, yet its pictures wait for the reader
+      await wait(400);
+      out.picturesAfterHover = (await pixels('speed-gmail'))['speed-gmail'] || 0;
       row.click();
       const doc = document.getElementById('body').contentDocument;
       await until(() => doc.querySelector('.thread'));
       out.printsAfterOpen = window.__prints;
+      for (const end = Date.now() + 2000; Date.now() < end && !out.picturesAfterOpen; await wait(50)) {
+        out.picturesAfterOpen = (await pixels('speed-gmail'))['speed-gmail'] || 0;
+      }
       out.keptForSession = (chrome.storage.session.area['print.index'] || []).length;
 
       // an action makes the kept answers old
@@ -140,6 +150,8 @@
     if (scenario === 'services') {
       const head = name => [...document.querySelectorAll('#list .section')].find(el => el.textContent.includes(name));
       out.meet = ['evgeny@example.com', 'ev@yahoo.com', 'ev@proton.me'].map(n => Boolean(head(n)?.querySelector('.section-head [class*="meet"], .section-head button[title*="Meet"]')));
+      // sender logos come from Google: a Gmail mailbox's senders only
+      out.logos = ['evgeny@example.com', 'ev@yahoo.com'].map(n => head(n)?.querySelectorAll('.row .avatar img').length);
       const yahooRow = head('ev@yahoo.com').querySelector('.row');
       out.openTitle = [...yahooRow.querySelectorAll('button')].map(b => b.title).find(t => t.includes('Yahoo')) || '';
       out.signedOut = [...document.querySelectorAll('#list .away .acc')].map(e => e.textContent);
@@ -161,9 +173,44 @@
       // remote pictures wait for the button
       out.heldBefore = doc.body.querySelectorAll('img[data-held]').length;
       out.loadedBefore = doc.body.querySelectorAll('img[src^="http"]').length;
+      // and so does whatever else of the mail could load: an SVG image, a video and its poster,
+      // a style's URL()
+      out.heldOther = ['video[data-held]', 'video[data-held-poster]', 'svg [data-held-href]'].map(s => doc.body.querySelectorAll(s).length);
+      await wait(400);
+      out.pixelsBefore = await pixels('services-svc-');
+      const top = doc.getElementById('top');
+      out.links = {target: top?.getAttribute('target'), rel: top?.getAttribute('rel'), ping: top?.hasAttribute('ping'), editable: doc.getElementById('editable')?.hasAttribute('contenteditable')};
       doc.querySelector('.pictures button')?.click();
       out.loadedAfter = doc.body.querySelectorAll('img[src^="https://mail.yahoo.com/"]').length;
       out.barGone = !doc.querySelector('.pictures');
+      for (const end = Date.now() + 2000; Date.now() < end; await wait(50)) {
+        out.pixelsAfter = await pixels('services-svc-');
+        if (out.pixelsAfter['services-svc-svg'] && out.pixelsAfter['services-svc-poster']) {
+          break;
+        }
+      }
+      await wait(200);
+      out.pixelsAfter = await pixels('services-svc-');
+
+      // a link of the mail opens through chrome.tabs, never over the panel or in the reader
+      const created = [];
+      const windows = [];
+      doc.defaultView.chrome = {
+        tabs: {create: o => created.push(o), query: (q, cb) => cb([{index: 2}])},
+        windows: {create: o => windows.push(o)}
+      };
+      const click = (el, o = {}) => el.dispatchEvent(new MouseEvent(o.type || 'click', {bubbles: true, cancelable: true, button: 0, ...o}));
+      top?.click();
+      click(top, {ctrlKey: true});
+      click(top, {type: 'auxclick', button: 1});
+      click(top, {shiftKey: true});
+      doc.getElementById('hash')?.click();
+      doc.getElementById('data')?.click();
+      await wait(300);
+      out.opened = created.map(o => [o.url, o.active, o.index]);
+      out.windowOpened = windows.map(o => o.url);
+      out.panelStayed = location.pathname.endsWith('/__panel.html');
+      out.pingAfterClicks = (await pixels('services-svc-ping'))['services-svc-ping'] || 0;
       out.star = Boolean(document.querySelector('#reader-bar .star'));
       out.noStarHint = getComputedStyle([...document.querySelectorAll('.keys > span')].find(el => el.textContent.includes('S'))).display === 'none';
       key(document, 'Escape');

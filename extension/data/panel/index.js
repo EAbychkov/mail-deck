@@ -167,7 +167,10 @@ const mark = email => {
 };
 // domain -> whether it has a logo, kept for the browser session
 const logos = new Map();
-const avatar = e => {
+// The icon service is Google's, and it answers without CORS, so the request carries the
+// Google cookies: a mailbox of another service (Proton, Yandex...) shows the letter only,
+// and its senders stay unknown to Google.
+const avatar = (e, o) => {
   const name = e.author_name || e.author_email || '';
   const hash = [...(e.author_email || name)].reduce((p, c) => (p * 31 + c.charCodeAt(0)) >>> 0, 0);
   const el = h('span', {class: 'avatar', style: `--c:${PALETTE[hash % PALETTE.length]}`},
@@ -175,7 +178,7 @@ const avatar = e => {
   const parts = ((e.author_email || '').split('@')[1] || '').toLowerCase().split('.');
   // keep the registrable part: news.binance.com -> binance.com, mail.example.co.uk -> example.co.uk
   const root = parts.slice(parts.length > 2 && parts.at(-2).length <= 3 && parts.at(-1).length === 2 ? -3 : -2).join('.');
-  if (state.senderLogos && root.includes('.') && !FREEMAIL.test(root) && logos.get(root) !== false) {
+  if (state.senderLogos && !serviceOf(o) && root.includes('.') && !FREEMAIL.test(root) && logos.get(root) !== false) {
     const img = h('img', {alt: '', referrerPolicy: 'no-referrer'});
     // the service answers an unknown domain with a 16px globe
     img.onload = () => {
@@ -658,7 +661,7 @@ const row = (e, o) => {
     'onmouseleave': () => clearTimeout(prefetchTimer),
     'onfocus': () => prefetch(e, o)
   },
-  avatar(e),
+  avatar(e, o),
   h('span', {class: 'from'}, e.author_name),
   h('time', {class: 'when', dateTime: e.modified, title: fullDate(e.modified)}, when(e.modified)),
   h('span', {class: 'subject'},
@@ -932,7 +935,7 @@ const read = async (e, o) => {
   $('reader-account').style.setProperty('--c', o.color);
   $('reader-account').lastChild.textContent = accountName(o);
   $('reader-subject').textContent = e.title || t('noSubject');
-  $('reader-avatar').replaceChildren(avatar(e));
+  $('reader-avatar').replaceChildren(avatar(e, o));
   $('reader-name').textContent = e.author_name;
   $('reader-addr').replaceChildren(h('span', {}, e.author_email), copyBtn(e.author_email));
   $('reader-date').textContent = fullDate(e.modified);
@@ -953,14 +956,11 @@ const read = async (e, o) => {
     }
     doc.body.className = '';
     doc.body.replaceChildren(node);
-    // a service's remote pictures load only when asked for
-    if (doc.body.querySelector('img[data-held]')) {
+    // a service's remote pictures, sounds and videos load only when asked for
+    if (gmail.render.held(doc.body)) {
       const bar = h('p', {class: 'pictures'}, h('button', {type: 'button', onclick: () => {
         bar.remove();
-        for (const img of doc.querySelectorAll('img[data-held]')) {
-          img.src = img.dataset.held;
-          delete img.dataset.held;
-        }
+        gmail.render.show(doc.body);
       }}, t('showPictures')));
       doc.body.prepend(bar);
     }

@@ -365,6 +365,13 @@ addEventListener('focus', paintShortcut);
 /* backup: a settings file, and a copy in Chrome sync */
 // what a backup holds: this page's settings and the inboxes' switches, not caches or the mail already seen
 const SOUND_FILES = MEDIA.flatMap(m => [m + '.file', m + '.mime']);
+// An own sound is the file this page read (pickFile): a data: URL of audio or video, never an
+// address to fetch, which would tell its owner each time mail comes. The local storage holds
+// 10 MB in all, so no own sound saved here is larger. core/offscreen/index.js checks the same.
+const SOUND_MAX = 10 * 1024 * 1024;
+const soundFile = v => typeof v === 'string' && v.length <= SOUND_MAX &&
+  /^data:(audio|video)\/[\w.+-]+(;\s*[\w.+-]+=[\w.+"-]+)*;base64,/i.test(v.slice(0, 200));
+const soundMime = v => typeof v === 'string' && /^(audio|video)\/[\w.+-]+$/i.test(v);
 const collect = files => store.get({
   ...Object.fromEntries(Object.entries(DEFAULTS).filter(([k]) => k !== 'sync.settings')),
   accounts: {},
@@ -387,13 +394,14 @@ const sanitize = data => {
     else if (k === 'services' && Array.isArray(v)) {
       out.services = v.filter(id => typeof id === 'string' && self.MailServices?.[id]);
     }
-    else if (SOUND_FILES.includes(k) && (v === null || typeof v === 'string')) {
+    else if (SOUND_FILES.includes(k) && (v === null || (k.endsWith('.file') ? soundFile(v) : soundMime(v)))) {
       out[k] = v;
     }
   }
-  // an own sound whose file did not come along plays the built-in one
+  // an own sound whose file did not come along, or came as anything but a sound, plays the
+  // built-in one; so does a sound this page does not offer (0-3 built in, 4 own file)
   for (const m of MEDIA) {
-    if (out[m + '.type'] === 4 && !out[m + '.file']) {
+    if ((out[m + '.type'] === 4 && !out[m + '.file']) || (m + '.type' in out && ![0, 1, 2, 3, 4].includes(out[m + '.type']))) {
       out[m + '.type'] = 0;
     }
   }

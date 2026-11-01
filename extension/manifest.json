@@ -18,8 +18,7 @@
     "declarativeNetRequestWithHostAccess"
   ],
   "host_permissions": [
-    "*://mail.google.com/mail/",
-    "*://mail.google.com/sync/"
+    "https://mail.google.com/*"
   ],
   "optional_host_permissions": [
     "https://mail.yahoo.com/*",

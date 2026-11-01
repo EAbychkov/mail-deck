@@ -111,11 +111,24 @@ gmail.get = {
 
 /* gmail.render */
 {
-  const el = (tag, className, ...kids) => {
-    const e = document.createElement(tag);
+  const SVG = 'http://www.w3.org/2000/svg';
+  const XLINK = 'http://www.w3.org/1999/xlink';
+
+  // The thread is put together in a parsed document, which shows nothing and loads nothing:
+  // its pictures and media start only once the reader frame takes it. A mail pointed at is
+  // built ahead of the click, and that must not tell its sender anything.
+  const maker = doc => (tag, className, ...kids) => {
+    const e = doc.createElement(tag);
     e.className = className;
     e.append(...kids);
     return e;
+  };
+  // A link of the mail opens in a tab of its own (body/index.js), never in the reader or over
+  // the panel, and tells the site nothing of the page it came from
+  const external = a => {
+    a.setAttribute('target', '_blank');
+    a.setAttribute('rel', 'noopener noreferrer');
+    a.removeAttribute('ping');
   };
 
   // every message of the thread: who, when, to whom, its attachments and its body cell
@@ -133,16 +146,27 @@ gmail.get = {
       if (!head || !body || rows.length < 2) {
         return null;
       }
-      for (const a of body.querySelectorAll('a[href]')) {
-        let url = a.href;
-        // prevent Google redirection
-        if (url.startsWith('https://www.google.com/url?q=')) {
-          try {
-            url = (new URL(url)).searchParams.get('q') || url;
+      for (const a of body.querySelectorAll('a[href], area[href]')) {
+        // a jump inside the mail stays one
+        if (!a.getAttribute('href').trim().startsWith('#')) {
+          let url = a.href;
+          // prevent Google redirection
+          if (url.startsWith('https://www.google.com/url?q=')) {
+            try {
+              url = (new URL(url)).searchParams.get('q') || url;
+            }
+            catch (e) {}
           }
-          catch (e) {}
+          a.setAttribute('href', url);
         }
-        a.setAttribute('href', url);
+        external(a);
+      }
+      for (const n of body.querySelectorAll('[contenteditable]')) {
+        n.removeAttribute('contenteditable');
+      }
+      // Show pictures restores what the reader held, never what the mail says it held
+      for (const n of body.querySelectorAll(HELD_SELECTOR)) {
+        Object.keys(HELD).forEach(key => delete n.dataset[key]);
       }
       for (const img of body.querySelectorAll('img[src]')) {
         img.setAttribute('src', img.src);
@@ -193,29 +217,31 @@ gmail.get = {
     return [...found.values()];
   };
 
-  const root = body => {
+  const root = (body, el) => {
     // remove extra padding
     for (const table of body.querySelectorAll('table[cellpadding="12"]')) {
       table.removeAttribute('cellpadding');
     }
     const table = el('table', 'root');
-    const tr = document.createElement('tr');
+    const tr = table.ownerDocument.createElement('tr');
     table.append(tr);
     tr.append(body);
     return table;
   };
-  const files = list => list.length ? el('p', 'files', ...list.map(f => {
+  const files = (list, el) => list.length ? el('p', 'files', ...list.map(f => {
     const a = el('a', 'file', '📎 ' + (f.name || chrome.i18n.getMessage('panel_attachment')));
     a.href = f.view || f.download;
+    external(a);
     if (f.view && f.download) {
       const d = el('a', 'download', '↓');
       d.href = f.download;
       d.title = chrome.i18n.getMessage('panel_download');
+      external(d);
       return el('span', 'file-pair', a, d);
     }
     return a;
   })) : '';
-  const card = (m, open) => {
+  const card = (m, open, el) => {
     const d = el('details', 'msg');
     d.open = open;
     d.append(
@@ -224,51 +250,111 @@ gmail.get = {
         el('span', 'date', m.date),
         el('span', 'snippet', m.body.textContent.trim().replace(/\s+/g, ' ').slice(0, 160))),
       m.to ? el('p', 'to', m.to) : '',
-      files(m.files),
-      root(m.body)
+      files(m.files, el),
+      root(m.body, el)
     );
     return d;
   };
 
   // A service's HTML is a page of its own: what could run or leave the frame goes, and so do
   // its style sheets, which would restyle the whole reader; its links and pictures resolve
-  // against the mail's page.
-  const DROP = 'script, style, iframe, frame, frameset, object, embed, applet, form, input, button, textarea, select, meta, link, base, noscript, template';
-  const sanitize = (html, href) => {
+  // against the mail's page. SVG animations go too: they could point a picture elsewhere later.
+  const DROP = 'script, style, iframe, frame, frameset, object, embed, applet, form, input, button, textarea, select, meta, link, base, noscript, template, animate, animateMotion, animateTransform, set, discard';
+  // an SVG attribute may point outside the mail through url(), in any spelling CSS reads;
+  // only a reference to a part of the mail itself, such as a gradient, stays
+  const LOCAL = /^\s*url\(\s*(['"]?)#[\w.:-]*\1\s*\)[\w\s#,.%-]*$/i;
+  // what the browser reads in a style attribute that can fetch, or hide what it fetches
+  const FETCH = /url\(|var\(|attr\(/i;
+  const remote = url => /^https?:/i.test(url);
+  const sanitize = (html, href, into) => {
     const doc = new DOMParser().parseFromString(html || '', 'text/html');
     doc.querySelectorAll(DROP).forEach(n => n.remove());
     const base = doc.createElement('base');
     base.href = href;
     doc.head.prepend(base);
+    const abs = value => {
+      try {
+        return new URL(value.trim(), href).href;
+      }
+      catch (e) {
+        return '';
+      }
+    };
     for (const n of doc.querySelectorAll('*')) {
+      const svg = n.namespaceURI === SVG;
       for (const {name, value} of [...n.attributes]) {
-        if (/^on/i.test(name) || (/^(href|src|xlink:href|action|formaction|background|poster)$/i.test(name) && /^\s*(javascript|vbscript|data:text\/html)/i.test(value))) {
+        if (/^on/i.test(name) || /^(ping|contenteditable|srcset|data-held(-poster|-href)?)$/i.test(name) ||
+          (/^(href|src|xlink:href|action|formaction|background|poster)$/i.test(name) && /^\s*(javascript|vbscript|data:text\/html)/i.test(value)) ||
+          (svg && name !== 'style' && /url\s*\(|\\/i.test(value) && !LOCAL.test(value))) {
           n.removeAttribute(name);
         }
       }
     }
-    for (const a of doc.querySelectorAll('a[href]')) {
-      a.setAttribute('href', a.href);
+    // links open in a tab (body/index.js); a jump inside the mail stays one
+    for (const a of doc.querySelectorAll('a, area')) {
+      let raw = a.getAttribute('href');
+      if (a.namespaceURI === SVG) {
+        raw = raw ?? a.getAttributeNS(XLINK, 'href');
+        a.removeAttributeNS(XLINK, 'href');
+      }
+      if (raw !== null) {
+        const url = raw.trim().startsWith('#') ? raw.trim() : abs(raw) || raw;
+        if (/^\s*(javascript|vbscript|data:text\/html)/i.test(url)) {
+          a.removeAttribute('href');
+        }
+        else {
+          a.setAttribute('href', url);
+        }
+      }
+      external(a);
     }
     // Gmail shows pictures through its own proxy; a service may hand the sender's addresses,
-    // which tell the sender the mail was opened. They wait for the reader's Show pictures.
-    for (const img of doc.querySelectorAll('img')) {
-      const src = img.getAttribute('src') ? img.src : '';
-      img.removeAttribute('srcset');
-      if (/^https?:/i.test(src)) {
-        img.dataset.held = src;
-        img.removeAttribute('src');
+    // which tell the sender the mail was opened. Pictures, sounds, videos and the pictures of
+    // an SVG wait for the reader's Show pictures (gmail.render.show).
+    const hold = (n, attr, key, ns = null) => {
+      const raw = n.getAttributeNS(ns, attr);
+      if (raw === null || !raw.trim() || (key === 'heldHref' && raw.trim().startsWith('#'))) {
+        return;
+      }
+      const url = abs(raw);
+      if (remote(url)) {
+        n.removeAttributeNS(ns, attr);
+        if (n.dataset) {
+          n.dataset[key] = url;
+        }
+      }
+    };
+    for (const n of doc.querySelectorAll('[src], [poster]')) {
+      hold(n, 'src', 'held');
+      hold(n, 'poster', 'heldPoster');
+    }
+    for (const n of doc.querySelectorAll('*')) {
+      if (n.namespaceURI === SVG && n.localName !== 'a') {
+        hold(n, 'href', 'heldHref', XLINK);
+        hold(n, 'href', 'heldHref');
       }
     }
     doc.querySelectorAll('source').forEach(n => n.remove());
-    for (const n of doc.querySelectorAll('[background], [poster]')) {
+    for (const n of doc.querySelectorAll('[background]')) {
       n.removeAttribute('background');
-      n.removeAttribute('poster');
     }
-    for (const n of doc.querySelectorAll('[style*="url("]')) {
-      n.setAttribute('style', n.getAttribute('style').replace(/url\([^)]*\)/gi, 'none'));
+    // A style asks for a picture in many spellings: URL(), u\72l(), image-set('…'), a custom
+    // property. The browser's own reading of it spells each as url(), so whatever it reads
+    // as fetching goes, and so does any custom property or var() with it.
+    for (const n of doc.querySelectorAll('[style]')) {
+      const s = n.style;
+      if (!s) {
+        n.removeAttribute('style');
+        continue;
+      }
+      // a longhand that reads as empty waits for a var() of its shorthand
+      [...s].filter(p => p.startsWith('--') || !s.getPropertyValue(p) || FETCH.test(s.getPropertyValue(p)))
+        .forEach(p => s.removeProperty(p));
+      if (s.length === 0) {
+        n.removeAttribute('style');
+      }
     }
-    const cell = document.createElement('td');
+    const cell = into.createElement('td');
     cell.append(...doc.body.childNodes);
     return cell;
   };
@@ -279,13 +365,13 @@ gmail.get = {
   };
 
   // the newest message open; older ones fold to a line, a long run of them to one line
-  const thread = messages => {
+  const thread = (messages, el) => {
     if (messages.length === 0) {
       return '';
     }
     const last = messages.at(-1);
     if (messages.length === 1) {
-      return el('div', 'thread single', last.to ? el('p', 'to', last.to) : '', files(last.files), root(last.body));
+      return el('div', 'thread single', last.to ? el('p', 'to', last.to) : '', files(last.files, el), root(last.body, el));
     }
     const older = messages.slice(0, -1);
     const shown = older.length > 3 ? older.slice(-2) : older;
@@ -293,25 +379,44 @@ gmail.get = {
     return el('div', 'thread',
       folded.length ? el('details', 'earlier',
         el('summary', '', chrome.i18n.getMessage('panel_earlier', [String(folded.length)])),
-        ...folded.map(m => card(m, false))) : '',
-      ...shown.map(m => card(m, false)),
-      card(last, true)
+        ...folded.map(m => card(m, false, el))) : '',
+      ...shown.map(m => card(m, false, el)),
+      card(last, true, el)
     );
   };
 
+  // what waits for Show pictures, and the attribute it goes back to
+  const HELD = {held: 'src', heldPoster: 'poster', heldHref: 'href'};
+  const HELD_SELECTOR = '[data-held], [data-held-poster], [data-held-href]';
+
   gmail.render = {
     getHTMLText(content, href) {
-      return thread(getMessages(content, href));
+      const messages = getMessages(content, href);
+      // the bodies stay in the print view's parsed document, and so does all around them
+      return thread(messages, maker(messages[0]?.body.ownerDocument || document.implementation.createHTMLDocument('')));
     },
     // a service's messages, oldest first: {name, email, date, to, html, files: [{name, url}]}
     messages(list, href) {
+      const doc = document.implementation.createHTMLDocument('');
       return thread(list.map(m => ({
         name: m.name || m.email || '',
         date: date(m.date),
         to: m.to ? chrome.i18n.getMessage('panel_to', [m.to]) || m.to : '',
         files: (m.files || []).filter(f => f?.url).map(f => ({name: f.name, view: f.url})),
-        body: sanitize(m.html, href)
-      })));
+        body: sanitize(m.html, href, doc)
+      })), maker(doc));
+    },
+    held: node => Boolean(node.querySelector(HELD_SELECTOR)),
+    // Show pictures: everything held loads now
+    show(node) {
+      for (const n of node.querySelectorAll(HELD_SELECTOR)) {
+        for (const [key, attr] of Object.entries(HELD)) {
+          if (key in n.dataset) {
+            n.setAttribute(attr, n.dataset[key]);
+            delete n.dataset[key];
+          }
+        }
+      }
     },
     getPlainText(content, href) {
       const last = getMessages(content, href).at(-1);
