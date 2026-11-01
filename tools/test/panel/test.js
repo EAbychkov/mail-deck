@@ -23,6 +23,8 @@
     await wait(200);
 
     if (scenario === 'main') {
+      // the toolbar count shows all unread mail: opening the panel marks no time for it
+      out.noSeen = !window.__set.some(o => 'badge.seen' in o);
       // the feed's 20, then the search's extra mail behind "show more"
       out.rowsBefore = rows();
       const more = document.querySelector('#list .section .more');
@@ -145,6 +147,8 @@
       archive?.click();
       await wait(100);
       out.cacheDroppedAfterAction = !('extra.cache' in chrome.storage.session.area);
+      // without auto-advance, the action took the reader back to the list
+      out.backAfterAction = !document.getElementById('app').classList.contains('reading');
     }
 
     if (scenario === 'services') {
@@ -465,6 +469,99 @@
       key($('search-input'), 'Escape');
       await wait(50);
       out.focusAfterSearch = focus();
+    }
+
+    if (scenario === 'codes') {
+      // a one-time code shows on its line; a click copies its digits and opens, reads or deletes nothing
+      const list = () => [...document.querySelectorAll('#list .row')];
+      out.pills = list().map(r => r.querySelector('.code')?.textContent || '');
+      const before = rows();
+      list()[0].querySelector('.code')?.click();
+      await wait(50);
+      out.copied = window.__copied;
+      out.copiedShown = Boolean(list()[0].querySelector('.code.copied'));
+      out.opened = document.getElementById('app').classList.contains('reading');
+      out.actions = sent('gmail.action').length + sent('open').length;
+      out.rowsKept = rows() === before;
+      // C on a focused line copies its code; on a line without one, nothing
+      window.__copied = null;
+      list()[1].focus();
+      key(document, 'KeyC');
+      await wait(50);
+      out.copiedByKey = window.__copied;
+      window.__copied = null;
+      list()[2].focus();
+      key(document, 'KeyC');
+      await wait(50);
+      out.copiedNone = window.__copied;
+      // the reader shows it too, and C copies it there
+      list()[3].click();
+      await wait(150);
+      out.readerPill = document.querySelector('#reader-subject .code')?.textContent || '';
+      key(document, 'KeyC');
+      await wait(50);
+      out.copiedInReader = window.__copied;
+      out.actionsAfter = sent('gmail.action').length;
+    }
+
+    if (scenario === 'advance') {
+      // J and K in the reader; with auto-advance an action opens the next mail. The list:
+      // a1 a2 (evgeny's), b1 (work's)
+      const $ = id => document.getElementById(id);
+      const subject = () => $('reader-subject').firstChild?.textContent;
+      document.querySelector('#list .row').click();
+      await wait(150);
+      out.first = subject();
+      out.prevDisabledAtFirst = $('reader-bar').querySelector('.prev')?.disabled;
+      key(document, 'KeyJ');
+      await wait(150);
+      out.afterJ = subject();
+      key(document, 'KeyK');
+      await wait(150);
+      out.afterK = subject();
+      key(document, 'KeyE');
+      await wait(300);
+      out.stillReading = $('app').classList.contains('reading');
+      out.afterE = subject();
+      out.archived = sent('gmail.action').at(-1)?.links?.[0] || '';
+      out.posAfterE = $('reader-bar').querySelector('.pos')?.textContent;
+      // the arrow does what J does; at the last mail J stays
+      $('reader-bar').querySelector('.next')?.click();
+      await wait(150);
+      out.atLast = subject();
+      key(document, 'KeyJ');
+      await wait(150);
+      out.pastLast = subject();
+      out.nextDisabled = $('reader-bar').querySelector('.next')?.disabled;
+      // K passes over the archived mail
+      key(document, 'KeyK');
+      await wait(150);
+      key(document, 'KeyK');
+      await wait(150);
+      out.topAfterArchive = subject();
+    }
+
+    if (scenario === 'readnext') {
+      // read on open takes the open mail out of the list; J still knows where it was
+      const doc = document.getElementById('body').contentDocument;
+      document.querySelector('#list .row').click();
+      await until(() => doc.querySelector('.thread'));
+      await wait(150);
+      out.marked = sent('gmail.action').filter(a => a.cmd === 'rd').length;
+      out.listedAfterRead = [...document.querySelectorAll('#list .row')].some(r => r.dataset.link.includes('message_id=a1&'));
+      key(document, 'KeyJ');
+      await wait(150);
+      out.afterJ = document.getElementById('reader-subject').firstChild?.textContent;
+    }
+
+    if (scenario === 'seen') {
+      // the toolbar count at "mail since the panel was last opened": opening the panel marks the
+      // time; a list update, which the background sends for that very mark, does not
+      out.seen = window.__set.some(o => 'badge.seen' in o);
+      window.__set = [];
+      update(JSON.parse(JSON.stringify(state.objs)));
+      await wait(100);
+      out.seenOnUpdate = window.__set.some(o => 'badge.seen' in o);
     }
 
     if (scenario === 'narrow') {

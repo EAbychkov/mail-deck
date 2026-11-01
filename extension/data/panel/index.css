@@ -46,6 +46,8 @@ html.side .app {
 /* a narrow side panel keeps the actions and drops what only explains them */
 @media (max-width: 440px) {
   .reader-bar .pos,
+  .reader-bar .prev,
+  .reader-bar .next,
   .keys {
     display: none;
   }
@@ -145,6 +147,14 @@ h1 {
 .icon-btn.danger,
 .icon-btn.danger:hover {
   color: var(--danger);
+}
+/* the reader's arrows at the first and the last mail */
+.icon-btn:disabled,
+.icon-btn:disabled:hover {
+  background: none;
+  color: var(--muted);
+  opacity: .35;
+  cursor: default;
 }
 .icon-btn:focus-visible,
 .text-btn:focus-visible,
@@ -892,6 +902,40 @@ kbd {
   margin-inline: 0 5px;
   color: #e8a317;
   fill: currentColor;
+}
+/* a one-time code found in a mail: a click copies it. Digits read left to right in any language */
+.code {
+  display: inline-block;
+  margin-inline: 0 6px;
+  padding: 0 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--ink);
+  font: 600 12px/18px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: .04em;
+  vertical-align: 1px;
+  direction: ltr;
+  unicode-bidi: isolate;
+  cursor: copy;
+  transition: background .12s, color .12s, border-color .12s;
+}
+.code:hover {
+  background: var(--hover);
+}
+.code:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+.code.copied {
+  color: var(--ok);
+  border-color: var(--ok);
+}
+.reader-head h2 .code {
+  margin-inline: 4px 0;
+  font-size: 13px;
+  line-height: 20px;
+  vertical-align: 3px;
 }
 
 /* remind me later */

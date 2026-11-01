@@ -101,7 +101,8 @@ const checks = {
     'Google\'s redirect is taken off links': r.thread?.redirectUnwrapped,
     'a Gmail mail\'s links and chips open in a tab of their own, without a ping': r.thread?.linksExternal,
     'Esc inside the message goes back': r.reading && r.escInFrameBack,
-    'search every mailbox': r.searchFocused && r.searchCalls >= 2 && r.searchSections >= 1 && r.searchSeen >= 1
+    'search every mailbox': r.searchFocused && r.searchCalls >= 2 && r.searchSections >= 1 && r.searchSeen >= 1,
+    'with the count at all unread mail, opening the panel marks no time': r.noSeen
   }),
   speed: r => ({
     'the first panel asks the search': r.firstOpenSearches >= 1 && r.cached >= 1,
@@ -110,7 +111,8 @@ const checks = {
     'pointing at a mail loads none of its pictures': r.picturesAfterHover === 0,
     'opening it then needs no second request': r.printsAfterOpen === 1 && r.keptForSession >= 1,
     'opening it loads its pictures, as Gmail shows them': r.picturesAfterOpen >= 1,
-    'an action drops the kept answers': r.cacheDroppedAfterAction
+    'an action drops the kept answers': r.cacheDroppedAfterAction,
+    'without auto-advance an action in the reader goes back to the list': r.backAfterAction
   }),
   services: r => ({
     'Meet is Gmail\'s alone': JSON.stringify(r.meet) === '[true,false,false]',
@@ -154,6 +156,24 @@ const checks = {
     'search: an account that did not answer says so; the result is said to a screen reader': r.searchFailedLine && r.searchFoundLine && r.searchSaid,
     'Esc in the search field gives the focus to the search button': r.focusAfterSearch === 'search'
   }),
+  codes: r => ({
+    'a one-time code shows on its line; numbers that are none show nothing': JSON.stringify(r.pills) === '["G-482913","7310","","123-456",""]',
+    'a click on it copies the digits, and opens, reads or deletes nothing': r.copied === '482913' && r.copiedShown && !r.opened && r.actions === 0 && r.rowsKept,
+    'C copies the code of the focused line, and nothing from a line without one': r.copiedByKey === '7310' && r.copiedNone === null,
+    'the reader shows the code too, and C copies it there without an action': r.readerPill === '123-456' && r.copiedInReader === '123456' && r.actionsAfter === 0
+  }),
+  advance: r => ({
+    'J and K move between the mails in the reader': r.first === 'Макеты на ревью' && r.afterJ === 'New sign-in' && r.afterK === 'Макеты на ревью' && r.prevDisabledAtFirst,
+    'with auto-advance an action from the reader opens the next mail': r.stillReading && r.afterE === 'New sign-in' && r.archived.includes('message_id=a1&') && r.posAfterE === '1 of 2',
+    'the reader\'s arrow goes on as J does; J stops at the last mail': r.atLast === 'Созвон' && r.pastLast === 'Созвон' && r.nextDisabled,
+    'K passes over the mail acted on': r.topAfterArchive === 'New sign-in'
+  }),
+  readnext: r => ({
+    'J goes on from a mail that read on open took out of the list': r.marked === 1 && !r.listedAfterRead && r.afterJ === 'New sign-in'
+  }),
+  seen: r => ({
+    'with the count at mail since the panel was opened, opening it marks the time, a list update does not': r.seen && !r.seenOnUpdate
+  }),
   narrow: r => ({
     'a 320px side panel: the mailbox line keeps whole buttons, without copy and Meet, and a readable address':
       r.width === 320 && JSON.stringify(r.buttons) === '["readAll:32","archive:32","open:32"]' && r.addr >= 60,
@@ -164,7 +184,8 @@ const checks = {
 server.listen(0, '127.0.0.1', async () => {
   const {port} = server.address();
   let failed = 0;
-  for (const [scenario, query, frame] of [['main', ''], ['speed', ''], ['services', '&s=services'], ['wide', '&wide=1'], ['keys', ''], ['narrow', '&side', 320]]) {
+  for (const [scenario, query, frame] of [['main', ''], ['speed', ''], ['services', '&s=services'], ['wide', '&wide=1'], ['keys', ''], ['narrow', '&side', 320],
+    ['codes', '&s=codes'], ['advance', '&advance=1'], ['readnext', '&read=1'], ['seen', '&badge=new']]) {
     const r = await run(port, scenario, query, frame);
     if (r.error) {
       failed += 1;

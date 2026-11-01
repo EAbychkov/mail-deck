@@ -14,6 +14,8 @@ const ICONS = {
   trash: ['M4 7h16', 'M6.5 7l.9 12a1.5 1.5 0 0 0 1.5 1.4h6.2a1.5 1.5 0 0 0 1.5-1.4l.9-12', 'M9.5 7V4.5h5V7'],
   spam: ['M12 3l8 3.5v5.5c0 4.5-3.4 7.7-8 9-4.6-1.3-8-4.5-8-9V6.5Z', 'M12 8.5v4', 'M12 15.8v.2'],
   back: ['M15 5l-7 7 7 7'],
+  up: ['M6 15l6-6 6 6'],
+  down: ['M6 9l6 6 6-6'],
   done: ['M4 12.5l5 5L20 6.5'],
   copy: ['M11 9h7a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2Z', 'M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3'],
   reply: ['M9.5 14.5L4 9l5.5-5.5', 'M4 9h10a6 6 0 0 1 6 6v4'],
@@ -55,7 +57,12 @@ const dark = matchMedia('(prefers-color-scheme: dark)');
 const state = {
   objs: [], // the accounts as the background published them
   hidden: new Set(), // links acted on here, until the feed stops listing them
-  reading: null, // {e, o, next}
+  reading: null, // {e, o, next, code}
+  // the list's mail as the reader found it, link -> {e, o}: J and K walk it, though mail read on
+  // opening has left the list by then
+  trail: null,
+  autoAdvance: false, // an action in the reader opens the next mail instead of the list
+  badgeNew: false, // the toolbar count shows the mail since the panel was last opened
   focus: null, // the line the next drawing gives the focus to: a link, or FIRST
   only: null, // the mailbox the chips narrowed the list to
   rows: new Map(), // link -> {e, o}
@@ -126,6 +133,41 @@ const copyBtn = text => btn('copy', t('copyAddress'), ev => {
     }, 1200);
   }, () => toast(t('copyFailed'), true));
 }, 'copy');
+
+/* one-time codes: a sign-in or verification code in a mail, a click from the clipboard */
+// a word that names a code, in the languages the panel speaks and a few more
+const CODE_WORDS = /code|passcode|\bpin\b|\botp\b|2fa|verif|one[- ]time|security|confirm|код|пароль|подтвержд|kod|código|codice|kód|κωδικ|קוד|رمز|验证码|驗證碼|認証|確認コード|인증/i;
+// 4-8 digits, or 3+3 split by a dash or a space, maybe after a prefix like G-; never part of a longer
+// number, an amount, a date, a time, an address, a word or a phone number. A full stop after it is fine.
+const CODE_NUMBER = /(?<![\p{L}\p{N}#№$€£¥₽/+@_-]|\p{N}[ .,:-])(?:\p{Lu}{1,3}-)?(\d{3}[- ]\d{3}|\d{4,8})(?![\p{L}\p{N}%@_/$€£¥₽]|[- .,:]\p{N})/gu;
+// The one-time code a text names: {shown, copy}, shown as the mail writes it (G-482913, 123-456)
+// and copy its digits alone, or null. A year is no code; of several, six digits win.
+const codeOf = text => {
+  text = String(text || '');
+  if (!CODE_WORDS.test(text)) {
+    return null;
+  }
+  const found = [...text.matchAll(CODE_NUMBER)].map(m => m[0]).filter(s => !/^(19|20)\d\d$/.test(s));
+  const pick = found.find(s => s.replace(/\D/g, '').length === 6) || found[0];
+  return pick ? {shown: pick, copy: pick.replace(/\D/g, '')} : null;
+};
+// copying marks nothing read and deletes nothing: the mail stays as it was
+const copyCode = (code, el) => navigator.clipboard.writeText(code.copy).then(() => {
+  el?.classList.add('copied');
+  setTimeout(() => el?.classList.remove('copied'), 1200);
+}, () => toast(t('copyCodeFailed'), true));
+const codePill = code => h('button', {
+  'class': 'code',
+  'type': 'button',
+  'title': t('copyCode') + ' (C)',
+  'aria-label': t('copyCode') + ' ' + code.shown,
+  'data-focus': 'code',
+  // the pill is not the mail: a click on it opens nothing
+  'onclick': ev => {
+    ev.stopPropagation();
+    copyCode(code, ev.currentTarget);
+  }
+}, code.shown);
 
 const when = iso => {
   const d = new Date(iso);
@@ -541,9 +583,11 @@ const remindMenu = (anchor, links) => {
       onclick: () => {
         closeMenu();
         if (state.reading) {
-          back();
+          actFromReader('remind', state.reading.e, o.until);
         }
-        act('remind', links, o.until);
+        else {
+          act('remind', links, o.until);
+        }
       }
     }, h('span', {}, t(o.key)), h('span', {class: 'hint'}, later(o.until)))));
   // Tab, or a click into the message, leaves it: it closes, the focus stays where it went
@@ -722,6 +766,7 @@ const prefetch = (e, o) => {
 };
 const row = (e, o) => {
   state.rows.set(e.link, {e, o});
+  const code = codeOf(e.title + ' ' + e.summary);
   return h('article', {
     'class': 'row' + (e.unread === false ? ' seen' : ''),
     'tabIndex': 0,
@@ -738,6 +783,8 @@ const row = (e, o) => {
   h('time', {class: 'when', dateTime: e.modified, title: fullDate(e.modified)}, when(e.modified)),
   h('span', {class: 'subject'},
     state.starred.has(thread(e.link)) && h('span', {class: 'starred', title: t('starred')}, icon('star')),
+    // before the subject: a long one ends in an ellipsis, the code must not
+    code && codePill(code),
     e.title || t('noSubject')),
   h('span', {class: 'snippet'}, e.summary),
   h('div', {class: 'acts'},
@@ -1036,23 +1083,59 @@ const shade = on => {
     el.inert = on;
   }
 };
+// the mail next to an open one in the list the reader came from, past the mail acted on here
+// and the mail the panel cannot read
+const besideOpen = (link, step) => {
+  const rows = state.trail || state.rows;
+  const keys = [...rows.keys()];
+  const at = keys.indexOf(link);
+  for (let i = at + step; at !== -1 && i >= 0 && i < keys.length; i += step) {
+    const r = rows.get(keys[i]);
+    if (!state.hidden.has(keys[i]) && can(r.o, 'body')) {
+      return r;
+    }
+  }
+  return null;
+};
+// J and K, and the reader's arrows
+const stepReader = step => {
+  const r = state.reading && besideOpen(state.reading.e.link, step);
+  if (r) {
+    read(r.e, r.o);
+  }
+};
+// an action from the reader: back to the list, or on to the next mail when the settings say so
+const actFromReader = (cmd, e, until) => {
+  const next = state.autoAdvance ? besideOpen(e.link, 1) || besideOpen(e.link, -1) : null;
+  back();
+  act(cmd, [e.link], until);
+  if (next) {
+    read(next.e, next.o);
+  }
+};
 const read = async (e, o) => {
+  if (!state.reading) {
+    state.trail = new Map(state.rows);
+  }
   // next: the line back() focuses should this mail's own leave the list meanwhile (read on open)
-  state.reading = {e, o, next: neighbour([e.link])?.dataset.link};
+  state.reading = {e, o, next: neighbour([e.link])?.dataset.link, code: codeOf(e.title + ' ' + e.summary)};
   closeMenu();
+  const trail = [...state.trail.keys()].filter(k => k === e.link || !state.hidden.has(k));
   $('reader-bar').replaceChildren(
     btn('back', t('back') + ' (Esc)', back),
-    h('span', {class: 'pos'}, t('position', [...state.rows.keys()].indexOf(e.link) + 1, state.rows.size)),
-    ...Object.entries(ACTIONS).filter(([cmd]) => allowed(cmd, o)).map(([cmd, a]) => btn(a.icon, a.title, () => {
-      back();
-      act(cmd, [e.link]);
-    }, a.danger ? 'danger' : '')),
+    h('span', {class: 'pos'}, t('position', trail.indexOf(e.link) + 1, trail.length)),
+    btn('up', t('prevMessage') + ' (K)', () => stepReader(-1), 'prev'),
+    btn('down', t('nextMessage') + ' (J)', () => stepReader(1), 'next'),
+    ...Object.entries(ACTIONS).filter(([cmd]) => allowed(cmd, o)).map(([cmd, a]) => btn(a.icon, a.title,
+      () => actFromReader(cmd, e), a.danger ? 'danger' : '')),
     remindBtn([e.link]),
     h('span', {class: 'sep'}),
     !serviceOf(o) && btn('star', t('star') + ' (S)', () => star(e), 'star'),
     btn('reply', t('reply'), () => openUrl(replyUrl(e, o))),
     btn('open', openIn(o) + ' (O)', ev => openEntry(e, o, ev))
   );
+  $('reader-bar').querySelector('.prev').disabled = !besideOpen(e.link, -1);
+  $('reader-bar').querySelector('.next').disabled = !besideOpen(e.link, 1);
   paintStar();
   // the key hints say only what this mailbox can do
   $('reader').classList.toggle('no-star', Boolean(serviceOf(o)));
@@ -1060,6 +1143,9 @@ const read = async (e, o) => {
   $('reader-account').style.setProperty('--c', o.color);
   $('reader-account').lastChild.textContent = accountName(o);
   $('reader-subject').textContent = e.title || t('noSubject');
+  if (state.reading.code) {
+    $('reader-subject').append(' ', codePill(state.reading.code));
+  }
   $('reader-avatar').replaceChildren(avatar(e, o));
   $('reader-name').textContent = e.author_name;
   $('reader-addr').replaceChildren(h('span', {}, e.author_email), copyBtn(e.author_email));
@@ -1095,6 +1181,20 @@ const read = async (e, o) => {
     }
     fit(doc);
     shown = true;
+    // a code the snippet did not reach, from the newest message only: a thread of codes from one
+    // sender would offer an older one
+    if (!state.reading.code) {
+      const last = [...doc.querySelectorAll('details.msg')].at(-1) || doc.body;
+      state.reading.code = codeOf(e.title + ' ' + last.innerText.slice(0, 3000));
+      if (state.reading.code) {
+        $('reader-subject').append(' ', codePill(state.reading.code));
+      }
+    }
+    // the mail J opens comes meanwhile
+    const ahead = besideOpen(e.link, 1);
+    if (ahead) {
+      prefetch(ahead.e, ahead.o);
+    }
   }
   catch (err) {
     if (state.reading?.e === e) {
@@ -1115,6 +1215,7 @@ const read = async (e, o) => {
 const back = () => {
   const r = state.reading;
   state.reading = null;
+  state.trail = null;
   shade(false);
   $('app').classList.remove('reading');
   if (r) {
@@ -1192,9 +1293,11 @@ const onKey = ev => {
   const run = cmd => {
     if (target && allowed(cmd, target.o)) {
       if (state.reading) {
-        back();
+        actFromReader(cmd, target.e);
       }
-      act(cmd, [target.e.link]);
+      else {
+        act(cmd, [target.e.link]);
+      }
     }
   };
 
@@ -1217,7 +1320,19 @@ const onKey = ev => {
   else if (ev.code === 'Slash' && !state.reading) {
     openSearch();
   }
-  else if (state.reading && ['ArrowDown', 'ArrowUp', 'KeyJ', 'KeyK', 'Enter'].includes(ev.code)) {
+  // the one-time code of the open mail or the focused line
+  else if (ev.code === 'KeyC' && target) {
+    const code = state.reading ? state.reading.code : codeOf(target.e.title + ' ' + target.e.summary);
+    if (!code) {
+      return;
+    }
+    copyCode(code, (state.reading ? $('reader-subject') : rowEl).querySelector('.code'));
+  }
+  // in the reader J and K go to the next and the previous mail; the arrows scroll the message
+  else if (state.reading && (ev.code === 'KeyJ' || ev.code === 'KeyK')) {
+    stepReader(ev.code === 'KeyJ' ? 1 : -1);
+  }
+  else if (state.reading && ['ArrowDown', 'ArrowUp', 'Enter'].includes(ev.code)) {
     return;
   }
   else if (ev.code === 'ArrowDown' || ev.code === 'KeyJ') {
@@ -1320,9 +1435,24 @@ const prefsChanged = prefs => {
   if ('avatars' in prefs) {
     state.avatars = prefs.avatars || {};
   }
+  if ('autoAdvance' in prefs) {
+    state.autoAdvance = prefs.autoAdvance === true;
+  }
+  if ('badge.count' in prefs) {
+    state.badgeNew = prefs['badge.count'] === 'new';
+  }
 };
+// With the toolbar count at "mail since the panel was last opened", opening the panel starts it
+// again, and so does a side panel coming back into view. Never a list update: the background
+// sends one for the very redraw this asks for.
+const markSeen = () => {
+  if (state.badgeNew && document.visibilityState === 'visible') {
+    chrome.storage.local.set({'badge.seen': Date.now()});
+  }
+};
+document.addEventListener('visibilitychange', markSeen);
 chrome.storage.onChanged.addListener((ps, area) => {
-  const changed = Object.fromEntries(['panelScale', 'readOnOpen', 'accounts', 'accountOrder', 'senderLogos', 'avatars']
+  const changed = Object.fromEntries(['panelScale', 'readOnOpen', 'accounts', 'accountOrder', 'senderLogos', 'avatars', 'autoAdvance', 'badge.count']
     .filter(k => area === 'local' && ps[k]).map(k => [k, ps[k].newValue]));
   if (Object.keys(changed).length) {
     prefsChanged(changed);
@@ -1332,10 +1462,12 @@ chrome.storage.onChanged.addListener((ps, area) => {
 chrome.windows?.getCurrent().then(w => state.windowId = w.id);
 
 Promise.all([
-  chrome.storage.local.get({panelScale: 1, readOnOpen: false, accounts: {}, accountOrder: [], senderLogos: true, avatars: {}, [Remind.KEY]: []}),
+  chrome.storage.local.get({panelScale: 1, readOnOpen: false, accounts: {}, accountOrder: [], senderLogos: true, avatars: {},
+    autoAdvance: false, 'badge.count': 'all', [Remind.KEY]: []}),
   chrome.storage.session.get({'cached-objects': [], [Resolved.KEY]: [], logos: {}})
 ]).then(([local, session]) => {
   prefsChanged(local);
+  markSeen();
   Object.entries(session.logos).forEach(([domain, has]) => logos.set(domain, has));
   // the background hides the mail waiting for its reminder at the next check; until then this does
   update(Resolved.apply(Resolved.apply(session['cached-objects'], session[Resolved.KEY]), Remind.waiting(local[Remind.KEY])));

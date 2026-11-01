@@ -23,8 +23,16 @@
     ]),
     box('proton', 'https://mail.proton.me/u/0/inbox', 'ev@proton.me', [sentry('proton', 'https://mail.proton.me/u/0/inbox', 'p1', 'Di', 'di@x.test', 'Proton one', 30)])
   ];
+  // ?s=codes: mail with one-time codes, and mail with numbers that are none
+  const codes = q.get('s') === 'codes' && [acc(0, 'evgeny@example.com', [
+    entry(0, 'c1', 'Google', 'no-reply@accounts.google.com', 'Your Google verification code', 'G-482913 is your Google verification code.', 1),
+    entry(0, 'c2', 'Банк', 'alerts@bank.test', 'Код подтверждения', 'Ваш код: 7310. Никому его не сообщайте.', 2),
+    entry(0, 'c3', 'Stripe', 'billing@stripe.com', 'Invoice #1042 for 2026', 'Questions? Call +1 415 555 0134. Our code of conduct changed.', 3),
+    entry(0, 'c4', 'GitHub', 'noreply@github.com', '[GitHub] Please verify your device', 'Verification code: 123-456', 4),
+    entry(0, 'c5', 'Anna', 'anna@figma.com', 'Встреча', 'В 10:30, комната 4815', 5)
+  ])];
   const nine = ['bychkovea@gmail.com', 'evgeny@arbitron.app', 'abrahamlincolncrypto@gmail.com', 'georgewashingtoncypto@gmail.com', 'knivesmagician@gmail.com', 'thomasjeffersoncrypto@gmail.com', 'codewithevgeny@gmail.com', 'cryptobychkov@gmail.com', 'eco.toplivo.msk@gmail.com'];
-  const objs = services || (q.get('s') === 'nine' ? nine.map((m, i) => acc(i, m, [])) : caught ? [acc(0, 'evgeny@example.com', []), acc(1, 'work@arbitron.example', [])] : [
+  const objs = services || codes || (q.get('s') === 'nine' ? nine.map((m, i) => acc(i, m, [])) : caught ? [acc(0, 'evgeny@example.com', []), acc(1, 'work@arbitron.example', [])] : [
     acc(0, 'evgeny@example.com', [
       entry(0, 'a1', 'Anna Petrova', 'anna@figma.com', 'Макеты на ревью', 'Посмотри, пожалуйста, до пятницы', 4),
       entry(0, 'a2', 'GitHub', 'noreply@github.com', 'New sign-in', 'A new sign-in to your account', 95)
@@ -34,8 +42,11 @@
   ]);
   const local = {accounts: services ? {'evgeny@example.com': {}, 'ev@yahoo.com': {service: 'yahoo'}, 'ev@proton.me': {service: 'proton'}, 'gone@yahoo.com': {service: 'yahoo'}} :
     q.get('s') === 'nine' ? Object.fromEntries(nine.map(m => [m, {}])) : {'evgeny@example.com': {}, 'work@arbitron.example': {}, 'old@example.org': {}, 'gone@example.com': {}},
-    accountOrder: [], panelScale: Number(q.get('scale') || 1), readOnOpen: false, 'remind.links': []};
+    accountOrder: [], panelScale: Number(q.get('scale') || 1), readOnOpen: q.get('read') === '1', 'remind.links': [],
+    autoAdvance: q.get('advance') === '1', 'badge.count': q.get('badge') || 'all'};
   window.__sent = []; window.__set = [];
+  // what the panel copies (__copied): a page under test has no clipboard of its own to ask
+  Object.defineProperty(navigator, 'clipboard', {configurable: true, value: {writeText: async s => { window.__copied = s; }}});
   // a link opened from the panel closes it; the page under test has to stay
   window.close = () => {};
   const row = (thread, subject, from, text, mins, labels) => ({subject, thread, labels, date: now - mins * 60000, from, text});
