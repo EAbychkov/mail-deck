@@ -291,7 +291,7 @@
         "message": "通知文字"
     },
     "opt_formatText": {
-        "message": "可使用 [author_name]、[author_email]、[title]、[summary]，换行用 [break]。"
+        "message": "可使用 [author_name]、[author_email]、[title]、[summary]，收件邮箱用 [account]，换行用 [break]。"
     },
     "opt_truncate": {
         "message": "主题和正文最多保留"
@@ -1589,5 +1589,56 @@
     },
     "opt_serviceAccess": {
         "message": "请重新开启以授予其访问权限。"
+    },
+    "panel_copyCode": {
+        "message": "复制验证码"
+    },
+    "panel_copyCodeFailed": {
+        "message": "无法复制验证码"
+    },
+    "panel_keyNext": {
+        "message": "下一封"
+    },
+    "panel_keyPrev": {
+        "message": "上一封"
+    },
+    "panel_nextMessage": {
+        "message": "下一封邮件"
+    },
+    "panel_prevMessage": {
+        "message": "上一封邮件"
+    },
+    "opt_autoAdvance": {
+        "message": "操作后打开下一封邮件"
+    },
+    "opt_autoAdvanceText": {
+        "message": "对打开的邮件归档、删除或标为已读后，会打开下一封，而不是回到列表。"
+    },
+    "opt_countChip": {
+        "message": "计入计数"
+    },
+    "opt_countHint": {
+        "message": "不计入计数的邮箱仍会显示在面板中并照常通知，但不会加到工具栏图标的数字上。"
+    },
+    "opt_badgeCount": {
+        "message": "计数显示"
+    },
+    "opt_badgeAll": {
+        "message": "全部未读邮件"
+    },
+    "opt_badgeNew": {
+        "message": "上次打开面板以来的邮件"
+    },
+    "opt_badgeCountText": {
+        "message": "打开面板后计数归零。面板本身仍会列出全部未读邮件。"
+    },
+    "opt_repeat": {
+        "message": "重复通知的间隔"
+    },
+    "opt_repeatOff": {
+        "message": "不重复"
+    },
+    "opt_repeatText": {
+        "message": "在你阅读、归档或删除邮件之前，通知会连同声音再次出现。免打扰时段照常生效。"
     }
 }

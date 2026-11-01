@@ -291,7 +291,7 @@
     "message": "通知の文面"
   },
   "opt_formatText": {
-    "message": "[author_name]、[author_email]、[title]、[summary]、改行には [break] を使えます。"
+    "message": "[author_name]、[author_email]、[title]、[summary]、届いた受信トレイには [account]、改行には [break] を使えます。"
   },
   "opt_truncate": {
     "message": "件名と本文の最大長"
@@ -1417,5 +1417,56 @@
   },
   "opt_serviceAccess": {
     "message": "アクセスを許可するには、もう一度オンにしてください。"
+  },
+  "panel_copyCode": {
+    "message": "コードをコピー"
+  },
+  "panel_copyCodeFailed": {
+    "message": "コードをコピーできませんでした"
+  },
+  "panel_keyNext": {
+    "message": "次へ"
+  },
+  "panel_keyPrev": {
+    "message": "前へ"
+  },
+  "panel_nextMessage": {
+    "message": "次のメール"
+  },
+  "panel_prevMessage": {
+    "message": "前のメール"
+  },
+  "opt_autoAdvance": {
+    "message": "操作後に次のメールを開く"
+  },
+  "opt_autoAdvanceText": {
+    "message": "開いているメールをアーカイブ、削除、既読にすると、一覧に戻らずに次のメールを開きます。"
+  },
+  "opt_countChip": {
+    "message": "件数に含める"
+  },
+  "opt_countHint": {
+    "message": "件数に含めない受信トレイもパネルに表示され通知も届きますが、ツールバーのアイコンの数には加わりません。"
+  },
+  "opt_badgeCount": {
+    "message": "件数に表示する内容"
+  },
+  "opt_badgeAll": {
+    "message": "すべての未読メール"
+  },
+  "opt_badgeNew": {
+    "message": "前回パネルを開いてから届いたメール"
+  },
+  "opt_badgeCountText": {
+    "message": "パネルを開くと 0 に戻ります。パネル自体には未読メールがすべて表示されます。"
+  },
+  "opt_repeat": {
+    "message": "通知を繰り返す間隔"
+  },
+  "opt_repeatOff": {
+    "message": "繰り返さない"
+  },
+  "opt_repeatText": {
+    "message": "メールを読む、アーカイブする、削除するまで、音とともに再び表示されます。おやすみ時間は適用されます。"
   }
 }

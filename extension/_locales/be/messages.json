@@ -288,7 +288,7 @@
     "message": "Тэкст апавяшчэння"
   },
   "opt_formatText": {
-    "message": "Выкарыстоўвайце [author_name], [author_email], [title], [summary] і [break] для новага радка."
+    "message": "Выкарыстоўвайце [author_name], [author_email], [title], [summary], [account] для скрыні, у якую прыйшоў ліст, і [break] для новага радка."
   },
   "opt_truncate": {
     "message": "Скарачаць тэму і тэкст да"
@@ -1444,5 +1444,56 @@
   },
   "opt_serviceAccess": {
     "message": "Уключыце яго яшчэ раз, каб даць яму доступ."
+  },
+  "panel_copyCode": {
+    "message": "Скапіяваць код"
+  },
+  "panel_copyCodeFailed": {
+    "message": "Не ўдалося скапіяваць код"
+  },
+  "panel_keyNext": {
+    "message": "наступны"
+  },
+  "panel_keyPrev": {
+    "message": "папярэдні"
+  },
+  "panel_nextMessage": {
+    "message": "Наступны ліст"
+  },
+  "panel_prevMessage": {
+    "message": "Папярэдні ліст"
+  },
+  "opt_autoAdvance": {
+    "message": "Пасля дзеяння адкрываць наступны ліст"
+  },
+  "opt_autoAdvanceText": {
+    "message": "Калі вы архівуеце, выдаляеце або пазначаеце прачытаным адкрыты ліст, адкрываецца наступны, а не спіс."
+  },
+  "opt_countChip": {
+    "message": "У лічыльніку"
+  },
+  "opt_countHint": {
+    "message": "Скрыня па-за лічыльнікам застаецца ў панэлі і дасылае апавяшчэнні, але не дадаецца да ліку на значку."
+  },
+  "opt_badgeCount": {
+    "message": "Лічыльнік паказвае"
+  },
+  "opt_badgeAll": {
+    "message": "Усе непрачытаныя"
+  },
+  "opt_badgeNew": {
+    "message": "Лісты з апошняга адкрыцця панэлі"
+  },
+  "opt_badgeCountText": {
+    "message": "Адкрыццё панэлі скідае яго да нуля. Сама панэль па-ранейшаму паказвае ўсе непрачытаныя."
+  },
+  "opt_repeat": {
+    "message": "Як часта паўтараць апавяшчэнне"
+  },
+  "opt_repeatOff": {
+    "message": "Не паўтараць"
+  },
+  "opt_repeatText": {
+    "message": "Яно вяртаецца разам з гукам, пакуль вы не прачытаеце, не заархівуеце або не выдаліце ліст. Ціхія гадзіны дзейнічаюць."
   }
 }

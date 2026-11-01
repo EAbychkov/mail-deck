@@ -291,7 +291,7 @@
         "message": "Tekst powiadomienia"
     },
     "opt_formatText": {
-        "message": "Użyj [author_name], [author_email], [title], [summary] i [break], aby zacząć nowy wiersz."
+        "message": "Użyj [author_name], [author_email], [title], [summary], [account] dla skrzynki, do której przyszła wiadomość, i [break], aby zacząć nowy wiersz."
     },
     "opt_truncate": {
         "message": "Skracaj temat i tekst do"
@@ -1589,5 +1589,56 @@
     },
     "opt_serviceAccess": {
         "message": "Włącz ją ponownie, aby dać jej dostęp."
+    },
+    "panel_copyCode": {
+        "message": "Kopiuj kod"
+    },
+    "panel_copyCodeFailed": {
+        "message": "Nie udało się skopiować kodu"
+    },
+    "panel_keyNext": {
+        "message": "następna"
+    },
+    "panel_keyPrev": {
+        "message": "poprzednia"
+    },
+    "panel_nextMessage": {
+        "message": "Następna wiadomość"
+    },
+    "panel_prevMessage": {
+        "message": "Poprzednia wiadomość"
+    },
+    "opt_autoAdvance": {
+        "message": "Po akcji otwieraj następną wiadomość"
+    },
+    "opt_autoAdvanceText": {
+        "message": "Gdy zarchiwizujesz, usuniesz lub oznaczysz jako przeczytaną otwartą wiadomość, zamiast listy otworzy się następna."
+    },
+    "opt_countChip": {
+        "message": "W liczniku"
+    },
+    "opt_countHint": {
+        "message": "Skrzynka poza licznikiem nadal widnieje w panelu i wysyła powiadomienia, ale nie dolicza się do liczby na ikonie."
+    },
+    "opt_badgeCount": {
+        "message": "Licznik pokazuje"
+    },
+    "opt_badgeAll": {
+        "message": "Całą nieprzeczytaną pocztę"
+    },
+    "opt_badgeNew": {
+        "message": "Pocztę od ostatniego otwarcia panelu"
+    },
+    "opt_badgeCountText": {
+        "message": "Otwarcie panelu go zeruje. Sam panel nadal pokazuje całą nieprzeczytaną pocztę."
+    },
+    "opt_repeat": {
+        "message": "Jak często powtarzać powiadomienie"
+    },
+    "opt_repeatOff": {
+        "message": "Nie powtarzaj"
+    },
+    "opt_repeatText": {
+        "message": "Wraca razem z dźwiękiem, dopóki nie przeczytasz, nie zarchiwizujesz lub nie usuniesz wiadomości. Godziny ciszy nadal obowiązują."
     }
 }

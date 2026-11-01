@@ -291,7 +291,7 @@
         "message": "טקסט ההתראה"
     },
     "opt_formatText": {
-        "message": "אפשר להשתמש ב-[author_name], [author_email], [title], [summary] וב-[break] לשורה חדשה."
+        "message": "אפשר להשתמש ב-[author_name], [author_email], [title], [summary], ב-[account] לתיבה שאליה הגיע הדואר וב-[break] לשורה חדשה."
     },
     "opt_truncate": {
         "message": "לקצר את הנושא והטקסט ל-"
@@ -1585,5 +1585,56 @@
     },
     "opt_serviceAccess": {
         "message": "הפעל אותו שוב כדי לתת לו גישה."
+    },
+    "panel_copyCode": {
+        "message": "העתק קוד"
+    },
+    "panel_copyCodeFailed": {
+        "message": "לא ניתן היה להעתיק את הקוד"
+    },
+    "panel_keyNext": {
+        "message": "הבאה"
+    },
+    "panel_keyPrev": {
+        "message": "הקודמת"
+    },
+    "panel_nextMessage": {
+        "message": "ההודעה הבאה"
+    },
+    "panel_prevMessage": {
+        "message": "ההודעה הקודמת"
+    },
+    "opt_autoAdvance": {
+        "message": "לפתוח את ההודעה הבאה אחרי פעולה"
+    },
+    "opt_autoAdvanceText": {
+        "message": "כשמעבירים לארכיון, מוחקים או מסמנים כנקראה הודעה פתוחה, נפתחת ההודעה הבאה במקום הרשימה."
+    },
+    "opt_countChip": {
+        "message": "במונה"
+    },
+    "opt_countHint": {
+        "message": "תיבה שמחוץ למונה ממשיכה להופיע בחלונית ולשלוח התראות, אבל לא נספרת במספר שעל הסמל."
+    },
+    "opt_badgeCount": {
+        "message": "המונה מציג"
+    },
+    "opt_badgeAll": {
+        "message": "כל הדואר שלא נקרא"
+    },
+    "opt_badgeNew": {
+        "message": "דואר מאז הפתיחה האחרונה של החלונית"
+    },
+    "opt_badgeCountText": {
+        "message": "פתיחת החלונית מאפסת אותו. החלונית עצמה ממשיכה להציג את כל הדואר שלא נקרא."
+    },
+    "opt_repeat": {
+        "message": "לחזור על ההתראה כל"
+    },
+    "opt_repeatOff": {
+        "message": "בלי חזרה"
+    },
+    "opt_repeatText": {
+        "message": "ההתראה חוזרת עם הצליל עד שקוראים, מעבירים לארכיון או מוחקים את ההודעה. שעות השקט חלות כרגיל."
     }
 }

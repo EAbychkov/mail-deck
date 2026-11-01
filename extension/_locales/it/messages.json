@@ -291,7 +291,7 @@
     "message": "Testo della notifica"
   },
   "opt_formatText": {
-    "message": "Usa [author_name], [author_email], [title], [summary] e [break] per andare a capo."
+    "message": "Usa [author_name], [author_email], [title], [summary], [account] per la casella in cui è arrivato il messaggio e [break] per andare a capo."
   },
   "opt_truncate": {
     "message": "Accorcia oggetto e testo a"
@@ -1417,5 +1417,56 @@
   },
   "opt_serviceAccess": {
     "message": "Attivalo di nuovo per dargli accesso."
+  },
+  "panel_copyCode": {
+    "message": "Copia codice"
+  },
+  "panel_copyCodeFailed": {
+    "message": "Impossibile copiare il codice"
+  },
+  "panel_keyNext": {
+    "message": "successivo"
+  },
+  "panel_keyPrev": {
+    "message": "precedente"
+  },
+  "panel_nextMessage": {
+    "message": "Messaggio successivo"
+  },
+  "panel_prevMessage": {
+    "message": "Messaggio precedente"
+  },
+  "opt_autoAdvance": {
+    "message": "Apri il messaggio successivo dopo un’azione"
+  },
+  "opt_autoAdvanceText": {
+    "message": "Quando archivi, elimini o segni come letto un messaggio aperto, si apre il successivo invece dell’elenco."
+  },
+  "opt_countChip": {
+    "message": "Nel contatore"
+  },
+  "opt_countHint": {
+    "message": "Una casella fuori dal contatore resta nel pannello e invia notifiche, ma non si aggiunge al numero sull’icona."
+  },
+  "opt_badgeCount": {
+    "message": "Il contatore mostra"
+  },
+  "opt_badgeAll": {
+    "message": "Tutta la posta non letta"
+  },
+  "opt_badgeNew": {
+    "message": "La posta dall’ultima apertura del pannello"
+  },
+  "opt_badgeCountText": {
+    "message": "Aprire il pannello lo azzera. Il pannello stesso elenca sempre tutta la posta non letta."
+  },
+  "opt_repeat": {
+    "message": "Ripeti la notifica ogni"
+  },
+  "opt_repeatOff": {
+    "message": "Non ripetere"
+  },
+  "opt_repeatText": {
+    "message": "Torna, con il suo suono, finché non leggi, archivi o elimini il messaggio. Le ore di silenzio valgono comunque."
   }
 }

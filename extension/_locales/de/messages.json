@@ -291,7 +291,7 @@
         "message": "Text der Benachrichtigung"
     },
     "opt_formatText": {
-        "message": "Verwende [author_name], [author_email], [title], [summary] und [break] für eine neue Zeile."
+        "message": "Verwende [author_name], [author_email], [title], [summary], [account] für das Postfach, in dem die Mail ankam, und [break] für eine neue Zeile."
     },
     "opt_truncate": {
         "message": "Betreff und Text kürzen auf"
@@ -1585,5 +1585,56 @@
     },
     "opt_serviceAccess": {
         "message": "Schalte ihn erneut ein, um ihm Zugriff zu geben."
+    },
+    "panel_copyCode": {
+        "message": "Code kopieren"
+    },
+    "panel_copyCodeFailed": {
+        "message": "Code konnte nicht kopiert werden"
+    },
+    "panel_keyNext": {
+        "message": "nächste"
+    },
+    "panel_keyPrev": {
+        "message": "vorige"
+    },
+    "panel_nextMessage": {
+        "message": "Nächste Nachricht"
+    },
+    "panel_prevMessage": {
+        "message": "Vorige Nachricht"
+    },
+    "opt_autoAdvance": {
+        "message": "Nach einer Aktion die nächste Nachricht öffnen"
+    },
+    "opt_autoAdvanceText": {
+        "message": "Wenn du eine geöffnete Nachricht archivierst, löschst oder als gelesen markierst, öffnet sich die nächste statt der Liste."
+    },
+    "opt_countChip": {
+        "message": "Im Zähler"
+    },
+    "opt_countHint": {
+        "message": "Ein Postfach außerhalb des Zählers bleibt im Panel und benachrichtigt weiter, zählt aber nicht zur Zahl am Symbol."
+    },
+    "opt_badgeCount": {
+        "message": "Der Zähler zeigt"
+    },
+    "opt_badgeAll": {
+        "message": "Alle ungelesenen Mails"
+    },
+    "opt_badgeNew": {
+        "message": "Mails seit dem letzten Öffnen des Panels"
+    },
+    "opt_badgeCountText": {
+        "message": "Beim Öffnen des Panels springt er auf null. Das Panel selbst zeigt weiter alle ungelesenen Mails."
+    },
+    "opt_repeat": {
+        "message": "Benachrichtigung wiederholen alle"
+    },
+    "opt_repeatOff": {
+        "message": "Nicht wiederholen"
+    },
+    "opt_repeatText": {
+        "message": "Sie kommt samt Ton wieder, bis du die Mail liest, archivierst oder löschst. Ruhezeiten gelten weiter."
     }
 }

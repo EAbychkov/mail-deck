@@ -291,7 +291,7 @@
     "message": "Texte de la notification"
   },
   "opt_formatText": {
-    "message": "Utilisez [author_name], [author_email], [title], [summary] et [break] pour un saut de ligne."
+    "message": "Utilisez [author_name], [author_email], [title], [summary], [account] pour la boîte où le message est arrivé, et [break] pour un saut de ligne."
   },
   "opt_truncate": {
     "message": "Raccourcir l’objet et le texte à"
@@ -1417,5 +1417,56 @@
   },
   "opt_serviceAccess": {
     "message": "Activez-le de nouveau pour lui donner accès."
+  },
+  "panel_copyCode": {
+    "message": "Copier le code"
+  },
+  "panel_copyCodeFailed": {
+    "message": "Impossible de copier le code"
+  },
+  "panel_keyNext": {
+    "message": "suivant"
+  },
+  "panel_keyPrev": {
+    "message": "précédent"
+  },
+  "panel_nextMessage": {
+    "message": "Message suivant"
+  },
+  "panel_prevMessage": {
+    "message": "Message précédent"
+  },
+  "opt_autoAdvance": {
+    "message": "Ouvrir le message suivant après une action"
+  },
+  "opt_autoAdvanceText": {
+    "message": "Quand vous archivez, supprimez ou marquez comme lu un message ouvert, le suivant s’ouvre au lieu de la liste."
+  },
+  "opt_countChip": {
+    "message": "Dans le compteur"
+  },
+  "opt_countHint": {
+    "message": "Une boîte hors du compteur reste dans le panneau et envoie ses notifications, mais n’ajoute rien au nombre sur l’icône."
+  },
+  "opt_badgeCount": {
+    "message": "Le compteur affiche"
+  },
+  "opt_badgeAll": {
+    "message": "Tous les messages non lus"
+  },
+  "opt_badgeNew": {
+    "message": "Les messages arrivés depuis la dernière ouverture du panneau"
+  },
+  "opt_badgeCountText": {
+    "message": "Ouvrir le panneau le remet à zéro. Le panneau lui-même liste toujours tous les non lus."
+  },
+  "opt_repeat": {
+    "message": "Répéter la notification toutes les"
+  },
+  "opt_repeatOff": {
+    "message": "Ne pas répéter"
+  },
+  "opt_repeatText": {
+    "message": "Elle revient, avec son son, jusqu’à ce que vous lisiez, archiviez ou supprimiez le message. Les heures calmes s’appliquent."
   }
 }

@@ -291,7 +291,7 @@
         "message": "Текст сповіщення"
     },
     "opt_formatText": {
-        "message": "Використовуйте [author_name], [author_email], [title], [summary] і [break] для нового рядка."
+        "message": "Використовуйте [author_name], [author_email], [title], [summary], [account] для скриньки, куди прийшов лист, і [break] для нового рядка."
     },
     "opt_truncate": {
         "message": "Скорочувати тему й текст до"
@@ -1585,5 +1585,56 @@
     },
     "opt_serviceAccess": {
         "message": "Увімкніть його ще раз, щоб надати йому доступ."
+    },
+    "panel_copyCode": {
+        "message": "Копіювати код"
+    },
+    "panel_copyCodeFailed": {
+        "message": "Не вдалося скопіювати код"
+    },
+    "panel_keyNext": {
+        "message": "наступний"
+    },
+    "panel_keyPrev": {
+        "message": "попередній"
+    },
+    "panel_nextMessage": {
+        "message": "Наступний лист"
+    },
+    "panel_prevMessage": {
+        "message": "Попередній лист"
+    },
+    "opt_autoAdvance": {
+        "message": "Після дії відкривати наступний лист"
+    },
+    "opt_autoAdvanceText": {
+        "message": "Коли ви архівуєте, видаляєте або позначаєте прочитаним відкритий лист, відкривається наступний, а не список."
+    },
+    "opt_countChip": {
+        "message": "У лічильнику"
+    },
+    "opt_countHint": {
+        "message": "Скринька поза лічильником лишається в панелі й надсилає сповіщення, але не додається до числа на значку."
+    },
+    "opt_badgeCount": {
+        "message": "Лічильник показує"
+    },
+    "opt_badgeAll": {
+        "message": "Усі непрочитані"
+    },
+    "opt_badgeNew": {
+        "message": "Листи з останнього відкриття панелі"
+    },
+    "opt_badgeCountText": {
+        "message": "Відкриття панелі скидає його до нуля. Сама панель і далі показує всі непрочитані."
+    },
+    "opt_repeat": {
+        "message": "Як часто повторювати сповіщення"
+    },
+    "opt_repeatOff": {
+        "message": "Не повторювати"
+    },
+    "opt_repeatText": {
+        "message": "Воно повертається разом зі звуком, доки ви не прочитаєте, не заархівуєте або не видалите лист. Тихі години діють."
     }
 }

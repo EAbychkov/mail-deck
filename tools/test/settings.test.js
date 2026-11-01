@@ -208,6 +208,45 @@ check('the page has a note element for equal quiet times, and every new string',
     assert.ok(en[key]?.message, key);
   }
 });
+check('a backup keeps what the count, the repeat and the auto-advance may be, and nothing else', () => {
+  const sanitize = page('sanitize');
+  const good = {'badge.count': 'new', 'notify.repeat': 15, 'autoAdvance': true};
+  assert.deepStrictEqual({...sanitize(good)}, good);
+  assert.deepStrictEqual({...sanitize({'badge.count': 'some', 'notify.repeat': 7, 'autoAdvance': 'yes'})}, {});
+  assert.deepStrictEqual({...sanitize({'badge.count': 1, 'notify.repeat': '5'})}, {});
+  // what the page offers is what a backup may hold, its default among it
+  for (const key of ['notify.repeat', 'badge.count']) {
+    const select = new RegExp(`<select data-key="${key.replace('.', '\\.')}"[^>]*>([\\s\\S]*?)</select>`).exec(html);
+    assert.ok(select, key);
+    const numeric = /data-type="number"/.test(select[0]);
+    const values = [...select[1].matchAll(/value="([^"]*)"/g)].map(m => numeric ? Number(m[1]) : m[1]);
+    assert.ok(values.length > 1 && values.every(v => page('VALID')[key](v)), key);
+    assert.ok(values.includes(page('DEFAULTS')[key]), key + ' offers its default');
+  }
+});
+check('an inbox left out of the count stays out of it in a backup', () => {
+  const out = page('sanitize')({accounts: {'a@gmail.com': {uncounted: true}, 'b@gmail.com': {uncounted: 'yes', quiet: true}}});
+  assert.deepStrictEqual({...out.accounts['a@gmail.com']}, {ignored: false, quiet: false, uncounted: true});
+  assert.deepStrictEqual({...out.accounts['b@gmail.com']}, {ignored: false, quiet: true});
+});
+check('an export holds the new settings, not the time the panel was last opened', async () => {
+  Object.assign(local, {'badge.count': 'new', 'badge.seen': 123, 'notify.repeat': 30});
+  const out = await page('collect(false)');
+  assert.deepStrictEqual([out['badge.count'], out['notify.repeat'], out.autoAdvance], ['new', 30, false]);
+  assert.strictEqual('badge.seen' in out, false);
+});
+check('the new settings default as the background does, and their rows and strings are there', () => {
+  const defaults = page('DEFAULTS');
+  assert.deepStrictEqual([defaults['badge.count'], defaults['notify.repeat'], defaults.autoAdvance], ['all', 0, false]);
+  const background = fs.readFileSync(path.join(EXT, 'core/check.js'), 'utf8');
+  assert.ok(background.includes(`'badge.count': 'all'`) && background.includes(`'notify.repeat': 0`));
+  assert.ok(/data-key="autoAdvance"/.test(html) && /data-i18n="countHint"/.test(html));
+  for (const key of ['opt_countChip', 'opt_countHint', 'opt_badgeCount', 'opt_badgeAll', 'opt_badgeNew', 'opt_badgeCountText',
+    'opt_repeat', 'opt_repeatOff', 'opt_repeatText', 'opt_autoAdvance', 'opt_autoAdvanceText']) {
+    assert.ok(en[key]?.message, key);
+  }
+  assert.ok(en.opt_formatText.message.includes('[account]'));
+});
 
 (async () => {
   for (const [name, fn] of checks) {

@@ -291,7 +291,7 @@
         "message": "Tekst van de melding"
     },
     "opt_formatText": {
-        "message": "Gebruik [author_name], [author_email], [title], [summary] en [break] voor een nieuwe regel."
+        "message": "Gebruik [author_name], [author_email], [title], [summary], [account] voor het postvak waarin de mail binnenkwam, en [break] voor een nieuwe regel."
     },
     "opt_truncate": {
         "message": "Onderwerp en tekst inkorten tot"
@@ -1589,5 +1589,56 @@
     },
     "opt_serviceAccess": {
         "message": "Zet hem opnieuw aan om hem toegang te geven."
+    },
+    "panel_copyCode": {
+        "message": "Code kopiëren"
+    },
+    "panel_copyCodeFailed": {
+        "message": "Kan de code niet kopiëren"
+    },
+    "panel_keyNext": {
+        "message": "volgende"
+    },
+    "panel_keyPrev": {
+        "message": "vorige"
+    },
+    "panel_nextMessage": {
+        "message": "Volgend bericht"
+    },
+    "panel_prevMessage": {
+        "message": "Vorig bericht"
+    },
+    "opt_autoAdvance": {
+        "message": "Na een actie het volgende bericht openen"
+    },
+    "opt_autoAdvanceText": {
+        "message": "Als je een geopend bericht archiveert, verwijdert of als gelezen markeert, opent het volgende in plaats van de lijst."
+    },
+    "opt_countChip": {
+        "message": "In de teller"
+    },
+    "opt_countHint": {
+        "message": "Een postvak buiten de teller blijft in het paneel staan en geeft meldingen, maar telt niet mee in het getal op het pictogram."
+    },
+    "opt_badgeCount": {
+        "message": "De teller toont"
+    },
+    "opt_badgeAll": {
+        "message": "Alle ongelezen mail"
+    },
+    "opt_badgeNew": {
+        "message": "Mail sinds je het paneel laatst opende"
+    },
+    "opt_badgeCountText": {
+        "message": "Het paneel openen zet hem op nul. Het paneel zelf toont nog steeds alle ongelezen mail."
+    },
+    "opt_repeat": {
+        "message": "Melding herhalen elke"
+    },
+    "opt_repeatOff": {
+        "message": "Niet herhalen"
+    },
+    "opt_repeatText": {
+        "message": "Ze komt terug, met geluid, tot je de mail leest, archiveert of verwijdert. Stille uren gelden gewoon."
     }
 }

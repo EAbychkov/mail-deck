@@ -291,7 +291,7 @@
         "message": "Текст на известието"
     },
     "opt_formatText": {
-        "message": "Използвайте [author_name], [author_email], [title], [summary] и [break] за нов ред."
+        "message": "Използвайте [author_name], [author_email], [title], [summary], [account] за кутията, в която е дошло писмото, и [break] за нов ред."
     },
     "opt_truncate": {
         "message": "Съкращавай темата и текста до"
@@ -1585,5 +1585,56 @@
     },
     "opt_serviceAccess": {
         "message": "Включете я отново, за да ѝ дадете достъп."
+    },
+    "panel_copyCode": {
+        "message": "Копиране на кода"
+    },
+    "panel_copyCodeFailed": {
+        "message": "Кодът не можа да се копира"
+    },
+    "panel_keyNext": {
+        "message": "следващо"
+    },
+    "panel_keyPrev": {
+        "message": "предишно"
+    },
+    "panel_nextMessage": {
+        "message": "Следващо писмо"
+    },
+    "panel_prevMessage": {
+        "message": "Предишно писмо"
+    },
+    "opt_autoAdvance": {
+        "message": "Отваряй следващото писмо след действие"
+    },
+    "opt_autoAdvanceText": {
+        "message": "Когато архивирате, изтриете или отбележите като прочетено отворено писмо, се отваря следващото, а не списъкът."
+    },
+    "opt_countChip": {
+        "message": "В брояча"
+    },
+    "opt_countHint": {
+        "message": "Кутия извън брояча остава в панела и изпраща известия, но не се добавя към числото върху иконата."
+    },
+    "opt_badgeCount": {
+        "message": "Броячът показва"
+    },
+    "opt_badgeAll": {
+        "message": "Всички непрочетени писма"
+    },
+    "opt_badgeNew": {
+        "message": "Писмата от последното отваряне на панела"
+    },
+    "opt_badgeCountText": {
+        "message": "Отварянето на панела го нулира. Самият панел пак показва всички непрочетени писма."
+    },
+    "opt_repeat": {
+        "message": "Повтаряй известието на всеки"
+    },
+    "opt_repeatOff": {
+        "message": "Без повторение"
+    },
+    "opt_repeatText": {
+        "message": "То се връща заедно със звука, докато не прочетете, архивирате или изтриете писмото. Тихите часове важат."
     }
 }

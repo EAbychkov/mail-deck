@@ -291,7 +291,7 @@
         "message": "Текст уведомления"
     },
     "opt_formatText": {
-        "message": "Используйте [author_name], [author_email], [title], [summary] и [break] для новой строки."
+        "message": "Используйте [author_name], [author_email], [title], [summary], [account] для ящика, куда пришло письмо, и [break] для новой строки."
     },
     "opt_truncate": {
         "message": "Сокращать тему и текст до"
@@ -1589,5 +1589,56 @@
     },
     "opt_serviceAccess": {
         "message": "Включите его ещё раз, чтобы дать ему доступ."
+    },
+    "panel_copyCode": {
+        "message": "Скопировать код"
+    },
+    "panel_copyCodeFailed": {
+        "message": "Не удалось скопировать код"
+    },
+    "panel_keyNext": {
+        "message": "следующее"
+    },
+    "panel_keyPrev": {
+        "message": "предыдущее"
+    },
+    "panel_nextMessage": {
+        "message": "Следующее письмо"
+    },
+    "panel_prevMessage": {
+        "message": "Предыдущее письмо"
+    },
+    "opt_autoAdvance": {
+        "message": "После действия открывать следующее письмо"
+    },
+    "opt_autoAdvanceText": {
+        "message": "Когда вы архивируете, удаляете или отмечаете прочитанным открытое письмо, открывается следующее, а не список."
+    },
+    "opt_countChip": {
+        "message": "В счётчике"
+    },
+    "opt_countHint": {
+        "message": "Ящик вне счётчика остаётся в панели и присылает уведомления, но не добавляется к числу на значке."
+    },
+    "opt_badgeCount": {
+        "message": "Счётчик показывает"
+    },
+    "opt_badgeAll": {
+        "message": "Все непрочитанные"
+    },
+    "opt_badgeNew": {
+        "message": "Письма с последнего открытия панели"
+    },
+    "opt_badgeCountText": {
+        "message": "Открытие панели сбрасывает его до нуля. Сама панель по-прежнему показывает все непрочитанные."
+    },
+    "opt_repeat": {
+        "message": "Как часто повторять уведомление"
+    },
+    "opt_repeatOff": {
+        "message": "Не повторять"
+    },
+    "opt_repeatText": {
+        "message": "Оно возвращается вместе со звуком, пока вы не прочитаете, не заархивируете или не удалите письмо. Тихие часы действуют."
     }
 }

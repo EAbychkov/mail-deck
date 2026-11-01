@@ -291,7 +291,7 @@
         "message": "Text de la notificació"
     },
     "opt_formatText": {
-        "message": "Fes servir [author_name], [author_email], [title], [summary] i [break] per a un salt de línia."
+        "message": "Fes servir [author_name], [author_email], [title], [summary], [account] per a la bústia on ha arribat el correu i [break] per a un salt de línia."
     },
     "opt_truncate": {
         "message": "Escurça l’assumpte i el text a"
@@ -1589,5 +1589,56 @@
     },
     "opt_serviceAccess": {
         "message": "Torna’l a activar per donar-li accés."
+    },
+    "panel_copyCode": {
+        "message": "Copia el codi"
+    },
+    "panel_copyCodeFailed": {
+        "message": "No s'ha pogut copiar el codi"
+    },
+    "panel_keyNext": {
+        "message": "següent"
+    },
+    "panel_keyPrev": {
+        "message": "anterior"
+    },
+    "panel_nextMessage": {
+        "message": "Missatge següent"
+    },
+    "panel_prevMessage": {
+        "message": "Missatge anterior"
+    },
+    "opt_autoAdvance": {
+        "message": "Obre el missatge següent després d’una acció"
+    },
+    "opt_autoAdvanceText": {
+        "message": "Quan arxives, suprimeixes o marques com a llegit un missatge obert, s’obre el següent en lloc de la llista."
+    },
+    "opt_countChip": {
+        "message": "Al comptador"
+    },
+    "opt_countHint": {
+        "message": "Una bústia fora del comptador continua al tauler i avisa, però no suma al número de la icona de la barra."
+    },
+    "opt_badgeCount": {
+        "message": "El comptador mostra"
+    },
+    "opt_badgeAll": {
+        "message": "Tot el correu no llegit"
+    },
+    "opt_badgeNew": {
+        "message": "El correu des de l’última vegada que vas obrir el tauler"
+    },
+    "opt_badgeCountText": {
+        "message": "Obrir el tauler el posa a zero. El tauler continua mostrant tot el correu no llegit."
+    },
+    "opt_repeat": {
+        "message": "Repeteix la notificació cada"
+    },
+    "opt_repeatOff": {
+        "message": "No la repeteixis"
+    },
+    "opt_repeatText": {
+        "message": "Torna, amb el so, fins que llegeixis, arxivis o suprimeixis el correu. Les hores de silenci continuen valent."
     }
 }

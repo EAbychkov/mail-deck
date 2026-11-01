@@ -291,7 +291,7 @@
         "message": "Bildirim metni"
     },
     "opt_formatText": {
-        "message": "Yeni satır için [author_name], [author_email], [title], [summary] ve [break] kullanın."
+        "message": "[author_name], [author_email], [title], [summary], postanın geldiği kutu için [account] ve yeni satır için [break] kullanın."
     },
     "opt_truncate": {
         "message": "Konuyu ve metni kısalt"
@@ -1585,5 +1585,56 @@
     },
     "opt_serviceAccess": {
         "message": "Erişim vermek için yeniden etkinleştirin."
+    },
+    "panel_copyCode": {
+        "message": "Kodu kopyala"
+    },
+    "panel_copyCodeFailed": {
+        "message": "Kod kopyalanamadı"
+    },
+    "panel_keyNext": {
+        "message": "sonraki"
+    },
+    "panel_keyPrev": {
+        "message": "önceki"
+    },
+    "panel_nextMessage": {
+        "message": "Sonraki ileti"
+    },
+    "panel_prevMessage": {
+        "message": "Önceki ileti"
+    },
+    "opt_autoAdvance": {
+        "message": "Bir işlemden sonra sonraki iletiyi aç"
+    },
+    "opt_autoAdvanceText": {
+        "message": "Açık bir iletiyi arşivlediğinizde, sildiğinizde veya okundu olarak işaretlediğinizde liste yerine sonraki ileti açılır."
+    },
+    "opt_countChip": {
+        "message": "Sayaçta"
+    },
+    "opt_countHint": {
+        "message": "Sayaç dışında bırakılan bir kutu panelde görünmeye ve bildirim göndermeye devam eder ama simgedeki sayıya eklenmez."
+    },
+    "opt_badgeCount": {
+        "message": "Sayaç şunu gösterir"
+    },
+    "opt_badgeAll": {
+        "message": "Tüm okunmamış postalar"
+    },
+    "opt_badgeNew": {
+        "message": "Panelin son açılışından beri gelen postalar"
+    },
+    "opt_badgeCountText": {
+        "message": "Paneli açmak sayacı sıfırlar. Panelin kendisi tüm okunmamış postaları göstermeye devam eder."
+    },
+    "opt_repeat": {
+        "message": "Bildirimi yineleme sıklığı"
+    },
+    "opt_repeatOff": {
+        "message": "Kapalı"
+    },
+    "opt_repeatText": {
+        "message": "Postayı okuyana, arşivleyene veya silene kadar sesiyle birlikte geri gelir. Sessiz saatler yine geçerlidir."
     }
 }

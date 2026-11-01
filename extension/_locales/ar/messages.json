@@ -291,7 +291,7 @@
         "message": "نص الإشعار"
     },
     "opt_formatText": {
-        "message": "استخدم [author_name] و[author_email] و[title] و[summary] و[break] لسطر جديد."
+        "message": "استخدم [author_name] و[author_email] و[title] و[summary]، و[account] لصندوق البريد الذي وصلت إليه الرسالة، و[break] لسطر جديد."
     },
     "opt_truncate": {
         "message": "اختصار الموضوع والنص إلى"
@@ -1585,5 +1585,56 @@
     },
     "opt_serviceAccess": {
         "message": "فعّلها مرة أخرى لمنحها حق الوصول."
+    },
+    "panel_copyCode": {
+        "message": "نسخ رمز التحقق"
+    },
+    "panel_copyCodeFailed": {
+        "message": "تعذّر نسخ رمز التحقق"
+    },
+    "panel_keyNext": {
+        "message": "التالية"
+    },
+    "panel_keyPrev": {
+        "message": "السابقة"
+    },
+    "panel_nextMessage": {
+        "message": "الرسالة التالية"
+    },
+    "panel_prevMessage": {
+        "message": "الرسالة السابقة"
+    },
+    "opt_autoAdvance": {
+        "message": "فتح الرسالة التالية بعد أي إجراء"
+    },
+    "opt_autoAdvanceText": {
+        "message": "بعد أرشفة رسالة مفتوحة أو حذفها أو وضع علامة عليها كمقروءة، تُفتح الرسالة التالية بدلًا من القائمة."
+    },
+    "opt_countChip": {
+        "message": "ضمن العدّاد"
+    },
+    "opt_countHint": {
+        "message": "يبقى صندوق البريد المستبعد من العدّاد ظاهرًا في اللوحة ويُرسل الإشعارات، لكنه لا يُضاف إلى الرقم على رمز شريط الأدوات."
+    },
+    "opt_badgeCount": {
+        "message": "يعرض العدّاد"
+    },
+    "opt_badgeAll": {
+        "message": "كل البريد غير المقروء"
+    },
+    "opt_badgeNew": {
+        "message": "البريد منذ آخر فتح للوحة"
+    },
+    "opt_badgeCountText": {
+        "message": "فتح اللوحة يعيده إلى الصفر. وتبقى اللوحة نفسها تعرض كل البريد غير المقروء."
+    },
+    "opt_repeat": {
+        "message": "تكرار الإشعار كل"
+    },
+    "opt_repeatOff": {
+        "message": "بلا تكرار"
+    },
+    "opt_repeatText": {
+        "message": "يعود الإشعار مع صوته حتى تقرأ الرسالة أو تؤرشفها أو تحذفها. تبقى ساعات الهدوء سارية."
     }
 }

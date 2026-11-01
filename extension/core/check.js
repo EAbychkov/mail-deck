@@ -61,6 +61,21 @@ if (typeof importScripts !== 'undefined') {
 
   const read = (prefs, type = 'local') => chrome.storage[type].get(prefs);
 
+  // what the number on the toolbar icon counts: the inboxes switched on and not left out of the count
+  const counted = o => o.meta?.ignored !== true && o.meta?.uncounted !== true;
+  // the number on the icon: every unread mail, or with "badge.count" at "new" only the mail that came
+  // after the panel was last opened (a feed lists 20 mails at most, plenty for "new")
+  const shown = async (objs, count) => {
+    const prefs = await read({
+      'badge.count': 'all',
+      'badge.seen': 0
+    });
+    if (prefs['badge.count'] !== 'new') {
+      return count;
+    }
+    return objs.filter(counted).reduce((p, o) => p + o.xml.entries.filter(e => helper.time(e.modified) > prefs['badge.seen']).length, 0);
+  };
+
   const notify = async (text, title, click = {}, buttons = []) => {
     title = title || chrome.i18n.getMessage('gmail');
 
@@ -186,6 +201,52 @@ if (typeof importScripts !== 'undefined') {
       chrome.notifications.clear(id);
       chrome.storage.session.remove(id);
     }
+  });
+  /*
+   * A notification the settings repeat ("notify.repeat", minutes) comes back with its sound
+   * while some of its mail is unread: not read, archived, deleted, put off or gone from the
+   * feed. Quiet hours hold it back without ending it; switching it or notifications off ends it.
+   */
+  chrome.alarms.onAlarm.addListener(async o => {
+    if (o.name !== 'repeat.notify') {
+      return;
+    }
+    const {'repeat.report': r} = await read({
+      'repeat.report': null
+    }, 'session');
+    const prefs = await read({
+      'notify.repeat': 0,
+      'notification': true,
+      'alert': true,
+      'quiet.hours': false,
+      'quiet.from': '22:00',
+      'quiet.to': '08:00',
+      'quiet.weekend': false
+    });
+    const stop = () => chrome.storage.session.remove('repeat.report');
+    if (!r || !(prefs['notify.repeat'] > 0) || !prefs.notification) {
+      return stop();
+    }
+    const listed = new Map((await self.checkEmails.visible())
+      .filter(c => c.meta?.ignored !== true && c.meta?.quiet !== true)
+      .flatMap(c => c.xml.entries).map(e => [e.link, e]));
+    const keep = r.links.map((link, i) => i).filter(i => listed.has(r.links[i]));
+    if (keep.length === 0) {
+      return stop();
+    }
+    if (Quiet.hours(prefs) === false) {
+      // a combined notification is one text for all its mail
+      const pick = list => list.length === r.links.length ? keep.map(i => list[i]) : list;
+      const links = keep.map(i => r.links[i]);
+      await notify(pick(r.text), r.title, {...r.click, links: pick(r.click.links)},
+        r.buttons.map(b => ({...b, action: {...b.action, links}})));
+      if (prefs.alert) {
+        sound.play(links.map(link => listed.get(link))).catch(e => toast(e.message));
+      }
+    }
+    chrome.alarms.create('repeat.notify', {
+      when: Date.now() + prefs['notify.repeat'] * 60000
+    });
   });
   if (chrome.notifications.onButtonClicked) {
     chrome.notifications.onButtonClicked.addListener((id, index) => {
@@ -315,12 +376,14 @@ if (typeof importScripts !== 'undefined') {
   self.checkEmails.publish = async objs => {
     loading = false;
     const active = objs.filter(c => c.meta?.ignored !== true);
-    const count = active.reduce((p, c) => p + c.xml.fullcount, 0);
+    const count = objs.filter(counted).reduce((p, c) => p + c.xml.fullcount, 0);
+    // read before anything is drawn, so two publishes in a row draw in their order
+    const badge = count ? await shown(objs, count) : 0;
 
     chrome.storage.session.set({count});
     if (count) {
       button.icon = 'red';
-      button.badge = count;
+      button.badge = badge;
     }
     else {
       button.icon = 'gray';
@@ -349,6 +412,22 @@ if (typeof importScripts !== 'undefined') {
   // Apply the resolved entries to the cached accounts and publish the result,
   // so the panel and the badge do not wait for the next check
   self.checkEmails.refresh = async () => self.checkEmails.publish(await self.checkEmails.visible());
+  // opening the panel, or switching what the count shows, draws the number again; switching to
+  // "new" counts from now on
+  chrome.storage.onChanged.addListener(async (ps, area) => {
+    if (area !== 'local' || !(ps['badge.seen'] || ps['badge.count'])) {
+      return;
+    }
+    if (ps['badge.count']?.newValue === 'new' && !ps['badge.seen']) {
+      // its own change draws the number
+      chrome.storage.local.set({'badge.seen': Date.now()});
+      return;
+    }
+    // signed out: the blue icon stays
+    if ((await self.checkEmails.getCached()).length) {
+      self.checkEmails.refresh();
+    }
+  });
   /*
    * Opening a mail marks it as read in Gmail, so it has to leave the panel and
    * the badge. The feed cannot report it yet, therefore the link is stored like
@@ -455,6 +534,7 @@ if (typeof importScripts !== 'undefined') {
       'notificationFormat': chrome.i18n.getMessage('notification'),
       'notify.never': '',
       'notify.only': '',
+      'notify.repeat': 0, // minutes; 0: a notification is not repeated
       'quiet.hours': false,
       'quiet.from': '22:00',
       'quiet.to': '08:00',
@@ -653,7 +733,7 @@ if (typeof importScripts !== 'undefined') {
       const anyNewEmails = cachedObjs.filter(c => c.meta.ignored !== true).some(c => c.newIDs.length !== 0);
       let newCount = 0;
       for (const obj of cachedObjs) {
-        if (obj.meta.ignored === true) {
+        if (!counted(obj)) {
           continue;
         }
         newCount += obj.xml.fullcount;
@@ -729,12 +809,19 @@ if (typeof importScripts !== 'undefined') {
         return (new Date(b.modified)).getTime() - (new Date(a.modified)).getTime();
       });
       reportArray.splice(prefs.maxReport, reportArray.length);
+      // the inbox each mail came to: [account] in the text, and the title of a notification
+      // about one inbox
+      const inboxOf = e => parents.get(e)?.xml.title || '';
+      const inboxes = [...new Set(reportArray.map(inboxOf))];
+      const inboxTitle = inboxes.length === 1 ? inboxes[0] : '';
 
       let report = reportArray.map(e => prefs.notificationFormat
         .replace('[author_name]', e.author_name)
         .replace('[author_email]', e.author_email)
         .replace('[summary]', shorten(e.summary, prefs.notificationTruncate))
         .replace('[title]', shorten(e.title, prefs.notificationTruncate))
+        // a function, so a $ in the address is taken as it is
+        .replace('[account]', () => inboxOf(e))
         .replace(/\[break\]/g, '\n'));
       if (prefs.combined) {
         report = [report.join('\n\n')];
@@ -754,8 +841,10 @@ if (typeof importScripts !== 'undefined') {
       }
       else {
         loading = false;
-        button.icon = 'new';
-        button.badge = newCount;
+        // new mail only in inboxes left out of the count: the icon does not blink for it
+        button.icon = cachedObjs.some(c => counted(c) && c.newIDs.length) ? 'new' : newCount ? 'red' : 'gray';
+        // not awaited: from the commit above to the notification nothing may wait
+        shown(cachedObjs, newCount).then(n => button.badge = n);
         chrome.storage.session.set({count: newCount});
         const singleAccount = prefs.oldFashion === 1 ?
           cachedObjs.filter(c => c.meta.ignored !== true)
@@ -831,10 +920,29 @@ if (typeof importScripts !== 'undefined') {
               links.push(o.link);
             }
           }
-          notify(report, '', {
+          notify(report, inboxTitle, {
             cmd: 'open',
             links
           }, buttons.slice(0, 2));
+          // the same notification comes back every few minutes while its mail stays unread
+          if (prefs['notify.repeat'] > 0) {
+            chrome.storage.session.set({
+              'repeat.report': {
+                links: reportArray.map(e => e.link),
+                text: report,
+                title: inboxTitle,
+                click: {cmd: 'open', links},
+                buttons: buttons.slice(0, 2)
+              }
+            });
+            chrome.alarms.create('repeat.notify', {
+              when: Date.now() + prefs['notify.repeat'] * 60000
+            });
+          }
+          else {
+            chrome.alarms.clear('repeat.notify');
+            chrome.storage.session.remove('repeat.report');
+          }
         }
         if (prefs.alert && !hushed) {
           // new entries only, each once

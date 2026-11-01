@@ -82,6 +82,7 @@
       </div>
       <p class="hint" data-i18n="offHint">A switched-off inbox leaves the panel, the badge and notifications.</p>
       <p class="hint" data-i18n="quietHint">An inbox without notifications still shows in the panel and the count, but makes no noise.</p>
+      <p class="hint adv" data-i18n="countHint">An inbox left out of the count still shows in the panel and still notifies, but adds nothing to the number on the toolbar icon.</p>
       <p class="hint adv"><span data-i18n="labelsHint">Labels: watch these Gmail labels instead of the inbox, separated by commas, for example:</span> <i>inbox, important</i></p>
       <p class="hint adv" data-i18n="primaryHint">Primary tab only reads a Gmail feed that Google does not document, so it can stop working.</p>
     </section>
@@ -110,6 +111,16 @@
             <option value="20" data-i18n="sec20">20 seconds</option>
             <option value="30" data-i18n="sec30">30 seconds</option>
             <option value="60" data-i18n="min1">1 minute</option>
+          </select>
+        </label>
+        <label class="row adv" data-needs="notification">
+          <span class="text"><b data-i18n="repeat">Repeat the notification every</b><small data-i18n="repeatText">It comes back, with its sound, until you read, archive or delete the mail. Quiet hours still apply.</small></span>
+          <select data-key="notify.repeat" data-type="number">
+            <option value="0" data-i18n="repeatOff">Don’t repeat</option>
+            <option value="5" data-i18n="min5">5 minutes</option>
+            <option value="15" data-i18n="min15">15 minutes</option>
+            <option value="30" data-i18n="min30">30 minutes</option>
+            <option value="60" data-i18n="hour1">1 hour</option>
           </select>
         </label>
         <label class="row">
@@ -240,6 +251,13 @@
           <span class="text"><b data-i18n="minimal">Shorten counts over 999</b><small data-i18n="minimalText">Shows &gt;1K instead of the exact number.</small></span>
           <input type="checkbox" role="switch" data-key="minimal">
         </label>
+        <label class="row adv" data-needs="badge">
+          <span class="text"><b data-i18n="badgeCount">The count shows</b><small data-i18n="badgeCountText">Opening the panel sets it back to zero. The panel itself still lists all unread mail.</small></span>
+          <select data-key="badge.count">
+            <option value="all" data-i18n="badgeAll">All unread mail</option>
+            <option value="new" data-i18n="badgeNew">Mail since the panel was last opened</option>
+          </select>
+        </label>
         <label class="row adv">
           <span class="text"><b data-i18n="clickIcon">Clicking the icon</b></span>
           <select data-key="oldFashion" data-type="number">
@@ -270,6 +288,10 @@
         <label class="row">
           <span class="text"><b data-i18n="readOnOpen">Mark as read when opened in the panel</b><small data-i18n="readOnOpenText">Otherwise mail stays unread until you act on it.</small></span>
           <input type="checkbox" role="switch" data-key="readOnOpen">
+        </label>
+        <label class="row adv">
+          <span class="text"><b data-i18n="autoAdvance">Open the next message after an action</b><small data-i18n="autoAdvanceText">After you archive, delete or mark an open message as read, the next one opens instead of the list.</small></span>
+          <input type="checkbox" role="switch" data-key="autoAdvance">
         </label>
         <label class="row">
           <span class="text"><b data-i18n="senderLogos">Show sender logos</b><small data-i18n="senderLogosText">Logos of Gmail senders come from Google's icon service, which is sent the sender's domain.</small></span>

@@ -288,7 +288,7 @@
     "message": "Notification text"
   },
   "opt_formatText": {
-    "message": "Use [author_name], [author_email], [title], [summary] and [break] for a new line."
+    "message": "Use [author_name], [author_email], [title], [summary], [account] for the inbox it came to, and [break] for a new line."
   },
   "opt_truncate": {
     "message": "Shorten the subject and text to"
@@ -1447,5 +1447,56 @@
   },
   "opt_serviceAccess": {
     "message": "Turn it on again to give it access."
+  },
+  "panel_copyCode": {
+    "message": "Copy code"
+  },
+  "panel_copyCodeFailed": {
+    "message": "Could not copy the code"
+  },
+  "panel_keyNext": {
+    "message": "next"
+  },
+  "panel_keyPrev": {
+    "message": "previous"
+  },
+  "panel_nextMessage": {
+    "message": "Next message"
+  },
+  "panel_prevMessage": {
+    "message": "Previous message"
+  },
+  "opt_autoAdvance": {
+    "message": "Open the next message after an action"
+  },
+  "opt_autoAdvanceText": {
+    "message": "After you archive, delete or mark an open message as read, the next one opens instead of the list."
+  },
+  "opt_countChip": {
+    "message": "In the count"
+  },
+  "opt_countHint": {
+    "message": "An inbox left out of the count still shows in the panel and still notifies, but adds nothing to the number on the toolbar icon."
+  },
+  "opt_badgeCount": {
+    "message": "The count shows"
+  },
+  "opt_badgeAll": {
+    "message": "All unread mail"
+  },
+  "opt_badgeNew": {
+    "message": "Mail since the panel was last opened"
+  },
+  "opt_badgeCountText": {
+    "message": "Opening the panel sets it back to zero. The panel itself still lists all unread mail."
+  },
+  "opt_repeat": {
+    "message": "Repeat the notification every"
+  },
+  "opt_repeatOff": {
+    "message": "Don’t repeat"
+  },
+  "opt_repeatText": {
+    "message": "It comes back, with its sound, until you read, archive or delete the mail. Quiet hours still apply."
   }
 }

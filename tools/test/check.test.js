@@ -175,10 +175,20 @@ const boot = ({mail = {}, local = {}, session = {}, online} = {}) => {
       return Promise.resolve();
     }
   });
-  const out = {local, session, told: [], sounds: [], messages: [], opened: [], toasts: [], requests: 0, offline: false};
+  const out = {local, session, told: [], sounds: [], messages: [], opened: [], toasts: [], requests: 0, offline: false,
+    badges: [], icons: [], alarms: {}, alarmFns: [], changeFns: []};
   const chrome = new Proxy({}, {get: (t, k) => {
     if (k === 'storage') {
-      return {session: area(session), local: area(local), onChanged: {addListener() {}}};
+      return {session: area(session), local: area(local), onChanged: {addListener: fn => out.changeFns.push(fn)}};
+    }
+    // kept, never fired by themselves: out.fire() rings one
+    if (k === 'alarms') {
+      return {
+        create: (name, o) => out.alarms[name] = o,
+        clear: name => Promise.resolve(delete out.alarms[name]),
+        get: async name => out.alarms[name],
+        onAlarm: {addListener: fn => out.alarmFns.push(fn)}
+      };
     }
     if (k === 'i18n') {
       return {getMessage: k => k === 'notification' ? '[title]' : 'x'};
@@ -220,7 +230,11 @@ const boot = ({mail = {}, local = {}, session = {}, online} = {}) => {
   ctx.importScripts = (...files) => files.forEach(p => vm.runInContext(fs.readFileSync(EXT + p, 'utf8'), ctx, {filename: p}));
   vm.createContext(ctx);
   vm.runInContext(fs.readFileSync(EXT + '/core/utils/log.js', 'utf8'), ctx);
-  vm.runInContext(`var button = new Proxy({}, {set: () => true, get: () => () => {}});
+  vm.runInContext(`var button = new Proxy({}, {set: (t, k, v) => {
+      if (k === 'badge') out.badges.push(v);
+      if (k === 'icon') out.icons.push(v);
+      return true;
+    }, get: () => () => {}});
     var context = {accounts() {}}; var repeater = {reset() {}};
     var sound = {play: e => (out.sounds.push(e.length), Promise.resolve()), stop() {}};
     var offscreen = {}; var toast = m => out.toasts.push(m); self.openLink = l => out.opened.push(l);`, ctx);
@@ -231,6 +245,9 @@ const boot = ({mail = {}, local = {}, session = {}, online} = {}) => {
   out.Remind = vm.runInContext('Remind', ctx);
   // a notification is made a moment after the check, once its settings are read
   out.run = (forced = false) => ctx.checkEmails.execute(forced).then(() => wait(20));
+  // an alarm rings, a stored setting changes (Chrome tells every listener of the area)
+  out.fire = name => Promise.all(out.alarmFns.map(fn => fn({name}))).then(() => wait(20));
+  out.change = (ps, where = 'local') => Promise.all(out.changeFns.map(fn => fn(ps, where))).then(() => wait(20));
   // the entries of the last 'update' the panel was sent, all mailboxes together
   out.panel = () => {
     const m = out.messages.filter(m => m.method === 'update').at(-1);
@@ -340,6 +357,127 @@ tests.push(
     const b = boot({mail: {'0': [{id: 'a', age: 1}]}});
     await Promise.all([b.run(), b.run()]);
     assert.deepStrictEqual([b.told.length, b.sounds], [1, [1]]);
+  }]
+);
+
+tests.push(
+  // the inbox a notification is about
+  ['a notification about one inbox is titled with its address; [account] fills in', async () => {
+    const b = boot({mail: {'0': [{id: 'a'}]}, local: {notificationFormat: '[account]|[author_email]'}});
+    await b.run();
+    assert.strictEqual(b.told.length, 1);
+    assert.strictEqual(b.told[0].title, 'user0@gmail.com');
+    assert.strictEqual(b.told[0].message, 'user0@gmail.com|a@x.com');
+  }],
+  ['a notification about several inboxes keeps the extension\'s name', async () => {
+    const b = boot({mail: {'0': [{id: 'a'}], '1': [{id: 'b'}]}, local: {notificationFormat: '[account]'}});
+    await b.run();
+    assert.strictEqual(b.told.length, 1);
+    assert.strictEqual(b.told[0].title, 'x');
+    assert.deepStrictEqual([...b.told[0].items.map(i => i.message)].sort(), users(0, 1));
+  }],
+  // an inbox left out of the count
+  ['an inbox left out of the count stays in the panel but leaves the badge', async () => {
+    const b = boot({mail: {'0': [{id: 'a', age: 60}], '1': [{id: 'b', age: 60}]}, local: {accounts: {'user1@gmail.com': {uncounted: true}}}});
+    await b.run();
+    assert.deepStrictEqual([b.session.count, b.badges.at(-1), b.panel()], [1, 1, 2]);
+    await b.ctx.checkEmails.refresh();
+    assert.deepStrictEqual([b.session.count, b.badges.at(-1)], [1, 1]);
+  }],
+  ['by default every inbox counts', async () => {
+    const b = boot({mail: {'0': [{id: 'a', age: 60}], '1': [{id: 'b', age: 60}]}});
+    await b.run();
+    assert.deepStrictEqual([b.session.count, b.badges.at(-1)], [2, 2]);
+  }],
+  ['new mail of an inbox out of the count is told, and the icon does not blink for it', async () => {
+    const b = boot({mail: {'0': [{id: 'a', age: 60}], '1': [{id: 'b', age: 1}]}, local: {accounts: {'user1@gmail.com': {uncounted: true}}}});
+    await b.run();
+    assert.strictEqual(b.told.length, 1);
+    assert.deepStrictEqual([b.icons.at(-1), b.badges.at(-1)], ['red', 1]);
+  }],
+  // the count of the mail since the panel was last opened
+  ['"new" counts only the mail since the panel was last opened; the true total stays', async () => {
+    const mail = {'0': [{id: 'a', age: 60}, {id: 'b', age: 60}]};
+    const b = boot({mail, local: {'badge.count': 'new', 'badge.seen': Date.now() - 30 * 60000}});
+    await b.run();
+    assert.deepStrictEqual([b.session.count, b.badges.at(-1), b.icons.at(-1)], [2, 0, 'red']);
+    mail['0'].push({id: 'c', age: 1});
+    await b.run();
+    assert.deepStrictEqual([b.session.count, b.badges.at(-1)], [3, 1]);
+  }],
+  ['opening the panel draws the number again', async () => {
+    const b = boot({mail: {'0': [{id: 'a', age: 60}]}, local: {'badge.count': 'new', 'badge.seen': Date.now() - 90 * 60000}});
+    await b.run();
+    assert.strictEqual(b.badges.at(-1), 1);
+    b.local['badge.seen'] = Date.now();
+    await b.change({'badge.seen': {newValue: b.local['badge.seen']}});
+    assert.deepStrictEqual([b.badges.at(-1), b.session.count], [0, 1]);
+  }],
+  ['switching the count to "new" counts from now on', async () => {
+    const b = boot({mail: {'0': [{id: 'a', age: 60}]}});
+    await b.run();
+    assert.strictEqual(b.badges.at(-1), 1);
+    b.local['badge.count'] = 'new';
+    await b.change({'badge.count': {newValue: 'new'}});
+    assert.ok(Math.abs(b.local['badge.seen'] - Date.now()) < 5000);
+    await b.change({'badge.seen': {newValue: b.local['badge.seen']}});
+    assert.strictEqual(b.badges.at(-1), 0);
+  }],
+  // a notification repeated while its mail is unread
+  ['a repeated notification comes back, with its sound, while its mail is unread', async () => {
+    const b = boot({mail: {'0': [{id: 'a'}]}, local: {'notify.repeat': 5}});
+    await b.run();
+    assert.strictEqual(b.told.length, 1);
+    assert.ok(b.alarms['repeat.notify'].when > Date.now() + 4 * 60000);
+    delete b.alarms['repeat.notify'];
+    await b.fire('repeat.notify');
+    assert.strictEqual(b.told.length, 2);
+    assert.strictEqual(b.told[1].title, 'user0@gmail.com');
+    assert.deepStrictEqual(b.sounds, [1, 1]);
+    assert.ok(b.alarms['repeat.notify'].when > Date.now() + 4 * 60000, 'and comes back again');
+  }],
+  ['a repeat ends once its mail is read', async () => {
+    const b = boot({mail: {'0': [{id: 'a'}]}, local: {'notify.repeat': 5}});
+    await b.run();
+    await b.Resolved.record([linkOf(0, 'a')], 60000);
+    delete b.alarms['repeat.notify'];
+    await b.fire('repeat.notify');
+    assert.strictEqual(b.told.length, 1);
+    assert.ok(!('repeat.report' in b.session) && !b.alarms['repeat.notify']);
+  }],
+  ['a repeat ends once Gmail no longer lists the mail', async () => {
+    const mail = {'0': [{id: 'a'}]};
+    const b = boot({mail, local: {'notify.repeat': 5}});
+    await b.run();
+    mail['0'] = [];
+    await b.run();
+    delete b.alarms['repeat.notify'];
+    await b.fire('repeat.notify');
+    assert.strictEqual(b.told.length, 1);
+    assert.ok(!('repeat.report' in b.session) && !b.alarms['repeat.notify']);
+  }],
+  ['quiet hours hold a repeat back without ending it', async () => {
+    const b = boot({mail: {'0': [{id: 'a'}]}, local: {'notify.repeat': 5}});
+    await b.run();
+    // a window around the present hour, whatever the time of day (it may cross midnight)
+    const hh = n => String((new Date().getHours() + n + 24) % 24).padStart(2, '0') + ':00';
+    Object.assign(b.local, {'quiet.hours': true, 'quiet.from': hh(-1), 'quiet.to': hh(2)});
+    delete b.alarms['repeat.notify'];
+    await b.fire('repeat.notify');
+    assert.deepStrictEqual([b.told.length, b.sounds], [1, [1]]);
+    assert.ok(b.alarms['repeat.notify'] && b.session['repeat.report']);
+  }],
+  ['a notification is not repeated by default, nor once repeating is switched off', async () => {
+    const b = boot({mail: {'0': [{id: 'a'}]}});
+    await b.run();
+    assert.strictEqual(b.told.length, 1);
+    assert.ok(!b.alarms['repeat.notify'] && !('repeat.report' in b.session));
+    const on = boot({mail: {'0': [{id: 'a'}]}, local: {'notify.repeat': 5}});
+    await on.run();
+    on.local['notify.repeat'] = 0;
+    await on.fire('repeat.notify');
+    assert.strictEqual(on.told.length, 1);
+    assert.ok(!('repeat.report' in on.session));
   }]
 );
 

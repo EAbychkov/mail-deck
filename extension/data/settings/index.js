@@ -44,8 +44,14 @@ const DEFAULTS = {
   'quiet.weekend': false,
   'notify.never': '',
   'notify.only': '',
+  // minutes between repeats of a notification whose mail stays unread; 0: no repeat
+  'notify.repeat': 0,
+  // what the toolbar count shows: all unread mail, or the mail since the panel was last opened
+  'badge.count': 'all',
   'panelScale': 1,
   'readOnOpen': false,
+  // an action in an open message opens the next one instead of the list
+  'autoAdvance': false,
   'senderLogos': true,
   // the other mail services turned on (core/services/)
   'services': [],
@@ -87,7 +93,9 @@ const VALID = {
   'quiet.to': TIME,
   'notificationFormat': upTo(2000),
   'notify.never': upTo(20000),
-  'notify.only': upTo(20000)
+  'notify.only': upTo(20000),
+  'notify.repeat': oneOf(0, 5, 15, 30, 60), // minutes
+  'badge.count': oneOf('all', 'new')
 };
 for (const m of MEDIA.slice(1)) {
   VALID[m + '.selector'] = oneOf(0, 1, 2);
@@ -331,6 +339,7 @@ const followAccounts = accounts => {
   for (const [name, row] of accountRows) {
     row.toggle.checked = accounts[name]?.ignored !== true;
     row.notify.checked = accounts[name]?.quiet !== true;
+    row.count.checked = accounts[name]?.uncounted !== true;
     row.paintShown();
   }
 };
@@ -359,6 +368,8 @@ const paintAccounts = async () => {
     toggle.setAttribute('aria-label', t('showInbox', name));
     // a quiet inbox stays in the panel and the badge, without notifications or sound
     const notify = chip(t('notifyChip'), accounts[name].quiet !== true, ev => update({quiet: !ev.target.checked}));
+    // an inbox out of the count stays in the panel and notifies; the number on the toolbar icon leaves it out
+    const count = chip(t('countChip'), accounts[name].uncounted !== true, ev => update({uncounted: !ev.target.checked}), 'adv');
     const n = slot[name];
     let primary = null;
     let labels = null;
@@ -376,7 +387,7 @@ const paintAccounts = async () => {
       }, 'adv');
       labels.classList.add('adv');
     }
-    const options = h('span', {className: 'options'}, h('span', {className: 'chips'}, notify, primary), labels);
+    const options = h('span', {className: 'options'}, h('span', {className: 'chips'}, notify, count, primary), labels);
     const paintShown = () => {
       options.classList.toggle('off', !toggle.checked);
       options.querySelectorAll('input').forEach(el => el.disabled = !toggle.checked);
@@ -386,7 +397,7 @@ const paintAccounts = async () => {
       update({ignored: !toggle.checked});
     };
     paintShown();
-    accountRows.set(name, {toggle, notify: notify.firstChild, paintShown});
+    accountRows.set(name, {toggle, notify: notify.firstChild, count: count.firstChild, paintShown});
     const service = self.MailServices?.[accounts[name].service];
     return h('div', {className: 'row'},
       h('span', {className: 'face', textContent: name[0].toUpperCase()}),
@@ -506,6 +517,8 @@ const sanitize = data => {
         quiet: o?.quiet === true,
         // an address hidden from the panel's signed-out list stays hidden
         ...(o?.signedOutHidden === true ? {signedOutHidden: true} : {}),
+        // an inbox left out of the toolbar count stays out of it
+        ...(o?.uncounted === true ? {uncounted: true} : {}),
         ...(self.MailServices?.[o?.service] ? {service: o.service} : {})
       }]));
     }

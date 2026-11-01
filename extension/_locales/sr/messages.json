@@ -291,7 +291,7 @@
         "message": "Текст обавештења"
     },
     "opt_formatText": {
-        "message": "Користите [author_name], [author_email], [title], [summary] и [break] за нови ред."
+        "message": "Користите [author_name], [author_email], [title], [summary], [account] за сандуче у које је порука стигла и [break] за нови ред."
     },
     "opt_truncate": {
         "message": "Скрати тему и текст на"
@@ -1589,5 +1589,56 @@
     },
     "opt_serviceAccess": {
         "message": "Укључите је поново да бисте јој дали приступ."
+    },
+    "panel_copyCode": {
+        "message": "Копирај код"
+    },
+    "panel_copyCodeFailed": {
+        "message": "Копирање кода није успело"
+    },
+    "panel_keyNext": {
+        "message": "следећа"
+    },
+    "panel_keyPrev": {
+        "message": "претходна"
+    },
+    "panel_nextMessage": {
+        "message": "Следећа порука"
+    },
+    "panel_prevMessage": {
+        "message": "Претходна порука"
+    },
+    "opt_autoAdvance": {
+        "message": "После радње отвори следећу поруку"
+    },
+    "opt_autoAdvanceText": {
+        "message": "Када архивирате, избришете или означите као прочитану отворену поруку, уместо листе отвара се следећа."
+    },
+    "opt_countChip": {
+        "message": "У бројачу"
+    },
+    "opt_countHint": {
+        "message": "Сандуче ван бројача и даље се види у панелу и шаље обавештења, али се не додаје броју на икони."
+    },
+    "opt_badgeCount": {
+        "message": "Бројач приказује"
+    },
+    "opt_badgeAll": {
+        "message": "Сву непрочитану пошту"
+    },
+    "opt_badgeNew": {
+        "message": "Пошту од последњег отварања панела"
+    },
+    "opt_badgeCountText": {
+        "message": "Отварање панела га враћа на нулу. Сам панел и даље приказује сву непрочитану пошту."
+    },
+    "opt_repeat": {
+        "message": "Колико често понављати обавештење"
+    },
+    "opt_repeatOff": {
+        "message": "Не понављај"
+    },
+    "opt_repeatText": {
+        "message": "Враћа се са звуком док не прочитате, архивирате или избришете поруку. Тихи сати и даље важе."
     }
 }

@@ -291,7 +291,7 @@
     "message": "Értesítés szövege"
   },
   "opt_formatText": {
-    "message": "Használd ezeket: [author_name], [author_email], [title], [summary], új sorhoz [break]."
+    "message": "Használd ezeket: [author_name], [author_email], [title], [summary], a postafiókhoz, ahová a levél érkezett, [account], új sorhoz [break]."
   },
   "opt_truncate": {
     "message": "Tárgy és szöveg rövidítése erre"
@@ -1405,5 +1405,56 @@
   },
   "opt_serviceAccess": {
     "message": "Kapcsold be újra, hogy hozzáférést kapjon."
+  },
+  "panel_copyCode": {
+    "message": "Kód másolása"
+  },
+  "panel_copyCodeFailed": {
+    "message": "Nem sikerült másolni a kódot"
+  },
+  "panel_keyNext": {
+    "message": "következő"
+  },
+  "panel_keyPrev": {
+    "message": "előző"
+  },
+  "panel_nextMessage": {
+    "message": "Következő levél"
+  },
+  "panel_prevMessage": {
+    "message": "Előző levél"
+  },
+  "opt_autoAdvance": {
+    "message": "Művelet után a következő levél megnyitása"
+  },
+  "opt_autoAdvanceText": {
+    "message": "Ha egy megnyitott levelet archiválsz, törölsz vagy olvasottnak jelölsz, a lista helyett a következő nyílik meg."
+  },
+  "opt_countChip": {
+    "message": "A számlálóban"
+  },
+  "opt_countHint": {
+    "message": "A számlálóból kihagyott postafiók látszik a panelen és értesít, de nem adódik hozzá az ikonon lévő számhoz."
+  },
+  "opt_badgeCount": {
+    "message": "A számláló mutatja"
+  },
+  "opt_badgeAll": {
+    "message": "Az összes olvasatlan levelet"
+  },
+  "opt_badgeNew": {
+    "message": "A panel legutóbbi megnyitása óta érkezett leveleket"
+  },
+  "opt_badgeCountText": {
+    "message": "A panel megnyitása nullázza. Maga a panel továbbra is minden olvasatlan levelet mutat."
+  },
+  "opt_repeat": {
+    "message": "Értesítés megismétlése ennyi időnként"
+  },
+  "opt_repeatOff": {
+    "message": "Nincs ismétlés"
+  },
+  "opt_repeatText": {
+    "message": "Hanggal együtt visszatér, amíg el nem olvasod, nem archiválod vagy nem törlöd a levelet. A csendes órák érvényesek."
   }
 }

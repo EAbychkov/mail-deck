@@ -291,7 +291,7 @@
         "message": "Texto de la notificación"
     },
     "opt_formatText": {
-        "message": "Usa [author_name], [author_email], [title], [summary] y [break] para un salto de línea."
+        "message": "Usa [author_name], [author_email], [title], [summary], [account] para el buzón al que llegó el correo y [break] para un salto de línea."
     },
     "opt_truncate": {
         "message": "Acortar el asunto y el texto a"
@@ -1585,5 +1585,56 @@
     },
     "opt_serviceAccess": {
         "message": "Actívalo de nuevo para darle acceso."
+    },
+    "panel_copyCode": {
+        "message": "Copiar código"
+    },
+    "panel_copyCodeFailed": {
+        "message": "No se pudo copiar el código"
+    },
+    "panel_keyNext": {
+        "message": "siguiente"
+    },
+    "panel_keyPrev": {
+        "message": "anterior"
+    },
+    "panel_nextMessage": {
+        "message": "Mensaje siguiente"
+    },
+    "panel_prevMessage": {
+        "message": "Mensaje anterior"
+    },
+    "opt_autoAdvance": {
+        "message": "Abrir el siguiente mensaje después de una acción"
+    },
+    "opt_autoAdvanceText": {
+        "message": "Cuando archivas, eliminas o marcas como leído un mensaje abierto, se abre el siguiente en lugar de la lista."
+    },
+    "opt_countChip": {
+        "message": "En el contador"
+    },
+    "opt_countHint": {
+        "message": "Un buzón fuera del contador sigue en el panel y avisa, pero no suma al número del icono de la barra."
+    },
+    "opt_badgeCount": {
+        "message": "El contador muestra"
+    },
+    "opt_badgeAll": {
+        "message": "Todo el correo no leído"
+    },
+    "opt_badgeNew": {
+        "message": "El correo desde la última vez que abriste el panel"
+    },
+    "opt_badgeCountText": {
+        "message": "Al abrir el panel vuelve a cero. El panel sigue mostrando todo el correo no leído."
+    },
+    "opt_repeat": {
+        "message": "Repetir la notificación cada"
+    },
+    "opt_repeatOff": {
+        "message": "No repetir"
+    },
+    "opt_repeatText": {
+        "message": "Vuelve, con su sonido, hasta que leas, archives o elimines el correo. Las horas de silencio siguen valiendo."
     }
 }
