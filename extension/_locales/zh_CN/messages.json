@@ -504,7 +504,7 @@
         "message": "此浏览器"
     },
     "opt_resetConfirm": {
-        "message": "将所有设置恢复为默认值吗？邮箱开关和标签也会重置。"
+        "message": "将所有设置恢复为默认值吗？邮箱开关和标签也会重置，AI 密钥也会被删除。"
     },
     "opt_play": {
         "message": "播放"
@@ -1640,5 +1640,260 @@
     },
     "opt_repeatText": {
         "message": "在你阅读、归档或删除邮件之前，通知会连同声音再次出现。免打扰时段照常生效。"
+    },
+    "ai_err_auth": {
+        "message": "密钥被拒绝。请在“设置 → AI 助手”中检查。"
+    },
+    "ai_err_quota": {
+        "message": "服务商表示该账户余额不足。"
+    },
+    "ai_err_rate": {
+        "message": "请求过多。请一分钟后再试。"
+    },
+    "ai_err_network": {
+        "message": "没有网络连接。"
+    },
+    "ai_err_model": {
+        "message": "你的密钥无法使用此模型。请在“设置 → AI 助手”中另选一个。"
+    },
+    "ai_err_refusal": {
+        "message": "模型拒绝总结这封邮件。"
+    },
+    "ai_err_too_long": {
+        "message": "这段对话太长，无法总结。"
+    },
+    "ai_err_unavailable": {
+        "message": "这台电脑上的内置模型尚未就绪。"
+    },
+    "ai_err_bad_output": {
+        "message": "无法读取回答。请重试。"
+    },
+    "ai_err_server": {
+        "message": "服务商没有响应。请稍后再试。"
+    },
+    "ai_err_no_access": {
+        "message": "请在“设置 → AI 助手”中允许访问服务商。"
+    },
+    "ai_note_english": {
+        "message": "内置模型会用英语回答。"
+    },
+    "panel_summary": {
+        "message": "摘要"
+    },
+    "panel_summaryKey": {
+        "message": "摘要"
+    },
+    "panel_summarizing": {
+        "message": "正在生成摘要…"
+    },
+    "panel_summaryPoints": {
+        "message": "要点"
+    },
+    "panel_summaryTodo": {
+        "message": "待办"
+    },
+    "panel_summaryEvents": {
+        "message": "日期"
+    },
+    "panel_addToCalendar": {
+        "message": "添加到 Google 日历"
+    },
+    "panel_summaryTruncated": {
+        "message": "最近几封邮件的摘要"
+    },
+    "panel_regenerate": {
+        "message": "重新生成"
+    },
+    "panel_copySummary": {
+        "message": "复制"
+    },
+    "panel_hideSummary": {
+        "message": "隐藏"
+    },
+    "panel_replyChip": {
+        "message": "待回复 · $1"
+    },
+    "panel_replyWhy": {
+        "message": "等待你回复：$1"
+    },
+    "panel_aiSettings": {
+        "message": "AI 助手设置"
+    },
+    "panel_fromSite": {
+        "message": "来自 $1"
+    },
+    "panel_siteMore": {
+        "message": "还有 $1 封"
+    },
+    "panel_codeCopied": {
+        "message": "已复制验证码"
+    },
+    "opt_ai": {
+        "message": "AI 助手"
+    },
+    "opt_aiEngine": {
+        "message": "使用哪种 AI"
+    },
+    "opt_aiOff": {
+        "message": "关闭"
+    },
+    "opt_aiOffText": {
+        "message": "没有摘要和回复标记。不会向任何地方发送任何内容。"
+    },
+    "opt_aiBuiltin": {
+        "message": "在这台电脑上"
+    },
+    "opt_aiBuiltinText": {
+        "message": "Chrome 的内置模型。免费且私密，但并非每台电脑都有。"
+    },
+    "opt_aiCloudText": {
+        "message": "使用你自己的 $1 API 密钥，按用量付费。"
+    },
+    "opt_aiChecking": {
+        "message": "正在检查…"
+    },
+    "opt_aiReady": {
+        "message": "已就绪"
+    },
+    "opt_aiReadyText": {
+        "message": "模型在 Chrome 中离线运行。你的邮件留在这台电脑上。"
+    },
+    "opt_aiNeedsDownload": {
+        "message": "需要下载一次"
+    },
+    "opt_aiNeedsDownloadText": {
+        "message": "Chrome 只需下载一次模型（几 GB），之后即可离线使用。"
+    },
+    "opt_aiDownload": {
+        "message": "下载"
+    },
+    "opt_aiDownloading": {
+        "message": "正在下载模型…"
+    },
+    "opt_aiUnavailable": {
+        "message": "在这台电脑上不可用"
+    },
+    "opt_aiUnavailableText": {
+        "message": "Chrome 未在这台电脑上提供其模型。OpenAI 和 Anthropic 在任何电脑上都能使用。"
+    },
+    "opt_aiOldChrome": {
+        "message": "需要 Chrome 138 或更高版本"
+    },
+    "opt_aiOldChromeText": {
+        "message": "请更新 Chrome，然后回到这里。"
+    },
+    "opt_aiEnglish": {
+        "message": "它会用英语回答：Chrome 的模型暂不支持这种语言（$1）。"
+    },
+    "opt_aiKey": {
+        "message": "$1 API 密钥"
+    },
+    "opt_aiKeyText": {
+        "message": "$1 订阅不包含 API 访问权限：$2 会按用量单独为密钥计费。"
+    },
+    "opt_aiGetKey": {
+        "message": "获取密钥"
+    },
+    "opt_aiShow": {
+        "message": "显示"
+    },
+    "opt_aiHide": {
+        "message": "隐藏"
+    },
+    "opt_aiConnect": {
+        "message": "连接"
+    },
+    "opt_aiConnecting": {
+        "message": "正在连接…"
+    },
+    "opt_aiKeyEmpty": {
+        "message": "请先粘贴你的密钥。"
+    },
+    "opt_aiKeyOther": {
+        "message": "这看起来是 $1 的密钥。请在上方选择它，或在此粘贴 $2 的密钥。"
+    },
+    "opt_aiConnected": {
+        "message": "已连接到 $1"
+    },
+    "opt_aiConnectedText": {
+        "message": "密钥只保存在这台电脑上：不会进入备份，也不会进入 Chrome 同步。"
+    },
+    "opt_aiDisconnect": {
+        "message": "断开连接"
+    },
+    "opt_aiDisconnected": {
+        "message": "已删除 $1 密钥"
+    },
+    "opt_aiNoAccess": {
+        "message": "Chrome 已不再允许 Mail Deck 访问 $1。"
+    },
+    "opt_aiAllow": {
+        "message": "允许访问"
+    },
+    "opt_aiModel": {
+        "message": "模型"
+    },
+    "opt_aiModelText": {
+        "message": "较大的模型摘要更好；较小的模型回答更快、费用更低。"
+    },
+    "opt_aiRecommended": {
+        "message": "推荐"
+    },
+    "opt_aiOtherModels": {
+        "message": "其他模型"
+    },
+    "opt_aiBest": {
+        "message": "效果最好"
+    },
+    "opt_aiFast": {
+        "message": "最快、最便宜"
+    },
+    "opt_aiModelGone": {
+        "message": "此密钥已无法使用 $1。请另选一个模型。"
+    },
+    "opt_aiNoModels": {
+        "message": "此密钥没有 Mail Deck 可用的模型。"
+    },
+    "opt_aiSummary": {
+        "message": "阅读时显示摘要"
+    },
+    "opt_aiSummaryText": {
+        "message": "在邮件上方显示要点、待办和日期。"
+    },
+    "opt_aiSummaryOff": {
+        "message": "关闭"
+    },
+    "opt_aiSummaryClick": {
+        "message": "点击时"
+    },
+    "opt_aiSummaryAuto": {
+        "message": "长邮件自动显示"
+    },
+    "opt_aiReply": {
+        "message": "等待你回复"
+    },
+    "opt_aiReplyText": {
+        "message": "标记来自真人、等待你回复的未读邮件，并在面板中集中到一个筛选条件下。"
+    },
+    "opt_aiPrivacy": {
+        "message": "请求从你的浏览器直接发送到 $1，使用你的密钥。Mail Deck 没有服务器。摘要会发送该邮件的正文；“等待你回复”会发送未读邮件的发件人、主题和预览。"
+    },
+    "opt_aiPrivacyLocal": {
+        "message": "Chrome 在这台电脑上运行模型，所以你的邮件不会被发送到任何地方。"
+    },
+    "opt_aiErrAuth": {
+        "message": "$1 拒绝了此密钥。请确认已完整复制。"
+    },
+    "opt_aiErrAccess": {
+        "message": "没有 $1 的访问权限，Mail Deck 无法使用该密钥。请重新连接并允许访问。"
+    },
+    "opt_aiErrOther": {
+        "message": "没有成功。请重试。"
+    },
+    "opt_aiDiagNoKey": {
+        "message": "尚无密钥"
+    },
+    "opt_aiDiagNoAccess": {
+        "message": "无法访问 $1"
     }
 }

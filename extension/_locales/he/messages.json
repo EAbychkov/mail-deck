@@ -504,7 +504,7 @@
         "message": "הדפדפן הזה"
     },
     "opt_resetConfirm": {
-        "message": "להחזיר את כל ההגדרות לברירת המחדל? גם המתגים והתוויות של התיבות יאופסו."
+        "message": "להחזיר את כל ההגדרות לברירת המחדל? גם המתגים והתוויות של התיבות יאופסו, ומפתחות הבינה המלאכותית יימחקו."
     },
     "opt_play": {
         "message": "השמעה"
@@ -1636,5 +1636,260 @@
     },
     "opt_repeatText": {
         "message": "ההתראה חוזרת עם הצליל עד שקוראים, מעבירים לארכיון או מוחקים את ההודעה. שעות השקט חלות כרגיל."
+    },
+    "ai_err_auth": {
+        "message": "המפתח נדחה. בדוק אותו בהגדרות, תחת ״בינה מלאכותית״."
+    },
+    "ai_err_quota": {
+        "message": "הספק מודיע שנגמר האשראי בחשבון."
+    },
+    "ai_err_rate": {
+        "message": "יותר מדי בקשות. נסה שוב בעוד דקה."
+    },
+    "ai_err_network": {
+        "message": "אין חיבור."
+    },
+    "ai_err_model": {
+        "message": "המודל הזה לא זמין למפתח שלך. בחר מודל אחר בהגדרות, תחת ״בינה מלאכותית״."
+    },
+    "ai_err_refusal": {
+        "message": "המודל סירב לסכם את ההודעה הזו."
+    },
+    "ai_err_too_long": {
+        "message": "השיחה הזו ארוכה מדי לסיכום."
+    },
+    "ai_err_unavailable": {
+        "message": "המודל המובנה לא מוכן במחשב הזה."
+    },
+    "ai_err_bad_output": {
+        "message": "לא ניתן היה לקרוא את התשובה. נסה שוב."
+    },
+    "ai_err_server": {
+        "message": "הספק לא ענה. נסה שוב מאוחר יותר."
+    },
+    "ai_err_no_access": {
+        "message": "אפשר גישה לספק בהגדרות, תחת ״בינה מלאכותית״."
+    },
+    "ai_note_english": {
+        "message": "המודל המובנה עונה באנגלית."
+    },
+    "panel_summary": {
+        "message": "סיכום"
+    },
+    "panel_summaryKey": {
+        "message": "סיכום"
+    },
+    "panel_summarizing": {
+        "message": "מסכם…"
+    },
+    "panel_summaryPoints": {
+        "message": "עיקרי הדברים"
+    },
+    "panel_summaryTodo": {
+        "message": "לביצוע"
+    },
+    "panel_summaryEvents": {
+        "message": "תאריכים"
+    },
+    "panel_addToCalendar": {
+        "message": "הוסף ליומן Google"
+    },
+    "panel_summaryTruncated": {
+        "message": "סיכום ההודעות האחרונות"
+    },
+    "panel_regenerate": {
+        "message": "סכם מחדש"
+    },
+    "panel_copySummary": {
+        "message": "העתק"
+    },
+    "panel_hideSummary": {
+        "message": "הסתר"
+    },
+    "panel_replyChip": {
+        "message": "לתשובה · $1"
+    },
+    "panel_replyWhy": {
+        "message": "מחכה לתשובה שלך: $1"
+    },
+    "panel_aiSettings": {
+        "message": "הגדרות בינה מלאכותית"
+    },
+    "panel_fromSite": {
+        "message": "מ-$1"
+    },
+    "panel_siteMore": {
+        "message": "עוד $1"
+    },
+    "panel_codeCopied": {
+        "message": "הקוד הועתק"
+    },
+    "opt_ai": {
+        "message": "בינה מלאכותית"
+    },
+    "opt_aiEngine": {
+        "message": "באיזו בינה מלאכותית להשתמש"
+    },
+    "opt_aiOff": {
+        "message": "כבויה"
+    },
+    "opt_aiOffText": {
+        "message": "בלי סיכומים ובלי סימוני תשובה. שום דבר לא נשלח לשום מקום."
+    },
+    "opt_aiBuiltin": {
+        "message": "במחשב הזה"
+    },
+    "opt_aiBuiltinText": {
+        "message": "המודל המובנה של Chrome. חינמי ופרטי, אבל לא קיים בכל מחשב."
+    },
+    "opt_aiCloudText": {
+        "message": "עם מפתח API משלך של $1, בתשלום לפי שימוש."
+    },
+    "opt_aiChecking": {
+        "message": "בודק…"
+    },
+    "opt_aiReady": {
+        "message": "מוכן"
+    },
+    "opt_aiReadyText": {
+        "message": "המודל רץ ב-Chrome, בלי חיבור לאינטרנט. הדואר שלך נשאר במחשב הזה."
+    },
+    "opt_aiNeedsDownload": {
+        "message": "צריך הורדה חד-פעמית"
+    },
+    "opt_aiNeedsDownloadText": {
+        "message": "Chrome מוריד את המודל פעם אחת, כמה ג׳יגה-בייט, ואחר כך הוא עובד בלי אינטרנט."
+    },
+    "opt_aiDownload": {
+        "message": "הורדה"
+    },
+    "opt_aiDownloading": {
+        "message": "מוריד את המודל…"
+    },
+    "opt_aiUnavailable": {
+        "message": "לא זמין במחשב הזה"
+    },
+    "opt_aiUnavailableText": {
+        "message": "Chrome לא מציע כאן את המודל שלו. OpenAI ו-Anthropic עובדים בכל מחשב."
+    },
+    "opt_aiOldChrome": {
+        "message": "נדרש Chrome 138 ומעלה"
+    },
+    "opt_aiOldChromeText": {
+        "message": "עדכן את Chrome וחזור לכאן."
+    },
+    "opt_aiEnglish": {
+        "message": "הוא עונה באנגלית: המודל של Chrome עדיין לא תומך בשפה הזו ($1)."
+    },
+    "opt_aiKey": {
+        "message": "מפתח API של $1"
+    },
+    "opt_aiKeyText": {
+        "message": "מנוי $1 לא כולל גישה ל-API: ‏$2 מחייבת על המפתח בנפרד, לפי שימוש."
+    },
+    "opt_aiGetKey": {
+        "message": "השג מפתח"
+    },
+    "opt_aiShow": {
+        "message": "הצג"
+    },
+    "opt_aiHide": {
+        "message": "הסתר"
+    },
+    "opt_aiConnect": {
+        "message": "התחבר"
+    },
+    "opt_aiConnecting": {
+        "message": "מתחבר…"
+    },
+    "opt_aiKeyEmpty": {
+        "message": "הדבק קודם את המפתח."
+    },
+    "opt_aiKeyOther": {
+        "message": "זה נראה כמו מפתח של $1. בחר בו למעלה, או הדבק כאן מפתח של $2."
+    },
+    "opt_aiConnected": {
+        "message": "מחובר ל-$1"
+    },
+    "opt_aiConnectedText": {
+        "message": "המפתח נשאר רק במחשב הזה: אף פעם לא בגיבויים או בסנכרון של Chrome."
+    },
+    "opt_aiDisconnect": {
+        "message": "נתק"
+    },
+    "opt_aiDisconnected": {
+        "message": "המפתח של $1 הוסר"
+    },
+    "opt_aiNoAccess": {
+        "message": "Chrome כבר לא מאפשר ל-Mail Deck לגשת אל $1."
+    },
+    "opt_aiAllow": {
+        "message": "אפשר גישה"
+    },
+    "opt_aiModel": {
+        "message": "מודל"
+    },
+    "opt_aiModelText": {
+        "message": "מודלים גדולים מסכמים טוב יותר; קטנים עונים מהר יותר ועולים פחות."
+    },
+    "opt_aiRecommended": {
+        "message": "מומלצים"
+    },
+    "opt_aiOtherModels": {
+        "message": "מודלים אחרים"
+    },
+    "opt_aiBest": {
+        "message": "התוצאות הטובות ביותר"
+    },
+    "opt_aiFast": {
+        "message": "המהיר והזול ביותר"
+    },
+    "opt_aiModelGone": {
+        "message": "$1 כבר לא זמין למפתח הזה. בחר מודל אחר."
+    },
+    "opt_aiNoModels": {
+        "message": "למפתח הזה אין מודלים ש-Mail Deck יכול להשתמש בהם."
+    },
+    "opt_aiSummary": {
+        "message": "סיכום בזמן קריאת ההודעה"
+    },
+    "opt_aiSummaryText": {
+        "message": "עיקרי הדברים, משימות ותאריכים, מעל ההודעה."
+    },
+    "opt_aiSummaryOff": {
+        "message": "כבוי"
+    },
+    "opt_aiSummaryClick": {
+        "message": "בלחיצה"
+    },
+    "opt_aiSummaryAuto": {
+        "message": "אוטומטית להודעות ארוכות"
+    },
+    "opt_aiReply": {
+        "message": "מחכים לתשובה שלך"
+    },
+    "opt_aiReplyText": {
+        "message": "מסמן דואר שלא נקרא מאנשים שמצפים לתשובה, ומרכז אותו תחת מסנן בחלונית."
+    },
+    "opt_aiPrivacy": {
+        "message": "הבקשות עוברות מהדפדפן שלך ישירות אל $1, עם המפתח שלך. ל-Mail Deck אין שרתים. סיכום שולח את הטקסט של אותה הודעה; ״מחכים לתשובה שלך״ שולח את השולח, הנושא והתצוגה המקדימה של דואר שלא נקרא."
+    },
+    "opt_aiPrivacyLocal": {
+        "message": "Chrome מריץ את המודל במחשב הזה, כך שהדואר שלך לא נשלח לשום מקום."
+    },
+    "opt_aiErrAuth": {
+        "message": "$1 דחתה את המפתח הזה. ודא שהעתקת את כולו."
+    },
+    "opt_aiErrAccess": {
+        "message": "בלי גישה אל $1, Mail Deck לא יכול להשתמש במפתח. התחבר שוב ואפשר את הגישה."
+    },
+    "opt_aiErrOther": {
+        "message": "זה לא הצליח. נסה שוב."
+    },
+    "opt_aiDiagNoKey": {
+        "message": "עדיין אין מפתח"
+    },
+    "opt_aiDiagNoAccess": {
+        "message": "אין גישה אל $1"
     }
 }

@@ -504,7 +504,7 @@
         "message": "هذا المتصفح"
     },
     "opt_resetConfirm": {
-        "message": "إعادة كل الإعدادات إلى الافتراضي؟ ستُعاد أيضًا مفاتيح الصناديق وتصنيفاتها."
+        "message": "إعادة كل الإعدادات إلى الافتراضي؟ ستُعاد أيضًا مفاتيح الصناديق وتصنيفاتها، وستُحذف مفاتيح API للذكاء الاصطناعي."
     },
     "opt_play": {
         "message": "تشغيل"
@@ -1636,5 +1636,260 @@
     },
     "opt_repeatText": {
         "message": "يعود الإشعار مع صوته حتى تقرأ الرسالة أو تؤرشفها أو تحذفها. تبقى ساعات الهدوء سارية."
+    },
+    "ai_err_auth": {
+        "message": "رُفض المفتاح. تحقّق منه في الإعدادات ضمن «الذكاء الاصطناعي»."
+    },
+    "ai_err_quota": {
+        "message": "يقول المزوّد إن رصيد الحساب نفد."
+    },
+    "ai_err_rate": {
+        "message": "طلبات كثيرة جدًا. أعد المحاولة بعد دقيقة."
+    },
+    "ai_err_network": {
+        "message": "لا يوجد اتصال."
+    },
+    "ai_err_model": {
+        "message": "هذا النموذج غير متاح لمفتاحك. اختر نموذجًا آخر في الإعدادات ضمن «الذكاء الاصطناعي»."
+    },
+    "ai_err_refusal": {
+        "message": "رفض النموذج تلخيص هذه الرسالة."
+    },
+    "ai_err_too_long": {
+        "message": "هذه المحادثة أطول من أن تُلخَّص."
+    },
+    "ai_err_unavailable": {
+        "message": "النموذج المدمج غير جاهز على هذا الكمبيوتر."
+    },
+    "ai_err_bad_output": {
+        "message": "تعذّرت قراءة الإجابة. أعد المحاولة."
+    },
+    "ai_err_server": {
+        "message": "لم يستجب المزوّد. أعد المحاولة لاحقًا."
+    },
+    "ai_err_no_access": {
+        "message": "اسمح بالوصول إلى المزوّد في الإعدادات ضمن «الذكاء الاصطناعي»."
+    },
+    "ai_note_english": {
+        "message": "يجيب النموذج المدمج بالإنجليزية."
+    },
+    "panel_summary": {
+        "message": "ملخّص"
+    },
+    "panel_summaryKey": {
+        "message": "ملخّص"
+    },
+    "panel_summarizing": {
+        "message": "جارٍ التلخيص…"
+    },
+    "panel_summaryPoints": {
+        "message": "أهم النقاط"
+    },
+    "panel_summaryTodo": {
+        "message": "مطلوب منك"
+    },
+    "panel_summaryEvents": {
+        "message": "مواعيد"
+    },
+    "panel_addToCalendar": {
+        "message": "إضافة إلى تقويم Google"
+    },
+    "panel_summaryTruncated": {
+        "message": "ملخّص أحدث الرسائل"
+    },
+    "panel_regenerate": {
+        "message": "إعادة التلخيص"
+    },
+    "panel_copySummary": {
+        "message": "نسخ"
+    },
+    "panel_hideSummary": {
+        "message": "إخفاء"
+    },
+    "panel_replyChip": {
+        "message": "بانتظار ردّك · $1"
+    },
+    "panel_replyWhy": {
+        "message": "بانتظار ردّك: $1"
+    },
+    "panel_aiSettings": {
+        "message": "إعدادات الذكاء الاصطناعي"
+    },
+    "panel_fromSite": {
+        "message": "من $1"
+    },
+    "panel_siteMore": {
+        "message": "$1 أخرى"
+    },
+    "panel_codeCopied": {
+        "message": "تم نسخ رمز التحقق"
+    },
+    "opt_ai": {
+        "message": "الذكاء الاصطناعي"
+    },
+    "opt_aiEngine": {
+        "message": "أي ذكاء اصطناعي يُستخدم"
+    },
+    "opt_aiOff": {
+        "message": "متوقف"
+    },
+    "opt_aiOffText": {
+        "message": "لا ملخّصات ولا علامات للرد. لا يُرسل أي شيء إلى أي مكان."
+    },
+    "opt_aiBuiltin": {
+        "message": "على هذا الكمبيوتر"
+    },
+    "opt_aiBuiltinText": {
+        "message": "النموذج المدمج في Chrome. مجاني وخاص، لكنه غير متوفر على كل كمبيوتر."
+    },
+    "opt_aiCloudText": {
+        "message": "بمفتاح API الخاص بك من $1، والدفع حسب الاستخدام."
+    },
+    "opt_aiChecking": {
+        "message": "جارٍ التحقق…"
+    },
+    "opt_aiReady": {
+        "message": "جاهز"
+    },
+    "opt_aiReadyText": {
+        "message": "يعمل النموذج داخل Chrome دون اتصال. يبقى بريدك على هذا الكمبيوتر."
+    },
+    "opt_aiNeedsDownload": {
+        "message": "يحتاج إلى تنزيل لمرة واحدة"
+    },
+    "opt_aiNeedsDownloadText": {
+        "message": "ينزّل Chrome النموذج مرة واحدة، بضعة غيغابايت، ثم يعمل دون اتصال."
+    },
+    "opt_aiDownload": {
+        "message": "تنزيل"
+    },
+    "opt_aiDownloading": {
+        "message": "جارٍ تنزيل النموذج…"
+    },
+    "opt_aiUnavailable": {
+        "message": "غير متاح على هذا الكمبيوتر"
+    },
+    "opt_aiUnavailableText": {
+        "message": "لا يوفّر Chrome نموذجه هنا. يعمل OpenAI وAnthropic على أي كمبيوتر."
+    },
+    "opt_aiOldChrome": {
+        "message": "يحتاج إلى Chrome 138 أو أحدث"
+    },
+    "opt_aiOldChromeText": {
+        "message": "حدّث Chrome، ثم عُد إلى هنا."
+    },
+    "opt_aiEnglish": {
+        "message": "يجيب بالإنجليزية: نموذج Chrome لا يدعم هذه اللغة ($1) بعد."
+    },
+    "opt_aiKey": {
+        "message": "مفتاح API من $1"
+    },
+    "opt_aiKeyText": {
+        "message": "اشتراك $1 لا يشمل الوصول إلى API: تحاسب $2 على المفتاح بشكل منفصل، حسب الاستخدام."
+    },
+    "opt_aiGetKey": {
+        "message": "احصل على مفتاح"
+    },
+    "opt_aiShow": {
+        "message": "إظهار"
+    },
+    "opt_aiHide": {
+        "message": "إخفاء"
+    },
+    "opt_aiConnect": {
+        "message": "ربط"
+    },
+    "opt_aiConnecting": {
+        "message": "جارٍ الربط…"
+    },
+    "opt_aiKeyEmpty": {
+        "message": "الصق مفتاحك أولًا."
+    },
+    "opt_aiKeyOther": {
+        "message": "يبدو أن هذا مفتاح من $1. اختره في الأعلى، أو الصق هنا مفتاحًا من $2."
+    },
+    "opt_aiConnected": {
+        "message": "مرتبط بـ $1"
+    },
+    "opt_aiConnectedText": {
+        "message": "يبقى المفتاح على هذا الكمبيوتر فقط: لا يدخل في النسخ الاحتياطية ولا في مزامنة Chrome."
+    },
+    "opt_aiDisconnect": {
+        "message": "إلغاء الربط"
+    },
+    "opt_aiDisconnected": {
+        "message": "أُزيل مفتاح $1"
+    },
+    "opt_aiNoAccess": {
+        "message": "لم يعد Chrome يسمح لـ Mail Deck بالوصول إلى $1."
+    },
+    "opt_aiAllow": {
+        "message": "السماح بالوصول"
+    },
+    "opt_aiModel": {
+        "message": "النموذج"
+    },
+    "opt_aiModelText": {
+        "message": "النماذج الأكبر تلخّص أفضل، والأصغر تجيب أسرع وتكلّف أقل."
+    },
+    "opt_aiRecommended": {
+        "message": "مقترحة"
+    },
+    "opt_aiOtherModels": {
+        "message": "نماذج أخرى"
+    },
+    "opt_aiBest": {
+        "message": "أفضل النتائج"
+    },
+    "opt_aiFast": {
+        "message": "الأسرع والأرخص"
+    },
+    "opt_aiModelGone": {
+        "message": "لم يعد $1 متاحًا لهذا المفتاح. اختر نموذجًا آخر."
+    },
+    "opt_aiNoModels": {
+        "message": "لا يملك هذا المفتاح نماذج يمكن لـ Mail Deck استخدامها."
+    },
+    "opt_aiSummary": {
+        "message": "ملخّص عند قراءة الرسالة"
+    },
+    "opt_aiSummaryText": {
+        "message": "أهم النقاط والمطلوب منك والمواعيد، فوق الرسالة."
+    },
+    "opt_aiSummaryOff": {
+        "message": "متوقف"
+    },
+    "opt_aiSummaryClick": {
+        "message": "عند النقر"
+    },
+    "opt_aiSummaryAuto": {
+        "message": "تلقائيًا للرسائل الطويلة"
+    },
+    "opt_aiReply": {
+        "message": "بانتظار ردّك"
+    },
+    "opt_aiReplyText": {
+        "message": "يميّز البريد غير المقروء من أشخاص ينتظرون ردًا، ويجمعه في عامل تصفية في اللوحة."
+    },
+    "opt_aiPrivacy": {
+        "message": "تذهب الطلبات من متصفحك مباشرة إلى $1، بمفتاحك. ليس لدى Mail Deck خوادم. يُرسل الملخّص نص تلك الرسالة، ويُرسل «بانتظار ردّك» المرسل والموضوع ومقتطف البريد غير المقروء."
+    },
+    "opt_aiPrivacyLocal": {
+        "message": "يشغّل Chrome النموذج على هذا الكمبيوتر، لذا لا يُرسل بريدك إلى أي مكان."
+    },
+    "opt_aiErrAuth": {
+        "message": "رفضت $1 هذا المفتاح. تأكّد من أنك نسخته كاملًا."
+    },
+    "opt_aiErrAccess": {
+        "message": "دون الوصول إلى $1 لا يستطيع Mail Deck استخدام المفتاح. اربط مرة أخرى واسمح بالوصول."
+    },
+    "opt_aiErrOther": {
+        "message": "لم ينجح ذلك. أعد المحاولة."
+    },
+    "opt_aiDiagNoKey": {
+        "message": "لا يوجد مفتاح بعد"
+    },
+    "opt_aiDiagNoAccess": {
+        "message": "لا وصول إلى $1"
     }
 }

@@ -82,12 +82,13 @@ loads('settings', fs.readFileSync(path.join(EXT, 'data/settings/index.html'), 'u
   }
 }
 
-// every locale: parses, and has en's panel and settings strings with the same placeholders
+// every locale: parses, and has en's panel, settings and AI strings with the same placeholders
 const LOCALES = path.join(EXT, '_locales');
 const read = lang => JSON.parse(fs.readFileSync(path.join(LOCALES, lang, 'messages.json'), 'utf8'));
 const holes = text => (String(text).match(/\$\d/g) || []).sort().join(',');
 const en = read('en');
-const keys = Object.keys(en).filter(k => k.startsWith('panel_') || k.startsWith('opt_'));
+const OURS = /^(panel_|opt_|ai_)/;
+const keys = Object.keys(en).filter(k => OURS.test(k));
 for (const lang of fs.readdirSync(LOCALES)) {
   let d;
   try {
@@ -113,10 +114,46 @@ const older = [...new Set([
   ...[...code.matchAll(/getMessage\(\s*['"]([A-Za-z0-9_]+)['"]\s*[,)]/g)].map(m => m[1]),
   ...[...code.matchAll(/['"](label_\d+)['"]/g)].map(m => m[1]),
   ...[...JSON.stringify(manifest).matchAll(/__MSG_(\w+)__/g)].map(m => m[1])
-])].filter(k => !/^(panel_|opt_)/.test(k)).sort();
+])].filter(k => !OURS.test(k)).sort();
 {
   const absent = older.filter(k => !en[k]);
   ok(`en has the ${older.length} older strings the code reads`, absent.length === 0, absent.join(' '));
+}
+// The strings a page asks for by its own short name are in English, which every locale then
+// follows (above): the panel's t('x'), data-i18n="x" and data-i18n-label="x" are panel_x; the
+// settings page's are opt_x, and so are its diagnostics' check('x') and its AI card's 'aiX'
+// names; each code the AI module (data/ai/ai.js) throws an AIError with has its ai_err_<code>,
+// which the module and the settings page read. A name made at run time (t(name), a template
+// literal) is not looked for.
+const uncommented = f => fs.readFileSync(f, 'utf8').replace(/^\s*\/\/.*$/gm, '');
+const pageKeys = (dir, prefix, extra = []) => {
+  const found = new Set();
+  for (const f of fs.readdirSync(dir).map(n => path.join(dir, n)).filter(f => /\.(js|html)$/.test(f))) {
+    const text = uncommented(f);
+    const patterns = f.endsWith('.js') ? [/(?<![\w$.])t\(\s*'([A-Za-z0-9_]+)'/g, ...extra] : [/\bdata-i18n(?:-label)?="([A-Za-z0-9_]+)"/g];
+    for (const re of patterns) {
+      for (const m of text.matchAll(re)) {
+        found.add(prefix + m[1]);
+      }
+    }
+  }
+  return [...found].sort();
+};
+const used = {
+  panel: pageKeys(path.join(EXT, 'data/panel'), 'panel_'),
+  settings: pageKeys(path.join(EXT, 'data/settings'), 'opt_', [/(?<![\w$.])check\(\s*'([A-Za-z0-9_]+)'/g, /'(ai[A-Z]\w*)'/g])
+};
+const AI_JS = path.join(EXT, 'data/ai/ai.js');
+if (fs.existsSync(AI_JS)) {
+  const text = uncommented(AI_JS);
+  const codes = new Set([...text.matchAll(/new AIError\(\s*'([a-z-]+)'/g)].map(m => m[1]));
+  ok(`the AI module throws AIErrors with codes (${codes.size})`, codes.size > 0);
+  // aborted is said by no one: the user stopped it
+  used.ai = [...codes].filter(c => c !== 'aborted').map(c => 'ai_err_' + c.replace(/-/g, '_')).sort();
+}
+for (const [where, list] of Object.entries(used)) {
+  const absent = list.filter(k => !en[k]?.message);
+  ok(`en has the ${list.length} strings the ${where} asks for by name`, list.length > 0 && absent.length === 0, absent.join(' '));
 }
 // the notification text: only the tokens check.js replaces, the same ones as English
 const TOKENS = ['author_name', 'author_email', 'title', 'summary', 'break'];

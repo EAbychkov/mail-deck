@@ -504,7 +504,7 @@
     "message": "Ez a böngésző"
   },
   "opt_resetConfirm": {
-    "message": "Minden beállítás visszaáll az alapértékre? A postafiókok kapcsolói és címkéi is."
+    "message": "Minden beállítás visszaáll az alapértékre? A postafiókok kapcsolói és címkéi is, és az MI-kulcsok törlődnek."
   },
   "opt_play": {
     "message": "Lejátszás"
@@ -1456,5 +1456,260 @@
   },
   "opt_repeatText": {
     "message": "Hanggal együtt visszatér, amíg el nem olvasod, nem archiválod vagy nem törlöd a levelet. A csendes órák érvényesek."
+  },
+  "ai_err_auth": {
+    "message": "A kulcsot elutasították. Ellenőrizze a Beállítások → Mesterséges intelligencia részben."
+  },
+  "ai_err_quota": {
+    "message": "A szolgáltató szerint a fiókon elfogyott a kredit."
+  },
+  "ai_err_rate": {
+    "message": "Túl sok kérés. Próbálja újra egy perc múlva."
+  },
+  "ai_err_network": {
+    "message": "Nincs kapcsolat."
+  },
+  "ai_err_model": {
+    "message": "Ez a modell nem érhető el a kulcsával. Válasszon másikat a Beállítások → Mesterséges intelligencia részben."
+  },
+  "ai_err_refusal": {
+    "message": "A modell nem volt hajlandó összefoglalni ezt a levelet."
+  },
+  "ai_err_too_long": {
+    "message": "Ez a levélváltás túl hosszú az összefoglaláshoz."
+  },
+  "ai_err_unavailable": {
+    "message": "A beépített modell nem áll készen ezen a számítógépen."
+  },
+  "ai_err_bad_output": {
+    "message": "A válasz nem olvasható. Próbálja újra."
+  },
+  "ai_err_server": {
+    "message": "A szolgáltató nem válaszolt. Próbálja később."
+  },
+  "ai_err_no_access": {
+    "message": "Engedélyezze a hozzáférést a szolgáltatóhoz a Beállítások → Mesterséges intelligencia részben."
+  },
+  "ai_note_english": {
+    "message": "A beépített modell angolul válaszol."
+  },
+  "panel_summary": {
+    "message": "Összefoglaló"
+  },
+  "panel_summaryKey": {
+    "message": "összefoglaló"
+  },
+  "panel_summarizing": {
+    "message": "Összefoglalás…"
+  },
+  "panel_summaryPoints": {
+    "message": "A lényeg"
+  },
+  "panel_summaryTodo": {
+    "message": "Teendők"
+  },
+  "panel_summaryEvents": {
+    "message": "Időpontok"
+  },
+  "panel_addToCalendar": {
+    "message": "Hozzáadás a Google Naptárhoz"
+  },
+  "panel_summaryTruncated": {
+    "message": "A legutóbbi levelek összefoglalója"
+  },
+  "panel_regenerate": {
+    "message": "Újra"
+  },
+  "panel_copySummary": {
+    "message": "Másolás"
+  },
+  "panel_hideSummary": {
+    "message": "Elrejtés"
+  },
+  "panel_replyChip": {
+    "message": "Válasz · $1"
+  },
+  "panel_replyWhy": {
+    "message": "Válaszra vár: $1"
+  },
+  "panel_aiSettings": {
+    "message": "MI-beállítások"
+  },
+  "panel_fromSite": {
+    "message": "Innen: $1"
+  },
+  "panel_siteMore": {
+    "message": "További $1"
+  },
+  "panel_codeCopied": {
+    "message": "Kód másolva"
+  },
+  "opt_ai": {
+    "message": "Mesterséges intelligencia"
+  },
+  "opt_aiEngine": {
+    "message": "Melyik MI-t használja"
+  },
+  "opt_aiOff": {
+    "message": "Kikapcsolva"
+  },
+  "opt_aiOffText": {
+    "message": "Nincs összefoglaló és válaszjelölés. Semmi nem megy sehova."
+  },
+  "opt_aiBuiltin": {
+    "message": "Ezen a számítógépen"
+  },
+  "opt_aiBuiltinText": {
+    "message": "A Chrome beépített modellje. Ingyenes és privát, de nem minden számítógépen érhető el."
+  },
+  "opt_aiCloudText": {
+    "message": "Saját $1 API-kulccsal, használat szerinti díjjal."
+  },
+  "opt_aiChecking": {
+    "message": "Ellenőrzés…"
+  },
+  "opt_aiReady": {
+    "message": "Kész"
+  },
+  "opt_aiReadyText": {
+    "message": "A modell a Chrome-ban fut, offline. A leveleid ezen a számítógépen maradnak."
+  },
+  "opt_aiNeedsDownload": {
+    "message": "Egyszeri letöltés kell"
+  },
+  "opt_aiNeedsDownloadText": {
+    "message": "A Chrome egyszer letölti a modellt, néhány gigabájtot, utána offline működik."
+  },
+  "opt_aiDownload": {
+    "message": "Letöltés"
+  },
+  "opt_aiDownloading": {
+    "message": "A modell letöltése…"
+  },
+  "opt_aiUnavailable": {
+    "message": "Ezen a számítógépen nem érhető el"
+  },
+  "opt_aiUnavailableText": {
+    "message": "A Chrome itt nem kínálja a modelljét. Az OpenAI és az Anthropic bármelyik számítógépen működik."
+  },
+  "opt_aiOldChrome": {
+    "message": "Chrome 138 vagy újabb kell"
+  },
+  "opt_aiOldChromeText": {
+    "message": "Frissítsd a Chrome-ot, aztán gyere vissza ide."
+  },
+  "opt_aiEnglish": {
+    "message": "Angolul válaszol: a Chrome modellje még nem támogatja ezt a nyelvet ($1)."
+  },
+  "opt_aiKey": {
+    "message": "$1 API-kulcs"
+  },
+  "opt_aiKeyText": {
+    "message": "Egy $1-előfizetés nem tartalmaz API-hozzáférést: a kulcsot az $2 külön, használat szerint számlázza."
+  },
+  "opt_aiGetKey": {
+    "message": "Kulcs igénylése"
+  },
+  "opt_aiShow": {
+    "message": "Mutat"
+  },
+  "opt_aiHide": {
+    "message": "Elrejt"
+  },
+  "opt_aiConnect": {
+    "message": "Csatlakozás"
+  },
+  "opt_aiConnecting": {
+    "message": "Csatlakozás…"
+  },
+  "opt_aiKeyEmpty": {
+    "message": "Előbb illeszd be a kulcsot."
+  },
+  "opt_aiKeyOther": {
+    "message": "Ez $1-kulcsnak tűnik. Válaszd ki fent, vagy illessz be ide egy $2-kulcsot."
+  },
+  "opt_aiConnected": {
+    "message": "Csatlakozva: $1"
+  },
+  "opt_aiConnectedText": {
+    "message": "A kulcs csak ezen a számítógépen marad: soha nem kerül biztonsági mentésbe vagy a Chrome szinkronizálásába."
+  },
+  "opt_aiDisconnect": {
+    "message": "Leválasztás"
+  },
+  "opt_aiDisconnected": {
+    "message": "$1-kulcs eltávolítva"
+  },
+  "opt_aiNoAccess": {
+    "message": "A Chrome már nem engedi, hogy a Mail Deck elérje ezt: $1."
+  },
+  "opt_aiAllow": {
+    "message": "Hozzáférés engedélyezése"
+  },
+  "opt_aiModel": {
+    "message": "Modell"
+  },
+  "opt_aiModelText": {
+    "message": "A nagyobb modellek jobban foglalnak össze; a kisebbek gyorsabban válaszolnak és olcsóbbak."
+  },
+  "opt_aiRecommended": {
+    "message": "Ajánlott"
+  },
+  "opt_aiOtherModels": {
+    "message": "Egyéb modellek"
+  },
+  "opt_aiBest": {
+    "message": "a legjobb eredmény"
+  },
+  "opt_aiFast": {
+    "message": "a leggyorsabb és legolcsóbb"
+  },
+  "opt_aiModelGone": {
+    "message": "A(z) $1 már nem érhető el ezzel a kulccsal. Válassz másik modellt."
+  },
+  "opt_aiNoModels": {
+    "message": "Ehhez a kulcshoz nincs olyan modell, amelyet a Mail Deck használni tud."
+  },
+  "opt_aiSummary": {
+    "message": "Összefoglaló olvasás közben"
+  },
+  "opt_aiSummaryText": {
+    "message": "A lényeg, a teendők és az időpontok a levél fölött."
+  },
+  "opt_aiSummaryOff": {
+    "message": "Ki"
+  },
+  "opt_aiSummaryClick": {
+    "message": "Kattintásra"
+  },
+  "opt_aiSummaryAuto": {
+    "message": "Hosszú leveleknél automatikusan"
+  },
+  "opt_aiReply": {
+    "message": "Válaszodra vár"
+  },
+  "opt_aiReplyText": {
+    "message": "Megjelöli a választ váró emberektől érkezett olvasatlan leveleket, és egy szűrőbe gyűjti őket a panelen."
+  },
+  "opt_aiPrivacy": {
+    "message": "A kérések a böngésződből egyenesen ide mennek: $1, a kulcsoddal. A Mail Deck-nek nincsenek szerverei. Az összefoglaló az adott levél szövegét küldi el; a „Válaszodra vár” az olvasatlan levelek feladóját, tárgyát és előnézetét."
+  },
+  "opt_aiPrivacyLocal": {
+    "message": "A Chrome ezen a számítógépen futtatja a modellt, így a leveleid sehova nem kerülnek."
+  },
+  "opt_aiErrAuth": {
+    "message": "A(z) $1 elutasította ezt a kulcsot. Ellenőrizd, hogy a teljes kulcsot másoltad-e."
+  },
+  "opt_aiErrAccess": {
+    "message": "Hozzáférés nélkül ($1) a Mail Deck nem tudja használni a kulcsot. Csatlakozz újra, és engedélyezd a hozzáférést."
+  },
+  "opt_aiErrOther": {
+    "message": "Nem sikerült. Próbáld újra."
+  },
+  "opt_aiDiagNoKey": {
+    "message": "még nincs kulcs"
+  },
+  "opt_aiDiagNoAccess": {
+    "message": "nincs hozzáférés: $1"
   }
 }

@@ -307,6 +307,83 @@
       </div>
     </section>
 
+    <section class="group" id="ai">
+      <h2 data-i18n="ai">AI</h2>
+      <div class="card">
+        <div class="engines" role="radiogroup" aria-label="Which AI to use" data-i18n-label="aiEngine">
+          <label class="row">
+            <span class="text"><b id="ai-off-name" data-i18n="aiOff">Off</b><small id="ai-off-text" data-i18n="aiOffText">No summaries or reply marks. Nothing is sent anywhere.</small></span>
+            <input type="radio" name="ai.engine" value="off" aria-labelledby="ai-off-name" aria-describedby="ai-off-text">
+          </label>
+          <label class="row">
+            <span class="text"><b id="ai-builtin-name" data-i18n="aiBuiltin">On this computer</b><small id="ai-builtin-desc" data-i18n="aiBuiltinText">Chrome’s built-in model. Free and private, but not on every computer.</small></span>
+            <input type="radio" name="ai.engine" value="builtin" aria-labelledby="ai-builtin-name" aria-describedby="ai-builtin-desc">
+          </label>
+          <label class="row">
+            <span class="text"><b id="ai-openai-name">OpenAI</b><small id="ai-openai-text" data-i18n="aiCloudText" data-i18n-arg="OpenAI">With your own OpenAI API key, paid per use.</small></span>
+            <input type="radio" name="ai.engine" value="openai" aria-labelledby="ai-openai-name" aria-describedby="ai-openai-text">
+          </label>
+          <label class="row">
+            <span class="text"><b id="ai-anthropic-name">Anthropic (Claude)</b><small id="ai-anthropic-text" data-i18n="aiCloudText" data-i18n-arg="Anthropic">With your own Anthropic API key, paid per use.</small></span>
+            <input type="radio" name="ai.engine" value="anthropic" aria-labelledby="ai-anthropic-name" aria-describedby="ai-anthropic-text">
+          </label>
+        </div>
+        <!-- the built-in model: ready, to download once, downloading, or not on this computer -->
+        <div class="row sub" id="ai-builtin" hidden>
+          <span class="text" id="ai-builtin-status">
+            <b class="state" id="ai-builtin-title" data-state="wait" aria-live="polite" data-i18n="aiChecking">Checking…</b>
+            <small id="ai-builtin-text" hidden></small>
+            <span class="meter" id="ai-meter" hidden><progress id="ai-progress" max="100" aria-labelledby="ai-builtin-title"></progress><small id="ai-percent"></small></span>
+            <small id="ai-builtin-lang" hidden></small>
+            <small class="note" id="ai-builtin-error" role="alert" hidden></small>
+          </span>
+          <button type="button" class="ghost primary" id="ai-download" data-i18n="aiDownload" hidden>Download</button>
+        </div>
+        <!-- a provider without a key: the key, its page, and what it costs -->
+        <div class="row stack sub" id="ai-key-row" hidden>
+          <span class="text">
+            <b id="ai-key-label">API key</b>
+            <small id="ai-key-text"><span id="ai-key-plan"></span> <a id="ai-key-link" href="https://platform.openai.com/api-keys" target="_blank" rel="noopener" data-i18n="aiGetKey">Get a key</a></small>
+          </span>
+          <span class="key">
+            <input type="password" id="ai-key" autocomplete="off" spellcheck="false" autocapitalize="off" dir="ltr" aria-labelledby="ai-key-label" aria-describedby="ai-key-text ai-error">
+            <button type="button" class="ghost" id="ai-key-show" aria-controls="ai-key" data-i18n="aiShow">Show</button>
+            <button type="button" class="ghost primary" id="ai-connect" data-i18n="aiConnect">Connect</button>
+          </span>
+          <small class="note error" id="ai-error" role="alert" hidden></small>
+        </div>
+        <!-- a provider with a key: connected, or without the access Chrome gave it -->
+        <div class="row sub" id="ai-connected" hidden>
+          <span class="text">
+            <b class="state" id="ai-connected-title" data-state="ok">Connected</b>
+            <small id="ai-connected-text" data-i18n="aiConnectedText">The key stays on this computer: never in backups or Chrome sync.</small>
+            <small class="note" id="ai-access" hidden></small>
+          </span>
+          <span class="inline">
+            <button type="button" class="ghost primary" id="ai-allow" data-i18n="aiAllow" hidden>Allow access</button>
+            <button type="button" class="ghost" id="ai-disconnect" data-i18n="aiDisconnect">Disconnect</button>
+          </span>
+        </div>
+        <label class="row sub" id="ai-model-row" hidden>
+          <span class="text"><b data-i18n="aiModel">Model</b><small data-i18n="aiModelText">Larger models summarize better; smaller ones answer faster and cost less.</small><small class="note" id="ai-model-note" hidden></small></span>
+          <select id="ai-model" aria-describedby="ai-model-note"></select>
+        </label>
+        <label class="row" data-ai>
+          <span class="text"><b data-i18n="aiSummary">Summary in the reader</b><small data-i18n="aiSummaryText">Key points, things to do and dates, above the message.</small></span>
+          <select data-key="ai.summary">
+            <option value="off" data-i18n="aiSummaryOff">Off</option>
+            <option value="click" data-i18n="aiSummaryClick">On click</option>
+            <option value="auto" data-i18n="aiSummaryAuto">Automatically for long mail</option>
+          </select>
+        </label>
+        <label class="row" data-ai>
+          <span class="text"><b data-i18n="aiReply">Waiting for your reply</b><small data-i18n="aiReplyText">Marks unread mail from people who expect an answer and gathers it under a chip in the panel.</small></span>
+          <input type="checkbox" role="switch" data-key="ai.reply">
+        </label>
+      </div>
+      <p class="hint" id="ai-privacy" hidden></p>
+    </section>
+
     <section class="group">
       <h2 data-i18n="opening">Opening mail</h2>
       <div class="card">
@@ -396,6 +473,7 @@
   <script src="/core/services/proton.js"></script>
   <script src="/core/services/yandex.js"></script>
   <script src="/core/services/mailru.js"></script>
+  <script src="../ai/ai.js"></script>
   <script src="index.js"></script>
 </body>
 </html>

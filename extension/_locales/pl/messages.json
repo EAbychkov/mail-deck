@@ -504,7 +504,7 @@
         "message": "Ta przeglądarka"
     },
     "opt_resetConfirm": {
-        "message": "Przywrócić wszystkie ustawienia domyślne? Przełączniki i etykiety skrzynek też."
+        "message": "Przywrócić wszystkie ustawienia domyślne? Przełączniki i etykiety skrzynek też, a klucze AI zostaną zapomniane."
     },
     "opt_play": {
         "message": "Odtwórz"
@@ -1640,5 +1640,260 @@
     },
     "opt_repeatText": {
         "message": "Wraca razem z dźwiękiem, dopóki nie przeczytasz, nie zarchiwizujesz lub nie usuniesz wiadomości. Godziny ciszy nadal obowiązują."
+    },
+    "ai_err_auth": {
+        "message": "Klucz został odrzucony. Sprawdź go w Ustawienia → AI."
+    },
+    "ai_err_quota": {
+        "message": "Dostawca informuje, że na koncie skończyły się środki."
+    },
+    "ai_err_rate": {
+        "message": "Za dużo żądań. Spróbuj ponownie za minutę."
+    },
+    "ai_err_network": {
+        "message": "Brak połączenia."
+    },
+    "ai_err_model": {
+        "message": "Ten model nie jest dostępny dla twojego klucza. Wybierz inny w Ustawienia → AI."
+    },
+    "ai_err_refusal": {
+        "message": "Model odmówił streszczenia tej wiadomości."
+    },
+    "ai_err_too_long": {
+        "message": "Ta rozmowa jest za długa, by ją streścić."
+    },
+    "ai_err_unavailable": {
+        "message": "Wbudowany model nie jest gotowy na tym komputerze."
+    },
+    "ai_err_bad_output": {
+        "message": "Nie udało się odczytać odpowiedzi. Spróbuj ponownie."
+    },
+    "ai_err_server": {
+        "message": "Dostawca nie odpowiedział. Spróbuj później."
+    },
+    "ai_err_no_access": {
+        "message": "Zezwól na dostęp do dostawcy w Ustawienia → AI."
+    },
+    "ai_note_english": {
+        "message": "Wbudowany model odpowiada po angielsku."
+    },
+    "panel_summary": {
+        "message": "Streszczenie"
+    },
+    "panel_summaryKey": {
+        "message": "streszczenie"
+    },
+    "panel_summarizing": {
+        "message": "Streszczanie…"
+    },
+    "panel_summaryPoints": {
+        "message": "Najważniejsze"
+    },
+    "panel_summaryTodo": {
+        "message": "Do zrobienia"
+    },
+    "panel_summaryEvents": {
+        "message": "Daty"
+    },
+    "panel_addToCalendar": {
+        "message": "Dodaj do Kalendarza Google"
+    },
+    "panel_summaryTruncated": {
+        "message": "Streszczenie najnowszych wiadomości"
+    },
+    "panel_regenerate": {
+        "message": "Utwórz ponownie"
+    },
+    "panel_copySummary": {
+        "message": "Kopiuj"
+    },
+    "panel_hideSummary": {
+        "message": "Ukryj"
+    },
+    "panel_replyChip": {
+        "message": "Odpowiedz · $1"
+    },
+    "panel_replyWhy": {
+        "message": "Czeka na twoją odpowiedź: $1"
+    },
+    "panel_aiSettings": {
+        "message": "Ustawienia AI"
+    },
+    "panel_fromSite": {
+        "message": "Od $1"
+    },
+    "panel_siteMore": {
+        "message": "Jeszcze $1"
+    },
+    "panel_codeCopied": {
+        "message": "Skopiowano kod"
+    },
+    "opt_ai": {
+        "message": "AI"
+    },
+    "opt_aiEngine": {
+        "message": "Której AI używać"
+    },
+    "opt_aiOff": {
+        "message": "Wyłączona"
+    },
+    "opt_aiOffText": {
+        "message": "Bez streszczeń i oznaczeń odpowiedzi. Nic nie jest nigdzie wysyłane."
+    },
+    "opt_aiBuiltin": {
+        "message": "Na tym komputerze"
+    },
+    "opt_aiBuiltinText": {
+        "message": "Wbudowany model Chrome. Bezpłatny i prywatny, ale nie na każdym komputerze."
+    },
+    "opt_aiCloudText": {
+        "message": "Z własnym kluczem API $1, płatność za użycie."
+    },
+    "opt_aiChecking": {
+        "message": "Sprawdzanie…"
+    },
+    "opt_aiReady": {
+        "message": "Gotowe"
+    },
+    "opt_aiReadyText": {
+        "message": "Model działa w Chrome, offline. Twoja poczta zostaje na tym komputerze."
+    },
+    "opt_aiNeedsDownload": {
+        "message": "Wymaga jednorazowego pobrania"
+    },
+    "opt_aiNeedsDownloadText": {
+        "message": "Chrome pobiera model raz, kilka gigabajtów; potem działa offline."
+    },
+    "opt_aiDownload": {
+        "message": "Pobierz"
+    },
+    "opt_aiDownloading": {
+        "message": "Pobieranie modelu…"
+    },
+    "opt_aiUnavailable": {
+        "message": "Niedostępne na tym komputerze"
+    },
+    "opt_aiUnavailableText": {
+        "message": "Chrome nie oferuje tu swojego modelu. OpenAI i Anthropic działają na każdym komputerze."
+    },
+    "opt_aiOldChrome": {
+        "message": "Wymaga Chrome 138 lub nowszego"
+    },
+    "opt_aiOldChromeText": {
+        "message": "Zaktualizuj Chrome i wróć tutaj."
+    },
+    "opt_aiEnglish": {
+        "message": "Odpowiada po angielsku: model Chrome nie obsługuje jeszcze tego języka ($1)."
+    },
+    "opt_aiKey": {
+        "message": "Klucz API $1"
+    },
+    "opt_aiKeyText": {
+        "message": "Subskrypcja $1 nie obejmuje dostępu do API: $2 rozlicza klucz osobno, za użycie."
+    },
+    "opt_aiGetKey": {
+        "message": "Zdobądź klucz"
+    },
+    "opt_aiShow": {
+        "message": "Pokaż"
+    },
+    "opt_aiHide": {
+        "message": "Ukryj"
+    },
+    "opt_aiConnect": {
+        "message": "Połącz"
+    },
+    "opt_aiConnecting": {
+        "message": "Łączenie…"
+    },
+    "opt_aiKeyEmpty": {
+        "message": "Najpierw wklej klucz."
+    },
+    "opt_aiKeyOther": {
+        "message": "To wygląda na klucz $1. Wybierz go powyżej albo wklej tu klucz $2."
+    },
+    "opt_aiConnected": {
+        "message": "Połączono z $1"
+    },
+    "opt_aiConnectedText": {
+        "message": "Klucz zostaje na tym komputerze: nigdy w kopiach zapasowych ani w synchronizacji Chrome."
+    },
+    "opt_aiDisconnect": {
+        "message": "Rozłącz"
+    },
+    "opt_aiDisconnected": {
+        "message": "Usunięto klucz $1"
+    },
+    "opt_aiNoAccess": {
+        "message": "Chrome nie pozwala już Mail Deck łączyć się z $1."
+    },
+    "opt_aiAllow": {
+        "message": "Zezwól na dostęp"
+    },
+    "opt_aiModel": {
+        "message": "Model"
+    },
+    "opt_aiModelText": {
+        "message": "Większe modele lepiej streszczają; mniejsze odpowiadają szybciej i kosztują mniej."
+    },
+    "opt_aiRecommended": {
+        "message": "Polecane"
+    },
+    "opt_aiOtherModels": {
+        "message": "Inne modele"
+    },
+    "opt_aiBest": {
+        "message": "najlepsze wyniki"
+    },
+    "opt_aiFast": {
+        "message": "najszybszy i najtańszy"
+    },
+    "opt_aiModelGone": {
+        "message": "$1 nie jest już dostępny dla tego klucza. Wybierz inny model."
+    },
+    "opt_aiNoModels": {
+        "message": "Ten klucz nie ma modeli, których Mail Deck może używać."
+    },
+    "opt_aiSummary": {
+        "message": "Streszczenie w czytniku"
+    },
+    "opt_aiSummaryText": {
+        "message": "Najważniejsze punkty, zadania i daty, nad wiadomością."
+    },
+    "opt_aiSummaryOff": {
+        "message": "Wyłączone"
+    },
+    "opt_aiSummaryClick": {
+        "message": "Po kliknięciu"
+    },
+    "opt_aiSummaryAuto": {
+        "message": "Automatycznie dla długich wiadomości"
+    },
+    "opt_aiReply": {
+        "message": "Czeka na twoją odpowiedź"
+    },
+    "opt_aiReplyText": {
+        "message": "Oznacza nieprzeczytaną pocztę od ludzi, którzy czekają na odpowiedź, i zbiera ją pod filtrem w panelu."
+    },
+    "opt_aiPrivacy": {
+        "message": "Żądania idą z twojej przeglądarki prosto do $1, z twoim kluczem. Mail Deck nie ma serwerów. Streszczenie wysyła tekst tej wiadomości; „Czeka na twoją odpowiedź” wysyła nadawcę, temat i podgląd nieprzeczytanej poczty."
+    },
+    "opt_aiPrivacyLocal": {
+        "message": "Chrome uruchamia model na tym komputerze, więc twoja poczta nie jest nigdzie wysyłana."
+    },
+    "opt_aiErrAuth": {
+        "message": "$1 odrzucił ten klucz. Sprawdź, czy skopiowano go w całości."
+    },
+    "opt_aiErrAccess": {
+        "message": "Bez dostępu do $1 Mail Deck nie może użyć klucza. Połącz ponownie i zezwól na dostęp."
+    },
+    "opt_aiErrOther": {
+        "message": "Nie udało się. Spróbuj ponownie."
+    },
+    "opt_aiDiagNoKey": {
+        "message": "jeszcze bez klucza"
+    },
+    "opt_aiDiagNoAccess": {
+        "message": "brak dostępu do $1"
     }
 }

@@ -55,8 +55,28 @@ const DEFAULTS = {
   'senderLogos': true,
   // the other mail services turned on (core/services/)
   'services': [],
+  // the AI (data/ai/ai.js): which engine, each provider's model, what it does. The keys are
+  // kept apart from these (AI_SECRETS): never in a backup, in Chrome sync or on the screen.
+  'ai.engine': 'off',
+  'ai.openai.model': '',
+  'ai.anthropic.model': '',
+  'ai.summary': 'click',
+  'ai.reply': true,
   'sync.settings': false
 };
+const AI_ENGINES = ['off', 'builtin', 'openai', 'anthropic'];
+const AI_PROVIDERS = {
+  openai: {
+    name: 'OpenAI', plan: 'ChatGPT Plus', origin: 'https://api.openai.com/*', host: 'api.openai.com',
+    keys: 'https://platform.openai.com/api-keys', placeholder: 'sk-…'
+  },
+  anthropic: {
+    name: 'Anthropic', plan: 'Claude Pro', origin: 'https://api.anthropic.com/*', host: 'api.anthropic.com',
+    keys: 'https://console.anthropic.com/settings/keys', placeholder: 'sk-ant-…'
+  }
+};
+const AI_SECRETS = Object.keys(AI_PROVIDERS).map(id => `ai.${id}.key`);
+const AI_ORIGINS = Object.values(AI_PROVIDERS).map(p => p.origin);
 const SERVICES = Object.values(self.MailServices || {});
 // the default sound and five special ones, each a type (0-3 built in, 4 own file), a file and a mime
 const MEDIA = ['default', 'custom0', 'custom1', 'custom2', 'custom3', 'custom4'].map(n => 'notification.sound.media.' + n);
@@ -95,7 +115,12 @@ const VALID = {
   'notify.never': upTo(20000),
   'notify.only': upTo(20000),
   'notify.repeat': oneOf(0, 5, 15, 30, 60), // minutes
-  'badge.count': oneOf('all', 'new')
+  'badge.count': oneOf('all', 'new'),
+  'ai.engine': oneOf(...AI_ENGINES),
+  'ai.summary': oneOf('off', 'click', 'auto'),
+  // a model id as the providers write them (gpt-5-mini, claude-opus-5-5, o4-mini); empty: not picked yet
+  'ai.openai.model': v => /^([\w][\w.:\/-]{0,99})?$/.test(v),
+  'ai.anthropic.model': v => /^([\w][\w.:\/-]{0,99})?$/.test(v)
 };
 for (const m of MEDIA.slice(1)) {
   VALID[m + '.selector'] = oneOf(0, 1, 2);
@@ -166,9 +191,12 @@ const syncNeeds = () => {
   }
 };
 
-/* plain fields: data-key names the stored setting */
-const paintFields = () => {
+/* plain fields: data-key names the stored setting; only: which of them to paint */
+const paintFields = (only = () => true) => {
   for (const el of document.querySelectorAll('[data-key]')) {
+    if (!only(el.dataset.key)) {
+      continue;
+    }
     const value = prefs[el.dataset.key];
     if (el.type === 'checkbox') {
       el.checked = el.hasAttribute('data-invert') ? !value : value;
@@ -214,6 +242,9 @@ document.addEventListener('change', ({target}) => {
   }
   else if (target.name === 'open') {
     save({currentTab: target.value === 'current', newWindow: target.value === 'window'});
+  }
+  else if (target.name === 'ai.engine') {
+    pickEngine(target.value);
   }
   else if (target.name === 'scope') {
     document.body.dataset.scope = target.value;
@@ -462,14 +493,506 @@ const revokeOff = ids => {
   const origins = SERVICES.filter(s => !ids.includes(s.id)).flatMap(s => s.origins);
   return origins.length ? chrome.permissions.remove({origins}).catch(() => false) : Promise.resolve(true);
 };
-// the panel's link to this section
-if (location.hash === '#services') {
-  addEventListener('load', () => $('services').scrollIntoView({block: 'start'}));
+// the panel's links to a section: #services, #ai
+if (location.hash === '#services' || location.hash === '#ai') {
+  addEventListener('load', () => $(location.hash.slice(1)).scrollIntoView({block: 'start'}));
 }
 $('forget').onclick = () => store.remove('accounts').then(() => {
   toast(t('forgotten'));
   paintAccounts();
 });
+
+/* AI: an engine, a provider's key and model, and what it does (self.AI, data/ai/ai.js) */
+// The page works without the module as well: the card then says the AI is not available.
+const aiModule = () => self.AI;
+const uiLang = () => chrome.i18n.getUILanguage();
+// each provider's key as chrome.storage.local holds it: never in prefs (a backup's source),
+// never written into the page; the field is for a new key only
+let aiKeys = {};
+// whether Chrome gives the provider's site: a key without it is of no use
+const aiAccess = {};
+// the models a provider's key may use, as this page last heard, or {error}
+const aiLists = {};
+const aiListing = new Set();
+let aiConnecting = false;
+// while this page downloads the built-in model: {part}, the fraction done when Chrome says it
+let aiDownload = null;
+let aiPoll;
+let builtinRun = 0;
+let builtinLang = '';
+const aiKeyOf = engine => aiKeys[`ai.${engine}.key`] || '';
+const aiModelKey = engine => `ai.${engine}.model`;
+const readAIKeys = () => store.get(Object.fromEntries(AI_SECRETS.map(k => [k, '']))).then(r => {
+  aiKeys = r;
+});
+const syncAIAccess = async () => {
+  const ids = Object.keys(AI_PROVIDERS);
+  const granted = await Promise.all(ids.map(id => chrome.permissions.contains({origins: [AI_PROVIDERS[id].origin]}).catch(() => false)));
+  ids.forEach((id, i) => {
+    // access given again (or taken) asks for the list anew
+    if (aiAccess[id] !== granted[i]) {
+      delete aiLists[id];
+    }
+    aiAccess[id] = granted[i] === true;
+  });
+};
+
+// What went wrong, in words that say what to do: an AIError's code (data/ai/ai.js) or the page's
+// own (no-models). The module's messages (ai_err_*) serve where they need nothing of this page.
+const aiErrorText = (e, engine) => {
+  const p = AI_PROVIDERS[engine];
+  const code = e?.code;
+  if (code === 'aborted') {
+    return '';
+  }
+  if (code === 'auth') {
+    return t('aiErrAuth', p ? p.name : '');
+  }
+  if (code === 'no-access') {
+    return t('aiErrAccess', p ? p.host : '');
+  }
+  if (code === 'model' || code === 'no-models') {
+    return t('aiNoModels');
+  }
+  return (typeof code === 'string' && chrome.i18n.getMessage('ai_err_' + code.replace(/-/g, '_'))) || t('aiErrOther');
+};
+// the provider a key's form names: Anthropic's start with sk-ant-, OpenAI's with sk- (sk-proj-…)
+const aiKeyProvider = key => /^sk-ant-/.test(key) ? 'anthropic' : /^sk-/.test(key) ? 'openai' : '';
+// the model a key gets until one is picked: the one data/ai/ai.js marks, else as it picks one
+// (the lists come newest first)
+const aiDefaultModel = (engine, list) => {
+  const marked = list.find(m => m.default);
+  if (marked) {
+    return marked.id;
+  }
+  const ids = list.map(m => m.id);
+  if (engine === 'anthropic') {
+    return ids.includes('claude-opus-5-5') ? 'claude-opus-5-5' : ids[0] || '';
+  }
+  return ids.find(id => /^gpt-\d+(\.\d+)?-mini$/.test(id)) || ids.find(id => id.startsWith('gpt-')) || ids[0] || '';
+};
+const aiPrefsFor = engine => ({
+  engine, model: prefs[aiModelKey(engine)] || '', summary: prefs['ai.summary'], reply: prefs['ai.reply'], key: aiKeyOf(engine)
+});
+// a setting the page sets on its own, as a model picked for a new key: saved without a toast
+const keep = values => {
+  Object.assign(prefs, values);
+  return store.set(values).then(() => prefs['sync.settings'] && pushSync(), () => {});
+};
+
+/* the built-in model: what Chrome says of it, and its one-time download */
+// each state's line: a title, a word under it, and the Download button or the meter with it
+const AI_BUILTIN = {
+  'checking': {title: 'aiChecking', state: 'wait'},
+  'available': {title: 'aiReady', text: 'aiReadyText', state: 'ok'},
+  'downloadable': {title: 'aiNeedsDownload', text: 'aiNeedsDownloadText', state: 'wait', download: true},
+  'downloading': {title: 'aiDownloading', state: 'wait', meter: true},
+  'unavailable': {title: 'aiUnavailable', text: 'aiUnavailableText', state: 'bad'},
+  'old-chrome': {title: 'aiOldChrome', text: 'aiOldChromeText', state: 'bad'}
+};
+const sameLanguage = (a, b) => String(a).toLowerCase().split(/[-_]/)[0] === String(b).toLowerCase().split(/[-_]/)[0];
+const languageName = lang => {
+  try {
+    return new Intl.DisplayNames([uiLang()], {type: 'language'}).of(lang) || lang;
+  }
+  catch (e) {
+    return lang;
+  }
+};
+// {status, lang}: what the model can do here, and the language it answers in
+const builtinStatus = async () => {
+  const AI = aiModule();
+  if (!AI?.builtin) {
+    return {status: 'unavailable', lang: uiLang()};
+  }
+  const state = await Promise.resolve().then(() => AI.state?.(aiPrefsFor('builtin'))).catch(() => null);
+  const lang = state?.lang || uiLang();
+  if (state?.reason === 'old-chrome') {
+    return {status: 'old-chrome', lang};
+  }
+  const status = await Promise.resolve().then(() => AI.builtin.availability(lang)).catch(() => 'unavailable');
+  return {status: AI_BUILTIN[status] && status !== 'checking' ? status : 'unavailable', lang};
+};
+const paintMeter = () => {
+  const part = aiDownload?.part;
+  const known = typeof part === 'number';
+  const progress = $('ai-progress');
+  // without a fraction yet the bar runs to and fro
+  if (known) {
+    progress.value = Math.round(part * 100);
+  }
+  else {
+    progress.removeAttribute('value');
+  }
+  $('ai-percent').textContent = known ? new Intl.NumberFormat(uiLang(), {style: 'percent'}).format(part) : '';
+};
+const showBuiltin = (status, lang) => {
+  const view = AI_BUILTIN[status] || AI_BUILTIN.checking;
+  const title = $('ai-builtin-title');
+  title.textContent = t(view.title);
+  title.dataset.state = view.state;
+  $('ai-builtin-text').textContent = view.text ? t(view.text) : '';
+  $('ai-builtin-text').hidden = !view.text;
+  $('ai-download').hidden = !view.download;
+  $('ai-meter').hidden = !view.meter;
+  paintMeter();
+  // a UI language the model does not speak: it answers in English (data/ai/ai.js)
+  const english = Boolean(lang) && !sameLanguage(lang, uiLang()) && ['available', 'downloadable', 'downloading'].includes(status);
+  $('ai-builtin-lang').textContent = english ? t('aiEnglish', languageName(uiLang())) : '';
+  $('ai-builtin-lang').hidden = !english;
+};
+const builtinError = text => {
+  $('ai-builtin-error').textContent = text || '';
+  $('ai-builtin-error').hidden = !text;
+};
+const paintBuiltin = async () => {
+  clearTimeout(aiPoll);
+  if (prefs['ai.engine'] !== 'builtin') {
+    return;
+  }
+  if (aiDownload) {
+    return showBuiltin('downloading', builtinLang);
+  }
+  const run = builtinRun += 1;
+  const {status, lang} = await builtinStatus();
+  // a later paint, or another engine picked meanwhile, wins
+  if (run !== builtinRun || prefs['ai.engine'] !== 'builtin') {
+    return;
+  }
+  builtinLang = lang;
+  showBuiltin(aiDownload ? 'downloading' : status, lang);
+  // a download another page started: its end shows here too
+  if (status === 'downloading' && !aiDownload) {
+    aiPoll = setTimeout(paintBuiltin, 3000);
+  }
+};
+$('ai-download').onclick = () => {
+  const AI = aiModule();
+  if (!AI?.builtin?.download || aiDownload) {
+    return;
+  }
+  aiDownload = {part: null};
+  builtinError('');
+  let done;
+  // Chrome downloads the model only from a click: the call comes first, before anything is awaited
+  try {
+    done = Promise.resolve(AI.builtin.download(loaded => {
+      const n = Number(loaded);
+      if (aiDownload) {
+        aiDownload.part = Number.isFinite(n) ? Math.min(1, Math.max(0, n > 1 ? n / 100 : n)) : null;
+        paintMeter();
+      }
+    }));
+  }
+  catch (e) {
+    done = Promise.reject(e);
+  }
+  showBuiltin('downloading', builtinLang);
+  // the button goes: the focus stays in the card, on the engine it belongs to
+  document.querySelector('input[name="ai.engine"][value="builtin"]')?.focus();
+  return done.then(() => {
+    aiDownload = null;
+    toast(t('aiReady'));
+  }, e => {
+    aiDownload = null;
+    builtinError(aiErrorText(e, 'builtin'));
+  }).then(paintBuiltin);
+};
+
+/* a provider: its key, Chrome's access to its site, its models */
+const aiError = text => {
+  $('ai-error').textContent = text || '';
+  $('ai-error').hidden = !text;
+  $('ai-key').setAttribute('aria-invalid', text ? 'true' : 'false');
+};
+const listModels = engine => {
+  const key = aiKeyOf(engine);
+  if (aiListing.has(engine) || !key) {
+    return;
+  }
+  aiListing.add(engine);
+  Promise.resolve().then(() => aiModule().models(engine, key)).then(list => {
+    list = (Array.isArray(list) ? list : []).filter(m => m && typeof m.id === 'string');
+    aiLists[engine] = list.length ? list : {error: {code: 'no-models'}};
+    // a key without a model picked (a backup from before, a model removed) gets the module's own
+    if (list.length && !prefs[aiModelKey(engine)]) {
+      keep({[aiModelKey(engine)]: aiDefaultModel(engine, list)});
+    }
+  }, e => {
+    aiLists[engine] = {error: e};
+  }).finally(() => {
+    aiListing.delete(engine);
+    if (prefs['ai.engine'] === engine) {
+      paintCloud();
+    }
+  });
+};
+const paintModels = engine => {
+  const select = $('ai-model');
+  const note = $('ai-model-note');
+  const stored = prefs[aiModelKey(engine)];
+  const list = aiLists[engine];
+  // a recommended model says what for: the best summaries, or the fastest and cheapest
+  const TAGS = {best: 'aiBest', fast: 'aiFast'};
+  const option = (m, label = [m.name || m.id, TAGS[m.tag] && t(TAGS[m.tag])].filter(Boolean).join(' · ')) =>
+    h('option', {value: m.id, textContent: label, selected: m.id === stored});
+  if (!Array.isArray(list)) {
+    // the model stored shows at once; the provider's list follows, or why it did not come
+    select.replaceChildren(option({id: stored}, stored || '…'));
+    note.textContent = list?.error ? aiErrorText(list.error, engine) : '';
+    note.hidden = !note.textContent;
+    if (!list) {
+      listModels(engine);
+    }
+    return;
+  }
+  // recommended first (data/ai/ai.js marks them), the rest under them
+  const group = (label, models) => {
+    const g = h('optgroup', {label});
+    g.append(...models.map(m => option(m)));
+    return g;
+  };
+  const best = list.filter(m => m.recommended);
+  const rest = list.filter(m => !m.recommended);
+  const gone = Boolean(stored) && !list.some(m => m.id === stored);
+  select.replaceChildren(
+    ...(gone ? [option({id: stored}, stored)] : []),
+    ...(best.length ? [group(t('aiRecommended'), best), rest.length && group(t('aiOtherModels'), rest)].filter(Boolean) : rest.map(m => option(m))));
+  select.value = stored;
+  // a model the account no longer has stays shown, with a word to pick another
+  note.textContent = gone ? t('aiModelGone', stored) : '';
+  note.hidden = !gone;
+};
+const paintCloud = () => {
+  const engine = prefs['ai.engine'];
+  const p = AI_PROVIDERS[engine];
+  const key = p ? aiKeyOf(engine) : '';
+  $('ai-key-row').hidden = !p || Boolean(key);
+  $('ai-connected').hidden = !p || !key;
+  $('ai-model-row').hidden = !p || !key || !aiAccess[engine];
+  if (!p) {
+    return;
+  }
+  if (!key) {
+    $('ai-key-label').textContent = t('aiKey', p.name);
+    $('ai-key-plan').textContent = t('aiKeyText', p.plan, p.name);
+    $('ai-key-link').href = p.keys;
+    $('ai-key').placeholder = p.placeholder;
+    $('ai-key').readOnly = aiConnecting;
+    // the button keeps the focus while it works: aria-disabled, not disabled
+    $('ai-connect').setAttribute('aria-disabled', aiConnecting ? 'true' : 'false');
+    $('ai-connect').textContent = t(aiConnecting ? 'aiConnecting' : 'aiConnect');
+    return;
+  }
+  const access = aiAccess[engine];
+  $('ai-connected-title').textContent = t('aiConnected', p.name);
+  $('ai-connected-title').dataset.state = access ? 'ok' : 'bad';
+  $('ai-access').textContent = access ? '' : t('aiNoAccess', p.host);
+  $('ai-access').hidden = access;
+  $('ai-allow').hidden = access;
+  if (access) {
+    paintModels(engine);
+  }
+};
+const paintAI = () => {
+  const engine = prefs['ai.engine'];
+  for (const radio of document.querySelectorAll('input[name="ai.engine"]')) {
+    radio.checked = radio.value === engine;
+  }
+  // with the AI off its features fade out, as a row does under a switch that is off
+  const off = !AI_ENGINES.includes(engine) || engine === 'off';
+  for (const row of document.querySelectorAll('[data-ai]')) {
+    row.classList.toggle('off', off);
+    row.querySelectorAll('input, select').forEach(el => el.disabled = off);
+  }
+  const p = AI_PROVIDERS[engine];
+  $('ai-privacy').textContent = p ? t('aiPrivacy', p.name) : engine === 'builtin' ? t('aiPrivacyLocal') : '';
+  $('ai-privacy').hidden = !$('ai-privacy').textContent;
+  $('ai-builtin').hidden = engine !== 'builtin';
+  paintBuiltin();
+  paintCloud();
+};
+const resetKeyField = () => {
+  $('ai-key').value = '';
+  $('ai-key').type = 'password';
+  $('ai-key-show').textContent = t('aiShow');
+  aiError('');
+};
+const pickEngine = engine => {
+  if (!AI_ENGINES.includes(engine) || engine === prefs['ai.engine']) {
+    return;
+  }
+  // a key typed for one provider never goes to another
+  resetKeyField();
+  builtinError('');
+  save({'ai.engine': engine});
+  paintAI();
+};
+// Connect: Chrome's access to the provider's site, asked from the click; then the key, checked
+// with the provider; then its models. Only a key that passed is kept.
+const connect = () => {
+  const engine = prefs['ai.engine'];
+  const p = AI_PROVIDERS[engine];
+  const field = $('ai-key');
+  const key = field.value.trim();
+  if (!p || aiConnecting) {
+    return Promise.resolve(false);
+  }
+  const other = aiKeyProvider(key);
+  if (!key || (other && other !== engine)) {
+    aiError(key ? t('aiKeyOther', AI_PROVIDERS[other].name, p.name) : t('aiKeyEmpty'));
+    field.focus();
+    return Promise.resolve(false);
+  }
+  const had = aiAccess[engine] === true;
+  // Chrome asks only from the click itself, before anything is awaited
+  const asked = chrome.permissions.request({origins: [p.origin]});
+  aiConnecting = true;
+  aiError('');
+  paintCloud();
+  return Promise.resolve(asked).catch(() => false).then(async granted => {
+    if (!granted) {
+      throw {code: 'no-access'};
+    }
+    aiAccess[engine] = true;
+    const AI = aiModule();
+    if (!AI?.check || !AI.models) {
+      throw {code: 'unavailable'};
+    }
+    await AI.check(engine, key);
+    const list = ((await AI.models(engine, key)) || []).filter(m => m && typeof m.id === 'string');
+    if (list.length === 0) {
+      throw {code: 'no-models'};
+    }
+    const stored = prefs[aiModelKey(engine)];
+    const model = list.some(m => m.id === stored) ? stored : aiDefaultModel(engine, list);
+    aiLists[engine] = list;
+    aiKeys[`ai.${engine}.key`] = key;
+    prefs[aiModelKey(engine)] = model;
+    try {
+      await store.set({[`ai.${engine}.key`]: key, [aiModelKey(engine)]: model});
+    }
+    catch (e) {
+      aiKeys[`ai.${engine}.key`] = '';
+      throw e;
+    }
+    field.value = '';
+    field.type = 'password';
+    $('ai-key-show').textContent = t('aiShow');
+    toast(t('aiConnected', p.name));
+    if (prefs['sync.settings']) {
+      pushSync();
+    }
+    return true;
+  }).catch(e => {
+    // a key that did not connect leaves Chrome's access as it found it
+    if (!had && e?.code !== 'no-access') {
+      aiAccess[engine] = false;
+      chrome.permissions.remove({origins: [p.origin]}).catch(() => false);
+    }
+    aiError(aiErrorText(e, engine));
+    return false;
+  }).then(ok => {
+    aiConnecting = false;
+    paintCloud();
+    if (prefs['ai.engine'] === engine) {
+      (ok ? ($('ai-model-row').hidden ? $('ai-disconnect') : $('ai-model')) : field).focus();
+    }
+    return ok;
+  });
+};
+// Disconnect: the key and the model forgotten, the provider's site given back to Chrome
+const disconnect = () => {
+  const engine = prefs['ai.engine'];
+  const p = AI_PROVIDERS[engine];
+  if (!p) {
+    return Promise.resolve();
+  }
+  delete aiLists[engine];
+  aiKeys[`ai.${engine}.key`] = '';
+  prefs[aiModelKey(engine)] = '';
+  aiAccess[engine] = false;
+  return Promise.all([
+    store.remove([`ai.${engine}.key`, aiModelKey(engine)]),
+    chrome.permissions.remove({origins: [p.origin]}).catch(() => false)
+  ]).then(() => {
+    toast(t('aiDisconnected', p.name));
+    if (prefs['sync.settings']) {
+      pushSync();
+    }
+  }, e => toast(e.message)).then(() => {
+    resetKeyField();
+    paintCloud();
+    $('ai-key').focus();
+  });
+};
+$('ai-connect').onclick = () => connect();
+$('ai-key').onkeydown = ev => {
+  if (ev.key === 'Enter') {
+    ev.preventDefault();
+    connect();
+  }
+};
+$('ai-key').oninput = () => aiError('');
+$('ai-key-show').onclick = () => {
+  const field = $('ai-key');
+  const show = field.type === 'password';
+  field.type = show ? 'text' : 'password';
+  $('ai-key-show').textContent = t(show ? 'aiHide' : 'aiShow');
+};
+$('ai-disconnect').onclick = () => disconnect();
+// a key kept while Chrome's access was taken (on chrome://extensions, say): asked for again
+$('ai-allow').onclick = () => {
+  const engine = prefs['ai.engine'];
+  const p = AI_PROVIDERS[engine];
+  if (!p) {
+    return;
+  }
+  return Promise.resolve(chrome.permissions.request({origins: [p.origin]})).catch(() => false).then(granted => {
+    aiAccess[engine] = granted === true;
+    delete aiLists[engine];
+    paintCloud();
+    if (granted) {
+      $('ai-model').focus();
+    }
+  });
+};
+$('ai-model').onchange = () => {
+  const engine = prefs['ai.engine'];
+  if (AI_PROVIDERS[engine]) {
+    save({[aiModelKey(engine)]: $('ai-model').value}).then(() => paintModels(engine));
+  }
+};
+// what another page changes (another settings tab, a reset): the card follows; a key only as stored
+const followAI = changes => {
+  let changed = false;
+  for (const [k, change] of Object.entries(changes)) {
+    if (AI_SECRETS.includes(k)) {
+      const value = change.newValue || '';
+      if (aiKeys[k] !== value) {
+        aiKeys[k] = value;
+        delete aiLists[k.split('.')[1]];
+        changed = true;
+      }
+    }
+    else if (k.startsWith('ai.') && k in DEFAULTS) {
+      const value = 'newValue' in change ? change.newValue : DEFAULTS[k];
+      if (prefs[k] !== value) {
+        prefs[k] = value;
+        changed = true;
+      }
+    }
+  }
+  if (changed) {
+    paintFields(k => k.startsWith('ai.'));
+    paintAI();
+  }
+};
+// what a reset leaves of the AI: no key, no provider's site, no reply marks kept
+const forgetAI = () => Promise.all([
+  store.remove([...AI_SECRETS, 'ai.replies']),
+  chrome.permissions.remove({origins: AI_ORIGINS}).catch(() => false)
+]);
 
 /* the panel's shortcut: Chrome keeps it, and changes it on chrome://extensions/shortcuts */
 const paintShortcut = () => chrome.commands.getAll(commands => {
@@ -501,12 +1024,20 @@ const collect = async files => {
   });
   const slot = gmailSlots(await sessionObjects());
   settings.labels = Object.fromEntries(Object.entries(slot).map(([email, n]) => [email, settings['feeds_' + n]]));
+  // an AI key is never in DEFAULTS, so never asked for above; and should one ever be, it stays here
+  for (const k of AI_SECRETS) {
+    delete settings[k];
+  }
   return settings;
 };
 // keeps only what a backup may hold, each value of its setting's type and within its range
 const sanitize = data => {
   const out = {};
   for (const [k, v] of Object.entries(data || {})) {
+    // a file that carries an AI key, whoever wrote it, does not bring it here
+    if (AI_SECRETS.includes(k)) {
+      continue;
+    }
     if (k in DEFAULTS && k !== 'sync.settings' && k !== 'services' && typeof v === typeof DEFAULTS[k] &&
       (typeof v !== 'number' || (Number.isFinite(v) && v >= 0)) && (!VALID[k] || VALID[k](v))) {
       out[k] = v;
@@ -733,8 +1264,32 @@ const browserChecks = () => Promise.all([
     const commands = await chrome.commands.getAll();
     const key = commands.find(c => c.name === '_execute_action')?.shortcut;
     return key ? [true, key] : [false, t('shortcutNone')];
-  })
+  }),
+  aiDiag()
 ]);
+// the AI's line: the engine and whether it works now (a key is asked of its provider), never the key
+const aiDiag = () => check('ai', async () => {
+  const engine = prefs['ai.engine'];
+  const p = AI_PROVIDERS[engine];
+  if (!p && engine !== 'builtin') {
+    return [null, t('aiOff')];
+  }
+  if (!p) {
+    const {status} = await within(builtinStatus());
+    return [status === 'available', `${t('aiBuiltin')}: ${t(AI_BUILTIN[status].title)}`];
+  }
+  const name = `ai.${engine}.key`;
+  const {[name]: key} = await store.get({[name]: ''});
+  if (!key) {
+    return [false, `${p.name}: ${t('aiDiagNoKey')}`];
+  }
+  if (!await chrome.permissions.contains({origins: [p.origin]}).catch(() => false)) {
+    return [false, `${p.name}: ${t('aiDiagNoAccess', p.host)}`];
+  }
+  return within(Promise.resolve().then(() => aiModule().check(engine, key))).then(
+    () => [true, [p.name, prefs[aiModelKey(engine)]].filter(Boolean).join(' · ')],
+    e => [false, `${p.name}: ${aiErrorText(e, engine)}`]);
+});
 const diagBlock = (title, lines) => h('div', {className: 'diag-block'},
   h('b', {textContent: title}),
   h('ul', {}, ...lines.map(([name, ok, why]) => h('li', {className: ok ? 'ok' : ok === null ? 'skip' : 'bad'},
@@ -768,8 +1323,9 @@ $('diag-run').onclick = async () => {
 /* the rest */
 $('reset').onclick = () => {
   if (confirm(t('resetConfirm'))) {
-    // the copy in Chrome sync stays on and follows the defaults; the services go off, their sites too
-    apply({...DEFAULTS, 'sync.settings': prefs['sync.settings'], accounts: {}}).then(() => location.reload());
+    // the copy in Chrome sync stays on and follows the defaults; the services go off, their sites too;
+    // the AI goes off, its keys and its providers' sites with it
+    return apply({...DEFAULTS, 'sync.settings': prefs['sync.settings'], accounts: {}}).then(forgetAI).then(() => location.reload());
   }
 };
 document.addEventListener('click', ({target}) => {
@@ -833,8 +1389,15 @@ store.get(DEFAULTS).then(stored => {
     if (ps.accounts) {
       followAccounts(ps.accounts.newValue || {});
     }
+    followAI(ps);
   });
-  chrome.permissions.onAdded?.addListener(() => syncServices());
-  chrome.permissions.onRemoved?.addListener(() => syncServices());
+  const followAccess = () => {
+    syncServices();
+    syncAIAccess().then(paintCloud);
+  };
+  chrome.permissions.onAdded?.addListener(followAccess);
+  chrome.permissions.onRemoved?.addListener(followAccess);
+  // the AI card: the keys as stored and Chrome's access first, so it shows as it is at once
+  Promise.all([readAIKeys(), syncAIAccess()]).then(paintAI);
   return paintAccounts();
 });

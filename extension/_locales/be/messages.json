@@ -501,7 +501,7 @@
     "message": "Гэты браўзер"
   },
   "opt_resetConfirm": {
-    "message": "Вярнуць усе налады па змаўчанні? Пераключальнікі скрынь і ярлыкі таксама скінуцца."
+    "message": "Вярнуць усе налады па змаўчанні? Пераключальнікі скрынь і ярлыкі таксама скінуцца, а ключы ШІ будуць забытыя."
   },
   "opt_play": {
     "message": "Праслухаць"
@@ -1495,5 +1495,260 @@
   },
   "opt_repeatText": {
     "message": "Яно вяртаецца разам з гукам, пакуль вы не прачытаеце, не заархівуеце або не выдаліце ліст. Ціхія гадзіны дзейнічаюць."
+  },
+  "ai_err_auth": {
+    "message": "Ключ не прыняты. Праверце яго ў раздзеле «Налады → ШІ»."
+  },
+  "ai_err_quota": {
+    "message": "Правайдар паведамляе, што на рахунку скончыліся сродкі."
+  },
+  "ai_err_rate": {
+    "message": "Занадта шмат запытаў. Паспрабуйце праз хвіліну."
+  },
+  "ai_err_network": {
+    "message": "Няма злучэння."
+  },
+  "ai_err_model": {
+    "message": "Гэтая мадэль недаступная для вашага ключа. Выберыце іншую ў раздзеле «Налады → ШІ»."
+  },
+  "ai_err_refusal": {
+    "message": "Мадэль адмовілася складаць зводку гэтага ліста."
+  },
+  "ai_err_too_long": {
+    "message": "Перапіска занадта доўгая для зводкі."
+  },
+  "ai_err_unavailable": {
+    "message": "Убудаваная мадэль на гэтым камп’ютары не гатовая."
+  },
+  "ai_err_bad_output": {
+    "message": "Не ўдалося прачытаць адказ. Паспрабуйце яшчэ раз."
+  },
+  "ai_err_server": {
+    "message": "Правайдар не адказаў. Паспрабуйце пазней."
+  },
+  "ai_err_no_access": {
+    "message": "Дазвольце доступ да правайдара ў раздзеле «Налады → ШІ»."
+  },
+  "ai_note_english": {
+    "message": "Убудаваная мадэль адказвае па-англійску."
+  },
+  "panel_summary": {
+    "message": "Зводка"
+  },
+  "panel_summaryKey": {
+    "message": "зводка"
+  },
+  "panel_summarizing": {
+    "message": "Складаю зводку…"
+  },
+  "panel_summaryPoints": {
+    "message": "Галоўнае"
+  },
+  "panel_summaryTodo": {
+    "message": "Што зрабіць"
+  },
+  "panel_summaryEvents": {
+    "message": "Даты"
+  },
+  "panel_addToCalendar": {
+    "message": "Дадаць у Google Каляндар"
+  },
+  "panel_summaryTruncated": {
+    "message": "Зводка апошніх лістоў"
+  },
+  "panel_regenerate": {
+    "message": "Скласці нанова"
+  },
+  "panel_copySummary": {
+    "message": "Скапіяваць"
+  },
+  "panel_hideSummary": {
+    "message": "Схаваць"
+  },
+  "panel_replyChip": {
+    "message": "Адказаць · $1"
+  },
+  "panel_replyWhy": {
+    "message": "Чакае вашага адказу: $1"
+  },
+  "panel_aiSettings": {
+    "message": "Налады ШІ"
+  },
+  "panel_fromSite": {
+    "message": "Ад $1"
+  },
+  "panel_siteMore": {
+    "message": "Яшчэ $1"
+  },
+  "panel_codeCopied": {
+    "message": "Код скапіяваны"
+  },
+  "opt_ai": {
+    "message": "ШІ"
+  },
+  "opt_aiEngine": {
+    "message": "Які ШІ выкарыстоўваць"
+  },
+  "opt_aiOff": {
+    "message": "Выключаны"
+  },
+  "opt_aiOffText": {
+    "message": "Ніякіх зводак і адзнак пра адказ. Нічога нікуды не адпраўляецца."
+  },
+  "opt_aiBuiltin": {
+    "message": "На гэтым камп’ютары"
+  },
+  "opt_aiBuiltinText": {
+    "message": "Убудаваная мадэль Chrome. Бясплатна і прыватна, але ёсць не на кожным камп’ютары."
+  },
+  "opt_aiCloudText": {
+    "message": "З вашым ключом API $1, аплата за выкарыстанне."
+  },
+  "opt_aiChecking": {
+    "message": "Правяраю…"
+  },
+  "opt_aiReady": {
+    "message": "Гатова"
+  },
+  "opt_aiReadyText": {
+    "message": "Мадэль працуе ў Chrome без інтэрнэту. Пошта застаецца на гэтым камп’ютары."
+  },
+  "opt_aiNeedsDownload": {
+    "message": "Патрэбна аднаразовая загрузка"
+  },
+  "opt_aiNeedsDownloadText": {
+    "message": "Chrome адзін раз спампуе мадэль, некалькі гігабайтаў, а далей яна працуе без інтэрнэту."
+  },
+  "opt_aiDownload": {
+    "message": "Спампаваць"
+  },
+  "opt_aiDownloading": {
+    "message": "Спампоўваю мадэль…"
+  },
+  "opt_aiUnavailable": {
+    "message": "Недаступна на гэтым камп’ютары"
+  },
+  "opt_aiUnavailableText": {
+    "message": "Chrome не прапануе тут сваю мадэль. OpenAI і Anthropic працуюць на любым камп’ютары."
+  },
+  "opt_aiOldChrome": {
+    "message": "Патрэбны Chrome 138 або навейшы"
+  },
+  "opt_aiOldChromeText": {
+    "message": "Абнавіце Chrome і вярніцеся сюды."
+  },
+  "opt_aiEnglish": {
+    "message": "Адказвае па-англійску: мадэль Chrome пакуль не падтрымлівае гэтую мову ($1)."
+  },
+  "opt_aiKey": {
+    "message": "Ключ API $1"
+  },
+  "opt_aiKeyText": {
+    "message": "Падпіска $1 не дае доступу да API: ключ $2 аплачваецца асобна, за выкарыстанне."
+  },
+  "opt_aiGetKey": {
+    "message": "Атрымаць ключ"
+  },
+  "opt_aiShow": {
+    "message": "Паказаць"
+  },
+  "opt_aiHide": {
+    "message": "Схаваць"
+  },
+  "opt_aiConnect": {
+    "message": "Падключыць"
+  },
+  "opt_aiConnecting": {
+    "message": "Падключаю…"
+  },
+  "opt_aiKeyEmpty": {
+    "message": "Спачатку ўстаўце ключ."
+  },
+  "opt_aiKeyOther": {
+    "message": "Падобна, гэта ключ $1. Выберыце яго вышэй або ўстаўце сюды ключ $2."
+  },
+  "opt_aiConnected": {
+    "message": "Падключана: $1"
+  },
+  "opt_aiConnectedText": {
+    "message": "Ключ захоўваецца толькі на гэтым камп’ютары: не трапляе ні ў рэзервовыя копіі, ні ў сінхранізацыю Chrome."
+  },
+  "opt_aiDisconnect": {
+    "message": "Адключыць"
+  },
+  "opt_aiDisconnected": {
+    "message": "Ключ $1 выдалены"
+  },
+  "opt_aiNoAccess": {
+    "message": "Chrome больш не дае Mail Deck доступу да $1."
+  },
+  "opt_aiAllow": {
+    "message": "Дазволіць доступ"
+  },
+  "opt_aiModel": {
+    "message": "Мадэль"
+  },
+  "opt_aiModelText": {
+    "message": "Большыя мадэлі пішуць зводкі лепей, меншыя адказваюць хутчэй і каштуюць танней."
+  },
+  "opt_aiRecommended": {
+    "message": "Рэкамендаваныя"
+  },
+  "opt_aiOtherModels": {
+    "message": "Іншыя мадэлі"
+  },
+  "opt_aiBest": {
+    "message": "найлепшая якасць"
+  },
+  "opt_aiFast": {
+    "message": "хутчэй і танней за ўсіх"
+  },
+  "opt_aiModelGone": {
+    "message": "Мадэль $1 больш недаступная для гэтага ключа. Выберыце іншую."
+  },
+  "opt_aiNoModels": {
+    "message": "Для гэтага ключа няма мадэляў, з якімі працуе Mail Deck."
+  },
+  "opt_aiSummary": {
+    "message": "Зводка пры чытанні ліста"
+  },
+  "opt_aiSummaryText": {
+    "message": "Галоўнае, што зрабіць і даты — над тэкстам ліста."
+  },
+  "opt_aiSummaryOff": {
+    "message": "Не паказваць"
+  },
+  "opt_aiSummaryClick": {
+    "message": "Па кнопцы"
+  },
+  "opt_aiSummaryAuto": {
+    "message": "Адразу для доўгіх лістоў"
+  },
+  "opt_aiReply": {
+    "message": "Чакаюць вашага адказу"
+  },
+  "opt_aiReplyText": {
+    "message": "Пазначае непрачытаныя лісты ад людзей, якія чакаюць адказу, і збірае іх у асобны фільтр у панэлі."
+  },
+  "opt_aiPrivacy": {
+    "message": "Запыты ідуць з вашага браўзера проста ў $1, з вашым ключом. У Mail Deck няма сервераў. Для зводкі адпраўляецца тэкст гэтага ліста; для «Чакаюць вашага адказу» — адпраўнік, тэма і пачатак непрачытаных лістоў."
+  },
+  "opt_aiPrivacyLocal": {
+    "message": "Chrome запускае мадэль на гэтым камп’ютары, таму пошта нікуды не адпраўляецца."
+  },
+  "opt_aiErrAuth": {
+    "message": "$1 не прыняў гэты ключ. Праверце, ці скапіяваны ён цалкам."
+  },
+  "opt_aiErrAccess": {
+    "message": "Без доступу да $1 Mail Deck не можа выкарыстаць ключ. Падключыце яшчэ раз і дазвольце доступ."
+  },
+  "opt_aiErrOther": {
+    "message": "Не атрымалася. Паспрабуйце яшчэ раз."
+  },
+  "opt_aiDiagNoKey": {
+    "message": "ключа пакуль няма"
+  },
+  "opt_aiDiagNoAccess": {
+    "message": "няма доступу да $1"
   }
 }

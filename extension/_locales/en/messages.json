@@ -501,7 +501,7 @@
     "message": "This browser"
   },
   "opt_resetConfirm": {
-    "message": "Put every setting back to its default? Inbox switches and labels reset too."
+    "message": "Put every setting back to its default? Inbox switches and labels reset too, and AI keys are forgotten."
   },
   "opt_play": {
     "message": "Play"
@@ -1498,5 +1498,260 @@
   },
   "opt_repeatText": {
     "message": "It comes back, with its sound, until you read, archive or delete the mail. Quiet hours still apply."
+  },
+  "ai_err_auth": {
+    "message": "The key was refused. Check it in Settings → AI."
+  },
+  "ai_err_quota": {
+    "message": "The provider says the account is out of credit."
+  },
+  "ai_err_rate": {
+    "message": "Too many requests. Try again in a minute."
+  },
+  "ai_err_network": {
+    "message": "No connection."
+  },
+  "ai_err_model": {
+    "message": "This model is not available to your key. Pick another in Settings → AI."
+  },
+  "ai_err_refusal": {
+    "message": "The model declined to summarize this mail."
+  },
+  "ai_err_too_long": {
+    "message": "This conversation is too long to summarize."
+  },
+  "ai_err_unavailable": {
+    "message": "The built-in model is not ready on this computer."
+  },
+  "ai_err_bad_output": {
+    "message": "The answer could not be read. Try again."
+  },
+  "ai_err_server": {
+    "message": "The provider did not answer. Try again later."
+  },
+  "ai_err_no_access": {
+    "message": "Allow access to the provider in Settings → AI."
+  },
+  "ai_note_english": {
+    "message": "The built-in model answers in English."
+  },
+  "panel_summary": {
+    "message": "Summary"
+  },
+  "panel_summaryKey": {
+    "message": "summary"
+  },
+  "panel_summarizing": {
+    "message": "Summarizing…"
+  },
+  "panel_summaryPoints": {
+    "message": "Key points"
+  },
+  "panel_summaryTodo": {
+    "message": "To do"
+  },
+  "panel_summaryEvents": {
+    "message": "Dates"
+  },
+  "panel_addToCalendar": {
+    "message": "Add to Google Calendar"
+  },
+  "panel_summaryTruncated": {
+    "message": "Summary of the latest messages"
+  },
+  "panel_regenerate": {
+    "message": "Regenerate"
+  },
+  "panel_copySummary": {
+    "message": "Copy"
+  },
+  "panel_hideSummary": {
+    "message": "Hide"
+  },
+  "panel_replyChip": {
+    "message": "Reply · $1"
+  },
+  "panel_replyWhy": {
+    "message": "Waiting for your reply: $1"
+  },
+  "panel_aiSettings": {
+    "message": "AI settings"
+  },
+  "panel_fromSite": {
+    "message": "From $1"
+  },
+  "panel_siteMore": {
+    "message": "$1 more"
+  },
+  "panel_codeCopied": {
+    "message": "Code copied"
+  },
+  "opt_ai": {
+    "message": "AI"
+  },
+  "opt_aiEngine": {
+    "message": "Which AI to use"
+  },
+  "opt_aiOff": {
+    "message": "Off"
+  },
+  "opt_aiOffText": {
+    "message": "No summaries or reply marks. Nothing is sent anywhere."
+  },
+  "opt_aiBuiltin": {
+    "message": "On this computer"
+  },
+  "opt_aiBuiltinText": {
+    "message": "Chrome’s built-in model. Free and private, but not on every computer."
+  },
+  "opt_aiCloudText": {
+    "message": "With your own $1 API key, paid per use."
+  },
+  "opt_aiChecking": {
+    "message": "Checking…"
+  },
+  "opt_aiReady": {
+    "message": "Ready"
+  },
+  "opt_aiReadyText": {
+    "message": "The model runs in Chrome, offline. Your mail stays on this computer."
+  },
+  "opt_aiNeedsDownload": {
+    "message": "Needs a one-time download"
+  },
+  "opt_aiNeedsDownloadText": {
+    "message": "Chrome fetches the model once, a few gigabytes; then it works offline."
+  },
+  "opt_aiDownload": {
+    "message": "Download"
+  },
+  "opt_aiDownloading": {
+    "message": "Downloading the model…"
+  },
+  "opt_aiUnavailable": {
+    "message": "Not available on this computer"
+  },
+  "opt_aiUnavailableText": {
+    "message": "Chrome does not offer its model here. OpenAI and Anthropic work on any computer."
+  },
+  "opt_aiOldChrome": {
+    "message": "Needs Chrome 138 or newer"
+  },
+  "opt_aiOldChromeText": {
+    "message": "Update Chrome, then come back here."
+  },
+  "opt_aiEnglish": {
+    "message": "It answers in English: Chrome’s model does not support $1 yet."
+  },
+  "opt_aiKey": {
+    "message": "$1 API key"
+  },
+  "opt_aiKeyText": {
+    "message": "A $1 subscription does not include API access: $2 bills the key separately, per use."
+  },
+  "opt_aiGetKey": {
+    "message": "Get a key"
+  },
+  "opt_aiShow": {
+    "message": "Show"
+  },
+  "opt_aiHide": {
+    "message": "Hide"
+  },
+  "opt_aiConnect": {
+    "message": "Connect"
+  },
+  "opt_aiConnecting": {
+    "message": "Connecting…"
+  },
+  "opt_aiKeyEmpty": {
+    "message": "Paste your key first."
+  },
+  "opt_aiKeyOther": {
+    "message": "This looks like a key for $1: choose it above, or paste a key for $2 here."
+  },
+  "opt_aiConnected": {
+    "message": "Connected to $1"
+  },
+  "opt_aiConnectedText": {
+    "message": "The key stays on this computer: never in backups or Chrome sync."
+  },
+  "opt_aiDisconnect": {
+    "message": "Disconnect"
+  },
+  "opt_aiDisconnected": {
+    "message": "$1 key removed"
+  },
+  "opt_aiNoAccess": {
+    "message": "Chrome no longer lets Mail Deck reach $1."
+  },
+  "opt_aiAllow": {
+    "message": "Allow access"
+  },
+  "opt_aiModel": {
+    "message": "Model"
+  },
+  "opt_aiModelText": {
+    "message": "Larger models summarize better; smaller ones answer faster and cost less."
+  },
+  "opt_aiRecommended": {
+    "message": "Recommended"
+  },
+  "opt_aiOtherModels": {
+    "message": "Other models"
+  },
+  "opt_aiBest": {
+    "message": "best results"
+  },
+  "opt_aiFast": {
+    "message": "fastest, cheapest"
+  },
+  "opt_aiModelGone": {
+    "message": "$1 is no longer available to this key. Pick another model."
+  },
+  "opt_aiNoModels": {
+    "message": "This key has no models Mail Deck can use."
+  },
+  "opt_aiSummary": {
+    "message": "Summary in the reader"
+  },
+  "opt_aiSummaryText": {
+    "message": "Key points, things to do and dates, above the message."
+  },
+  "opt_aiSummaryOff": {
+    "message": "Off"
+  },
+  "opt_aiSummaryClick": {
+    "message": "On click"
+  },
+  "opt_aiSummaryAuto": {
+    "message": "Automatically for long mail"
+  },
+  "opt_aiReply": {
+    "message": "Waiting for your reply"
+  },
+  "opt_aiReplyText": {
+    "message": "Marks unread mail from people who expect an answer and gathers it under a chip in the panel."
+  },
+  "opt_aiPrivacy": {
+    "message": "Requests go from your browser straight to $1, with your key. Mail Deck has no servers. A summary sends that message’s text; Waiting for your reply sends the sender, subject and preview of unread mail."
+  },
+  "opt_aiPrivacyLocal": {
+    "message": "Chrome runs the model on this computer, so your mail is not sent anywhere."
+  },
+  "opt_aiErrAuth": {
+    "message": "$1 refused this key. Check that you copied all of it."
+  },
+  "opt_aiErrAccess": {
+    "message": "Without access to $1, Mail Deck cannot use the key. Connect again and allow it."
+  },
+  "opt_aiErrOther": {
+    "message": "That did not work. Try again."
+  },
+  "opt_aiDiagNoKey": {
+    "message": "no key yet"
+  },
+  "opt_aiDiagNoAccess": {
+    "message": "no access to $1"
   }
 }

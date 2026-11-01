@@ -504,7 +504,7 @@
         "message": "Bu tarayıcı"
     },
     "opt_resetConfirm": {
-        "message": "Tüm ayarlar varsayılana dönsün mü? Kutu anahtarları ve etiketler de sıfırlanır."
+        "message": "Tüm ayarlar varsayılana dönsün mü? Kutu anahtarları ve etiketler de sıfırlanır, yapay zekâ API anahtarları da silinir."
     },
     "opt_play": {
         "message": "Çal"
@@ -1636,5 +1636,260 @@
     },
     "opt_repeatText": {
         "message": "Postayı okuyana, arşivleyene veya silene kadar sesiyle birlikte geri gelir. Sessiz saatler yine geçerlidir."
+    },
+    "ai_err_auth": {
+        "message": "Anahtar reddedildi. Ayarlar → Yapay zekâ bölümünden kontrol edin."
+    },
+    "ai_err_quota": {
+        "message": "Sağlayıcı, hesabın kredisinin bittiğini bildiriyor."
+    },
+    "ai_err_rate": {
+        "message": "Çok fazla istek. Bir dakika sonra yeniden deneyin."
+    },
+    "ai_err_network": {
+        "message": "Bağlantı yok."
+    },
+    "ai_err_model": {
+        "message": "Bu model anahtarınızla kullanılamıyor. Ayarlar → Yapay zekâ bölümünden başka birini seçin."
+    },
+    "ai_err_refusal": {
+        "message": "Model bu e-postayı özetlemeyi reddetti."
+    },
+    "ai_err_too_long": {
+        "message": "Bu yazışma özetlenemeyecek kadar uzun."
+    },
+    "ai_err_unavailable": {
+        "message": "Yerleşik model bu bilgisayarda hazır değil."
+    },
+    "ai_err_bad_output": {
+        "message": "Yanıt okunamadı. Yeniden deneyin."
+    },
+    "ai_err_server": {
+        "message": "Sağlayıcı yanıt vermedi. Daha sonra yeniden deneyin."
+    },
+    "ai_err_no_access": {
+        "message": "Ayarlar → Yapay zekâ bölümünden sağlayıcıya erişim izni verin."
+    },
+    "ai_note_english": {
+        "message": "Yerleşik model İngilizce yanıt verir."
+    },
+    "panel_summary": {
+        "message": "Özet"
+    },
+    "panel_summaryKey": {
+        "message": "özet"
+    },
+    "panel_summarizing": {
+        "message": "Özetleniyor…"
+    },
+    "panel_summaryPoints": {
+        "message": "Önemli noktalar"
+    },
+    "panel_summaryTodo": {
+        "message": "Yapılacaklar"
+    },
+    "panel_summaryEvents": {
+        "message": "Tarihler"
+    },
+    "panel_addToCalendar": {
+        "message": "Google Takvim’e ekle"
+    },
+    "panel_summaryTruncated": {
+        "message": "Son iletilerin özeti"
+    },
+    "panel_regenerate": {
+        "message": "Yeniden oluştur"
+    },
+    "panel_copySummary": {
+        "message": "Kopyala"
+    },
+    "panel_hideSummary": {
+        "message": "Gizle"
+    },
+    "panel_replyChip": {
+        "message": "Yanıtla · $1"
+    },
+    "panel_replyWhy": {
+        "message": "Yanıtınızı bekliyor: $1"
+    },
+    "panel_aiSettings": {
+        "message": "Yapay zekâ ayarları"
+    },
+    "panel_fromSite": {
+        "message": "$1 adresinden"
+    },
+    "panel_siteMore": {
+        "message": "$1 tane daha"
+    },
+    "panel_codeCopied": {
+        "message": "Kod kopyalandı"
+    },
+    "opt_ai": {
+        "message": "Yapay zekâ"
+    },
+    "opt_aiEngine": {
+        "message": "Hangi yapay zekâ kullanılsın"
+    },
+    "opt_aiOff": {
+        "message": "Kapalı"
+    },
+    "opt_aiOffText": {
+        "message": "Özet ya da yanıt işareti yok. Hiçbir şey hiçbir yere gönderilmez."
+    },
+    "opt_aiBuiltin": {
+        "message": "Bu bilgisayarda"
+    },
+    "opt_aiBuiltinText": {
+        "message": "Chrome’un yerleşik modeli. Ücretsiz ve gizli, ama her bilgisayarda yok."
+    },
+    "opt_aiCloudText": {
+        "message": "Kendi $1 API anahtarınızla, kullandıkça ödeme."
+    },
+    "opt_aiChecking": {
+        "message": "Denetleniyor…"
+    },
+    "opt_aiReady": {
+        "message": "Hazır"
+    },
+    "opt_aiReadyText": {
+        "message": "Model Chrome’da çevrimdışı çalışır. Postanız bu bilgisayarda kalır."
+    },
+    "opt_aiNeedsDownload": {
+        "message": "Bir kerelik indirme gerekiyor"
+    },
+    "opt_aiNeedsDownloadText": {
+        "message": "Chrome modeli bir kez indirir, birkaç gigabayt; sonra çevrimdışı çalışır."
+    },
+    "opt_aiDownload": {
+        "message": "İndir"
+    },
+    "opt_aiDownloading": {
+        "message": "Model indiriliyor…"
+    },
+    "opt_aiUnavailable": {
+        "message": "Bu bilgisayarda kullanılamıyor"
+    },
+    "opt_aiUnavailableText": {
+        "message": "Chrome modelini burada sunmuyor. OpenAI ve Anthropic her bilgisayarda çalışır."
+    },
+    "opt_aiOldChrome": {
+        "message": "Chrome 138 veya daha yenisi gerekiyor"
+    },
+    "opt_aiOldChromeText": {
+        "message": "Chrome’u güncelleyin, sonra buraya dönün."
+    },
+    "opt_aiEnglish": {
+        "message": "İngilizce yanıt verir: Chrome’un modeli henüz bu dili ($1) desteklemiyor."
+    },
+    "opt_aiKey": {
+        "message": "$1 API anahtarı"
+    },
+    "opt_aiKeyText": {
+        "message": "$1 aboneliği API erişimi içermez: $2 anahtarı ayrıca, kullandıkça faturalandırır."
+    },
+    "opt_aiGetKey": {
+        "message": "Anahtar alın"
+    },
+    "opt_aiShow": {
+        "message": "Göster"
+    },
+    "opt_aiHide": {
+        "message": "Gizle"
+    },
+    "opt_aiConnect": {
+        "message": "Bağlan"
+    },
+    "opt_aiConnecting": {
+        "message": "Bağlanıyor…"
+    },
+    "opt_aiKeyEmpty": {
+        "message": "Önce anahtarınızı yapıştırın."
+    },
+    "opt_aiKeyOther": {
+        "message": "Bu bir $1 anahtarına benziyor. Yukarıda onu seçin ya da buraya bir $2 anahtarı yapıştırın."
+    },
+    "opt_aiConnected": {
+        "message": "$1 ile bağlı"
+    },
+    "opt_aiConnectedText": {
+        "message": "Anahtar yalnızca bu bilgisayarda kalır: yedeklere ya da Chrome eşitlemesine asla girmez."
+    },
+    "opt_aiDisconnect": {
+        "message": "Bağlantıyı kes"
+    },
+    "opt_aiDisconnected": {
+        "message": "$1 anahtarı kaldırıldı"
+    },
+    "opt_aiNoAccess": {
+        "message": "Chrome artık Mail Deck’in $1 adresine erişmesine izin vermiyor."
+    },
+    "opt_aiAllow": {
+        "message": "Erişime izin ver"
+    },
+    "opt_aiModel": {
+        "message": "Model"
+    },
+    "opt_aiModelText": {
+        "message": "Büyük modeller daha iyi özetler; küçükler daha hızlı yanıt verir ve daha ucuzdur."
+    },
+    "opt_aiRecommended": {
+        "message": "Önerilen"
+    },
+    "opt_aiOtherModels": {
+        "message": "Diğer modeller"
+    },
+    "opt_aiBest": {
+        "message": "en iyi sonuçlar"
+    },
+    "opt_aiFast": {
+        "message": "en hızlı ve en ucuz"
+    },
+    "opt_aiModelGone": {
+        "message": "$1 artık bu anahtarla kullanılamıyor. Başka bir model seçin."
+    },
+    "opt_aiNoModels": {
+        "message": "Bu anahtarın Mail Deck’in kullanabileceği modeli yok."
+    },
+    "opt_aiSummary": {
+        "message": "Okurken özet"
+    },
+    "opt_aiSummaryText": {
+        "message": "Önemli noktalar, yapılacaklar ve tarihler, iletinin üstünde."
+    },
+    "opt_aiSummaryOff": {
+        "message": "Kapalı"
+    },
+    "opt_aiSummaryClick": {
+        "message": "Tıklayınca"
+    },
+    "opt_aiSummaryAuto": {
+        "message": "Uzun postalarda otomatik"
+    },
+    "opt_aiReply": {
+        "message": "Yanıtınızı bekleyenler"
+    },
+    "opt_aiReplyText": {
+        "message": "Yanıt bekleyen kişilerden gelen okunmamış postaları işaretler ve paneldeki bir filtrede toplar."
+    },
+    "opt_aiPrivacy": {
+        "message": "İstekler tarayıcınızdan doğrudan $1 sunucularına, anahtarınızla gider. Mail Deck’in sunucusu yoktur. Özet o iletinin metnini gönderir; “Yanıtınızı bekleyenler” okunmamış postaların göndereni, konusu ve önizlemesini gönderir."
+    },
+    "opt_aiPrivacyLocal": {
+        "message": "Chrome modeli bu bilgisayarda çalıştırır, bu yüzden postanız hiçbir yere gönderilmez."
+    },
+    "opt_aiErrAuth": {
+        "message": "$1 bu anahtarı reddetti. Tamamını kopyaladığınızdan emin olun."
+    },
+    "opt_aiErrAccess": {
+        "message": "$1 erişimi olmadan Mail Deck anahtarı kullanamaz. Yeniden bağlanın ve erişime izin verin."
+    },
+    "opt_aiErrOther": {
+        "message": "Olmadı. Yeniden deneyin."
+    },
+    "opt_aiDiagNoKey": {
+        "message": "henüz anahtar yok"
+    },
+    "opt_aiDiagNoAccess": {
+        "message": "$1 erişimi yok"
     }
 }

@@ -15,7 +15,8 @@
     "offscreen",
     "cookies",
     "sidePanel",
-    "declarativeNetRequestWithHostAccess"
+    "declarativeNetRequestWithHostAccess",
+    "activeTab"
   ],
   "host_permissions": [
     "https://mail.google.com/*"
@@ -28,7 +29,9 @@
     "https://mail.360.yandex.ru/*",
     "https://api.passport.yandex.ru/*",
     "https://portal.mail.ru/*",
-    "https://e.mail.ru/*"
+    "https://e.mail.ru/*",
+    "https://api.openai.com/*",
+    "https://api.anthropic.com/*"
   ],
   "action": {
     "default_icon": {

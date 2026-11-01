@@ -504,7 +504,7 @@
         "message": "Този браузър"
     },
     "opt_resetConfirm": {
-        "message": "Да върна ли всички настройки по подразбиране? Превключвателите на кутиите и етикетите също се нулират."
+        "message": "Да върна ли всички настройки по подразбиране? Превключвателите на кутиите и етикетите също се нулират, а ключовете за ИИ се забравят."
     },
     "opt_play": {
         "message": "Пусни"
@@ -1636,5 +1636,260 @@
     },
     "opt_repeatText": {
         "message": "То се връща заедно със звука, докато не прочетете, архивирате или изтриете писмото. Тихите часове важат."
+    },
+    "ai_err_auth": {
+        "message": "Ключът беше отхвърлен. Проверете го в „Настройки → ИИ“."
+    },
+    "ai_err_quota": {
+        "message": "Доставчикът съобщава, че по сметката няма кредит."
+    },
+    "ai_err_rate": {
+        "message": "Твърде много заявки. Опитайте пак след минута."
+    },
+    "ai_err_network": {
+        "message": "Няма връзка."
+    },
+    "ai_err_model": {
+        "message": "Този модел не е достъпен за вашия ключ. Изберете друг в „Настройки → ИИ“."
+    },
+    "ai_err_refusal": {
+        "message": "Моделът отказа да обобщи това писмо."
+    },
+    "ai_err_too_long": {
+        "message": "Кореспонденцията е твърде дълга за обобщение."
+    },
+    "ai_err_unavailable": {
+        "message": "Вграденият модел не е готов на този компютър."
+    },
+    "ai_err_bad_output": {
+        "message": "Отговорът не можа да се прочете. Опитайте отново."
+    },
+    "ai_err_server": {
+        "message": "Доставчикът не отговори. Опитайте по-късно."
+    },
+    "ai_err_no_access": {
+        "message": "Разрешете достъпа до доставчика в „Настройки → ИИ“."
+    },
+    "ai_note_english": {
+        "message": "Вграденият модел отговаря на английски."
+    },
+    "panel_summary": {
+        "message": "Обобщение"
+    },
+    "panel_summaryKey": {
+        "message": "обобщение"
+    },
+    "panel_summarizing": {
+        "message": "Обобщаване…"
+    },
+    "panel_summaryPoints": {
+        "message": "Основното"
+    },
+    "panel_summaryTodo": {
+        "message": "За вършене"
+    },
+    "panel_summaryEvents": {
+        "message": "Дати"
+    },
+    "panel_addToCalendar": {
+        "message": "Добавяне в Google Календар"
+    },
+    "panel_summaryTruncated": {
+        "message": "Обобщение на последните писма"
+    },
+    "panel_regenerate": {
+        "message": "Ново обобщение"
+    },
+    "panel_copySummary": {
+        "message": "Копиране"
+    },
+    "panel_hideSummary": {
+        "message": "Скриване"
+    },
+    "panel_replyChip": {
+        "message": "Отговор · $1"
+    },
+    "panel_replyWhy": {
+        "message": "Очаква вашия отговор: $1"
+    },
+    "panel_aiSettings": {
+        "message": "Настройки на ИИ"
+    },
+    "panel_fromSite": {
+        "message": "От $1"
+    },
+    "panel_siteMore": {
+        "message": "Още $1"
+    },
+    "panel_codeCopied": {
+        "message": "Кодът е копиран"
+    },
+    "opt_ai": {
+        "message": "ИИ"
+    },
+    "opt_aiEngine": {
+        "message": "Кой ИИ да се използва"
+    },
+    "opt_aiOff": {
+        "message": "Изключен"
+    },
+    "opt_aiOffText": {
+        "message": "Без обобщения и отметки за отговор. Нищо не се изпраща никъде."
+    },
+    "opt_aiBuiltin": {
+        "message": "На този компютър"
+    },
+    "opt_aiBuiltinText": {
+        "message": "Вграденият модел на Chrome. Безплатен и поверителен, но не на всеки компютър."
+    },
+    "opt_aiCloudText": {
+        "message": "С ваш собствен API ключ за $1, плащане според употребата."
+    },
+    "opt_aiChecking": {
+        "message": "Проверка…"
+    },
+    "opt_aiReady": {
+        "message": "Готово"
+    },
+    "opt_aiReadyText": {
+        "message": "Моделът работи в Chrome без интернет. Пощата ви остава на този компютър."
+    },
+    "opt_aiNeedsDownload": {
+        "message": "Нужно е еднократно изтегляне"
+    },
+    "opt_aiNeedsDownloadText": {
+        "message": "Chrome изтегля модела веднъж, няколко гигабайта, после той работи без интернет."
+    },
+    "opt_aiDownload": {
+        "message": "Изтегляне"
+    },
+    "opt_aiDownloading": {
+        "message": "Моделът се изтегля…"
+    },
+    "opt_aiUnavailable": {
+        "message": "Не е достъпно на този компютър"
+    },
+    "opt_aiUnavailableText": {
+        "message": "Chrome не предлага тук модела си. OpenAI и Anthropic работят на всеки компютър."
+    },
+    "opt_aiOldChrome": {
+        "message": "Нужен е Chrome 138 или по-нов"
+    },
+    "opt_aiOldChromeText": {
+        "message": "Обновете Chrome и се върнете тук."
+    },
+    "opt_aiEnglish": {
+        "message": "Отговаря на английски: моделът на Chrome още не поддържа този език ($1)."
+    },
+    "opt_aiKey": {
+        "message": "API ключ за $1"
+    },
+    "opt_aiKeyText": {
+        "message": "Абонаментът $1 не включва достъп до API: $2 таксува ключа отделно, според употребата."
+    },
+    "opt_aiGetKey": {
+        "message": "Вземете ключ"
+    },
+    "opt_aiShow": {
+        "message": "Показване"
+    },
+    "opt_aiHide": {
+        "message": "Скриване"
+    },
+    "opt_aiConnect": {
+        "message": "Свързване"
+    },
+    "opt_aiConnecting": {
+        "message": "Свързване…"
+    },
+    "opt_aiKeyEmpty": {
+        "message": "Първо поставете ключа си."
+    },
+    "opt_aiKeyOther": {
+        "message": "Това прилича на ключ за $1. Изберете го по-горе или поставете тук ключ за $2."
+    },
+    "opt_aiConnected": {
+        "message": "Свързано с $1"
+    },
+    "opt_aiConnectedText": {
+        "message": "Ключът остава само на този компютър: никога в резервни копия или в синхронизирането на Chrome."
+    },
+    "opt_aiDisconnect": {
+        "message": "Прекъсване"
+    },
+    "opt_aiDisconnected": {
+        "message": "Ключът за $1 е премахнат"
+    },
+    "opt_aiNoAccess": {
+        "message": "Chrome вече не позволява на Mail Deck да достига до $1."
+    },
+    "opt_aiAllow": {
+        "message": "Разрешаване на достъпа"
+    },
+    "opt_aiModel": {
+        "message": "Модел"
+    },
+    "opt_aiModelText": {
+        "message": "По-големите модели обобщават по-добре; по-малките отговарят по-бързо и струват по-малко."
+    },
+    "opt_aiRecommended": {
+        "message": "Препоръчани"
+    },
+    "opt_aiOtherModels": {
+        "message": "Други модели"
+    },
+    "opt_aiBest": {
+        "message": "най-добро качество"
+    },
+    "opt_aiFast": {
+        "message": "най-бърз и най-евтин"
+    },
+    "opt_aiModelGone": {
+        "message": "$1 вече не е достъпен за този ключ. Изберете друг модел."
+    },
+    "opt_aiNoModels": {
+        "message": "Този ключ няма модели, с които Mail Deck да работи."
+    },
+    "opt_aiSummary": {
+        "message": "Обобщение при четене"
+    },
+    "opt_aiSummaryText": {
+        "message": "Основното, задачите и датите — над писмото."
+    },
+    "opt_aiSummaryOff": {
+        "message": "Изключено"
+    },
+    "opt_aiSummaryClick": {
+        "message": "При щракване"
+    },
+    "opt_aiSummaryAuto": {
+        "message": "Автоматично за дълги писма"
+    },
+    "opt_aiReply": {
+        "message": "Очаква вашия отговор"
+    },
+    "opt_aiReplyText": {
+        "message": "Отбелязва непрочетените писма от хора, които чакат отговор, и ги събира в отделен филтър в панела."
+    },
+    "opt_aiPrivacy": {
+        "message": "Заявките отиват от браузъра ви направо до $1, с вашия ключ. Mail Deck няма сървъри. Обобщението изпраща текста на писмото; „Очаква вашия отговор“ изпраща подателя, темата и началото на непрочетените писма."
+    },
+    "opt_aiPrivacyLocal": {
+        "message": "Chrome изпълнява модела на този компютър, така че пощата ви не се изпраща никъде."
+    },
+    "opt_aiErrAuth": {
+        "message": "$1 отхвърли този ключ. Проверете дали сте го копирали целия."
+    },
+    "opt_aiErrAccess": {
+        "message": "Без достъп до $1 Mail Deck не може да използва ключа. Свържете отново и разрешете достъпа."
+    },
+    "opt_aiErrOther": {
+        "message": "Не се получи. Опитайте отново."
+    },
+    "opt_aiDiagNoKey": {
+        "message": "още няма ключ"
+    },
+    "opt_aiDiagNoAccess": {
+        "message": "няма достъп до $1"
     }
 }

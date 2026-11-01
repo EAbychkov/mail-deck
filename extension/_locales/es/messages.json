@@ -504,7 +504,7 @@
         "message": "Este navegador"
     },
     "opt_resetConfirm": {
-        "message": "¿Volver a los valores predeterminados? Los interruptores y las etiquetas de las bandejas también se restablecen."
+        "message": "¿Volver a los valores predeterminados? Los interruptores y las etiquetas de las bandejas también se restablecen, y se olvidan las claves de IA."
     },
     "opt_play": {
         "message": "Reproducir"
@@ -1636,5 +1636,260 @@
     },
     "opt_repeatText": {
         "message": "Vuelve, con su sonido, hasta que leas, archives o elimines el correo. Las horas de silencio siguen valiendo."
+    },
+    "ai_err_auth": {
+        "message": "Se rechazó la clave. Revísala en Configuración → IA."
+    },
+    "ai_err_quota": {
+        "message": "El proveedor indica que la cuenta no tiene saldo."
+    },
+    "ai_err_rate": {
+        "message": "Demasiadas solicitudes. Vuelve a intentarlo en un minuto."
+    },
+    "ai_err_network": {
+        "message": "Sin conexión."
+    },
+    "ai_err_model": {
+        "message": "Este modelo no está disponible para tu clave. Elige otro en Configuración → IA."
+    },
+    "ai_err_refusal": {
+        "message": "El modelo se negó a resumir este correo."
+    },
+    "ai_err_too_long": {
+        "message": "Esta conversación es demasiado larga para resumirla."
+    },
+    "ai_err_unavailable": {
+        "message": "El modelo integrado no está listo en este ordenador."
+    },
+    "ai_err_bad_output": {
+        "message": "No se pudo leer la respuesta. Vuelve a intentarlo."
+    },
+    "ai_err_server": {
+        "message": "El proveedor no respondió. Inténtalo más tarde."
+    },
+    "ai_err_no_access": {
+        "message": "Permite el acceso al proveedor en Configuración → IA."
+    },
+    "ai_note_english": {
+        "message": "El modelo integrado responde en inglés."
+    },
+    "panel_summary": {
+        "message": "Resumen"
+    },
+    "panel_summaryKey": {
+        "message": "resumen"
+    },
+    "panel_summarizing": {
+        "message": "Resumiendo…"
+    },
+    "panel_summaryPoints": {
+        "message": "Puntos clave"
+    },
+    "panel_summaryTodo": {
+        "message": "Pendiente"
+    },
+    "panel_summaryEvents": {
+        "message": "Fechas"
+    },
+    "panel_addToCalendar": {
+        "message": "Añadir a Google Calendar"
+    },
+    "panel_summaryTruncated": {
+        "message": "Resumen de los últimos mensajes"
+    },
+    "panel_regenerate": {
+        "message": "Volver a generar"
+    },
+    "panel_copySummary": {
+        "message": "Copiar"
+    },
+    "panel_hideSummary": {
+        "message": "Ocultar"
+    },
+    "panel_replyChip": {
+        "message": "Responder · $1"
+    },
+    "panel_replyWhy": {
+        "message": "Espera tu respuesta: $1"
+    },
+    "panel_aiSettings": {
+        "message": "Configuración de IA"
+    },
+    "panel_fromSite": {
+        "message": "De $1"
+    },
+    "panel_siteMore": {
+        "message": "$1 más"
+    },
+    "panel_codeCopied": {
+        "message": "Código copiado"
+    },
+    "opt_ai": {
+        "message": "IA"
+    },
+    "opt_aiEngine": {
+        "message": "Qué IA usar"
+    },
+    "opt_aiOff": {
+        "message": "Desactivada"
+    },
+    "opt_aiOffText": {
+        "message": "Sin resúmenes ni marcas de respuesta. No se envía nada a ningún sitio."
+    },
+    "opt_aiBuiltin": {
+        "message": "En este ordenador"
+    },
+    "opt_aiBuiltinText": {
+        "message": "El modelo integrado de Chrome. Gratis y privado, pero no está en todos los ordenadores."
+    },
+    "opt_aiCloudText": {
+        "message": "Con tu propia clave de API de $1, de pago por uso."
+    },
+    "opt_aiChecking": {
+        "message": "Comprobando…"
+    },
+    "opt_aiReady": {
+        "message": "Listo"
+    },
+    "opt_aiReadyText": {
+        "message": "El modelo funciona en Chrome, sin conexión. Tu correo se queda en este ordenador."
+    },
+    "opt_aiNeedsDownload": {
+        "message": "Necesita una descarga única"
+    },
+    "opt_aiNeedsDownloadText": {
+        "message": "Chrome descarga el modelo una vez, unos cuantos gigabytes; después funciona sin conexión."
+    },
+    "opt_aiDownload": {
+        "message": "Descargar"
+    },
+    "opt_aiDownloading": {
+        "message": "Descargando el modelo…"
+    },
+    "opt_aiUnavailable": {
+        "message": "No disponible en este ordenador"
+    },
+    "opt_aiUnavailableText": {
+        "message": "Chrome no ofrece su modelo aquí. OpenAI y Anthropic funcionan en cualquier ordenador."
+    },
+    "opt_aiOldChrome": {
+        "message": "Necesita Chrome 138 o posterior"
+    },
+    "opt_aiOldChromeText": {
+        "message": "Actualiza Chrome y vuelve aquí."
+    },
+    "opt_aiEnglish": {
+        "message": "Responde en inglés: el modelo de Chrome aún no admite este idioma ($1)."
+    },
+    "opt_aiKey": {
+        "message": "Clave de API de $1"
+    },
+    "opt_aiKeyText": {
+        "message": "Una suscripción a $1 no incluye acceso a la API: $2 cobra la clave aparte, por uso."
+    },
+    "opt_aiGetKey": {
+        "message": "Obtener una clave"
+    },
+    "opt_aiShow": {
+        "message": "Mostrar"
+    },
+    "opt_aiHide": {
+        "message": "Ocultar"
+    },
+    "opt_aiConnect": {
+        "message": "Conectar"
+    },
+    "opt_aiConnecting": {
+        "message": "Conectando…"
+    },
+    "opt_aiKeyEmpty": {
+        "message": "Primero pega tu clave."
+    },
+    "opt_aiKeyOther": {
+        "message": "Parece una clave de $1. Elígelo arriba o pega aquí una clave de $2."
+    },
+    "opt_aiConnected": {
+        "message": "Conectado a $1"
+    },
+    "opt_aiConnectedText": {
+        "message": "La clave se queda en este ordenador: nunca en copias de seguridad ni en la sincronización de Chrome."
+    },
+    "opt_aiDisconnect": {
+        "message": "Desconectar"
+    },
+    "opt_aiDisconnected": {
+        "message": "Clave de $1 eliminada"
+    },
+    "opt_aiNoAccess": {
+        "message": "Chrome ya no permite que Mail Deck acceda a $1."
+    },
+    "opt_aiAllow": {
+        "message": "Permitir acceso"
+    },
+    "opt_aiModel": {
+        "message": "Modelo"
+    },
+    "opt_aiModelText": {
+        "message": "Los modelos grandes resumen mejor; los pequeños responden más rápido y cuestan menos."
+    },
+    "opt_aiRecommended": {
+        "message": "Recomendados"
+    },
+    "opt_aiOtherModels": {
+        "message": "Otros modelos"
+    },
+    "opt_aiBest": {
+        "message": "mejores resultados"
+    },
+    "opt_aiFast": {
+        "message": "el más rápido y barato"
+    },
+    "opt_aiModelGone": {
+        "message": "$1 ya no está disponible para esta clave. Elige otro modelo."
+    },
+    "opt_aiNoModels": {
+        "message": "Esta clave no tiene modelos que Mail Deck pueda usar."
+    },
+    "opt_aiSummary": {
+        "message": "Resumen en el lector"
+    },
+    "opt_aiSummaryText": {
+        "message": "Puntos clave, tareas y fechas, encima del mensaje."
+    },
+    "opt_aiSummaryOff": {
+        "message": "Desactivado"
+    },
+    "opt_aiSummaryClick": {
+        "message": "Al hacer clic"
+    },
+    "opt_aiSummaryAuto": {
+        "message": "Automático en correos largos"
+    },
+    "opt_aiReply": {
+        "message": "Esperan tu respuesta"
+    },
+    "opt_aiReplyText": {
+        "message": "Marca el correo no leído de personas que esperan una respuesta y lo agrupa bajo un filtro en el panel."
+    },
+    "opt_aiPrivacy": {
+        "message": "Las solicitudes van de tu navegador directamente a $1, con tu clave. Mail Deck no tiene servidores. Un resumen envía el texto de ese mensaje; «Esperan tu respuesta» envía el remitente, el asunto y la vista previa del correo no leído."
+    },
+    "opt_aiPrivacyLocal": {
+        "message": "Chrome ejecuta el modelo en este ordenador, así que tu correo no se envía a ningún sitio."
+    },
+    "opt_aiErrAuth": {
+        "message": "$1 rechazó esta clave. Comprueba que la copiaste entera."
+    },
+    "opt_aiErrAccess": {
+        "message": "Sin acceso a $1, Mail Deck no puede usar la clave. Vuelve a conectar y permite el acceso."
+    },
+    "opt_aiErrOther": {
+        "message": "No ha funcionado. Vuelve a intentarlo."
+    },
+    "opt_aiDiagNoKey": {
+        "message": "aún no hay clave"
+    },
+    "opt_aiDiagNoAccess": {
+        "message": "sin acceso a $1"
     }
 }

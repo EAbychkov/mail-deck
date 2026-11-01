@@ -504,7 +504,7 @@
         "message": "Овај прегледач"
     },
     "opt_resetConfirm": {
-        "message": "Вратити сва подешавања на подразумевана? Прекидачи и ознаке сандучића се такође враћају."
+        "message": "Вратити сва подешавања на подразумевана? Прекидачи и ознаке сандучића се такође враћају, а кључеви за вештачку интелигенцију се бришу."
     },
     "opt_play": {
         "message": "Пусти"
@@ -1640,5 +1640,260 @@
     },
     "opt_repeatText": {
         "message": "Враћа се са звуком док не прочитате, архивирате или избришете поруку. Тихи сати и даље важе."
+    },
+    "ai_err_auth": {
+        "message": "Кључ је одбијен. Проверите га у „Подешавања → Вештачка интелигенција“."
+    },
+    "ai_err_quota": {
+        "message": "Добављач каже да на налогу више нема кредита."
+    },
+    "ai_err_rate": {
+        "message": "Превише захтева. Покушајте поново за минут."
+    },
+    "ai_err_network": {
+        "message": "Нема везе."
+    },
+    "ai_err_model": {
+        "message": "Овај модел није доступан за ваш кључ. Изаберите други у „Подешавања → Вештачка интелигенција“."
+    },
+    "ai_err_refusal": {
+        "message": "Модел је одбио да сажме ову поруку."
+    },
+    "ai_err_too_long": {
+        "message": "Ова преписка је предуга за сажетак."
+    },
+    "ai_err_unavailable": {
+        "message": "Уграђени модел није спреман на овом рачунару."
+    },
+    "ai_err_bad_output": {
+        "message": "Одговор није могао да се прочита. Покушајте поново."
+    },
+    "ai_err_server": {
+        "message": "Добављач није одговорио. Покушајте касније."
+    },
+    "ai_err_no_access": {
+        "message": "Дозволите приступ добављачу у „Подешавања → Вештачка интелигенција“."
+    },
+    "ai_note_english": {
+        "message": "Уграђени модел одговара на енглеском."
+    },
+    "panel_summary": {
+        "message": "Сажетак"
+    },
+    "panel_summaryKey": {
+        "message": "сажетак"
+    },
+    "panel_summarizing": {
+        "message": "Сажимање…"
+    },
+    "panel_summaryPoints": {
+        "message": "Главно"
+    },
+    "panel_summaryTodo": {
+        "message": "Задаци"
+    },
+    "panel_summaryEvents": {
+        "message": "Датуми"
+    },
+    "panel_addToCalendar": {
+        "message": "Додај у Google календар"
+    },
+    "panel_summaryTruncated": {
+        "message": "Сажетак најновијих порука"
+    },
+    "panel_regenerate": {
+        "message": "Направи поново"
+    },
+    "panel_copySummary": {
+        "message": "Копирај"
+    },
+    "panel_hideSummary": {
+        "message": "Сакриј"
+    },
+    "panel_replyChip": {
+        "message": "Одговор · $1"
+    },
+    "panel_replyWhy": {
+        "message": "Чека ваш одговор: $1"
+    },
+    "panel_aiSettings": {
+        "message": "Подешавања вештачке интелигенције"
+    },
+    "panel_fromSite": {
+        "message": "Од $1"
+    },
+    "panel_siteMore": {
+        "message": "Још $1"
+    },
+    "panel_codeCopied": {
+        "message": "Код је копиран"
+    },
+    "opt_ai": {
+        "message": "Вештачка интелигенција"
+    },
+    "opt_aiEngine": {
+        "message": "Коју вештачку интелигенцију користити"
+    },
+    "opt_aiOff": {
+        "message": "Искључена"
+    },
+    "opt_aiOffText": {
+        "message": "Без сажетака и ознака за одговор. Ништа се никуда не шаље."
+    },
+    "opt_aiBuiltin": {
+        "message": "На овом рачунару"
+    },
+    "opt_aiBuiltinText": {
+        "message": "Уграђени модел у Chrome-у. Бесплатан и приватан, али није на сваком рачунару."
+    },
+    "opt_aiCloudText": {
+        "message": "Уз ваш $1 API кључ, плаћање по коришћењу."
+    },
+    "opt_aiChecking": {
+        "message": "Провера…"
+    },
+    "opt_aiReady": {
+        "message": "Спремно"
+    },
+    "opt_aiReadyText": {
+        "message": "Модел ради у Chrome-у, без интернета. Пошта остаје на овом рачунару."
+    },
+    "opt_aiNeedsDownload": {
+        "message": "Потребно је једнократно преузимање"
+    },
+    "opt_aiNeedsDownloadText": {
+        "message": "Chrome једном преузима модел, неколико гигабајта, а затим ради без интернета."
+    },
+    "opt_aiDownload": {
+        "message": "Преузми"
+    },
+    "opt_aiDownloading": {
+        "message": "Преузимање модела…"
+    },
+    "opt_aiUnavailable": {
+        "message": "Није доступно на овом рачунару"
+    },
+    "opt_aiUnavailableText": {
+        "message": "Chrome овде не нуди свој модел. OpenAI и Anthropic раде на сваком рачунару."
+    },
+    "opt_aiOldChrome": {
+        "message": "Потребан је Chrome 138 или новији"
+    },
+    "opt_aiOldChromeText": {
+        "message": "Ажурирајте Chrome, па се вратите овде."
+    },
+    "opt_aiEnglish": {
+        "message": "Одговара на енглеском: модел у Chrome-у још не подржава овај језик ($1)."
+    },
+    "opt_aiKey": {
+        "message": "$1 API кључ"
+    },
+    "opt_aiKeyText": {
+        "message": "Претплата $1 не укључује приступ API-ју: $2 наплаћује кључ посебно, по коришћењу."
+    },
+    "opt_aiGetKey": {
+        "message": "Набавите кључ"
+    },
+    "opt_aiShow": {
+        "message": "Прикажи"
+    },
+    "opt_aiHide": {
+        "message": "Сакриј"
+    },
+    "opt_aiConnect": {
+        "message": "Повежи"
+    },
+    "opt_aiConnecting": {
+        "message": "Повезивање…"
+    },
+    "opt_aiKeyEmpty": {
+        "message": "Прво налепите кључ."
+    },
+    "opt_aiKeyOther": {
+        "message": "Ово личи на $1 кључ. Изаберите га изнад или овде налепите $2 кључ."
+    },
+    "opt_aiConnected": {
+        "message": "Повезано: $1"
+    },
+    "opt_aiConnectedText": {
+        "message": "Кључ остаје само на овом рачунару: никад у резервним копијама нити у Chrome синхронизацији."
+    },
+    "opt_aiDisconnect": {
+        "message": "Прекини везу"
+    },
+    "opt_aiDisconnected": {
+        "message": "$1 кључ је уклоњен"
+    },
+    "opt_aiNoAccess": {
+        "message": "Chrome више не дозвољава Mail Deck-у да приступи адреси $1."
+    },
+    "opt_aiAllow": {
+        "message": "Дозволи приступ"
+    },
+    "opt_aiModel": {
+        "message": "Модел"
+    },
+    "opt_aiModelText": {
+        "message": "Већи модели боље сажимају; мањи одговарају брже и коштају мање."
+    },
+    "opt_aiRecommended": {
+        "message": "Препоручени"
+    },
+    "opt_aiOtherModels": {
+        "message": "Остали модели"
+    },
+    "opt_aiBest": {
+        "message": "најбољи резултати"
+    },
+    "opt_aiFast": {
+        "message": "најбржи и најјефтинији"
+    },
+    "opt_aiModelGone": {
+        "message": "$1 више није доступан за овај кључ. Изаберите други модел."
+    },
+    "opt_aiNoModels": {
+        "message": "Овај кључ нема моделе које Mail Deck може да користи."
+    },
+    "opt_aiSummary": {
+        "message": "Сажетак у читачу"
+    },
+    "opt_aiSummaryText": {
+        "message": "Главне ставке, задаци и датуми, изнад поруке."
+    },
+    "opt_aiSummaryOff": {
+        "message": "Искључено"
+    },
+    "opt_aiSummaryClick": {
+        "message": "На клик"
+    },
+    "opt_aiSummaryAuto": {
+        "message": "Аутоматски за дуге поруке"
+    },
+    "opt_aiReply": {
+        "message": "Чека ваш одговор"
+    },
+    "opt_aiReplyText": {
+        "message": "Означава непрочитане поруке од људи који очекују одговор и окупља их у посебан филтер у панелу."
+    },
+    "opt_aiPrivacy": {
+        "message": "Захтеви иду из вашег прегледача право до $1, са вашим кључем. Mail Deck нема сервере. Сажетак шаље текст те поруке; „Чека ваш одговор“ шаље пошиљаоца, наслов и почетак непрочитаних порука."
+    },
+    "opt_aiPrivacyLocal": {
+        "message": "Chrome покреће модел на овом рачунару, па се ваша пошта нигде не шаље."
+    },
+    "opt_aiErrAuth": {
+        "message": "$1 је одбио овај кључ. Проверите да ли сте га копирали целог."
+    },
+    "opt_aiErrAccess": {
+        "message": "Без приступа адреси $1 Mail Deck не може да користи кључ. Повежите поново и дозволите приступ."
+    },
+    "opt_aiErrOther": {
+        "message": "Није успело. Покушајте поново."
+    },
+    "opt_aiDiagNoKey": {
+        "message": "још нема кључа"
+    },
+    "opt_aiDiagNoAccess": {
+        "message": "нема приступа адреси $1"
     }
 }

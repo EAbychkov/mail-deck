@@ -504,7 +504,7 @@
         "message": "Deze browser"
     },
     "opt_resetConfirm": {
-        "message": "Alle instellingen terugzetten naar de standaard? Schakelaars en labels van postvakken ook."
+        "message": "Alle instellingen terugzetten naar de standaard? Schakelaars en labels van postvakken ook, en AI-sleutels worden vergeten."
     },
     "opt_play": {
         "message": "Afspelen"
@@ -1640,5 +1640,260 @@
     },
     "opt_repeatText": {
         "message": "Ze komt terug, met geluid, tot je de mail leest, archiveert of verwijdert. Stille uren gelden gewoon."
+    },
+    "ai_err_auth": {
+        "message": "De sleutel is geweigerd. Controleer hem bij Instellingen → AI."
+    },
+    "ai_err_quota": {
+        "message": "Volgens de aanbieder is het tegoed van het account op."
+    },
+    "ai_err_rate": {
+        "message": "Te veel verzoeken. Probeer het over een minuut opnieuw."
+    },
+    "ai_err_network": {
+        "message": "Geen verbinding."
+    },
+    "ai_err_model": {
+        "message": "Dit model is niet beschikbaar voor je sleutel. Kies een ander bij Instellingen → AI."
+    },
+    "ai_err_refusal": {
+        "message": "Het model weigerde deze mail samen te vatten."
+    },
+    "ai_err_too_long": {
+        "message": "Dit gesprek is te lang om samen te vatten."
+    },
+    "ai_err_unavailable": {
+        "message": "Het ingebouwde model is niet klaar op deze computer."
+    },
+    "ai_err_bad_output": {
+        "message": "Het antwoord kon niet worden gelezen. Probeer het opnieuw."
+    },
+    "ai_err_server": {
+        "message": "De aanbieder gaf geen antwoord. Probeer het later opnieuw."
+    },
+    "ai_err_no_access": {
+        "message": "Geef toegang tot de aanbieder bij Instellingen → AI."
+    },
+    "ai_note_english": {
+        "message": "Het ingebouwde model antwoordt in het Engels."
+    },
+    "panel_summary": {
+        "message": "Samenvatting"
+    },
+    "panel_summaryKey": {
+        "message": "samenvatting"
+    },
+    "panel_summarizing": {
+        "message": "Bezig met samenvatten…"
+    },
+    "panel_summaryPoints": {
+        "message": "Belangrijkste punten"
+    },
+    "panel_summaryTodo": {
+        "message": "Te doen"
+    },
+    "panel_summaryEvents": {
+        "message": "Datums"
+    },
+    "panel_addToCalendar": {
+        "message": "Toevoegen aan Google Agenda"
+    },
+    "panel_summaryTruncated": {
+        "message": "Samenvatting van de nieuwste berichten"
+    },
+    "panel_regenerate": {
+        "message": "Opnieuw maken"
+    },
+    "panel_copySummary": {
+        "message": "Kopiëren"
+    },
+    "panel_hideSummary": {
+        "message": "Verbergen"
+    },
+    "panel_replyChip": {
+        "message": "Beantwoorden · $1"
+    },
+    "panel_replyWhy": {
+        "message": "Wacht op je antwoord: $1"
+    },
+    "panel_aiSettings": {
+        "message": "AI-instellingen"
+    },
+    "panel_fromSite": {
+        "message": "Van $1"
+    },
+    "panel_siteMore": {
+        "message": "Nog $1"
+    },
+    "panel_codeCopied": {
+        "message": "Code gekopieerd"
+    },
+    "opt_ai": {
+        "message": "AI"
+    },
+    "opt_aiEngine": {
+        "message": "Welke AI je gebruikt"
+    },
+    "opt_aiOff": {
+        "message": "Uit"
+    },
+    "opt_aiOffText": {
+        "message": "Geen samenvattingen of antwoordmarkeringen. Er wordt niets verstuurd."
+    },
+    "opt_aiBuiltin": {
+        "message": "Op deze computer"
+    },
+    "opt_aiBuiltinText": {
+        "message": "Het ingebouwde model van Chrome. Gratis en privé, maar niet op elke computer."
+    },
+    "opt_aiCloudText": {
+        "message": "Met je eigen API-sleutel van $1, betalen per gebruik."
+    },
+    "opt_aiChecking": {
+        "message": "Controleren…"
+    },
+    "opt_aiReady": {
+        "message": "Klaar"
+    },
+    "opt_aiReadyText": {
+        "message": "Het model draait offline in Chrome. Je mail blijft op deze computer."
+    },
+    "opt_aiNeedsDownload": {
+        "message": "Eenmalige download nodig"
+    },
+    "opt_aiNeedsDownloadText": {
+        "message": "Chrome downloadt het model één keer, een paar gigabyte; daarna werkt het offline."
+    },
+    "opt_aiDownload": {
+        "message": "Downloaden"
+    },
+    "opt_aiDownloading": {
+        "message": "Model downloaden…"
+    },
+    "opt_aiUnavailable": {
+        "message": "Niet beschikbaar op deze computer"
+    },
+    "opt_aiUnavailableText": {
+        "message": "Chrome biedt zijn model hier niet aan. OpenAI en Anthropic werken op elke computer."
+    },
+    "opt_aiOldChrome": {
+        "message": "Chrome 138 of nieuwer nodig"
+    },
+    "opt_aiOldChromeText": {
+        "message": "Werk Chrome bij en kom dan hier terug."
+    },
+    "opt_aiEnglish": {
+        "message": "Het antwoordt in het Engels: het model van Chrome ondersteunt deze taal ($1) nog niet."
+    },
+    "opt_aiKey": {
+        "message": "API-sleutel van $1"
+    },
+    "opt_aiKeyText": {
+        "message": "Een $1-abonnement geeft geen toegang tot de API: $2 rekent de sleutel apart af, per gebruik."
+    },
+    "opt_aiGetKey": {
+        "message": "Sleutel aanmaken"
+    },
+    "opt_aiShow": {
+        "message": "Tonen"
+    },
+    "opt_aiHide": {
+        "message": "Verbergen"
+    },
+    "opt_aiConnect": {
+        "message": "Verbinden"
+    },
+    "opt_aiConnecting": {
+        "message": "Verbinden…"
+    },
+    "opt_aiKeyEmpty": {
+        "message": "Plak eerst je sleutel."
+    },
+    "opt_aiKeyOther": {
+        "message": "Dit lijkt een sleutel van $1. Kies die hierboven of plak hier een sleutel van $2."
+    },
+    "opt_aiConnected": {
+        "message": "Verbonden met $1"
+    },
+    "opt_aiConnectedText": {
+        "message": "De sleutel blijft op deze computer: nooit in back-ups of in Chrome-synchronisatie."
+    },
+    "opt_aiDisconnect": {
+        "message": "Ontkoppelen"
+    },
+    "opt_aiDisconnected": {
+        "message": "Sleutel van $1 verwijderd"
+    },
+    "opt_aiNoAccess": {
+        "message": "Chrome laat Mail Deck $1 niet meer bereiken."
+    },
+    "opt_aiAllow": {
+        "message": "Toegang geven"
+    },
+    "opt_aiModel": {
+        "message": "Model"
+    },
+    "opt_aiModelText": {
+        "message": "Grotere modellen vatten beter samen; kleinere antwoorden sneller en kosten minder."
+    },
+    "opt_aiRecommended": {
+        "message": "Aanbevolen"
+    },
+    "opt_aiOtherModels": {
+        "message": "Andere modellen"
+    },
+    "opt_aiBest": {
+        "message": "beste resultaten"
+    },
+    "opt_aiFast": {
+        "message": "snelst en goedkoopst"
+    },
+    "opt_aiModelGone": {
+        "message": "$1 is niet meer beschikbaar voor deze sleutel. Kies een ander model."
+    },
+    "opt_aiNoModels": {
+        "message": "Deze sleutel heeft geen modellen die Mail Deck kan gebruiken."
+    },
+    "opt_aiSummary": {
+        "message": "Samenvatting in de lezer"
+    },
+    "opt_aiSummaryText": {
+        "message": "Belangrijkste punten, taken en datums, boven het bericht."
+    },
+    "opt_aiSummaryOff": {
+        "message": "Uit"
+    },
+    "opt_aiSummaryClick": {
+        "message": "Op klik"
+    },
+    "opt_aiSummaryAuto": {
+        "message": "Automatisch bij lange mail"
+    },
+    "opt_aiReply": {
+        "message": "Wacht op je antwoord"
+    },
+    "opt_aiReplyText": {
+        "message": "Markeert ongelezen mail van mensen die een antwoord verwachten en verzamelt die onder een filter in het paneel."
+    },
+    "opt_aiPrivacy": {
+        "message": "Verzoeken gaan vanuit je browser rechtstreeks naar $1, met je sleutel. Mail Deck heeft geen servers. Een samenvatting stuurt de tekst van dat bericht; ‘Wacht op je antwoord’ stuurt de afzender, het onderwerp en het voorbeeld van ongelezen mail."
+    },
+    "opt_aiPrivacyLocal": {
+        "message": "Chrome draait het model op deze computer, dus je mail wordt nergens heen gestuurd."
+    },
+    "opt_aiErrAuth": {
+        "message": "$1 heeft deze sleutel geweigerd. Controleer of je hem helemaal hebt gekopieerd."
+    },
+    "opt_aiErrAccess": {
+        "message": "Zonder toegang tot $1 kan Mail Deck de sleutel niet gebruiken. Verbind opnieuw en geef toegang."
+    },
+    "opt_aiErrOther": {
+        "message": "Dat is niet gelukt. Probeer het opnieuw."
+    },
+    "opt_aiDiagNoKey": {
+        "message": "nog geen sleutel"
+    },
+    "opt_aiDiagNoAccess": {
+        "message": "geen toegang tot $1"
     }
 }

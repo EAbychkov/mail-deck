@@ -504,7 +504,7 @@
         "message": "Dieser Browser"
     },
     "opt_resetConfirm": {
-        "message": "Alle Einstellungen auf den Standard zurücksetzen? Postfach-Schalter und Labels werden ebenfalls zurückgesetzt."
+        "message": "Alle Einstellungen auf den Standard zurücksetzen? Postfach-Schalter und Labels werden ebenfalls zurückgesetzt, und die KI-Schlüssel werden gelöscht."
     },
     "opt_play": {
         "message": "Abspielen"
@@ -1636,5 +1636,260 @@
     },
     "opt_repeatText": {
         "message": "Sie kommt samt Ton wieder, bis du die Mail liest, archivierst oder löschst. Ruhezeiten gelten weiter."
+    },
+    "ai_err_auth": {
+        "message": "Der Schlüssel wurde abgelehnt. Bitte unter Einstellungen → KI prüfen."
+    },
+    "ai_err_quota": {
+        "message": "Laut Anbieter ist das Guthaben des Kontos aufgebraucht."
+    },
+    "ai_err_rate": {
+        "message": "Zu viele Anfragen. In einer Minute erneut versuchen."
+    },
+    "ai_err_network": {
+        "message": "Keine Verbindung."
+    },
+    "ai_err_model": {
+        "message": "Dieses Modell ist für den Schlüssel nicht verfügbar. Unter Einstellungen → KI ein anderes wählen."
+    },
+    "ai_err_refusal": {
+        "message": "Das Modell hat es abgelehnt, diese Mail zusammenzufassen."
+    },
+    "ai_err_too_long": {
+        "message": "Diese Unterhaltung ist zu lang für eine Zusammenfassung."
+    },
+    "ai_err_unavailable": {
+        "message": "Das integrierte Modell ist auf diesem Computer nicht bereit."
+    },
+    "ai_err_bad_output": {
+        "message": "Die Antwort konnte nicht gelesen werden. Bitte erneut versuchen."
+    },
+    "ai_err_server": {
+        "message": "Der Anbieter hat nicht geantwortet. Später erneut versuchen."
+    },
+    "ai_err_no_access": {
+        "message": "Den Zugriff auf den Anbieter unter Einstellungen → KI erlauben."
+    },
+    "ai_note_english": {
+        "message": "Das integrierte Modell antwortet auf Englisch."
+    },
+    "panel_summary": {
+        "message": "Zusammenfassung"
+    },
+    "panel_summaryKey": {
+        "message": "zusammenfassen"
+    },
+    "panel_summarizing": {
+        "message": "Wird zusammengefasst…"
+    },
+    "panel_summaryPoints": {
+        "message": "Das Wichtigste"
+    },
+    "panel_summaryTodo": {
+        "message": "Zu erledigen"
+    },
+    "panel_summaryEvents": {
+        "message": "Termine"
+    },
+    "panel_addToCalendar": {
+        "message": "Zu Google Kalender hinzufügen"
+    },
+    "panel_summaryTruncated": {
+        "message": "Zusammenfassung der neuesten Nachrichten"
+    },
+    "panel_regenerate": {
+        "message": "Neu erstellen"
+    },
+    "panel_copySummary": {
+        "message": "Kopieren"
+    },
+    "panel_hideSummary": {
+        "message": "Ausblenden"
+    },
+    "panel_replyChip": {
+        "message": "Antworten · $1"
+    },
+    "panel_replyWhy": {
+        "message": "Wartet auf Antwort: $1"
+    },
+    "panel_aiSettings": {
+        "message": "KI-Einstellungen"
+    },
+    "panel_fromSite": {
+        "message": "Von $1"
+    },
+    "panel_siteMore": {
+        "message": "$1 weitere"
+    },
+    "panel_codeCopied": {
+        "message": "Code kopiert"
+    },
+    "opt_ai": {
+        "message": "KI"
+    },
+    "opt_aiEngine": {
+        "message": "Welche KI genutzt wird"
+    },
+    "opt_aiOff": {
+        "message": "Aus"
+    },
+    "opt_aiOffText": {
+        "message": "Keine Zusammenfassungen, keine Antwort-Markierungen. Nichts wird irgendwohin gesendet."
+    },
+    "opt_aiBuiltin": {
+        "message": "Auf diesem Computer"
+    },
+    "opt_aiBuiltinText": {
+        "message": "Das integrierte Modell von Chrome. Kostenlos und privat, aber nicht auf jedem Computer."
+    },
+    "opt_aiCloudText": {
+        "message": "Mit deinem eigenen $1-API-Schlüssel, Abrechnung nach Nutzung."
+    },
+    "opt_aiChecking": {
+        "message": "Wird geprüft…"
+    },
+    "opt_aiReady": {
+        "message": "Bereit"
+    },
+    "opt_aiReadyText": {
+        "message": "Das Modell läuft in Chrome, offline. Deine Mails bleiben auf diesem Computer."
+    },
+    "opt_aiNeedsDownload": {
+        "message": "Einmaliger Download nötig"
+    },
+    "opt_aiNeedsDownloadText": {
+        "message": "Chrome lädt das Modell einmal herunter, einige Gigabyte; danach funktioniert es offline."
+    },
+    "opt_aiDownload": {
+        "message": "Herunterladen"
+    },
+    "opt_aiDownloading": {
+        "message": "Modell wird heruntergeladen…"
+    },
+    "opt_aiUnavailable": {
+        "message": "Auf diesem Computer nicht verfügbar"
+    },
+    "opt_aiUnavailableText": {
+        "message": "Chrome bietet sein Modell hier nicht an. OpenAI und Anthropic funktionieren auf jedem Computer."
+    },
+    "opt_aiOldChrome": {
+        "message": "Benötigt Chrome 138 oder neuer"
+    },
+    "opt_aiOldChromeText": {
+        "message": "Aktualisiere Chrome und komm dann hierher zurück."
+    },
+    "opt_aiEnglish": {
+        "message": "Es antwortet auf Englisch: Das Chrome-Modell unterstützt diese Sprache ($1) noch nicht."
+    },
+    "opt_aiKey": {
+        "message": "$1-API-Schlüssel"
+    },
+    "opt_aiKeyText": {
+        "message": "Ein $1-Abo enthält keinen API-Zugang: $2 rechnet den Schlüssel separat ab, nach Nutzung."
+    },
+    "opt_aiGetKey": {
+        "message": "Schlüssel holen"
+    },
+    "opt_aiShow": {
+        "message": "Zeigen"
+    },
+    "opt_aiHide": {
+        "message": "Verbergen"
+    },
+    "opt_aiConnect": {
+        "message": "Verbinden"
+    },
+    "opt_aiConnecting": {
+        "message": "Wird verbunden…"
+    },
+    "opt_aiKeyEmpty": {
+        "message": "Füge zuerst deinen Schlüssel ein."
+    },
+    "opt_aiKeyOther": {
+        "message": "Das sieht nach einem $1-Schlüssel aus. Wähle oben diesen Anbieter oder füge hier einen $2-Schlüssel ein."
+    },
+    "opt_aiConnected": {
+        "message": "Mit $1 verbunden"
+    },
+    "opt_aiConnectedText": {
+        "message": "Der Schlüssel bleibt auf diesem Computer: nie in Backups oder in der Chrome-Synchronisierung."
+    },
+    "opt_aiDisconnect": {
+        "message": "Trennen"
+    },
+    "opt_aiDisconnected": {
+        "message": "$1-Schlüssel entfernt"
+    },
+    "opt_aiNoAccess": {
+        "message": "Chrome lässt Mail Deck nicht mehr auf $1 zugreifen."
+    },
+    "opt_aiAllow": {
+        "message": "Zugriff erlauben"
+    },
+    "opt_aiModel": {
+        "message": "Modell"
+    },
+    "opt_aiModelText": {
+        "message": "Größere Modelle fassen besser zusammen; kleinere antworten schneller und kosten weniger."
+    },
+    "opt_aiRecommended": {
+        "message": "Empfohlen"
+    },
+    "opt_aiOtherModels": {
+        "message": "Weitere Modelle"
+    },
+    "opt_aiBest": {
+        "message": "beste Ergebnisse"
+    },
+    "opt_aiFast": {
+        "message": "am schnellsten und günstigsten"
+    },
+    "opt_aiModelGone": {
+        "message": "$1 ist für diesen Schlüssel nicht mehr verfügbar. Wähle ein anderes Modell."
+    },
+    "opt_aiNoModels": {
+        "message": "Dieser Schlüssel hat keine Modelle, die Mail Deck nutzen kann."
+    },
+    "opt_aiSummary": {
+        "message": "Zusammenfassung beim Lesen"
+    },
+    "opt_aiSummaryText": {
+        "message": "Das Wichtigste, Aufgaben und Termine, über der Nachricht."
+    },
+    "opt_aiSummaryOff": {
+        "message": "Aus"
+    },
+    "opt_aiSummaryClick": {
+        "message": "Auf Klick"
+    },
+    "opt_aiSummaryAuto": {
+        "message": "Automatisch bei langen Mails"
+    },
+    "opt_aiReply": {
+        "message": "Wartet auf deine Antwort"
+    },
+    "opt_aiReplyText": {
+        "message": "Markiert ungelesene Mails von Menschen, die eine Antwort erwarten, und sammelt sie unter einem Filter im Panel."
+    },
+    "opt_aiPrivacy": {
+        "message": "Anfragen gehen direkt von deinem Browser an $1, mit deinem Schlüssel. Mail Deck hat keine Server. Eine Zusammenfassung sendet den Text dieser Nachricht; „Wartet auf deine Antwort“ sendet Absender, Betreff und Vorschau ungelesener Mails."
+    },
+    "opt_aiPrivacyLocal": {
+        "message": "Chrome führt das Modell auf diesem Computer aus, deine Mails werden also nirgendwohin gesendet."
+    },
+    "opt_aiErrAuth": {
+        "message": "$1 hat diesen Schlüssel abgelehnt. Prüfe, ob du ihn vollständig kopiert hast."
+    },
+    "opt_aiErrAccess": {
+        "message": "Ohne Zugriff auf $1 kann Mail Deck den Schlüssel nicht nutzen. Verbinde erneut und erlaube den Zugriff."
+    },
+    "opt_aiErrOther": {
+        "message": "Das hat nicht geklappt. Versuch es noch einmal."
+    },
+    "opt_aiDiagNoKey": {
+        "message": "noch kein Schlüssel"
+    },
+    "opt_aiDiagNoAccess": {
+        "message": "kein Zugriff auf $1"
     }
 }

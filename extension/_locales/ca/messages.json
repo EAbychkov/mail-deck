@@ -504,7 +504,7 @@
         "message": "Aquest navegador"
     },
     "opt_resetConfirm": {
-        "message": "Vols tornar als valors per defecte? També es restableixen els interruptors i les etiquetes de les safates."
+        "message": "Vols tornar als valors per defecte? També es restableixen els interruptors i les etiquetes de les safates, i s’obliden les claus d’IA."
     },
     "opt_play": {
         "message": "Reprodueix"
@@ -1640,5 +1640,260 @@
     },
     "opt_repeatText": {
         "message": "Torna, amb el so, fins que llegeixis, arxivis o suprimeixis el correu. Les hores de silenci continuen valent."
+    },
+    "ai_err_auth": {
+        "message": "S'ha rebutjat la clau. Revisa-la a Opcions → IA."
+    },
+    "ai_err_quota": {
+        "message": "El proveïdor indica que el compte no té saldo."
+    },
+    "ai_err_rate": {
+        "message": "Massa sol·licituds. Torna-ho a provar d'aquí a un minut."
+    },
+    "ai_err_network": {
+        "message": "Sense connexió."
+    },
+    "ai_err_model": {
+        "message": "Aquest model no està disponible per a la teva clau. Tria'n un altre a Opcions → IA."
+    },
+    "ai_err_refusal": {
+        "message": "El model s'ha negat a resumir aquest correu."
+    },
+    "ai_err_too_long": {
+        "message": "Aquesta conversa és massa llarga per resumir-la."
+    },
+    "ai_err_unavailable": {
+        "message": "El model integrat no està a punt en aquest ordinador."
+    },
+    "ai_err_bad_output": {
+        "message": "No s'ha pogut llegir la resposta. Torna-ho a provar."
+    },
+    "ai_err_server": {
+        "message": "El proveïdor no ha respost. Prova-ho més tard."
+    },
+    "ai_err_no_access": {
+        "message": "Permet l'accés al proveïdor a Opcions → IA."
+    },
+    "ai_note_english": {
+        "message": "El model integrat respon en anglès."
+    },
+    "panel_summary": {
+        "message": "Resum"
+    },
+    "panel_summaryKey": {
+        "message": "resum"
+    },
+    "panel_summarizing": {
+        "message": "S'està resumint…"
+    },
+    "panel_summaryPoints": {
+        "message": "Punts clau"
+    },
+    "panel_summaryTodo": {
+        "message": "Per fer"
+    },
+    "panel_summaryEvents": {
+        "message": "Dates"
+    },
+    "panel_addToCalendar": {
+        "message": "Afegeix a Google Calendar"
+    },
+    "panel_summaryTruncated": {
+        "message": "Resum dels missatges més recents"
+    },
+    "panel_regenerate": {
+        "message": "Torna a generar"
+    },
+    "panel_copySummary": {
+        "message": "Copia"
+    },
+    "panel_hideSummary": {
+        "message": "Amaga"
+    },
+    "panel_replyChip": {
+        "message": "Respon · $1"
+    },
+    "panel_replyWhy": {
+        "message": "Espera la teva resposta: $1"
+    },
+    "panel_aiSettings": {
+        "message": "Opcions d'IA"
+    },
+    "panel_fromSite": {
+        "message": "De $1"
+    },
+    "panel_siteMore": {
+        "message": "$1 més"
+    },
+    "panel_codeCopied": {
+        "message": "S'ha copiat el codi"
+    },
+    "opt_ai": {
+        "message": "IA"
+    },
+    "opt_aiEngine": {
+        "message": "Quina IA fer servir"
+    },
+    "opt_aiOff": {
+        "message": "Desactivada"
+    },
+    "opt_aiOffText": {
+        "message": "Sense resums ni marques de resposta. No s’envia res enlloc."
+    },
+    "opt_aiBuiltin": {
+        "message": "En aquest ordinador"
+    },
+    "opt_aiBuiltinText": {
+        "message": "El model integrat de Chrome. Gratuït i privat, però no és a tots els ordinadors."
+    },
+    "opt_aiCloudText": {
+        "message": "Amb la teva pròpia clau d’API de $1, de pagament per ús."
+    },
+    "opt_aiChecking": {
+        "message": "S’està comprovant…"
+    },
+    "opt_aiReady": {
+        "message": "A punt"
+    },
+    "opt_aiReadyText": {
+        "message": "El model funciona a Chrome, sense connexió. El teu correu es queda en aquest ordinador."
+    },
+    "opt_aiNeedsDownload": {
+        "message": "Cal una baixada única"
+    },
+    "opt_aiNeedsDownloadText": {
+        "message": "Chrome baixa el model una vegada, uns quants gigabytes; després funciona sense connexió."
+    },
+    "opt_aiDownload": {
+        "message": "Baixa"
+    },
+    "opt_aiDownloading": {
+        "message": "S’està baixant el model…"
+    },
+    "opt_aiUnavailable": {
+        "message": "No disponible en aquest ordinador"
+    },
+    "opt_aiUnavailableText": {
+        "message": "Chrome no ofereix el seu model aquí. OpenAI i Anthropic funcionen en qualsevol ordinador."
+    },
+    "opt_aiOldChrome": {
+        "message": "Cal Chrome 138 o posterior"
+    },
+    "opt_aiOldChromeText": {
+        "message": "Actualitza Chrome i torna aquí."
+    },
+    "opt_aiEnglish": {
+        "message": "Respon en anglès: el model de Chrome encara no admet aquest idioma ($1)."
+    },
+    "opt_aiKey": {
+        "message": "Clau d’API de $1"
+    },
+    "opt_aiKeyText": {
+        "message": "Una subscripció a $1 no inclou accés a l’API: $2 cobra la clau a part, per ús."
+    },
+    "opt_aiGetKey": {
+        "message": "Obtén una clau"
+    },
+    "opt_aiShow": {
+        "message": "Mostra"
+    },
+    "opt_aiHide": {
+        "message": "Amaga"
+    },
+    "opt_aiConnect": {
+        "message": "Connecta"
+    },
+    "opt_aiConnecting": {
+        "message": "S’està connectant…"
+    },
+    "opt_aiKeyEmpty": {
+        "message": "Primer enganxa la teva clau."
+    },
+    "opt_aiKeyOther": {
+        "message": "Sembla una clau de $1. Tria’l més amunt o enganxa aquí una clau de $2."
+    },
+    "opt_aiConnected": {
+        "message": "Connectat a $1"
+    },
+    "opt_aiConnectedText": {
+        "message": "La clau es queda en aquest ordinador: mai a les còpies de seguretat ni a la sincronització de Chrome."
+    },
+    "opt_aiDisconnect": {
+        "message": "Desconnecta"
+    },
+    "opt_aiDisconnected": {
+        "message": "S’ha suprimit la clau de $1"
+    },
+    "opt_aiNoAccess": {
+        "message": "Chrome ja no permet que Mail Deck accedeixi a $1."
+    },
+    "opt_aiAllow": {
+        "message": "Permet l’accés"
+    },
+    "opt_aiModel": {
+        "message": "Model"
+    },
+    "opt_aiModelText": {
+        "message": "Els models grans resumeixen millor; els petits responen més de pressa i costen menys."
+    },
+    "opt_aiRecommended": {
+        "message": "Recomanats"
+    },
+    "opt_aiOtherModels": {
+        "message": "Altres models"
+    },
+    "opt_aiBest": {
+        "message": "millors resultats"
+    },
+    "opt_aiFast": {
+        "message": "el més ràpid i barat"
+    },
+    "opt_aiModelGone": {
+        "message": "$1 ja no està disponible per a aquesta clau. Tria un altre model."
+    },
+    "opt_aiNoModels": {
+        "message": "Aquesta clau no té cap model que Mail Deck pugui fer servir."
+    },
+    "opt_aiSummary": {
+        "message": "Resum al lector"
+    },
+    "opt_aiSummaryText": {
+        "message": "Punts clau, tasques i dates, a sobre del missatge."
+    },
+    "opt_aiSummaryOff": {
+        "message": "Desactivat"
+    },
+    "opt_aiSummaryClick": {
+        "message": "En fer clic"
+    },
+    "opt_aiSummaryAuto": {
+        "message": "Automàtic als correus llargs"
+    },
+    "opt_aiReply": {
+        "message": "Esperen la teva resposta"
+    },
+    "opt_aiReplyText": {
+        "message": "Marca el correu no llegit de persones que esperen resposta i l’agrupa sota un filtre al tauler."
+    },
+    "opt_aiPrivacy": {
+        "message": "Les sol·licituds van del teu navegador directament a $1, amb la teva clau. Mail Deck no té servidors. Un resum envia el text d’aquell missatge; «Esperen la teva resposta» envia el remitent, l’assumpte i la previsualització del correu no llegit."
+    },
+    "opt_aiPrivacyLocal": {
+        "message": "Chrome executa el model en aquest ordinador, així que el teu correu no s’envia enlloc."
+    },
+    "opt_aiErrAuth": {
+        "message": "$1 ha rebutjat aquesta clau. Comprova que l’has copiada sencera."
+    },
+    "opt_aiErrAccess": {
+        "message": "Sense accés a $1, Mail Deck no pot fer servir la clau. Torna a connectar i permet l’accés."
+    },
+    "opt_aiErrOther": {
+        "message": "No ha funcionat. Torna-ho a provar."
+    },
+    "opt_aiDiagNoKey": {
+        "message": "encara no hi ha clau"
+    },
+    "opt_aiDiagNoAccess": {
+        "message": "sense accés a $1"
     }
 }

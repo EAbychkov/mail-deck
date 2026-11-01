@@ -504,7 +504,7 @@
         "message": "Цей браузер"
     },
     "opt_resetConfirm": {
-        "message": "Повернути всі налаштування за замовчуванням? Перемикачі скриньок і мітки теж скинуться."
+        "message": "Повернути всі налаштування за замовчуванням? Перемикачі скриньок і мітки теж скинуться, а ключі ШІ буде забуто."
     },
     "opt_play": {
         "message": "Прослухати"
@@ -1636,5 +1636,260 @@
     },
     "opt_repeatText": {
         "message": "Воно повертається разом зі звуком, доки ви не прочитаєте, не заархівуєте або не видалите лист. Тихі години діють."
+    },
+    "ai_err_auth": {
+        "message": "Ключ не прийнято. Перевірте його в розділі «Налаштування → ШІ»."
+    },
+    "ai_err_quota": {
+        "message": "Провайдер повідомляє, що на рахунку закінчилися кошти."
+    },
+    "ai_err_rate": {
+        "message": "Забагато запитів. Спробуйте за хвилину."
+    },
+    "ai_err_network": {
+        "message": "Немає з’єднання."
+    },
+    "ai_err_model": {
+        "message": "Ця модель недоступна для вашого ключа. Виберіть іншу в розділі «Налаштування → ШІ»."
+    },
+    "ai_err_refusal": {
+        "message": "Модель відмовилася складати підсумок цього листа."
+    },
+    "ai_err_too_long": {
+        "message": "Листування задовге для підсумку."
+    },
+    "ai_err_unavailable": {
+        "message": "Вбудована модель на цьому комп’ютері не готова."
+    },
+    "ai_err_bad_output": {
+        "message": "Не вдалося прочитати відповідь. Спробуйте ще раз."
+    },
+    "ai_err_server": {
+        "message": "Провайдер не відповів. Спробуйте пізніше."
+    },
+    "ai_err_no_access": {
+        "message": "Дозвольте доступ до провайдера в розділі «Налаштування → ШІ»."
+    },
+    "ai_note_english": {
+        "message": "Вбудована модель відповідає англійською."
+    },
+    "panel_summary": {
+        "message": "Підсумок"
+    },
+    "panel_summaryKey": {
+        "message": "підсумок"
+    },
+    "panel_summarizing": {
+        "message": "Складаю підсумок…"
+    },
+    "panel_summaryPoints": {
+        "message": "Головне"
+    },
+    "panel_summaryTodo": {
+        "message": "Що зробити"
+    },
+    "panel_summaryEvents": {
+        "message": "Дати"
+    },
+    "panel_addToCalendar": {
+        "message": "Додати в Google Календар"
+    },
+    "panel_summaryTruncated": {
+        "message": "Підсумок останніх листів"
+    },
+    "panel_regenerate": {
+        "message": "Скласти знову"
+    },
+    "panel_copySummary": {
+        "message": "Копіювати"
+    },
+    "panel_hideSummary": {
+        "message": "Сховати"
+    },
+    "panel_replyChip": {
+        "message": "Відповісти · $1"
+    },
+    "panel_replyWhy": {
+        "message": "Чекає на вашу відповідь: $1"
+    },
+    "panel_aiSettings": {
+        "message": "Налаштування ШІ"
+    },
+    "panel_fromSite": {
+        "message": "Від $1"
+    },
+    "panel_siteMore": {
+        "message": "Ще $1"
+    },
+    "panel_codeCopied": {
+        "message": "Код скопійовано"
+    },
+    "opt_ai": {
+        "message": "ШІ"
+    },
+    "opt_aiEngine": {
+        "message": "Який ШІ використовувати"
+    },
+    "opt_aiOff": {
+        "message": "Вимкнено"
+    },
+    "opt_aiOffText": {
+        "message": "Жодних підсумків і позначок про відповідь. Нічого нікуди не надсилається."
+    },
+    "opt_aiBuiltin": {
+        "message": "На цьому комп’ютері"
+    },
+    "opt_aiBuiltinText": {
+        "message": "Вбудована модель Chrome. Безкоштовно й приватно, але є не на кожному комп’ютері."
+    },
+    "opt_aiCloudText": {
+        "message": "З вашим ключем API $1, оплата за використання."
+    },
+    "opt_aiChecking": {
+        "message": "Перевіряю…"
+    },
+    "opt_aiReady": {
+        "message": "Готово"
+    },
+    "opt_aiReadyText": {
+        "message": "Модель працює в Chrome без інтернету. Пошта лишається на цьому комп’ютері."
+    },
+    "opt_aiNeedsDownload": {
+        "message": "Потрібне одноразове завантаження"
+    },
+    "opt_aiNeedsDownloadText": {
+        "message": "Chrome один раз завантажить модель, кілька гігабайтів, а далі вона працює без інтернету."
+    },
+    "opt_aiDownload": {
+        "message": "Завантажити"
+    },
+    "opt_aiDownloading": {
+        "message": "Завантажую модель…"
+    },
+    "opt_aiUnavailable": {
+        "message": "Недоступно на цьому комп’ютері"
+    },
+    "opt_aiUnavailableText": {
+        "message": "Chrome не пропонує тут свою модель. OpenAI та Anthropic працюють на будь-якому комп’ютері."
+    },
+    "opt_aiOldChrome": {
+        "message": "Потрібен Chrome 138 або новіший"
+    },
+    "opt_aiOldChromeText": {
+        "message": "Оновіть Chrome і поверніться сюди."
+    },
+    "opt_aiEnglish": {
+        "message": "Відповідає англійською: модель Chrome поки не підтримує цю мову ($1)."
+    },
+    "opt_aiKey": {
+        "message": "Ключ API $1"
+    },
+    "opt_aiKeyText": {
+        "message": "Підписка $1 не дає доступу до API: ключ $2 оплачується окремо, за використання."
+    },
+    "opt_aiGetKey": {
+        "message": "Отримати ключ"
+    },
+    "opt_aiShow": {
+        "message": "Показати"
+    },
+    "opt_aiHide": {
+        "message": "Сховати"
+    },
+    "opt_aiConnect": {
+        "message": "Підключити"
+    },
+    "opt_aiConnecting": {
+        "message": "Підключаю…"
+    },
+    "opt_aiKeyEmpty": {
+        "message": "Спочатку вставте ключ."
+    },
+    "opt_aiKeyOther": {
+        "message": "Схоже, це ключ $1. Виберіть його вище або вставте сюди ключ $2."
+    },
+    "opt_aiConnected": {
+        "message": "Підключено: $1"
+    },
+    "opt_aiConnectedText": {
+        "message": "Ключ зберігається лише на цьому комп’ютері: не потрапляє ні в резервні копії, ні в синхронізацію Chrome."
+    },
+    "opt_aiDisconnect": {
+        "message": "Відключити"
+    },
+    "opt_aiDisconnected": {
+        "message": "Ключ $1 видалено"
+    },
+    "opt_aiNoAccess": {
+        "message": "Chrome більше не дає Mail Deck доступу до $1."
+    },
+    "opt_aiAllow": {
+        "message": "Дозволити доступ"
+    },
+    "opt_aiModel": {
+        "message": "Модель"
+    },
+    "opt_aiModelText": {
+        "message": "Більші моделі пишуть підсумки краще, менші відповідають швидше й коштують дешевше."
+    },
+    "opt_aiRecommended": {
+        "message": "Рекомендовані"
+    },
+    "opt_aiOtherModels": {
+        "message": "Інші моделі"
+    },
+    "opt_aiBest": {
+        "message": "найкраща якість"
+    },
+    "opt_aiFast": {
+        "message": "найшвидша й найдешевша"
+    },
+    "opt_aiModelGone": {
+        "message": "Модель $1 більше недоступна для цього ключа. Виберіть іншу."
+    },
+    "opt_aiNoModels": {
+        "message": "Для цього ключа немає моделей, з якими працює Mail Deck."
+    },
+    "opt_aiSummary": {
+        "message": "Підсумок під час читання листа"
+    },
+    "opt_aiSummaryText": {
+        "message": "Головне, що зробити й дати — над текстом листа."
+    },
+    "opt_aiSummaryOff": {
+        "message": "Не показувати"
+    },
+    "opt_aiSummaryClick": {
+        "message": "За кнопкою"
+    },
+    "opt_aiSummaryAuto": {
+        "message": "Одразу для довгих листів"
+    },
+    "opt_aiReply": {
+        "message": "Чекають на вашу відповідь"
+    },
+    "opt_aiReplyText": {
+        "message": "Позначає непрочитані листи від людей, які чекають відповіді, і збирає їх в окремий фільтр у панелі."
+    },
+    "opt_aiPrivacy": {
+        "message": "Запити йдуть із вашого браузера прямо в $1, з вашим ключем. У Mail Deck немає серверів. Для підсумку надсилається текст цього листа; для «Чекають на вашу відповідь» — відправник, тема й початок непрочитаних листів."
+    },
+    "opt_aiPrivacyLocal": {
+        "message": "Chrome запускає модель на цьому комп’ютері, тому пошта нікуди не надсилається."
+    },
+    "opt_aiErrAuth": {
+        "message": "$1 не прийняв цей ключ. Перевірте, що його скопійовано повністю."
+    },
+    "opt_aiErrAccess": {
+        "message": "Без доступу до $1 Mail Deck не може використати ключ. Підключіть ще раз і дозвольте доступ."
+    },
+    "opt_aiErrOther": {
+        "message": "Не вийшло. Спробуйте ще раз."
+    },
+    "opt_aiDiagNoKey": {
+        "message": "ключа ще немає"
+    },
+    "opt_aiDiagNoAccess": {
+        "message": "немає доступу до $1"
     }
 }

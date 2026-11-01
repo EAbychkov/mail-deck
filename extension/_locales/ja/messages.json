@@ -504,7 +504,7 @@
     "message": "このブラウザ"
   },
   "opt_resetConfirm": {
-    "message": "すべての設定を初期値に戻しますか？受信トレイのスイッチとラベルもリセットされます。"
+    "message": "すべての設定を初期値に戻しますか？受信トレイのスイッチとラベルもリセットされ、AI のキーも削除されます。"
   },
   "opt_play": {
     "message": "再生"
@@ -1468,5 +1468,260 @@
   },
   "opt_repeatText": {
     "message": "メールを読む、アーカイブする、削除するまで、音とともに再び表示されます。おやすみ時間は適用されます。"
+  },
+  "ai_err_auth": {
+    "message": "キーが拒否されました。設定 → AI アシスタントで確認してください。"
+  },
+  "ai_err_quota": {
+    "message": "アカウントのクレジットが残っていないとプロバイダから通知されました。"
+  },
+  "ai_err_rate": {
+    "message": "リクエストが多すぎます。1 分後にもう一度お試しください。"
+  },
+  "ai_err_network": {
+    "message": "接続されていません。"
+  },
+  "ai_err_model": {
+    "message": "このモデルはお使いのキーでは利用できません。設定 → AI アシスタントで別のモデルを選んでください。"
+  },
+  "ai_err_refusal": {
+    "message": "モデルがこのメールの要約を断りました。"
+  },
+  "ai_err_too_long": {
+    "message": "このスレッドは長すぎて要約できません。"
+  },
+  "ai_err_unavailable": {
+    "message": "このパソコンでは内蔵モデルの準備ができていません。"
+  },
+  "ai_err_bad_output": {
+    "message": "回答を読み取れませんでした。もう一度お試しください。"
+  },
+  "ai_err_server": {
+    "message": "プロバイダから応答がありません。しばらくしてからお試しください。"
+  },
+  "ai_err_no_access": {
+    "message": "設定 → AI アシスタントでプロバイダへのアクセスを許可してください。"
+  },
+  "ai_note_english": {
+    "message": "内蔵モデルは英語で回答します。"
+  },
+  "panel_summary": {
+    "message": "要約"
+  },
+  "panel_summaryKey": {
+    "message": "要約"
+  },
+  "panel_summarizing": {
+    "message": "要約しています…"
+  },
+  "panel_summaryPoints": {
+    "message": "要点"
+  },
+  "panel_summaryTodo": {
+    "message": "やること"
+  },
+  "panel_summaryEvents": {
+    "message": "日時"
+  },
+  "panel_addToCalendar": {
+    "message": "Google カレンダーに追加"
+  },
+  "panel_summaryTruncated": {
+    "message": "最新のメッセージの要約"
+  },
+  "panel_regenerate": {
+    "message": "再生成"
+  },
+  "panel_copySummary": {
+    "message": "コピー"
+  },
+  "panel_hideSummary": {
+    "message": "非表示"
+  },
+  "panel_replyChip": {
+    "message": "要返信 · $1"
+  },
+  "panel_replyWhy": {
+    "message": "返信待ち: $1"
+  },
+  "panel_aiSettings": {
+    "message": "AI アシスタントの設定"
+  },
+  "panel_fromSite": {
+    "message": "$1 から"
+  },
+  "panel_siteMore": {
+    "message": "他 $1 件"
+  },
+  "panel_codeCopied": {
+    "message": "コードをコピーしました"
+  },
+  "opt_ai": {
+    "message": "AI アシスタント"
+  },
+  "opt_aiEngine": {
+    "message": "使用する AI"
+  },
+  "opt_aiOff": {
+    "message": "オフ"
+  },
+  "opt_aiOffText": {
+    "message": "要約も返信マークもありません。どこにも何も送信されません。"
+  },
+  "opt_aiBuiltin": {
+    "message": "このパソコンで"
+  },
+  "opt_aiBuiltinText": {
+    "message": "Chrome の内蔵モデル。無料でプライベートですが、すべてのパソコンで使えるわけではありません。"
+  },
+  "opt_aiCloudText": {
+    "message": "ご自身の $1 API キーを使用（従量課金）。"
+  },
+  "opt_aiChecking": {
+    "message": "確認しています…"
+  },
+  "opt_aiReady": {
+    "message": "準備完了"
+  },
+  "opt_aiReadyText": {
+    "message": "モデルは Chrome 内でオフラインで動きます。メールはこのパソコンから出ません。"
+  },
+  "opt_aiNeedsDownload": {
+    "message": "1 回だけダウンロードが必要です"
+  },
+  "opt_aiNeedsDownloadText": {
+    "message": "Chrome がモデル（数 GB）を一度だけダウンロードし、その後はオフラインで動作します。"
+  },
+  "opt_aiDownload": {
+    "message": "ダウンロード"
+  },
+  "opt_aiDownloading": {
+    "message": "モデルをダウンロードしています…"
+  },
+  "opt_aiUnavailable": {
+    "message": "このパソコンでは使用できません"
+  },
+  "opt_aiUnavailableText": {
+    "message": "このパソコンでは Chrome がモデルを提供していません。OpenAI と Anthropic はどのパソコンでも使えます。"
+  },
+  "opt_aiOldChrome": {
+    "message": "Chrome 138 以降が必要です"
+  },
+  "opt_aiOldChromeText": {
+    "message": "Chrome を更新してから、ここに戻ってください。"
+  },
+  "opt_aiEnglish": {
+    "message": "英語で回答します。Chrome のモデルはまだこの言語（$1）に対応していません。"
+  },
+  "opt_aiKey": {
+    "message": "$1 API キー"
+  },
+  "opt_aiKeyText": {
+    "message": "$1 のサブスクリプションに API へのアクセスは含まれません。キーの利用料は $2 が別途、従量で請求します。"
+  },
+  "opt_aiGetKey": {
+    "message": "キーを取得"
+  },
+  "opt_aiShow": {
+    "message": "表示"
+  },
+  "opt_aiHide": {
+    "message": "隠す"
+  },
+  "opt_aiConnect": {
+    "message": "接続"
+  },
+  "opt_aiConnecting": {
+    "message": "接続しています…"
+  },
+  "opt_aiKeyEmpty": {
+    "message": "先にキーを貼り付けてください。"
+  },
+  "opt_aiKeyOther": {
+    "message": "これは $1 のキーのようです。上で選ぶか、ここに $2 のキーを貼り付けてください。"
+  },
+  "opt_aiConnected": {
+    "message": "$1 に接続済み"
+  },
+  "opt_aiConnectedText": {
+    "message": "キーはこのパソコンにだけ保存され、バックアップや Chrome の同期には含まれません。"
+  },
+  "opt_aiDisconnect": {
+    "message": "接続を解除"
+  },
+  "opt_aiDisconnected": {
+    "message": "$1 のキーを削除しました"
+  },
+  "opt_aiNoAccess": {
+    "message": "Chrome が Mail Deck による $1 へのアクセスを許可しなくなりました。"
+  },
+  "opt_aiAllow": {
+    "message": "アクセスを許可"
+  },
+  "opt_aiModel": {
+    "message": "モデル"
+  },
+  "opt_aiModelText": {
+    "message": "大きいモデルほど要約が上手で、小さいモデルほど速く安価です。"
+  },
+  "opt_aiRecommended": {
+    "message": "おすすめ"
+  },
+  "opt_aiOtherModels": {
+    "message": "その他のモデル"
+  },
+  "opt_aiBest": {
+    "message": "最高の品質"
+  },
+  "opt_aiFast": {
+    "message": "最速・最安"
+  },
+  "opt_aiModelGone": {
+    "message": "$1 はこのキーで使えなくなりました。別のモデルを選んでください。"
+  },
+  "opt_aiNoModels": {
+    "message": "このキーには Mail Deck で使えるモデルがありません。"
+  },
+  "opt_aiSummary": {
+    "message": "メールを読むときに要約"
+  },
+  "opt_aiSummaryText": {
+    "message": "要点、やること、日時をメールの上に表示します。"
+  },
+  "opt_aiSummaryOff": {
+    "message": "オフ"
+  },
+  "opt_aiSummaryClick": {
+    "message": "クリックしたとき"
+  },
+  "opt_aiSummaryAuto": {
+    "message": "長いメールは自動で"
+  },
+  "opt_aiReply": {
+    "message": "返信待ち"
+  },
+  "opt_aiReplyText": {
+    "message": "返事を待っている人からの未読メールに印を付け、パネルのフィルタにまとめます。"
+  },
+  "opt_aiPrivacy": {
+    "message": "リクエストはお使いのキーで、ブラウザから $1 に直接送られます。Mail Deck にはサーバーがありません。要約ではそのメールの本文を、返信待ちでは未読メールの送信者、件名、冒頭部分を送信します。"
+  },
+  "opt_aiPrivacyLocal": {
+    "message": "Chrome がこのパソコン上でモデルを動かすため、メールはどこにも送信されません。"
+  },
+  "opt_aiErrAuth": {
+    "message": "$1 がこのキーを拒否しました。キー全体をコピーしたか確認してください。"
+  },
+  "opt_aiErrAccess": {
+    "message": "$1 へのアクセスがないと、Mail Deck はキーを使えません。もう一度接続してアクセスを許可してください。"
+  },
+  "opt_aiErrOther": {
+    "message": "うまくいきませんでした。もう一度お試しください。"
+  },
+  "opt_aiDiagNoKey": {
+    "message": "キー未設定"
+  },
+  "opt_aiDiagNoAccess": {
+    "message": "$1 へのアクセスなし"
   }
 }

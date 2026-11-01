@@ -504,7 +504,7 @@
     "message": "Questo browser"
   },
   "opt_resetConfirm": {
-    "message": "Ripristinare tutte le impostazioni predefinite? Anche interruttori ed etichette delle caselle."
+    "message": "Ripristinare tutte le impostazioni predefinite? Anche interruttori ed etichette delle caselle, e le chiavi IA vengono dimenticate."
   },
   "opt_play": {
     "message": "Ascolta"
@@ -1468,5 +1468,260 @@
   },
   "opt_repeatText": {
     "message": "Torna, con il suo suono, finché non leggi, archivi o elimini il messaggio. Le ore di silenzio valgono comunque."
+  },
+  "ai_err_auth": {
+    "message": "La chiave è stata rifiutata. Controllala in Impostazioni → IA."
+  },
+  "ai_err_quota": {
+    "message": "Il fornitore segnala che l’account ha esaurito il credito."
+  },
+  "ai_err_rate": {
+    "message": "Troppe richieste. Riprova tra un minuto."
+  },
+  "ai_err_network": {
+    "message": "Nessuna connessione."
+  },
+  "ai_err_model": {
+    "message": "Questo modello non è disponibile per la tua chiave. Scegline un altro in Impostazioni → IA."
+  },
+  "ai_err_refusal": {
+    "message": "Il modello si è rifiutato di riassumere questo messaggio."
+  },
+  "ai_err_too_long": {
+    "message": "Questa conversazione è troppo lunga da riassumere."
+  },
+  "ai_err_unavailable": {
+    "message": "Il modello integrato non è pronto su questo computer."
+  },
+  "ai_err_bad_output": {
+    "message": "Impossibile leggere la risposta. Riprova."
+  },
+  "ai_err_server": {
+    "message": "Il fornitore non ha risposto. Riprova più tardi."
+  },
+  "ai_err_no_access": {
+    "message": "Consenti l’accesso al fornitore in Impostazioni → IA."
+  },
+  "ai_note_english": {
+    "message": "Il modello integrato risponde in inglese."
+  },
+  "panel_summary": {
+    "message": "Riepilogo"
+  },
+  "panel_summaryKey": {
+    "message": "riepilogo"
+  },
+  "panel_summarizing": {
+    "message": "Riepilogo in corso…"
+  },
+  "panel_summaryPoints": {
+    "message": "Punti chiave"
+  },
+  "panel_summaryTodo": {
+    "message": "Da fare"
+  },
+  "panel_summaryEvents": {
+    "message": "Date"
+  },
+  "panel_addToCalendar": {
+    "message": "Aggiungi a Google Calendar"
+  },
+  "panel_summaryTruncated": {
+    "message": "Riepilogo degli ultimi messaggi"
+  },
+  "panel_regenerate": {
+    "message": "Rigenera"
+  },
+  "panel_copySummary": {
+    "message": "Copia"
+  },
+  "panel_hideSummary": {
+    "message": "Nascondi"
+  },
+  "panel_replyChip": {
+    "message": "Rispondi · $1"
+  },
+  "panel_replyWhy": {
+    "message": "Attende la tua risposta: $1"
+  },
+  "panel_aiSettings": {
+    "message": "Impostazioni IA"
+  },
+  "panel_fromSite": {
+    "message": "Da $1"
+  },
+  "panel_siteMore": {
+    "message": "Altri $1"
+  },
+  "panel_codeCopied": {
+    "message": "Codice copiato"
+  },
+  "opt_ai": {
+    "message": "IA"
+  },
+  "opt_aiEngine": {
+    "message": "Quale IA usare"
+  },
+  "opt_aiOff": {
+    "message": "Disattivata"
+  },
+  "opt_aiOffText": {
+    "message": "Niente riepiloghi né segni di risposta. Non viene inviato nulla da nessuna parte."
+  },
+  "opt_aiBuiltin": {
+    "message": "Su questo computer"
+  },
+  "opt_aiBuiltinText": {
+    "message": "Il modello integrato di Chrome. Gratuito e privato, ma non su tutti i computer."
+  },
+  "opt_aiCloudText": {
+    "message": "Con la tua chiave API di $1, a consumo."
+  },
+  "opt_aiChecking": {
+    "message": "Verifica in corso…"
+  },
+  "opt_aiReady": {
+    "message": "Pronto"
+  },
+  "opt_aiReadyText": {
+    "message": "Il modello funziona in Chrome, offline. La tua posta resta su questo computer."
+  },
+  "opt_aiNeedsDownload": {
+    "message": "Serve un download una tantum"
+  },
+  "opt_aiNeedsDownloadText": {
+    "message": "Chrome scarica il modello una volta, qualche gigabyte; poi funziona offline."
+  },
+  "opt_aiDownload": {
+    "message": "Scarica"
+  },
+  "opt_aiDownloading": {
+    "message": "Download del modello…"
+  },
+  "opt_aiUnavailable": {
+    "message": "Non disponibile su questo computer"
+  },
+  "opt_aiUnavailableText": {
+    "message": "Chrome non offre qui il suo modello. OpenAI e Anthropic funzionano su qualsiasi computer."
+  },
+  "opt_aiOldChrome": {
+    "message": "Serve Chrome 138 o successivo"
+  },
+  "opt_aiOldChromeText": {
+    "message": "Aggiorna Chrome, poi torna qui."
+  },
+  "opt_aiEnglish": {
+    "message": "Risponde in inglese: il modello di Chrome non supporta ancora questa lingua ($1)."
+  },
+  "opt_aiKey": {
+    "message": "Chiave API di $1"
+  },
+  "opt_aiKeyText": {
+    "message": "Un abbonamento $1 non include l’accesso all’API: $2 addebita la chiave a parte, a consumo."
+  },
+  "opt_aiGetKey": {
+    "message": "Ottieni una chiave"
+  },
+  "opt_aiShow": {
+    "message": "Mostra"
+  },
+  "opt_aiHide": {
+    "message": "Nascondi"
+  },
+  "opt_aiConnect": {
+    "message": "Collega"
+  },
+  "opt_aiConnecting": {
+    "message": "Collegamento…"
+  },
+  "opt_aiKeyEmpty": {
+    "message": "Prima incolla la tua chiave."
+  },
+  "opt_aiKeyOther": {
+    "message": "Sembra una chiave di $1. Sceglilo qui sopra o incolla qui una chiave di $2."
+  },
+  "opt_aiConnected": {
+    "message": "Collegato a $1"
+  },
+  "opt_aiConnectedText": {
+    "message": "La chiave resta su questo computer: mai nei backup né nella sincronizzazione di Chrome."
+  },
+  "opt_aiDisconnect": {
+    "message": "Scollega"
+  },
+  "opt_aiDisconnected": {
+    "message": "Chiave di $1 rimossa"
+  },
+  "opt_aiNoAccess": {
+    "message": "Chrome non consente più a Mail Deck di raggiungere $1."
+  },
+  "opt_aiAllow": {
+    "message": "Consenti l’accesso"
+  },
+  "opt_aiModel": {
+    "message": "Modello"
+  },
+  "opt_aiModelText": {
+    "message": "I modelli più grandi riassumono meglio; quelli piccoli rispondono prima e costano meno."
+  },
+  "opt_aiRecommended": {
+    "message": "Consigliati"
+  },
+  "opt_aiOtherModels": {
+    "message": "Altri modelli"
+  },
+  "opt_aiBest": {
+    "message": "risultati migliori"
+  },
+  "opt_aiFast": {
+    "message": "il più veloce ed economico"
+  },
+  "opt_aiModelGone": {
+    "message": "$1 non è più disponibile per questa chiave. Scegli un altro modello."
+  },
+  "opt_aiNoModels": {
+    "message": "Questa chiave non ha modelli che Mail Deck possa usare."
+  },
+  "opt_aiSummary": {
+    "message": "Riepilogo nel lettore"
+  },
+  "opt_aiSummaryText": {
+    "message": "Punti chiave, cose da fare e date, sopra il messaggio."
+  },
+  "opt_aiSummaryOff": {
+    "message": "Disattivato"
+  },
+  "opt_aiSummaryClick": {
+    "message": "Al clic"
+  },
+  "opt_aiSummaryAuto": {
+    "message": "Automatico per la posta lunga"
+  },
+  "opt_aiReply": {
+    "message": "In attesa della tua risposta"
+  },
+  "opt_aiReplyText": {
+    "message": "Segna la posta non letta di persone che aspettano una risposta e la raccoglie sotto un filtro nel pannello."
+  },
+  "opt_aiPrivacy": {
+    "message": "Le richieste vanno dal tuo browser direttamente a $1, con la tua chiave. Mail Deck non ha server. Un riepilogo invia il testo di quel messaggio; «In attesa della tua risposta» invia mittente, oggetto e anteprima della posta non letta."
+  },
+  "opt_aiPrivacyLocal": {
+    "message": "Chrome esegue il modello su questo computer, quindi la tua posta non viene inviata da nessuna parte."
+  },
+  "opt_aiErrAuth": {
+    "message": "$1 ha rifiutato questa chiave. Controlla di averla copiata tutta."
+  },
+  "opt_aiErrAccess": {
+    "message": "Senza accesso a $1, Mail Deck non può usare la chiave. Collega di nuovo e consenti l’accesso."
+  },
+  "opt_aiErrOther": {
+    "message": "Non ha funzionato. Riprova."
+  },
+  "opt_aiDiagNoKey": {
+    "message": "ancora nessuna chiave"
+  },
+  "opt_aiDiagNoAccess": {
+    "message": "nessun accesso a $1"
   }
 }
