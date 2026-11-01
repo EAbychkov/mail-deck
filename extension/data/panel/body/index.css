@@ -97,6 +97,19 @@ html.dark canvas {
   white-space: nowrap;
   color: #5f6772;
 }
+/* a sender, a snippet or the text shown while the mail loads takes its direction from its
+   own text (a Hebrew mail in the English panel); a folded line keeps the frame's left side,
+   the frame being always ltr */
+body.summary,
+.to,
+.thread summary .who,
+.thread summary .snippet {
+  unicode-bidi: plaintext;
+}
+.thread summary .who,
+.thread summary .snippet {
+  text-align: left;
+}
 .thread summary .date {
   order: 3;
   flex: none;

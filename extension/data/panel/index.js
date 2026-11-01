@@ -45,13 +45,18 @@ const ADD_ACCOUNT = 'https://accounts.google.com/AddSession?continue=https://mai
 const SIDE = new URLSearchParams(location.search).has('side');
 
 const $ = id => document.getElementById(id);
+// a mail's line in the list
+const rowOf = link => $('list').querySelector(`.row[data-link="${CSS.escape(link)}"]`);
+// state.focus is a link, or this: the first line of the list, when no mail is left to go to
+const FIRST = Symbol('first');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const dark = matchMedia('(prefers-color-scheme: dark)');
 
 const state = {
   objs: [], // the accounts as the background published them
   hidden: new Set(), // links acted on here, until the feed stops listing them
-  reading: null, // {e, o}
+  reading: null, // {e, o, next}
+  focus: null, // the line the next drawing gives the focus to: a link, or FIRST
   only: null, // the mailbox the chips narrowed the list to
   rows: new Map(), // link -> {e, o}
   pending: null, // the action waiting for its Undo: {cmd, links, ready, timer}
@@ -97,11 +102,13 @@ const icon = name => {
   svg.innerHTML = ICONS[name].map(d => `<path d="${d}"/>`).join('');
   return svg;
 };
+// data-focus names the button, so it gets the focus back once the list is drawn again
 const btn = (name, title, onclick, extra = '') => h('button', {
   class: 'icon-btn ' + extra,
   type: 'button',
   title,
   'aria-label': title,
+  'data-focus': name,
   onclick: ev => {
     ev.stopPropagation();
     onclick(ev);
@@ -426,9 +433,22 @@ const undo = () => {
   }
   p.links.forEach(link => state.hidden.delete(link));
   state.focus = p.links[0];
+  foldUntil = 0;
   render();
 };
+// the line that takes the place of these mails: the next one left, else the one before
+const neighbour = links => {
+  const all = [...$('list').querySelectorAll('.row')];
+  const at = all.findLastIndex(r => links.includes(r.dataset.link));
+  const left = r => !links.includes(r.dataset.link) && !state.hidden.has(r.dataset.link);
+  return at === -1 ? null : all.slice(at + 1).find(left) || all.slice(0, at).reverse().find(left) || null;
+};
+// a list drawn while mail folds away would cut the fold short; the fold draws it when done
+let foldUntil = 0;
 const act = (cmd, links, until) => {
+  // a second click, or the key pressed twice, while the mail folds away: it has its action
+  // already, and a second one would outlive the Undo of the first
+  links = links.filter(link => !state.pending?.links.includes(link));
   if (links.length === 0) {
     return;
   }
@@ -436,13 +456,17 @@ const act = (cmd, links, until) => {
   if (state.pending) {
     commit(state.pending);
   }
-  const rows = links.map(link => document.querySelector(`.row[data-link="${CSS.escape(link)}"]`)).filter(Boolean);
-  const after = rows.at(-1)?.nextElementSibling;
-  state.focus = after?.classList.contains('row') ? after.dataset.link : null;
+  const rows = links.map(rowOf).filter(Boolean);
+  // the focus goes to the mail that takes their place; from the reader, to the line back()
+  // focused; with no mail left, to the first line of the list
+  const active = document.activeElement?.closest?.('#list .row');
+  const next = neighbour(links) || (active && !links.includes(active.dataset.link) && !state.hidden.has(active.dataset.link) ? active : null);
+  state.focus = next ? next.dataset.link : FIRST;
 
   links.forEach(link => state.hidden.add(link));
   forgetExtra();
   const duration = reducedMotion ? 0 : 180;
+  foldUntil = performance.now() + duration;
   rows.forEach(el => el.animate([
     {height: el.offsetHeight + 'px', opacity: 1},
     {height: '0px', opacity: 0, paddingTop: 0, paddingBottom: 0}
@@ -492,10 +516,24 @@ const star = e => {
 };
 
 /* remind me later: a short menu of times under the clock */
-const closeMenu = () => $('menu')?.remove();
+// the clock the menu opened from; Esc gives it the focus back, or its mail's line
+let menuFrom = null;
+const closeMenu = (refocus = false) => {
+  const from = menuFrom;
+  const menu = $('menu');
+  menuFrom = null;
+  // its id goes first: the removal blurs its focused item, and that focusout must not close it twice
+  menu?.removeAttribute('id');
+  menu?.remove();
+  from?.setAttribute('aria-expanded', 'false');
+  if (refocus && from?.isConnected) {
+    (from.closest('.row') || from).focus({preventScroll: true});
+  }
+};
 const remindMenu = (anchor, links) => {
   closeMenu();
-  const menu = h('div', {class: 'menu', id: 'menu', role: 'menu', onclick: ev => ev.stopPropagation()},
+  // focusable itself, so a click on its title or edge keeps the focus inside
+  const menu = h('div', {class: 'menu', id: 'menu', role: 'menu', tabIndex: -1, onclick: ev => ev.stopPropagation()},
     h('p', {class: 'menu-title'}, t('remind')),
     Remind.times().map(o => h('button', {
       type: 'button',
@@ -508,17 +546,30 @@ const remindMenu = (anchor, links) => {
         act('remind', links, o.until);
       }
     }, h('span', {}, t(o.key)), h('span', {class: 'hint'}, later(o.until)))));
+  // Tab, or a click into the message, leaves it: it closes, the focus stays where it went
+  menu.addEventListener('focusout', ev => menu.id === 'menu' && !menu.contains(ev.relatedTarget) && closeMenu());
   document.body.append(menu);
-  // under the button and inside the window, above it when there is no room below
+  menuFrom = anchor;
+  anchor.setAttribute('aria-expanded', 'true');
+  // under the button and inside the window, above it when there is no room below. A larger
+  // text size zooms the page: the button's place and the window come in zoomed pixels, the
+  // menu's size and place are written in the page's own, so the zoom is taken off
+  const z = parseFloat(document.documentElement.style.zoom) || 1;
   const r = anchor.getBoundingClientRect();
+  const [right, top, bottom, width, height] = [r.right, r.top, r.bottom, innerWidth, innerHeight].map(v => v / z);
   const w = menu.offsetWidth;
   const ht = menu.offsetHeight;
-  menu.style.left = Math.max(8, Math.min(r.right - w, innerWidth - w - 8)) + 'px';
-  menu.style.top = (r.bottom + ht + 8 > innerHeight ? Math.max(8, r.top - ht - 4) : r.bottom + 4) + 'px';
+  menu.style.left = Math.max(8, Math.min(right - w, width - w - 8)) + 'px';
+  menu.style.top = (bottom + ht + 8 > height ? Math.max(8, top - ht - 4) : bottom + 4) + 'px';
   menu.querySelector('button').focus();
 };
-document.addEventListener('click', closeMenu);
-const remindBtn = links => btn('clock', t('remind') + ' (B)', ev => remindMenu(ev.currentTarget, links), 'remind');
+document.addEventListener('click', () => closeMenu());
+const remindBtn = links => {
+  const el = btn('clock', t('remind') + ' (B)', ev => remindMenu(ev.currentTarget, links), 'remind');
+  el.setAttribute('aria-haspopup', 'menu');
+  el.setAttribute('aria-expanded', 'false');
+  return el;
+};
 
 /* side panel: the deck stays open beside the page; Chrome opens it only from a click */
 const openSide = () => chrome.sidePanel.open({windowId: state.windowId}).then(() => window.close(), () => toast(t('actionFailed'), true));
@@ -564,6 +615,7 @@ const renderChips = objs => {
     'class': 'chip' + ((o?.xml.link ?? null) === state.only ? ' on' : ''),
     'type': 'button',
     'aria-pressed': String((o?.xml.link ?? null) === state.only),
+    'data-focus': 'chip:' + (o?.xml.link ?? ''),
     'style': o ? `--c:${o.color}` : '',
     'onclick': () => {
       state.only = o?.xml.link ?? null;
@@ -584,21 +636,34 @@ const openSearch = () => {
   $('search-input').focus();
 };
 const closeSearch = () => {
+  const inside = $('search').contains(document.activeElement);
   state.search = null;
   $('search').hidden = true;
   $('search-input').value = '';
+  say('');
   render();
+  // the field goes; the focus goes back to the button that opened it
+  if (inside) {
+    $('tools').querySelector('[data-focus="search"]')?.focus();
+  }
+};
+// what a screen reader says of the search; the list itself changes without a word
+const say = text => {
+  $('status').textContent = text;
 };
 const runSearch = q => {
   q = q.trim();
   if (!q) {
     return;
   }
-  // a mailbox watched through labels is one account all the same; only Gmail can be searched
-  const accounts = view().filter(o => !serviceOf(o) && (!state.only || o.xml.link === state.only))
-    .filter((o, i, l) => l.findIndex(x => x.xml.title === o.xml.title) === i);
+  // a mailbox watched through labels is one account all the same; only Gmail can be searched,
+  // so a chip of another service searches every Gmail account
+  const gmails = view().filter(o => !serviceOf(o));
+  const chosen = gmails.filter(o => o.xml.link === state.only);
+  const accounts = (chosen.length ? chosen : gmails).filter((o, i, l) => l.findIndex(x => x.xml.title === o.xml.title) === i);
   const s = state.search = {q, busy: true, results: null};
   render();
+  say(t('searching'));
   Promise.all(accounts.map(o => searchIn(o, q).then(entries => ({o, entries: entries || [], failed: !entries}))))
     .then(results => {
       if (state.search !== s) {
@@ -608,6 +673,8 @@ const runSearch = q => {
       s.results = results;
       results.flatMap(r => r.entries).filter(e => e.starred).forEach(e => state.starred.add(thread(e.link)));
       render();
+      const n = results.reduce((p, r) => p + r.entries.length, 0);
+      say(results.every(r => r.failed) ? t('searchFailed') : n ? t('found', n) : t('searchNone'));
     });
 };
 const note = text => h('div', {class: 'empty'}, h('p', {}, text));
@@ -622,18 +689,22 @@ const searchList = () => {
   if (s.results.every(r => r.failed)) {
     return [note(t('searchFailed'))];
   }
+  // an account that did not answer keeps its line, saying so, with its way to Gmail's own search
   const shown = s.results.map(r => ({...r, entries: r.entries.filter(e => !state.hidden.has(e.link))}))
-    .filter(r => r.entries.length);
-  return shown.length ? shown.map(r => h('section', {class: 'section', style: `--c:${r.o.color}`},
-    h('header', {class: 'section-head', title: t('openInGmail'), onclick: () => openUrl(searchUrl(r.o, s.q))},
-      mark(r.o.xml.title),
-      h('span', {class: 'addr'}, r.o.xml.title),
-      h('span', {class: 'none'}, t('found', r.entries.length)),
-      h('span', {class: 'grow'}),
-      btn('open', t('openInGmail'), () => openUrl(searchUrl(r.o, s.q)))
-    ),
-    h('div', {class: 'cards'}, r.entries.map(e => row(e, r.o)))
-  )) : [note(t('searchNone'))];
+    .filter(r => r.failed || r.entries.length);
+  return [
+    ...shown.map(r => h('section', {'class': 'section', 'style': `--c:${r.o.color}`, 'data-scope': r.o.xml.title},
+      h('header', {class: 'section-head', title: t('openInGmail'), onclick: () => openUrl(searchUrl(r.o, s.q))},
+        mark(r.o.xml.title),
+        h('span', {class: 'addr'}, r.o.xml.title),
+        h('span', {class: 'none'}, r.failed ? t('searchFailed') : t('found', r.entries.length)),
+        h('span', {class: 'grow'}),
+        btn('open', t('openInGmail'), () => openUrl(searchUrl(r.o, s.q)))
+      ),
+      r.entries.length > 0 && h('div', {class: 'cards'}, r.entries.map(e => row(e, r.o)))
+    )),
+    shown.every(r => r.failed) && note(t('searchNone'))
+  ].filter(Boolean);
 };
 
 /* list */
@@ -655,7 +726,8 @@ const row = (e, o) => {
     'class': 'row' + (e.unread === false ? ' seen' : ''),
     'tabIndex': 0,
     'data-link': e.link,
-    'onclick': ev => ev.metaKey || ev.ctrlKey || !can(o, 'body') ? openEntry(e, o, ev) : read(e, o),
+    // a mail folding away after its action takes no second click
+    'onclick': ev => state.hidden.has(e.link) ? null : ev.metaKey || ev.ctrlKey || !can(o, 'body') ? openEntry(e, o, ev) : read(e, o),
     'onauxclick': ev => ev.button === 1 && openEntry(e, o, ev),
     'onmouseenter': () => prefetch(e, o),
     'onmouseleave': () => clearTimeout(prefetchTimer),
@@ -695,12 +767,14 @@ const section = o => {
       h('span', {class: 'grow'}),
       entries.length > 0 && btn('readAll', t('markAllRead'), () => act('rd', links)),
       entries.length > 0 && can(o, 'archive') && btn('archive', t('archiveAll'), () => act('rc_^i', links)),
-      !serviceOf(o) && btn('meet', t('newMeeting'), () => openUrl(meetUrl(o))),
+      !serviceOf(o) && btn('meet', t('newMeeting'), () => openUrl(meetUrl(o)), 'meet'),
       btn('open', openInbox(o), () => openUrl(o.xml.link))
     ),
     entries.length > 0 && h('div', {class: 'cards'}, entries.map(e => row(e, o)),
       !open && extra.length > 0 ? h('button', {class: 'more', type: 'button', onclick: () => {
         state.expanded.add(o.xml.link);
+        // the button goes; the first mail it brought takes the focus
+        state.focus = extra[0].link;
         render();
       }}, t('showMore', Math.min(extra.length, rest))) :
         rest > 0 && h('button', {class: 'more', type: 'button', onclick: () => openUrl(o.xml.link)},
@@ -761,7 +835,10 @@ const signedOut = () => {
 const renderList = objs => {
   const list = $('list');
   const top = list.scrollTop;
-  const focused = state.focus || document.activeElement?.dataset?.link;
+  // an action or its Undo names the line that takes the focus, and brings it into view; any
+  // other drawing keeps the focused line where it is, scrolled to or not
+  const wanted = state.focus;
+  const focused = wanted || document.activeElement?.dataset?.link;
   state.focus = null;
   state.rows.clear();
 
@@ -771,8 +848,10 @@ const renderList = objs => {
     !state.only && signedOut()
   ].filter(Boolean)));
   list.scrollTop = top;
-  if (focused) {
-    list.querySelector(`.row[data-link="${CSS.escape(focused)}"]`)?.focus();
+  const el = focused === FIRST ? list.querySelector('.row, .acc') : focused && rowOf(focused);
+  el?.focus({preventScroll: true});
+  if (wanted) {
+    el?.scrollIntoView({block: 'nearest'});
   }
 };
 
@@ -827,12 +906,41 @@ const renderList = objs => {
   });
 }
 
+// where the focus is, said so that it outlives the list drawn again: a button by its name,
+// inside its mail, its mailbox or its bar
+const focusPath = () => {
+  const el = document.activeElement;
+  const name = el?.dataset?.focus;
+  if (!name) {
+    return null;
+  }
+  const what = `[data-focus="${CSS.escape(name)}"]`;
+  const row = el.closest('.row[data-link]');
+  const box = el.closest('[data-key], [data-scope]');
+  const bar = el.closest('#tools, #chips, #list');
+  return row ? `.row[data-link="${CSS.escape(row.dataset.link)}"] ${what}` :
+    box ? `[${box.dataset.key ? 'data-key' : 'data-scope'}="${CSS.escape(box.dataset.key || box.dataset.scope)}"] ${what}` :
+      bar ? `#${bar.id} ${what}` : null;
+};
+// the accounts as the list shows them, to tell a change from none: a mailbox's snapshot
+// clock (its feed's modified) moves on without anything new to show; its mails' do not
+const sig = objs => JSON.stringify(objs, function (k, v) {
+  return k === 'modified' && Array.isArray(this.entries) ? undefined : v;
+});
+// the accounts last drawn; the same ones again need no drawing
+let drawn = '';
 const render = () => {
+  const path = focusPath();
   const objs = view();
+  drawn = sig(state.objs);
   // the chips drop a choice whose mailbox has no mail left; the bar's compose follows the choice
   renderChips(objs);
   renderBar(objs);
   renderList(objs);
+  // a button drawn again gets the focus back, unless a line took it
+  if (path && (!document.activeElement || document.activeElement === document.body)) {
+    document.querySelector(path)?.focus({preventScroll: true});
+  }
 };
 const update = objs => {
   state.objs = objs || [];
@@ -847,7 +955,17 @@ const update = objs => {
       state.hidden.delete(link);
     }
   }
-  render();
+  // A check that found nothing new, every two minutes, leaves the list as it is: the focus,
+  // the pointer's line and its pictures stay; only the times move on. Mail folding away
+  // after its action draws the list itself once the fold is done.
+  if (sig(state.objs) === drawn) {
+    for (const el of $('list').querySelectorAll('time.when')) {
+      el.textContent = when(el.dateTime);
+    }
+  }
+  else if (performance.now() >= foldUntil) {
+    render();
+  }
   loadExtra();
 };
 
@@ -912,8 +1030,15 @@ frameReady.then(doc => {
   doc.defaultView.addEventListener('resize', refit);
 });
 
+// the reader lies over the list: what is under it can be neither focused nor read out
+const shade = on => {
+  for (const el of [document.querySelector('.main > .bar'), $('search'), $('chips'), $('list')]) {
+    el.inert = on;
+  }
+};
 const read = async (e, o) => {
-  state.reading = {e, o};
+  // next: the line back() focuses should this mail's own leave the list meanwhile (read on open)
+  state.reading = {e, o, next: neighbour([e.link])?.dataset.link};
   closeMenu();
   $('reader-bar').replaceChildren(
     btn('back', t('back') + ' (Esc)', back),
@@ -940,12 +1065,16 @@ const read = async (e, o) => {
   $('reader-addr').replaceChildren(h('span', {}, e.author_email), copyBtn(e.author_email));
   $('reader-date').textContent = fullDate(e.modified);
   $('app').classList.add('reading');
+  shade(true);
+  // the keys and a screen reader follow the reader
+  $('reader').focus({preventScroll: true});
 
   const doc = await frameReady;
   doc.querySelector('base').href = e.link;
   doc.body.className = 'summary';
   doc.body.textContent = e.summary;
   $('reader').classList.add('loading');
+  let shown = false;
   try {
     const node = await bodyOf(e, o);
     if (state.reading?.e !== e) {
@@ -965,6 +1094,7 @@ const read = async (e, o) => {
       doc.body.prepend(bar);
     }
     fit(doc);
+    shown = true;
   }
   catch (err) {
     if (state.reading?.e === e) {
@@ -974,19 +1104,21 @@ const read = async (e, o) => {
   finally {
     $('reader').classList.remove('loading');
   }
-  // the settings may ask for a mail read here to count as read; Gmail's print view has set the cookie by now
-  if (state.readOnOpen && e.unread !== false && !state.hidden.has(e.link)) {
+  // the settings may ask for a mail read here to count as read, once it did show: one that
+  // did not load stays unread. Gmail's print view has set the cookie by now
+  if (shown && state.readOnOpen && e.unread !== false && !state.hidden.has(e.link)) {
     state.hidden.add(e.link);
     render();
     send({cmd: 'rd', links: [e.link]});
   }
 };
 const back = () => {
-  const link = state.reading?.e.link;
+  const r = state.reading;
   state.reading = null;
+  shade(false);
   $('app').classList.remove('reading');
-  if (link) {
-    document.querySelector(`.row[data-link="${CSS.escape(link)}"]`)?.focus({preventScroll: true});
+  if (r) {
+    (rowOf(r.e.link) || (r.next && rowOf(r.next)) || $('list').querySelector('.row, .acc'))?.focus({preventScroll: true});
   }
 };
 
@@ -1035,7 +1167,7 @@ const onKey = ev => {
     const items = [...menu.querySelectorAll('button')];
     const i = items.indexOf(document.activeElement);
     if (ev.code === 'Escape') {
-      closeMenu();
+      closeMenu(true);
     }
     else if (ev.code === 'ArrowDown' || ev.code === 'KeyJ') {
       items[Math.min(items.length - 1, i + 1)].focus();
@@ -1095,7 +1227,13 @@ const onKey = ev => {
     move(-1);
   }
   else if (ev.code === 'Enter' && rowEl && rowEl === document.activeElement) {
-    read(target.e, target.o);
+    // as a click: a mail the panel cannot read opens on its site
+    if (can(target.o, 'body')) {
+      read(target.e, target.o);
+    }
+    else {
+      openEntry(target.e, target.o, ev);
+    }
   }
   else if (ev.code === 'KeyO' && target) {
     openEntry(target.e, target.o, ev);

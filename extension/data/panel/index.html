@@ -22,7 +22,7 @@
       <nav class="chips" id="chips" aria-label="Mailboxes" data-i18n-label="mailboxes"></nav>
       <div class="list" id="list"></div>
 
-      <section class="reader" id="reader" aria-label="Message" data-i18n-label="message">
+      <section class="reader" id="reader" tabindex="-1" aria-label="Message" data-i18n-label="message">
         <header class="bar reader-bar" id="reader-bar"></header>
         <div class="reader-card">
         <div class="reader-head">
@@ -47,6 +47,8 @@
     </main>
   </div>
   <div class="toast" id="toast" role="status"></div>
+  <!-- what the search found, said to a screen reader -->
+  <p class="sr" id="status" role="status"></p>
 
   <script src="/core/services/yahoo.js"></script>
   <script src="/core/services/aol.js"></script>

@@ -6,11 +6,14 @@
   --ink: #17191c;
   --soft: #2c3036;
   --muted: #5d6470;
-  --faint: #737a85;
+  /* 4.7:1 on --paper, the darkest of the backgrounds it is read on */
+  --faint: #676d78;
   --line: #e6e8ec;
   --focus: #2f5bea;
   --accent: #4352e3;
   --danger: #c9372c;
+  /* "all caught up" and a copied address: 4.8:1 on --paper */
+  --ok: #1a7a50;
   --shadow: 0 0 0 1px var(--line);
   --lift: 0 2px 4px rgba(22, 27, 36, .06), 0 10px 24px -10px rgba(22, 27, 36, .22);
   --ease: cubic-bezier(.2, .8, .2, 1);
@@ -29,6 +32,7 @@
     --focus: #8aa6ff;
     --accent: #7d93ff;
     --danger: #ff8a80;
+    --ok: #2fa874;
     --shadow: 0 0 0 1px #24252a;
     --lift: 0 2px 4px rgba(0, 0, 0, .35), 0 10px 24px -10px rgba(0, 0, 0, .6);
     color-scheme: dark;

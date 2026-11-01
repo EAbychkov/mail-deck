@@ -65,12 +65,14 @@ const server = http.createServer((req, res) => {
   res.end(content);
 });
 
-const run = (port, scenario, query = '') => new Promise(resolve => {
+// frame: a width narrower than a window can be; the panel then runs in a frame that wide
+const run = (port, scenario, query = '', frame = 0) => new Promise(resolve => {
   const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'mail-deck-chrome-'));
+  const panel = `lang=en&scenario=${scenario}${query}`;
   const args = ['--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check', '--disable-extensions',
     `--user-data-dir=${profile}`, '--window-size=800,600',
     ...(process.platform === 'linux' ? ['--no-sandbox'] : []),
-    `http://127.0.0.1:${port}/__panel.html?lang=en&scenario=${scenario}${query}`];
+    frame ? `http://127.0.0.1:${port}/__frame.html?w=${frame}&q=${encodeURIComponent(panel)}` : `http://127.0.0.1:${port}/__panel.html?${panel}`];
   const chrome = spawn(CHROME, args, {stdio: 'ignore'});
   const done = result => {
     clearTimeout(timer);
@@ -126,19 +128,44 @@ const checks = {
       JSON.stringify(r.windowOpened) === '["https://evil.test/top"]' && r.panelStayed && !r.pingAfterClicks,
     'no star where the service has none': r.star === false && r.noStarHint,
     'a mail the panel cannot read opens on its site': r.protonReader === false && r.protonOpened?.startsWith('https://mail.proton.me/'),
+    'Enter on it opens it on its site too, not a reader that cannot load it': r.protonEnterReader === false && r.protonEnterOpened?.startsWith('https://mail.proton.me/'),
     'pointing at a service mail fetches nothing': r.hoverFetched === 0,
-    'search asks Gmail only': JSON.stringify(r.searchUrls) === '["https://mail.google.com/mail/u/0"]'
+    'search asks Gmail only': JSON.stringify(r.searchUrls) === '["https://mail.google.com/mail/u/0"]',
+    'with a service\'s chip chosen, search asks Gmail instead of failing': r.yahooChosen && JSON.stringify(r.chipSearchUrls) === '["https://mail.google.com/mail/u/0"]' && !r.chipSearchFailed
   }),
   wide: r => ({
     'a 700px newsletter fits without a sideways scroll': r.clientWidth > 0 && r.scrollWidth <= r.clientWidth + 1
+  }),
+  keys: r => ({
+    'read on open: a mail whose body did not load stays unread and listed': r.failedMarked === 0 && r.failedListed,
+    'read on open: back from a mail marked read, the next mail has the focus': r.readMarked === 1 && r.focusAfterReadOnOpen === 'row:b1',
+    'the reader takes the focus, the list under it is inert until back': r.readerFocused && r.underInert && r.backFocus === 'row:a1' && r.underBack,
+    'E pressed twice while the mail folds: one action, and Z cancels it': r.doubleKey?.length === 1 && r.doubleKeyUndone,
+    'a double click on delete: one action; a click on the folding mail opens nothing': r.doubleClick === 1 && r.foldClickReads === false,
+    'the only mail of a mailbox archived: the focus goes to the mail before it, Undo brings it back': r.focusAfterLast === 'row:a1' && r.focusAfterUndo === 'row:b1',
+    'a chip keeps the focus; show more hands it to the first mail it brought': r.focusAfterChip && r.focusAfterMore === 'row:a3',
+    'a check keeps a toolbar button focused and a scrolled list where it was': r.toolKept === 'compose' && r.scrollKept,
+    'a check with nothing new does not draw the list again; its times move on; a change draws it': r.sameNotDrawn && r.timesMoved && r.changeDrawn,
+    'the background\'s answer to an action does not cut the fold short': r.foldGoesOn && r.foldDone,
+    'remind me later: its button says it opens a menu, the focused time shows a ring': r.menuExpanded && r.menuRing === 'solid',
+    'remind me later: Esc gives the focus back to the mail, Tab out closes it': r.menuEsc && r.menuTabOut,
+    'remind me later at a larger text size opens at its clock, inside the window': r.zoomMenu?.alignedRight && r.zoomMenu.inside && r.zoomMenu.atClock,
+    'a subject keeps its own direction and the panel\'s side (Hebrew in English, English in Hebrew)': r.bidi?.hebrewInLtr && r.bidi.englishInRtl,
+    'search: an account that did not answer says so; the result is said to a screen reader': r.searchFailedLine && r.searchFoundLine && r.searchSaid,
+    'Esc in the search field gives the focus to the search button': r.focusAfterSearch === 'search'
+  }),
+  narrow: r => ({
+    'a 320px side panel: the mailbox line keeps whole buttons, without copy and Meet, and a readable address':
+      r.width === 320 && JSON.stringify(r.buttons) === '["readAll:32","archive:32","open:32"]' && r.addr >= 60,
+    'a 320px side panel: the reader\'s bar stays inside': r.barInside
   })
 };
 
 server.listen(0, '127.0.0.1', async () => {
   const {port} = server.address();
   let failed = 0;
-  for (const [scenario, query] of [['main', ''], ['speed', ''], ['services', '&s=services'], ['wide', '&wide=1']]) {
-    const r = await run(port, scenario, query);
+  for (const [scenario, query, frame] of [['main', ''], ['speed', ''], ['services', '&s=services'], ['wide', '&wide=1'], ['keys', ''], ['narrow', '&side', 320]]) {
+    const r = await run(port, scenario, query, frame);
     if (r.error) {
       failed += 1;
       console.log('not ok', scenario, '-', r.error);

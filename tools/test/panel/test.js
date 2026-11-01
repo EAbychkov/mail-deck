@@ -222,6 +222,12 @@
       await wait(50);
       out.protonReader = document.getElementById('app').classList.contains('reading');
       out.protonOpened = sent('open').length === opens + 1 && sent('open').at(-1).url?.link;
+      // and so does Enter on it, as a click does
+      head('ev@proton.me').querySelector('.row').focus();
+      key(document, 'Enter');
+      await wait(50);
+      out.protonEnterReader = document.getElementById('app').classList.contains('reading');
+      out.protonEnterOpened = sent('open').length === opens + 2 && sent('open').at(-1).url?.link;
       // pointing at a service mail fetches nothing: a service may count a fetched mail as read
       const asked = sent('services.body').length;
       head('ev@yahoo.com').querySelectorAll('.row')[1].dispatchEvent(new MouseEvent('mouseenter'));
@@ -235,6 +241,244 @@
       document.getElementById('search').requestSubmit();
       await wait(150);
       out.searchUrls = sent('gmail.search').filter(m => m.query === 'invoice').map(m => m.url);
+
+      // the Yahoo chip chosen: Yahoo cannot be searched, so Gmail is, instead of a failure
+      key(document.getElementById('search-input'), 'Escape');
+      await wait(50);
+      [...document.querySelectorAll('#chips .chip')].find(c => c.textContent.startsWith('yahoo.com'))?.click();
+      await wait(50);
+      out.yahooChosen = state.only === 'https://mail.yahoo.com/n/folders/1';
+      key(document, 'Slash');
+      await wait(50);
+      document.getElementById('search-input').value = 'receipt';
+      document.getElementById('search').requestSubmit();
+      await wait(150);
+      out.chipSearchUrls = sent('gmail.search').filter(m => m.query === 'receipt').map(m => m.url);
+      out.chipSearchFailed = document.getElementById('list').textContent.includes(t('searchFailed'));
+    }
+
+    if (scenario === 'keys') {
+      // the focus, the keys and the reader. a1 a2 (and a3-a5 behind "show more") are evgeny's,
+      // b1 is the only mail of work@
+      const $ = id => document.getElementById(id);
+      const rowOf = id => [...document.querySelectorAll('#list .row')].find(r => r.dataset.link.includes('message_id=' + id + '&'));
+      const doc = $('body').contentDocument;
+      const reading = () => $('app').classList.contains('reading');
+      // what has the focus: a mail by its id, a button by its name
+      const focus = () => {
+        const el = document.activeElement;
+        return el?.dataset?.link ? 'row:' + el.dataset.link.match(/message_id=([^&]*)/)[1] : el?.dataset?.focus || el?.id || el?.tagName;
+      };
+      const actions = (cmd, id) => sent('gmail.action').filter(a => a.cmd === cmd && a.links.some(l => l.includes('message_id=' + id + '&')));
+      await until(() => [...state.extra.values()].flat().length >= 3);
+
+      // read on open: a mail whose body did not load stays unread and listed
+      state.readOnOpen = true;
+      window.__printStatus = 500;
+      rowOf('b1')?.click();
+      await until(() => doc.querySelector('.note'));
+      await wait(50);
+      out.failedMarked = actions('rd', 'b1').length;
+      out.failedListed = Boolean(rowOf('b1'));
+      key(document, 'Escape');
+      await wait(50);
+      window.__printStatus = 0;
+      // one that did is marked read and leaves; back from it, the next mail takes the focus
+      rowOf('a2')?.focus();
+      key(document, 'Enter');
+      await until(() => doc.querySelector('.thread'));
+      await wait(50);
+      out.readMarked = actions('rd', 'a2').length;
+      key(document, 'Escape');
+      await wait(50);
+      out.focusAfterReadOnOpen = focus();
+      state.readOnOpen = false;
+
+      // the reader takes the focus; what lies under it can be neither focused nor read out
+      rowOf('a1')?.focus();
+      key(document, 'Enter');
+      await wait(50);
+      out.readerFocused = document.activeElement === $('reader');
+      out.underInert = [document.querySelector('.main > .bar'), $('chips'), $('list')].every(el => el.inert);
+      key(document, 'Escape');
+      await wait(50);
+      out.backFocus = focus();
+      out.underBack = !$('list').inert;
+
+      // E twice, or a double click, while the mail folds away: one action, and its Undo cancels it
+      rowOf('a1')?.focus();
+      key(document, 'KeyE');
+      await wait(60);
+      key(document, 'KeyE');
+      await wait(250);
+      out.doubleKey = actions('rc_^i', 'a1').map(a => a.id);
+      key(document, 'KeyZ');
+      await wait(100);
+      out.doubleKeyUndone = sent('gmail.action.cancel').at(-1)?.id === out.doubleKey[0] && Boolean(rowOf('a1'));
+      const trash = rowOf('b1')?.querySelector('.acts .danger');
+      trash?.click();
+      await wait(60);
+      trash?.click();
+      rowOf('b1')?.click();
+      await wait(250);
+      out.doubleClick = actions('tr', 'b1').length;
+      out.foldClickReads = reading();
+      key(document, 'KeyZ');
+      await wait(100);
+
+      // the only mail of a mailbox archived: the focus goes to the mail before it
+      rowOf('b1')?.focus();
+      key(document, 'KeyE');
+      await wait(300);
+      out.focusAfterLast = focus();
+      key(document, 'KeyZ');
+      await wait(100);
+      out.focusAfterUndo = focus();
+
+      // a chip, and "show more", keep the keys where they were
+      const chips = () => [...document.querySelectorAll('#chips .chip')];
+      chips()[1]?.focus();
+      chips()[1]?.click();
+      await wait(50);
+      out.focusAfterChip = focus() === chips()[1]?.dataset.focus && chips()[1].classList.contains('on');
+      chips()[0]?.click();
+      await wait(50);
+      const more = document.querySelector('#list .more');
+      more?.focus();
+      more?.click();
+      await wait(50);
+      out.focusAfterMore = focus();
+
+      // a check, every two minutes: a toolbar button keeps the focus, a scrolled list its place,
+      // and with nothing new the list is not drawn again, yet its times move on
+      const copy = () => JSON.parse(JSON.stringify(state.objs));
+      const changed = () => {
+        const objs = copy();
+        objs[0].xml.entries[0].summary += ' ';
+        return objs;
+      };
+      [...$('tools').querySelectorAll('.icon-btn')].find(b => b.title.startsWith(t('compose'))).focus();
+      update(changed());
+      out.toolKept = focus();
+      const list = $('list');
+      list.style.cssText = 'max-height: 160px; flex: none';
+      rowOf('a1')?.focus();
+      list.scrollTop = list.scrollHeight;
+      const scrolled = list.scrollTop;
+      update(changed());
+      out.scrollKept = scrolled > 0 && list.scrollTop === scrolled;
+      list.style.cssText = '';
+      const line = rowOf('a1');
+      line && (line.querySelector('time.when').textContent = 'stale');
+      const same = copy();
+      same.forEach(o => o.xml.modified = new Date().toISOString());
+      update(same);
+      out.sameNotDrawn = rowOf('a1') === line;
+      out.timesMoved = Boolean(line) && line.querySelector('time.when').textContent !== 'stale';
+      update(changed());
+      out.changeDrawn = rowOf('a1') !== line;
+      // the background's answer to an action comes while the mail folds: the fold goes on
+      const full = copy();
+      const folding = rowOf('a1');
+      folding?.focus();
+      key(document, 'KeyE');
+      await wait(20);
+      const after = copy();
+      after[0].xml.entries = after[0].xml.entries.filter(e => !e.link.includes('message_id=a1&'));
+      update(after);
+      out.foldGoesOn = Boolean(folding?.isConnected);
+      await wait(300);
+      out.foldDone = Boolean(folding) && !folding.isConnected && !rowOf('a1');
+      key(document, 'KeyZ');
+      await wait(50);
+      update(full);
+      await wait(50);
+
+      // remind me later: its focused time shows, Esc gives the focus back, Tab out closes it
+      const menuItems = () => [...document.querySelectorAll('#menu button')];
+      rowOf('a1')?.focus();
+      key(document, 'KeyB');
+      await wait(50);
+      const clock = rowOf('a1')?.querySelector('.remind');
+      out.menuExpanded = Boolean(clock) && clock.getAttribute('aria-haspopup') === 'menu' && clock.getAttribute('aria-expanded') === 'true';
+      key(document.activeElement, 'ArrowDown');
+      await wait(30);
+      out.menuRing = menuItems()[1] && getComputedStyle(menuItems()[1]).outlineStyle;
+      key(document.activeElement, 'Escape');
+      await wait(30);
+      out.menuEsc = !$('menu') && focus() === 'row:a1' && clock?.getAttribute('aria-expanded') === 'false';
+      key(document, 'KeyB');
+      await wait(30);
+      rowOf('b1')?.focus();
+      await wait(30);
+      out.menuTabOut = !$('menu') && focus() === 'row:b1';
+      // a larger text size: the menu still opens at its clock, inside the window
+      prefsChanged({panelScale: 1.25});
+      await wait(50);
+      rowOf('a1')?.focus();
+      key(document, 'KeyB');
+      await wait(50);
+      const a = rowOf('a1')?.querySelector('.remind')?.getBoundingClientRect() || {};
+      const m = $('menu')?.getBoundingClientRect() || {};
+      out.zoomMenu = {alignedRight: Math.abs(m.right - a.right) <= 2, inside: m.left >= 0 && m.right <= innerWidth && m.top >= 0 && m.bottom <= innerHeight,
+        atClock: m.top >= a.bottom - 1 || m.bottom <= a.top + 1};
+      key(document.activeElement, 'Escape');
+      prefsChanged({panelScale: 1});
+      await wait(50);
+
+      // names and subjects keep their own direction: a Hebrew subject in the English panel,
+      // an English one in the Hebrew panel, each with its "?" at its end and on the panel's side
+      const sides = (id, title) => {
+        const e = state.objs[0].xml.entries.find(x => x.link.includes('message_id=' + id + '&'));
+        e.title = title;
+        render();
+        const el = rowOf(id).querySelector('.subject');
+        const text = [...el.childNodes].find(n => n.nodeType === 3);
+        const at = i => {
+          const r = document.createRange();
+          r.setStart(text, i);
+          r.setEnd(text, i + 1);
+          return r.getBoundingClientRect().left;
+        };
+        const box = el.getBoundingClientRect();
+        return {first: at(0), mark: at(text.data.indexOf('?')), left: box.left, right: box.right};
+      };
+      const he = sides('a1', 'שלום, מה נשמע?');
+      document.documentElement.dir = 'rtl';
+      const en = sides('a1', 'Re: Meeting at 10:00?');
+      document.documentElement.dir = 'ltr';
+      out.bidi = {hebrewInLtr: he.mark < he.first && he.mark - he.left < 20, englishInRtl: en.mark > en.first && en.right - en.mark < 20};
+
+      // search: an account that did not answer says so, the others show what they found
+      window.__searchFails = m => m.url.endsWith('/u/0') && !m.query.includes('is:unread');
+      key(document, 'Slash');
+      await wait(50);
+      $('search-input').value = 'invoice';
+      $('search').requestSubmit();
+      await until(() => !state.search?.busy);
+      await wait(50);
+      out.searchLines = [...document.querySelectorAll('#list .section-head')].map(h => h.querySelector('.addr')?.textContent + ': ' + h.querySelector('.none')?.textContent);
+      out.searchFailedLine = out.searchLines.includes('evgeny@example.com: ' + t('searchFailed'));
+      out.searchFoundLine = out.searchLines.includes('old@example.org: ' + t('found', 2));
+      out.searchSaid = $('status')?.textContent === t('found', 2);
+      window.__searchFails = null;
+      key($('search-input'), 'Escape');
+      await wait(50);
+      out.focusAfterSearch = focus();
+    }
+
+    if (scenario === 'narrow') {
+      // a side panel 320px wide: the mailbox line keeps its buttons whole and its address
+      // readable, the reader's bar stays inside
+      const head = document.querySelector('#list .section-head');
+      const shown = el => getComputedStyle(el).display !== 'none';
+      out.width = innerWidth;
+      out.buttons = [...head.querySelectorAll('.icon-btn')].filter(shown).map(b => b.dataset.focus + ':' + Math.round(b.getBoundingClientRect().width));
+      out.addr = Math.round(head.querySelector('.addr').getBoundingClientRect().width);
+      document.querySelector('#list .row').click();
+      await wait(350);
+      const bar = document.getElementById('reader-bar');
+      out.barInside = bar.scrollWidth <= bar.clientWidth && [...bar.querySelectorAll('.icon-btn')].at(-1).getBoundingClientRect().right <= bar.getBoundingClientRect().right;
     }
 
     if (scenario === 'wide') {

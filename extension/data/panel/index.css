@@ -50,6 +50,13 @@ html.side .app {
     display: none;
   }
 }
+/* narrower still, a mailbox line keeps its address readable: copy and Meet wait for a wider panel */
+@media (max-width: 400px) {
+  .section-head .copy,
+  .section-head .meet {
+    display: none;
+  }
+}
 
 /* main column */
 .main {
@@ -90,7 +97,7 @@ h1 {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: #2fa874;
+  color: var(--ok);
   font-weight: 500;
 }
 .sub .ok svg {
@@ -123,6 +130,13 @@ h1 {
   color: var(--muted);
   cursor: pointer;
   transition: background .12s, color .12s;
+  /* a long address must not squeeze the buttons next to it below their size */
+  flex: none;
+}
+/* the reader's ten buttons do not fit a narrow side panel at full size: there they shrink
+   rather than run past the edge */
+.reader-bar .icon-btn {
+  flex: 0 1 auto;
 }
 .icon-btn:hover {
   background: color-mix(in srgb, var(--ink) 8%, transparent);
@@ -161,7 +175,7 @@ h1 {
   opacity: 1;
 }
 .icon-btn.copy.copied {
-  color: #2fa874;
+  color: var(--ok);
 }
 .section-head .copy,
 .acc .copy {
@@ -282,7 +296,8 @@ h1 {
   height: 20px;
   padding: 0 6px;
   border-radius: 10px;
-  background: var(--c);
+  /* darkened, so white digits read on every colour of the palette (4.8:1 at least) */
+  background: color-mix(in srgb, var(--c) 75%, #000);
   color: #fff;
   font-size: 11.5px;
   font-weight: 650;
@@ -581,6 +596,10 @@ h1 {
   visibility: visible;
   transition: transform .26s var(--ease);
 }
+/* the reader takes the focus when it opens, so the keys and a screen reader follow it */
+.reader:focus {
+  outline: none;
+}
 .reader-bar {
   padding-block: 12px 10px;
   padding-inline: 10px 12px;
@@ -800,6 +819,12 @@ kbd {
   background: var(--danger);
   color: #fff;
 }
+/* the dark theme's danger is a light red: white on it reads at 2.3:1, near-black at 8.3:1 */
+@media (prefers-color-scheme: dark) {
+  .toast.error {
+    color: #1a0d0b;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -904,6 +929,25 @@ kbd {
   background: var(--hover);
   outline: none;
 }
+/* the keys move through the times; the hover tint alone barely differs from the card */
+.menu button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+/* the menu itself takes the focus of a click on its title or edge */
+.menu:focus {
+  outline: none;
+}
+/* heard, not seen */
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .menu .hint {
   color: var(--muted);
   font-variant-numeric: tabular-nums;
@@ -1005,6 +1049,28 @@ kbd {
 }
 [dir="rtl"] .reader-bar > .icon-btn:first-child svg {
   transform: scaleX(-1);
+}
+/* A name, subject or address takes its direction from its own text, so an English subject
+   in the Hebrew panel, or a Hebrew one in the English panel, keeps its punctuation and its
+   ellipsis where they belong. plaintext turns "start" into the text's own side, so the side
+   the lines keep is set from the panel's direction. */
+:root {
+  --start: left;
+}
+:root[dir="rtl"] {
+  --start: right;
+}
+.from,
+.subject,
+.snippet,
+.section-head:not(.plain) .addr,
+.acc .addr,
+.reader-account > span:last-child,
+.reader-head h2,
+.reader-from .name,
+.reader-from .addr span {
+  unicode-bidi: plaintext;
+  text-align: var(--start);
 }
 .acc:focus-visible {
   outline: 2px solid var(--focus);

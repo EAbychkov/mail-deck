@@ -1,6 +1,7 @@
 // chrome.* and Gmail for the panel under test: three mailboxes, Gmail's search,
 // a three-message thread with an attachment, and a 700px newsletter (?wide=1).
 // It records what the panel sends (__sent), stores (__set) and prints (__prints).
+// A test may make Gmail fail: __printStatus answers the print view, __searchFails(m) the search.
 (() => {
   const q = new URLSearchParams(location.search);
   const lang = q.get('lang') || 'ru';
@@ -57,7 +58,7 @@
   const respond = (m, cb) => {
     window.__sent.push(m);
     let r;
-    if (m.method === 'gmail.search') r = search(m);
+    if (m.method === 'gmail.search') r = window.__searchFails?.(m) ? null : search(m);
     if (m.method === 'get-at') r = 'AT';
     // what a service answers: markup that must not run in the reader
     // and markup that must not load before Show pictures, nor open a link over the panel
@@ -113,5 +114,5 @@
 </font></div></td></tr></table></td></tr></table></body></html>`;
   const realFetch = window.fetch;
   window.__prints = 0;
-  window.fetch = (url, o) => String(url).includes('view=pt') && ++window.__prints ? Promise.resolve(new Response(q.get('wide') ? wide : page, {status: 200})) : realFetch(url, o);
+  window.fetch = (url, o) => String(url).includes('view=pt') && ++window.__prints ? Promise.resolve(new Response(q.get('wide') ? wide : page, {status: window.__printStatus || 200})) : realFetch(url, o);
 })();
