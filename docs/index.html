@@ -141,6 +141,14 @@
           <p>A Gmail conversation opens whole in the panel, attachments included. Mail from Yahoo, AOL, Yandex and Mail.ru opens there too; Proton’s opens on Proton’s site.</p>
         </li>
         <li>
+          <h3>Mail from the site you’re on</h3>
+          <p>Open the panel on a site and its unread mail is at the top, from every inbox, with a sign-in code from the last half hour ready to copy. The page’s address stays in the panel: it is not stored or sent.</p>
+        </li>
+        <li>
+          <h3>Codes in one click</h3>
+          <p>A mail with a one-time code shows it before the subject. Click it, or press C, to copy the digits; the mail stays as it was.</p>
+        </li>
+        <li>
           <h3>Undo for five seconds</h3>
           <p>Archived or deleted the wrong one? Press Undo in the notice, or Z.</p>
         </li>
@@ -166,9 +174,26 @@
         </li>
         <li>
           <h3>Notifications and sound</h3>
-          <p>A desktop notice and an optional sound for new mail, with quiet hours, quiet inboxes and rules for senders.</p>
+          <p>A desktop notice titled with its inbox and an optional sound for new mail, with quiet hours, quiet inboxes and rules for senders. If you want, it comes back until the mail is read.</p>
+        </li>
+        <li>
+          <h3>The count you want</h3>
+          <p>Leave an inbox out of the number on the toolbar, or count only the mail since you last opened the panel.</p>
         </li>
       </ul>
+    </section>
+
+    <section class="block wrap" id="ai">
+      <h2>An assistant, if you want one</h2>
+      <div class="works">
+        <ul class="services">
+          <li>Chrome’s built-in model</li>
+          <li>OpenAI</li>
+          <li>Anthropic</li>
+        </ul>
+        <p>Off until you turn it on in Settings → AI. In an open message, Summary puts the conversation in a few lines above it: the key points, what it asks of you, and its dates, each with a link that adds it to Google Calendar. Waiting for your reply gathers, under one chip, the unread mail from people who expect an answer.</p>
+        <p>Chrome’s built-in model is free and runs on your computer, so your mail stays there; not every computer can run it. Or connect your own OpenAI or Anthropic API key, billed by the provider per use: a ChatGPT Plus or Claude Pro subscription does not include API access. Requests then go from your browser straight to that provider, with no servers of ours in between, and the key stays on this computer.</p>
+      </div>
     </section>
 
     <section class="block wrap">
@@ -181,24 +206,27 @@
         <li><kbd>S</kbd>Star</li>
         <li><kbd>Z</kbd>Undo</li>
         <li><kbd>B</kbd>Remind me later</li>
+        <li><kbd>C</kbd>Copy the code</li>
+        <li><kbd>I</kbd>Summary</li>
         <li><kbd>/</kbd>Search</li>
         <li><kbd>O</kbd>Open in the web app</li>
         <li><kbd>J</kbd>Next message</li>
+        <li><kbd>K</kbd>Previous message</li>
       </ul>
-      <p class="after">The keys go by position, so they work with any keyboard layout. Star and search are for Gmail; archive works everywhere but Yandex Mail and Mail.ru.</p>
+      <p class="after">The keys go by position, so they work with any keyboard layout. J and K work in an open message too, and the next one can open by itself after an action. Star and search are for Gmail; archive works everywhere but Yandex Mail and Mail.ru; Summary needs the AI assistant.</p>
     </section>
 
     <section class="block quiet wrap" id="privacy">
       <h2>Nothing in between</h2>
       <div>
-        <p>Mail Deck has no servers and no analytics. It talks only to Google and to the mail services you turn on, each with the session your browser already has, and never sees your password.</p>
+        <p>Mail Deck has no servers and no analytics. It talks only to Google and to the mail services you turn on, each with the session your browser already has, and never sees your password. The AI assistant adds one more only if you connect your own key: that provider, straight from your browser.</p>
         <p><a href="privacy.html">Read the privacy policy</a></p>
       </div>
     </section>
   </main>
 
   <footer class="foot wrap">
-    <p>Mail Deck is not made by or affiliated with Google, Yahoo, AOL, Proton, Yandex or VK. Gmail is a trademark of Google LLC; the other names belong to their owners.</p>
+    <p>Mail Deck is not made by or affiliated with Google, Yahoo, AOL, Proton, Yandex, VK, OpenAI or Anthropic. Gmail is a trademark of Google LLC; the other names belong to their owners.</p>
     <a href="https://github.com/nord-express/mail-deck">GitHub</a>
     <a href="https://github.com/nord-express/mail-deck/issues">Report a problem</a>
     <a href="privacy.html">Privacy</a>

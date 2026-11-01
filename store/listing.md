@@ -4,7 +4,7 @@ Copy-paste fields for the Developer Dashboard (https://chrome.google.com/webstor
 
 ## Store listing tab
 
-**Store metadata rule** (the 1.3.0 submission was rejected for keyword spam, 2026-10-31): the summary, the description, the screenshots and the promo tile must not list the mail services' names. Name Gmail only where a Gmail feature is described, call the rest "other mail services", and leave the list to the website.
+**Store metadata rule** (the 1.3.0 submission was rejected for keyword spam, 2026-10-31): the summary, the description, the screenshots and the promo tile must not list the mail services' names. Name Gmail only where a Gmail feature is described, call the rest "other mail services", and leave the list to the website. The same goes for the AI assistant: no AI company or model names (no OpenAI, Anthropic, Claude, ChatGPT or Gemini); say "Chrome's built-in model" and "your own API key from a supported AI provider".
 
 **Name** (from the manifest): Mail Deck
 
@@ -23,23 +23,35 @@ It works through the session your browser already has, the way each mail service
 
 Click a message to read it right in the panel. You can mark it as read, archive it, delete it or report it as spam without opening a tab. Click a mailbox to open it on its own site.
 
+Open the panel on a website and that site's mail is at the top, from every inbox, with a fresh sign-in code ready to copy.
+
 Features
 - Every signed-in mailbox, each with its own colour, in the order you drag them to
 - Whole conversations in the panel, attachments included
+- One-time codes stand out in the list and the message; a click or C copies them
 - Gmail: up to ten accounts, search across accounts, stars, chosen labels or only the Primary tab, and a video meeting in one click
 - Remind me later: put a message away until this evening, tomorrow or next week
 - Read, archive, delete or report spam from the panel or a notification, with Undo
 - Pictures in mail from other services load only when you ask for them
 - Notifications and an optional sound, with quiet hours, quiet inboxes and sender rules
+- A notification names its inbox and can come back while the mail stays unread
+- Choose what the toolbar count shows: leave an inbox out, or count only mail since you last opened the panel
 - Side panel, a keyboard shortcut and one key per action
+- While you read, J and K open the next or previous message
 - Light and dark theme, following your system
 - Settings backup to a file or Chrome sync
 - Free, with no limit on accounts and no paid tier
 
 The other mail services have no public interface for this, so Mail Deck follows their own web apps, and a change on their side can stop one until Mail Deck is updated.
 
+AI assistant
+Off until you turn it on in Settings → AI.
+- A summary of the conversation you're reading: the key points, what it asks of you, and its dates, each with a link that adds it to Google Calendar
+- Waiting for your reply: a chip that gathers unread mail from people who expect an answer
+It runs with Chrome's built-in model on your computer, or with your own API key from a supported AI provider. The built-in model is free and private but does not run on every computer. A key is billed by its provider per use; a subscription to the provider's chat app does not include API access.
+
 Privacy
-Mail Deck has no servers of its own and no analytics. It talks only to Google and to the mail services you turn on, each with the session your browser already has, and each service's mail goes only to that service. It never asks for or stores your password, and your settings stay in your browser.
+Mail Deck has no servers of its own and no analytics. It talks only to Google and to the mail services you turn on, each with the session your browser already has, and each service's mail goes only to that service. The one addition is the AI assistant, if you give it your own key: a summary then sends that conversation, and Waiting for your reply the sender, subject and preview of unread mail, from your browser straight to that provider. The key stays on this computer, and with Chrome's built-in model your mail does not leave it. The address of the page you're on is read only inside the panel, never stored or sent. Mail Deck never asks for or stores your password, and your settings stay in your browser.
 
 Mail Deck is open source under the Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 It is not made by or affiliated with any mail provider. Gmail is a trademark of Google LLC.
@@ -64,7 +76,7 @@ It is not made by or affiliated with any mail provider. Gmail is a trademark of 
 **Single purpose:**
 
 ```
-Show the unread mail of the webmail accounts the user is signed in to in this browser (Gmail, and Yahoo Mail, AOL Mail, Proton Mail, Yandex Mail or Mail.ru once the user turns them on) in a toolbar panel or Chrome's side panel, and let the user read, search, archive, delete, star or mark it as read, or set a reminder for it, from there.
+Show the unread mail of the webmail accounts the user is signed in to in this browser (Gmail, and Yahoo Mail, AOL Mail, Proton Mail, Yandex Mail or Mail.ru once the user turns them on) in a toolbar panel or Chrome's side panel, and let the user read, search, archive, delete, star or mark it as read, or set a reminder for it, from there. Optionally, and only once the user turns it on, an AI model the user chooses (Chrome's built-in model, or the user's own OpenAI or Anthropic API key) summarizes the conversation being read and marks unread mail that waits for a reply.
 ```
 
 **Permission justifications:**
@@ -74,27 +86,28 @@ Show the unread mail of the webmail accounts the user is signed in to in this br
 | `notifications` | Shows a desktop notification when new mail arrives, with buttons to mark it as read, archive or delete it, and shows an error notice when an action or the alert sound fails. |
 | `contextMenus` | Adds the right-click menu on the toolbar icon: open Gmail, refresh now, compose an email, turn notifications off for a while or for the session, and choose which accounts are included. |
 | `webRequest` | Observes (never blocks or modifies) requests that the user's own Gmail tabs send to mail.google.com, so the unread count refreshes right after the user reads or archives mail in Gmail. The user can turn this off in settings. |
-| `storage` | Saves the user's settings (including which mail services are turned on), the order of their inboxes, reminders they set, the addresses of their accounts' pictures and the current unread counts in local extension storage; keeps the last opened messages and search answers in session storage (memory only) so they open at once, along with the session tokens and the last answer of each other mail service the user turned on; and, only if the user turns it on, a copy of the settings in Chrome sync. |
+| `storage` | Saves the user's settings (including which mail services are turned on and the AI settings), the order of their inboxes, reminders they set, the addresses of their accounts' pictures and the current unread counts in local extension storage; if the user connects an AI provider, also their own API key (on this device only: never in a backup or Chrome sync) and, for 30 days, whether a mail waits for a reply; keeps the last opened messages, search answers and AI summaries in session storage (memory only) so they open at once, along with the session tokens and the last answer of each other mail service the user turned on; and, only if the user turns it on, a copy of the settings (without any API key) in Chrome sync. |
 | `alarms` | Schedules the periodic mail check and the reminders the user sets, and removes old notifications after a set time. |
 | `idle` | Lets the user mute notifications and sounds while away or while the screen is locked, and rechecks mail when the user comes back. |
 | `offscreen` | Opens an offscreen document to play the new-mail sound and to parse Gmail's responses when performing actions and searches, since the service worker has no audio or DOM. |
 | `sidePanel` | Lets the user keep the same Mail Deck panel open in Chrome's side panel next to the page, from a button in the toolbar panel. It shows only Mail Deck's own page. |
 | `cookies` | Reads two kinds of cookie only. For Gmail, the GMAIL_AT cookie of mail.google.com, the token Gmail's own web page sends with actions, so that mark as read, archive, delete and spam requests are accepted by Gmail; its value is sent only to mail.google.com. For Proton Mail, once the user turns it on, the names of Proton's session cookies (AUTH-<id>) for mail.proton.me/api/: the name carries the session's id, which Proton's own API expects in its x-pm-uid header. Only the names are used, only to address that API, and nothing from them goes anywhere but mail.proton.me. |
 | `declarativeNetRequestWithHostAccess` | The mail APIs of Yahoo Mail (mail.yahoo.com/ws/), AOL Mail (mail.aol.com/ws/), Yandex Mail (mail.yandex.ru/web-api, mail.360.yandex.ru/web-api) and Mail.ru (e.mail.ru/api/) expect requests that come from their own web page. For each of these services the user turned on and granted, Mail Deck adds a session rule that sets the Origin and Referer headers to the service's own address. Each rule matches only the extension's own background requests to that API (initiator: the extension; no tab; XHR/fetch only), never a request from a page or tab, and is removed when the service is turned off. It does not block, redirect or read any request. |
-| Host `*://mail.google.com/mail/` | Reads the Gmail Atom feed of unread mail for each signed-in account; loads a conversation's print view to show it in the panel; runs Gmail's own search for the user's query and for stars and unread mail past the feed's 20; loads each account's Gmail page about once a week to find that account's picture, and once per session for Gmail's ID key; and sends the user's read, archive, delete, spam and star actions. |
-| Host `*://mail.google.com/sync/` | Lets the webRequest observer above see Gmail's sync requests, so the count updates after the user acts in a Gmail tab. |
+| `activeTab` | When the user opens the panel with the toolbar button or its keyboard shortcut, reads the address of the active tab so that the panel can put the unread mail sent from that site at the top, with its one-time sign-in code ready to copy. Only the site's domain is used, and only inside the panel; the address is never stored or sent. Nothing is injected into the page and the page is not read or changed. |
+| Host `https://mail.google.com/*` | Reads the Gmail Atom feed of unread mail for each signed-in account; loads a conversation's print view to show it in the panel; runs Gmail's own search for the user's query and for stars and unread mail past the feed's 20; loads each account's Gmail page about once a week to find that account's picture, and once per session for Gmail's ID key; sends the user's read, archive, delete, spam and star actions; and lets the webRequest observer above see Gmail's sync requests, so the count updates after the user acts in a Gmail tab. |
 | Optional host `https://mail.yahoo.com/*` | Asked only when the user turns Yahoo Mail on in Settings → Other mail, and removed when it is turned off. Reads the Yahoo Mail page for the mailbox id, the address and the token the page uses for changes; asks Yahoo's mail API on mail.yahoo.com for the folders and the unread inbox mail; loads a message's text when the user opens it in the panel; and sends the user's read, archive, delete and spam actions. |
 | Optional host `https://mail.aol.com/*` | Asked only when the user turns AOL Mail on, and removed when it is turned off. Reads the AOL Mail page and its mailboxes call for the mailbox id, the address and the token for changes; asks AOL's mail API on mail.aol.com for the folders and the newest inbox mail; loads a message's text when the user opens it in the panel; and sends the user's read, archive, delete and spam actions. |
 | Optional host `https://mail.proton.me/*` | Asked only when the user turns Proton Mail on, and removed when it is turned off. Reads the web app's version number, which Proton's API expects; asks Proton's API on mail.proton.me which account each signed-in session is, the inbox's unread count and the sender, subject and time of unread messages; renews an expired session the way the web app does, unless a Proton Mail tab is open; and sends the user's read, archive, delete and spam actions. It never fetches message bodies, which are end-to-end encrypted. |
 | Optional hosts `https://api.passport.yandex.ru/*`, `https://mail.yandex.ru/*`, `https://mail.360.yandex.ru/*` | Asked only when the user turns Yandex Mail on, and removed when it is turned off. Asks api.passport.yandex.ru which Yandex accounts the browser is signed in to; reads each mailbox page on mail.yandex.ru, or mail.360.yandex.ru for a Yandex 360 mailbox, for the token the page uses; asks the mail web API on the same host for the unread inbox mail, the unread count and the folder list; downloads a message's original when the user opens it in the panel; and sends the user's read, delete and spam actions. |
 | Optional hosts `https://portal.mail.ru/*`, `https://e.mail.ru/*` | Asked only when the user turns Mail.ru on, and removed when it is turned off. Asks portal.mail.ru which Mail.ru mailboxes the browser is signed in to; gets each mailbox's API token from e.mail.ru; asks e.mail.ru's mail API for the unread inbox mail and the folder counts; loads a message when the user opens it in the panel; and sends the user's read, delete and spam actions. |
+| Optional hosts `https://api.openai.com/*`, `https://api.anthropic.com/*` | Asked only when the user connects that AI provider with their own API key in Settings → AI, and removed on Disconnect or when the key does not connect. Checks the key and lists the models it can use; then, from the browser straight to that provider's API with the user's key, sends the text and subject of a conversation when the user asks for its summary (or opens a long one, if the user chose that), and the sender, subject and preview of recent unread mail to mark the mail that waits for a reply. Only the provider chosen in Settings → AI is used, and nothing is sent to a provider the user has not connected. |
 
 **Are you using remote code?** No, I am not using remote code. (All JavaScript ships in the package; nothing is loaded from a server or evaluated from strings.)
 
-**Data usage — what user data do you collect?** The extension handles this data on the device and sends each service's mail and tokens only to the service it belongs to: mail.google.com for Gmail, and for the other services only the sites listed under the optional host permissions above, and only for the services the user turned on. The one exception is a sender's domain (never an address or a message), which goes to Google's icon service for sender logos; the user can turn that off. Tick:
+**Data usage — what user data do you collect?** The extension handles this data on the device and sends each service's mail and tokens only to the service it belongs to: mail.google.com for Gmail, and for the other services only the sites listed under the optional host permissions above, and only for the services the user turned on. Two exceptions: the domain of a Gmail sender (never an address or a message) goes to Google's icon service for sender logos, which the user can turn off; and, only if the user connects an AI provider with their own API key, the conversation they summarize and the sender, subject and preview of unread mail checked for "Waiting for your reply" go from the browser straight to that provider. With Chrome's built-in model nothing leaves the device. The address of the active tab is read inside the panel only, to match the site's mail, and is never stored or sent. Tick:
 
 - [x] Personally identifiable information (account email addresses and sender names and addresses shown in the panel)
-- [x] Authentication information (the GMAIL_AT token read from the mail.google.com cookie; the session tokens the other services' pages hand out, kept in session memory; the session ids in the names of Proton's AUTH cookies)
+- [x] Authentication information (the GMAIL_AT token read from the mail.google.com cookie; the session tokens the other services' pages hand out, kept in session memory; the session ids in the names of Proton's AUTH cookies; the user's own AI API key, if they add one, kept on the device)
 - [x] Personal communications (email subjects, snippets and message text)
 - [x] Website content (Gmail's feed and print-view pages, and the other services' mail pages and API answers it reads)
 - [ ] Health information
