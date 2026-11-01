@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="11" viewBox="0 0 16 11">
+  <!-- Mail Deck · tray 16×11 · quiet. Front card 12×7 at (0,0); the deck steps 2 px down-right. -->
+  <defs>
+    <linearGradient id="orange" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dcdfe2"/><stop offset="1" stop-color="#cfd2d6"/></linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c8cbcf"/><stop offset="1" stop-color="#babec3"/></linearGradient>
+    <linearGradient id="indigo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3b7bd"/><stop offset="1" stop-color="#8a8f95"/></linearGradient>
+    <linearGradient id="flap" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d3d6da"/><stop offset="1" stop-color="#bfc3c8"/></linearGradient>
+    <clipPath id="front"><path d="M2 0H10A2 2 0 0 1 12 2V5A2 2 0 0 1 10 7H2A2 2 0 0 1 0 5V2A2 2 0 0 1 2 0Z"/></clipPath>
+  </defs>
+  <path d="M6 4H14A2 2 0 0 1 16 6V9A2 2 0 0 1 14 11H6A2 2 0 0 1 4 9V6A2 2 0 0 1 6 4Z" fill="url(#orange)"/>
+  <path d="M4 2H12A2 2 0 0 1 14 4V7A2 2 0 0 1 12 9H4A2 2 0 0 1 2 7V4A2 2 0 0 1 4 2Z" fill="url(#green)"/>
+  <path d="M2 0H10A2 2 0 0 1 12 2V5A2 2 0 0 1 10 7H2A2 2 0 0 1 0 5V2A2 2 0 0 1 2 0Z" fill="url(#indigo)"/>
+  <g clip-path="url(#front)">
+    <path d="M-1 -1H13V0L6 3.5L-1 0Z" fill="url(#flap)"/>
+    <path d="M0.2 0.77L6 4.105L11.8 0.77" fill="none" stroke="#ffffff" stroke-width="1.1" stroke-linejoin="round"/>
+  </g>
+</svg>

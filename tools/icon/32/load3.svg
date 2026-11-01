@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- Mail Deck · 32 px · load3. Front card 24×18 at (0,2); the deck steps 2 px down-right. -->
+  <defs>
+    <linearGradient id="orange" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dcdfe2"/><stop offset="1" stop-color="#cfd2d6"/></linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c8cbcf"/><stop offset="1" stop-color="#babec3"/></linearGradient>
+    <linearGradient id="indigo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3b7bd"/><stop offset="1" stop-color="#8a8f95"/></linearGradient>
+    <linearGradient id="flap" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d3d6da"/><stop offset="1" stop-color="#bfc3c8"/></linearGradient>
+    <clipPath id="front"><path d="M5 2H19A5 5 0 0 1 24 7V15A5 5 0 0 1 19 20H5A5 5 0 0 1 0 15V7A5 5 0 0 1 5 2Z"/></clipPath>
+  </defs>
+  <path d="M9 6H23A5 5 0 0 1 28 11V19A5 5 0 0 1 23 24H9A5 5 0 0 1 4 19V11A5 5 0 0 1 9 6Z" fill="url(#orange)"/>
+  <path d="M8 5H22A5 5 0 0 1 27 10V18A5 5 0 0 1 22 23H8A5 5 0 0 1 3 18V10A5 5 0 0 1 8 5Z" fill="#0b0d2e" fill-opacity=".22"/>
+  <path d="M7 4H21A5 5 0 0 1 26 9V17A5 5 0 0 1 21 22H7A5 5 0 0 1 2 17V9A5 5 0 0 1 7 4Z" fill="url(#green)"/>
+  <path d="M6 3H20A5 5 0 0 1 25 8V16A5 5 0 0 1 20 21H6A5 5 0 0 1 1 16V8A5 5 0 0 1 6 3Z" fill="#0b0d2e" fill-opacity=".22"/>
+  <path d="M5 2H19A5 5 0 0 1 24 7V15A5 5 0 0 1 19 20H5A5 5 0 0 1 0 15V7A5 5 0 0 1 5 2Z" fill="url(#indigo)"/>
+  <g clip-path="url(#front)">
+    <path d="M-1 1H25V2L12 11L-1 2Z" fill="url(#flap)"/>
+    <path d="M0.2 3.54L12 12.21L23.8 3.54" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round"/>
+  </g>
+</svg>

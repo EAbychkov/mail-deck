@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+  <!-- Mail Deck · 18 px · signedout. Front card 14×10 at (0,1); the deck steps 2 px down-right. -->
+  <path d="M7 5H15A3 3 0 0 1 18 8V12A3 3 0 0 1 15 15H7A3 3 0 0 1 4 12V8A3 3 0 0 1 7 5Z" fill="#d5d8dc"/>
+  <path d="M5 3H13A3 3 0 0 1 16 6V10A3 3 0 0 1 13 13H5A3 3 0 0 1 2 10V6A3 3 0 0 1 5 3Z" fill="#b4b8be"/>
+  <path d="M3 1.5H11A2.5 2.5 0 0 1 13.5 4V8A2.5 2.5 0 0 1 11 10.5H3A2.5 2.5 0 0 1 0.5 8V4A2.5 2.5 0 0 1 3 1.5Z" fill="#ffffff" stroke="#80868b" stroke-width="1"/>
+  <path d="M2.6 3.6L7 6.6L11.4 3.6" fill="none" stroke="#80868b" stroke-width="1.282" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
