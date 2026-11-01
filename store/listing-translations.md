@@ -35,7 +35,7 @@ Mail Deck собирает непрочитанные письма из всех
 Конфиденциальность
 У Mail Deck нет своих серверов и аналитики. Расширение обращается только к Google и к почтовым сервисам, которые вы включили, через сеансы, которые уже есть в браузере, и почта каждого сервиса уходит только в этот сервис. Оно никогда не спрашивает и не хранит ваш пароль, а настройки остаются в браузере.
 
-Mail Deck — проект с открытым кодом под лицензией Mozilla Public License 1.1: https://github.com/EAbychkov/mail-deck
+Mail Deck — проект с открытым кодом под лицензией Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Расширение не создано ни одним почтовым провайдером и не связано ни с одним из них. Gmail — товарный знак Google LLC.
 ```
 
@@ -68,7 +68,7 @@ Mail Deck збирає непрочитані листи з усіх скрин�
 Конфіденційність
 У Mail Deck немає власних серверів і аналітики. Розширення звертається лише до Google і до поштових сервісів, які ви ввімкнули, через сеанси, які вже є у браузері, і пошта кожного сервісу йде лише до нього. Воно ніколи не запитує і не зберігає ваш пароль, а налаштування залишаються у браузері.
 
-Mail Deck — проєкт із відкритим кодом за ліцензією Mozilla Public License 1.1: https://github.com/EAbychkov/mail-deck
+Mail Deck — проєкт із відкритим кодом за ліцензією Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Розширення не створене жодним поштовим провайдером і не пов'язане з жодним із них. Gmail — торговельна марка Google LLC.
 ```
 
@@ -101,7 +101,7 @@ Die anderen E-Mail-Dienste haben dafür keine öffentliche Schnittstelle. Mail D
 Datenschutz
 Mail Deck hat keine eigenen Server und keine Analyse. Es spricht nur mit Google und mit den E-Mail-Diensten, die du einschaltest, jeweils über die Sitzung, die dein Browser schon hat, und die Mails jedes Dienstes gehen nur an diesen Dienst. Es fragt nie nach deinem Passwort und speichert es nicht, und deine Einstellungen bleiben in deinem Browser.
 
-Mail Deck ist Open Source unter der Mozilla Public License 1.1: https://github.com/EAbychkov/mail-deck
+Mail Deck ist Open Source unter der Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Es stammt von keinem E-Mail-Anbieter und ist mit keinem verbunden. Gmail ist eine Marke von Google LLC.
 ```
 
@@ -134,7 +134,7 @@ Los demás servicios de correo no tienen una interfaz pública para esto, así q
 Privacidad
 Mail Deck no tiene servidores propios ni analítica. Solo se comunica con Google y con los servicios de correo que actives, cada uno con la sesión que tu navegador ya tiene, y el correo de cada servicio solo va a ese servicio. Nunca pide ni guarda tu contraseña, y tus ajustes se quedan en tu navegador.
 
-Mail Deck es de código abierto con la licencia Mozilla Public License 1.1: https://github.com/EAbychkov/mail-deck
+Mail Deck es de código abierto con la licencia Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 No está hecho por ningún proveedor de correo ni está afiliado a ninguno. Gmail es una marca comercial de Google LLC.
 ```
 
@@ -167,7 +167,7 @@ Les autres messageries n'ont pas d'interface publique pour cela : Mail Deck suit
 Confidentialité
 Mail Deck n'a ni serveurs ni outils d'analyse. Il ne communique qu'avec Google et avec les messageries que vous activez, chacune grâce à la session déjà ouverte dans votre navigateur, et le courrier de chaque service ne va qu'à ce service. Il ne demande ni ne stocke jamais votre mot de passe, et vos réglages restent dans votre navigateur.
 
-Mail Deck est open source sous licence Mozilla Public License 1.1 : https://github.com/EAbychkov/mail-deck
+Mail Deck est open source sous licence Mozilla Public License 1.1 : https://github.com/nord-express/mail-deck
 Il n'est ni conçu par un fournisseur de messagerie, ni affilié à l'un d'eux. Gmail est une marque de Google LLC.
 ```
 
@@ -200,7 +200,7 @@ Gli altri servizi di posta non hanno un'interfaccia pubblica per questo, quindi 
 Privacy
 Mail Deck non ha server propri né strumenti di analisi. Comunica solo con Google e con i servizi di posta che attivi, ognuno tramite la sessione già aperta nel browser, e la posta di ogni servizio va solo a quel servizio. Non chiede né conserva mai la tua password, e le impostazioni restano nel tuo browser.
 
-Mail Deck è open source con licenza Mozilla Public License 1.1: https://github.com/EAbychkov/mail-deck
+Mail Deck è open source con licenza Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Non è realizzato da alcun fornitore di posta né affiliato ad alcuno di essi. Gmail è un marchio di Google LLC.
 ```
 
@@ -233,7 +233,7 @@ Pozostałe usługi pocztowe nie mają do tego publicznego interfejsu, więc Mail
 Prywatność
 Mail Deck nie ma własnych serwerów ani analityki. Łączy się tylko z Google i z usługami pocztowymi, które włączysz, z każdą przez sesję, którą przeglądarka już ma, a poczta każdej usługi trafia tylko do niej. Nigdy nie prosi o hasło ani go nie przechowuje, a ustawienia zostają w przeglądarce.
 
-Mail Deck jest otwartym oprogramowaniem na licencji Mozilla Public License 1.1: https://github.com/EAbychkov/mail-deck
+Mail Deck jest otwartym oprogramowaniem na licencji Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Nie jest tworzony przez żadnego dostawcę poczty ani z żadnym z nich powiązany. Gmail jest znakiem towarowym Google LLC.
 ```
 
@@ -266,7 +266,7 @@ Diğer e-posta hizmetlerinin bunun için herkese açık bir arayüzü yoktur; bu
 Gizlilik
 Mail Deck'in kendi sunucuları ve analitiği yoktur. Yalnızca Google ve etkinleştirdiğiniz e-posta hizmetleriyle, her biri için tarayıcınızda zaten açık olan oturumla konuşur ve her hizmetin postası yalnızca o hizmete gider. Şifrenizi asla istemez veya saklamaz, ayarlarınız tarayıcınızda kalır.
 
-Mail Deck, Mozilla Public License 1.1 lisansıyla açık kaynaklıdır: https://github.com/EAbychkov/mail-deck
+Mail Deck, Mozilla Public License 1.1 lisansıyla açık kaynaklıdır: https://github.com/nord-express/mail-deck
 Hiçbir e-posta sağlayıcısı tarafından yapılmamıştır ve hiçbiriyle bağlantılı değildir. Gmail, Google LLC'nin ticari markasıdır.
 ```
 
@@ -299,7 +299,7 @@ De andere maildiensten hebben hiervoor geen openbare interface. Mail Deck volgt 
 Privacy
 Mail Deck heeft geen eigen servers en geen analyse. Het praat alleen met Google en met de maildiensten die je aanzet, elk via de sessie die je browser al heeft, en de mail van elke dienst gaat alleen naar die dienst. Het vraagt nooit naar je wachtwoord en bewaart het niet, en je instellingen blijven in je browser.
 
-Mail Deck is open source onder de Mozilla Public License 1.1: https://github.com/EAbychkov/mail-deck
+Mail Deck is open source onder de Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Het is niet gemaakt door of verbonden met welke mailprovider dan ook. Gmail is een handelsmerk van Google LLC.
 ```
 
@@ -332,7 +332,7 @@ Mail Deck は、ログインしているすべての受信トレイの未読メ�
 プライバシー
 Mail Deck は独自のサーバーも分析ツールも持ちません。通信するのは Google と、オンにしたメールサービスだけで、いずれもブラウザにすでにあるセッションを使います。各サービスのメールはそのサービスにだけ送られます。パスワードを尋ねたり保存したりすることはなく、設定はブラウザ内に保存されます。
 
-Mail Deck は Mozilla Public License 1.1 のオープンソースです: https://github.com/EAbychkov/mail-deck
+Mail Deck は Mozilla Public License 1.1 のオープンソースです: https://github.com/nord-express/mail-deck
 どのメール プロバイダが作成したものでもなく、いずれのメール プロバイダとも関係ありません。Gmail は Google LLC の商標です。
 ```
 
@@ -365,7 +365,7 @@ Mail Deck 将你已登录的所有邮箱中的未读邮件，集中到工具栏�
 隐私
 Mail Deck 没有自己的服务器，也不做任何统计分析。它只与 Google 和你开启的邮件服务通信，并且都使用浏览器中已有的会话；每个服务的邮件只发送到该服务。它从不询问或保存你的密码，你的设置只保存在浏览器中。
 
-Mail Deck 采用 Mozilla Public License 1.1 开源：https://github.com/EAbychkov/mail-deck
+Mail Deck 采用 Mozilla Public License 1.1 开源：https://github.com/nord-express/mail-deck
 本扩展并非由任何邮件服务提供商开发，也与它们无关。Gmail 是 Google LLC 的商标。
 ```
 
@@ -398,7 +398,7 @@ Os outros serviços de e-mail não têm uma interface pública para isso, então
 Privacidade
 O Mail Deck não tem servidores próprios nem análises. Ele se comunica só com o Google e com os serviços de e-mail que você ativar, cada um com a sessão que o navegador já tem, e o e-mail de cada serviço vai só para esse serviço. Ele nunca pede nem guarda sua senha, e suas configurações ficam no navegador.
 
-O Mail Deck é de código aberto sob a Mozilla Public License 1.1: https://github.com/EAbychkov/mail-deck
+O Mail Deck é de código aberto sob a Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Ele não é feito por nenhum provedor de e-mail nem afiliado a nenhum deles. Gmail é uma marca registrada da Google LLC.
 ```
 
@@ -431,7 +431,7 @@ Ele não é feito por nenhum provedor de e-mail nem afiliado a nenhum deles. Gma
 الخصوصية
 ليس لدى Mail Deck خوادم خاصة به ولا أدوات تحليلات. لا يتواصل إلا مع Google ومع خدمات البريد التي تفعّلها، مستخدمًا لكلٍّ منها الجلسة الموجودة أصلًا في متصفحك، ولا يذهب بريد كل خدمة إلا إليها. لا يطلب كلمة مرورك أبدًا ولا يخزّنها، وتبقى إعداداتك في متصفحك.
 
-يتوفر Mail Deck كبرنامج مفتوح المصدر بموجب رخصة Mozilla Public License 1.1: https://github.com/EAbychkov/mail-deck
+يتوفر Mail Deck كبرنامج مفتوح المصدر بموجب رخصة Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 لم يطوّره أي مزوّد بريد وليس تابعًا لأيٍّ منهم. Gmail علامة تجارية لشركة Google LLC.
 ```
 
@@ -464,7 +464,7 @@ Mail Deck събира в един панел в лентата с инстру�
 Поверителност
 Mail Deck няма собствени сървъри и не използва аналитика. Разширението се свързва само с Google и с пощенските услуги, които включите, с всяка чрез сесията, която браузърът ви вече има, и пощата на всяка услуга отива само към нея. То никога не иска и не съхранява паролата ви, а настройките ви остават в браузъра.
 
-Mail Deck е с отворен код под лиценза Mozilla Public License 1.1: https://github.com/EAbychkov/mail-deck
+Mail Deck е с отворен код под лиценза Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Разширението не е създадено от пощенски доставчик и не е свързано с никой от тях. Gmail е търговска марка на Google LLC.
 ```
 
@@ -497,7 +497,7 @@ Els altres serveis de correu no tenen cap interfície pública per a això, aix�
 Privadesa
 Mail Deck no té servidors propis ni cap eina d'analítica. Només es comunica amb Google i amb els serveis de correu que activis, cadascun amb la sessió que el navegador ja té oberta, i el correu de cada servei només va a aquell servei. Mai no et demana la contrasenya ni la desa, i les teves opcions es queden al navegador.
 
-Mail Deck és de codi obert, amb la llicència Mozilla Public License 1.1: https://github.com/EAbychkov/mail-deck
+Mail Deck és de codi obert, amb la llicència Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 No l'ha creat cap proveïdor de correu ni hi està vinculat. Gmail és una marca comercial de Google LLC.
 ```
 
@@ -530,7 +530,7 @@ No l'ha creat cap proveïdor de correu ni hi està vinculat. Gmail és una marca
 Απόρρητο
 Το Mail Deck δεν έχει δικούς του διακομιστές ούτε εργαλεία ανάλυσης. Επικοινωνεί μόνο με την Google και με τις υπηρεσίες αλληλογραφίας που ενεργοποιείτε, με την καθεμία μέσω της περιόδου σύνδεσης που έχει ήδη το πρόγραμμα περιήγησής σας, και η αλληλογραφία κάθε υπηρεσίας πηγαίνει μόνο σε αυτήν. Δεν ζητά ούτε αποθηκεύει ποτέ τον κωδικό πρόσβασής σας, και οι ρυθμίσεις σας μένουν στο πρόγραμμα περιήγησης.
 
-Το Mail Deck είναι ανοιχτού κώδικα, με την άδεια Mozilla Public License 1.1: https://github.com/EAbychkov/mail-deck
+Το Mail Deck είναι ανοιχτού κώδικα, με την άδεια Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Δεν έχει δημιουργηθεί από κανέναν πάροχο αλληλογραφίας και δεν συνδέεται με κανέναν από αυτούς. Το Gmail είναι εμπορικό σήμα της Google LLC.
 ```
 
@@ -563,7 +563,7 @@ No l'ha creat cap proveïdor de correu ni hi està vinculat. Gmail és una marca
 פרטיות
 ל-Mail Deck אין שרתים משלו ואין כלי ניתוח נתונים. הוא מתקשר רק עם Google ועם שירותי הדואר שהפעלתם, כל אחד דרך ההתחברות שכבר פעילה בדפדפן שלכם, והדואר של כל שירות נשלח רק אליו. הוא אף פעם לא מבקש את הסיסמה שלכם ולא שומר אותה, וההגדרות שלכם נשארות בדפדפן.
 
-הקוד של Mail Deck פתוח, ברישיון Mozilla Public License 1.1: https://github.com/EAbychkov/mail-deck
+הקוד של Mail Deck פתוח, ברישיון Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 התוסף לא נוצר על ידי אף ספק דואר ואינו קשור לאף אחד מהם. Gmail הוא סימן מסחרי של Google LLC.
 ```
 
@@ -596,7 +596,7 @@ A többi levelezőszolgáltatás nem kínál ehhez nyilvános felületet, ezért
 Adatvédelem
 A Mail Deck nem rendelkezik saját szerverekkel, és nem használ analitikát. Csak a Google-lal és a bekapcsolt levelezőszolgáltatásokkal kommunikál, mindegyikkel a böngésződben már meglévő munkameneten keresztül, és minden szolgáltatás levelei csak az adott szolgáltatáshoz jutnak el. Soha nem kéri el és nem tárolja a jelszavadat, a beállításaid pedig a böngésződben maradnak.
 
-A Mail Deck nyílt forráskódú, a Mozilla Public License 1.1 feltételei szerint: https://github.com/EAbychkov/mail-deck
+A Mail Deck nyílt forráskódú, a Mozilla Public License 1.1 feltételei szerint: https://github.com/nord-express/mail-deck
 Egyetlen levelezőszolgáltató sem készítette, és egyikkel sem áll kapcsolatban. A Gmail a Google LLC védjegye.
 ```
 
@@ -629,6 +629,6 @@ Mail Deck окупља у један панел на траци с алатка�
 Приватност
 Mail Deck нема сопствене сервере ни аналитику. Комуницира само са Google-ом и са сервисима е-поште које укључите, са сваким преко сесије коју ваш прегледач већ има, а пошта сваког сервиса иде само том сервису. Никада не тражи и не чува вашу лозинку, а ваша подешавања остају у прегледачу.
 
-Mail Deck је отвореног кода, под лиценцом Mozilla Public License 1.1: https://github.com/EAbychkov/mail-deck
+Mail Deck је отвореног кода, под лиценцом Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Није га направио ниједан добављач е-поште и није повезан ни са једним од њих. Gmail је заштитни знак компаније Google LLC.
 ```

@@ -6,7 +6,7 @@
     return;
   }
   try {
-    const r = await fetch('https://api.github.com/repos/EAbychkov/mail-deck');
+    const r = await fetch('https://api.github.com/repos/nord-express/mail-deck');
     if (!r.ok) {
       return;
     }

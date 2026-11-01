@@ -8,10 +8,10 @@
 Gmail, Yahoo Mail, AOL Mail, Proton Mail, Yandex Mail and Mail.ru. Read, archive and delete mail without opening a tab.
 
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/hjlkjemogfgkpbbnogihekjcdmafecff?label=Chrome%20Web%20Store&logo=googlechrome&logoColor=white&color=4352e3)](https://chromewebstore.google.com/detail/mail-deck/hjlkjemogfgkpbbnogihekjcdmafecff)
-[![Tests](https://github.com/EAbychkov/mail-deck/actions/workflows/test.yml/badge.svg)](https://github.com/EAbychkov/mail-deck/actions/workflows/test.yml)
+[![Tests](https://github.com/nord-express/mail-deck/actions/workflows/test.yml/badge.svg)](https://github.com/nord-express/mail-deck/actions/workflows/test.yml)
 [![License: MPL 1.1](https://img.shields.io/badge/license-MPL%201.1-blue)](LICENSE)
 
-[Website](https://eabychkov.github.io/mail-deck/) · [Features](#features) · [Other mail](#other-mail-services) · [Screens](#screens) · [Install](#install) · [Privacy](PRIVACY.md) · [Development](#development)
+[Website](https://nord-express.github.io/mail-deck/) · [Features](#features) · [Other mail](#other-mail-services) · [Screens](#screens) · [Install](#install) · [Privacy](PRIVACY.md) · [Development](#development)
 
 <br>
 

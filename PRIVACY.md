@@ -45,4 +45,4 @@ Your settings (including which mail services you turned on), the order of your i
 
 ## Contact
 
-Questions or problems: open an issue at https://github.com/EAbychkov/mail-deck/issues.
+Questions or problems: open an issue at https://github.com/nord-express/mail-deck/issues.

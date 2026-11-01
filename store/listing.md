@@ -41,7 +41,7 @@ The other mail services have no public interface for this, so Mail Deck follows 
 Privacy
 Mail Deck has no servers of its own and no analytics. It talks only to Google and to the mail services you turn on, each with the session your browser already has, and each service's mail goes only to that service. It never asks for or stores your password, and your settings stay in your browser.
 
-Mail Deck is open source under the Mozilla Public License 1.1: https://github.com/EAbychkov/mail-deck
+Mail Deck is open source under the Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 It is not made by or affiliated with any mail provider. Gmail is a trademark of Google LLC.
 ```
 
@@ -55,9 +55,9 @@ It is not made by or affiliated with any mail provider. Gmail is a trademark of 
 
 **Other languages:** translated summaries and descriptions are in `store/listing-translations.md`.
 
-**Official URL / Homepage URL:** https://eabychkov.github.io/mail-deck/
+**Official URL / Homepage URL:** https://nord-express.github.io/mail-deck/
 
-**Support URL:** https://github.com/EAbychkov/mail-deck/issues
+**Support URL:** https://github.com/nord-express/mail-deck/issues
 
 ## Privacy tab
 
@@ -109,7 +109,7 @@ Show the unread mail of the webmail accounts the user is signed in to in this br
 - [x] I do not use or transfer user data for purposes that are unrelated to my item's single purpose
 - [x] I do not use or transfer user data to determine creditworthiness or for lending purposes
 
-**Privacy policy URL:** https://eabychkov.github.io/mail-deck/privacy.html
+**Privacy policy URL:** https://nord-express.github.io/mail-deck/privacy.html
 
 ## Distribution tab
 
