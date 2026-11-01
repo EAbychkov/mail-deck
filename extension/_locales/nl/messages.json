@@ -644,7 +644,7 @@
         "description": ""
     },
     "label_13": {
-        "message": "Voor een aangepaste tijdsperiode",
+        "message": "Aangepast",
         "description": ""
     },
     "label_10": {
@@ -1577,5 +1577,8 @@
     },
     "panel_keyBack": {
         "message": "terug"
+    },
+    "label_15": {
+        "message": "Postvakken"
     }
 }

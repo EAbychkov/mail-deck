@@ -644,7 +644,7 @@
         "description": ""
     },
     "label_13": {
-        "message": "Für einen benutzerdefinierten Zeitraum",
+        "message": "Benutzerdefiniert",
         "description": ""
     },
     "label_10": {
@@ -1573,5 +1573,8 @@
     },
     "panel_keyBack": {
         "message": "zurück"
+    },
+    "label_15": {
+        "message": "Postfächer"
     }
 }

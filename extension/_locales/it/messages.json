@@ -597,7 +597,7 @@
     "message": "Impostazioni"
   },
   "label_3": {
-    "message": "Disabilita tutte le notifiche"
+    "message": "Disattiva tutte le notifiche"
   },
   "label_4": {
     "message": "Per 5 minuti"
@@ -618,7 +618,7 @@
     "message": "Per 5 ore"
   },
   "label_13": {
-    "message": "Per il periodo di tempo personalizzato"
+    "message": "Personalizzata"
   },
   "label_10": {
     "message": "Abilita notifiche (sessione)"
@@ -1405,5 +1405,8 @@
   },
   "panel_keyBack": {
     "message": "indietro"
+  },
+  "label_15": {
+    "message": "Caselle"
   }
 }

@@ -644,7 +644,7 @@
         "description": ""
     },
     "label_13": {
-        "message": "Na własny odstęp czasowy",
+        "message": "Własny",
         "description": ""
     },
     "label_10": {
@@ -1577,5 +1577,8 @@
     },
     "panel_keyBack": {
         "message": "wstecz"
+    },
+    "label_15": {
+        "message": "Skrzynki"
     }
 }

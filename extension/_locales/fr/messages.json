@@ -618,7 +618,7 @@
     "message": "Pour 5 heures"
   },
   "label_13": {
-    "message": "Pour la période de temps personnalisée"
+    "message": "Personnalisé"
   },
   "label_10": {
     "message": "Activer les notifications (session)"
@@ -1405,5 +1405,8 @@
   },
   "panel_keyBack": {
     "message": "retour"
+  },
+  "label_15": {
+    "message": "Boîtes de réception"
   }
 }

@@ -616,7 +616,7 @@
         "description": ""
     },
     "label_3": {
-        "message": "Tüm bildirimleri devre dışı bırak",
+        "message": "Tüm bildirimleri kapat",
         "description": ""
     },
     "label_4": {
@@ -644,7 +644,7 @@
         "description": ""
     },
     "label_13": {
-        "message": "Özel bir süre için",
+        "message": "Özel",
         "description": ""
     },
     "label_10": {
@@ -672,11 +672,11 @@
         "description": ""
     },
     "log_into_your_account": {
-        "message": "Please log into your account",
+        "message": "Lütfen hesabınıza giriş yapın",
         "description": ""
     },
     "notification": {
-        "message": "From: [author_email][break]Title: [title][break]Summary: [summary]",
+        "message": "Kimden: [author_email][break]Konu: [title][break]Özet: [summary]",
         "description": ""
     },
     "options_title": {
@@ -1573,5 +1573,8 @@
     },
     "panel_keyBack": {
         "message": "geri"
+    },
+    "label_15": {
+        "message": "Gelen kutuları"
     }
 }

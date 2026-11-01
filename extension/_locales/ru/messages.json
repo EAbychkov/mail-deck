@@ -616,7 +616,7 @@
         "description": ""
     },
     "label_3": {
-        "message": "Отключить все оповещения...",
+        "message": "Отключить все уведомления",
         "description": ""
     },
     "label_4": {
@@ -644,7 +644,7 @@
         "description": ""
     },
     "label_13": {
-        "message": "на Х минут",
+        "message": "Своё время",
         "description": ""
     },
     "label_10": {
@@ -1577,5 +1577,8 @@
     },
     "panel_keyBack": {
         "message": "назад"
+    },
+    "label_15": {
+        "message": "Ящики"
     }
 }

@@ -616,7 +616,7 @@
         "description": ""
     },
     "label_3": {
-        "message": "Deshabilitar totes les notificacions",
+        "message": "Desactiva totes les notificacions",
         "description": ""
     },
     "label_4": {
@@ -644,7 +644,7 @@
         "description": ""
     },
     "label_13": {
-        "message": "Durant un període de temps personalitzat",
+        "message": "Personalitzat",
         "description": ""
     },
     "label_10": {
@@ -1577,5 +1577,8 @@
     "gmail": {
         "message": "Mail Deck",
         "description": ""
+    },
+    "label_15": {
+        "message": "Safates"
     }
 }

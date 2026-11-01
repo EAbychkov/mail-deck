@@ -618,7 +618,7 @@
     "message": "5時間"
   },
   "label_13": {
-    "message": "カスタム期間"
+    "message": "カスタム"
   },
   "label_10": {
     "message": "通知を有効にする（セッション）"
@@ -642,7 +642,7 @@
     "message": "アカウントにログインしてください"
   },
   "notification": {
-    "message": "From: [author_email][break] 件名: [title][break] Summary: [summary]"
+    "message": "差出人: [author_email][break]件名: [title][break]概要: [summary]"
   },
   "options_title": {
     "message": "オプション ページ - Gmail™ Notifier"
@@ -1405,5 +1405,8 @@
   },
   "panel_keyBack": {
     "message": "戻る"
+  },
+  "label_15": {
+    "message": "受信トレイ"
   }
 }

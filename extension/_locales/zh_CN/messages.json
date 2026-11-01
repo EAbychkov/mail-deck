@@ -616,7 +616,7 @@
         "description": ""
     },
     "label_3": {
-        "message": "禁用所有通知",
+        "message": "停用所有通知",
         "description": ""
     },
     "label_4": {
@@ -644,7 +644,7 @@
         "description": ""
     },
     "label_13": {
-        "message": "自定义时间长度",
+        "message": "自定义",
         "description": ""
     },
     "label_10": {
@@ -1577,5 +1577,8 @@
     },
     "panel_keyBack": {
         "message": "返回"
+    },
+    "label_15": {
+        "message": "邮箱"
     }
 }

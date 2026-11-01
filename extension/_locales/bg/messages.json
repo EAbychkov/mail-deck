@@ -616,7 +616,7 @@
         "description": ""
     },
     "label_3": {
-        "message": "Изключване на известията",
+        "message": "Изключи всички известия",
         "description": ""
     },
     "label_4": {
@@ -644,11 +644,11 @@
         "description": ""
     },
     "label_13": {
-        "message": "За избран период",
+        "message": "Друго",
         "description": ""
     },
     "label_10": {
-        "message": "Enable notifications (session)",
+        "message": "Включване на известията (сесия)",
         "description": ""
     },
     "label_11": {
@@ -1573,5 +1573,8 @@
     "gmail": {
         "message": "Mail Deck",
         "description": ""
+    },
+    "label_15": {
+        "message": "Пощенски кутии"
     }
 }

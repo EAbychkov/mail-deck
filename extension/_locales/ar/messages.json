@@ -588,7 +588,7 @@
         "description": ""
     },
     "msg_1": {
-        "message": "Tab is already open. Click on the toolbar button to open Gmail in a new tab, or to switch to an existing Gmail tab.",
+        "message": "علامة التبويب مفتوحة بالفعل. انقر زر شريط الأدوات لفتح Gmail في علامة تبويب جديدة أو للانتقال إلى علامة تبويب Gmail مفتوحة.",
         "description": ""
     },
     "msg_2": {
@@ -616,7 +616,7 @@
         "description": ""
     },
     "label_3": {
-        "message": "عدل كل الإشعارات",
+        "message": "تعطيل كل الإشعارات",
         "description": ""
     },
     "label_4": {
@@ -644,11 +644,11 @@
         "description": ""
     },
     "label_13": {
-        "message": "For a custom time period",
+        "message": "مخصص",
         "description": ""
     },
     "label_10": {
-        "message": "Enable notifications (session)",
+        "message": "تفعيل الإشعارات (لهذه الجلسة)",
         "description": ""
     },
     "label_11": {
@@ -660,7 +660,7 @@
         "description": ""
     },
     "label_14": {
-        "message": "Logged-in accounts",
+        "message": "فتح Gmail",
         "description": ""
     },
     "unknown": {
@@ -672,11 +672,11 @@
         "description": ""
     },
     "log_into_your_account": {
-        "message": "Please log into your account",
+        "message": "يُرجى تسجيل الدخول إلى حسابك",
         "description": ""
     },
     "notification": {
-        "message": "From: [author_email][break]Title: [title][break]Summary: [summary]",
+        "message": "من: [author_email][break]الموضوع: [title][break]الملخص: [summary]",
         "description": ""
     },
     "options_title": {
@@ -1200,7 +1200,7 @@
         "description": ""
     },
     "popup_archive": {
-        "message": "Archive",
+        "message": "أرشفة",
         "description": ""
     },
     "popup_spam": {
@@ -1208,7 +1208,7 @@
         "description": ""
     },
     "popup_trash": {
-        "message": "Trash",
+        "message": "حذف",
         "description": ""
     },
     "popup_refresh": {
@@ -1216,7 +1216,7 @@
         "description": ""
     },
     "popup_read": {
-        "message": "Mark as Read",
+        "message": "تمييز كمقروء",
         "description": ""
     },
     "popup_read_all": {
@@ -1573,5 +1573,8 @@
     "gmail": {
         "message": "Mail Deck",
         "description": ""
+    },
+    "label_15": {
+        "message": "صناديق البريد"
     }
 }

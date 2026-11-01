@@ -159,16 +159,16 @@
           </select>
         </label>
         <div class="row stack adv">
-          <span class="text"><b data-i18n="never">Never notify when the sender or subject contains</b><small data-i18n="neverText">One word or address per line. The mail still shows in the panel, without a notification or sound.</small></span>
-          <textarea data-key="notify.never" rows="3" spellcheck="false" placeholder="newsletter&#10;noreply@"></textarea>
+          <span class="text"><b id="never-label" data-i18n="never">Never notify when the sender or subject contains</b><small id="never-text" data-i18n="neverText">One word or address per line. The mail still shows in the panel, without a notification or sound.</small></span>
+          <textarea data-key="notify.never" rows="3" spellcheck="false" placeholder="newsletter&#10;noreply@" aria-labelledby="never-label" aria-describedby="never-text"></textarea>
         </div>
         <div class="row stack adv">
-          <span class="text"><b data-i18n="only">Notify only when the sender or subject contains</b><small data-i18n="onlyText">Leave it empty to hear about all mail.</small></span>
-          <textarea data-key="notify.only" rows="3" spellcheck="false"></textarea>
+          <span class="text"><b id="only-label" data-i18n="only">Notify only when the sender or subject contains</b><small id="only-text" data-i18n="onlyText">Leave it empty to hear about all mail.</small></span>
+          <textarea data-key="notify.only" rows="3" spellcheck="false" aria-labelledby="only-label" aria-describedby="only-text"></textarea>
         </div>
         <div class="row stack adv" data-needs="notification">
-          <span class="text"><b data-i18n="format">Notification text</b><small data-i18n="formatText">Use [author_name], [author_email], [title], [summary] and [break] for a new line.</small></span>
-          <textarea data-key="notificationFormat" rows="2" spellcheck="false"></textarea>
+          <span class="text"><b id="format-label" data-i18n="format">Notification text</b><small id="format-text" data-i18n="formatText">Use [author_name], [author_email], [title], [summary] and [break] for a new line.</small></span>
+          <textarea data-key="notificationFormat" rows="2" spellcheck="false" aria-labelledby="format-label" aria-describedby="format-text"></textarea>
         </div>
         <label class="row adv" data-needs="notification">
           <span class="text"><b data-i18n="truncate">Shorten the subject and text to</b></span>

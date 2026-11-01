@@ -104,6 +104,56 @@ for (const lang of fs.readdirSync(LOCALES)) {
       .filter(Boolean).join('; '));
 }
 
+// The older strings the code still reads by name: chrome.i18n.getMessage('…') anywhere, the
+// toolbar menu's label_<n> ids (context.js builds some of their names) and the manifest's
+// __MSG_…__. A line that is commented out does not count.
+const code = walk(EXT).filter(f => /\.(js|html)$/.test(f))
+  .map(f => fs.readFileSync(f, 'utf8').replace(/^\s*\/\/.*$/gm, '')).join('\n');
+const older = [...new Set([
+  ...[...code.matchAll(/getMessage\(\s*['"]([A-Za-z0-9_]+)['"]\s*[,)]/g)].map(m => m[1]),
+  ...[...code.matchAll(/['"](label_\d+)['"]/g)].map(m => m[1]),
+  ...[...JSON.stringify(manifest).matchAll(/__MSG_(\w+)__/g)].map(m => m[1])
+])].filter(k => !/^(panel_|opt_)/.test(k)).sort();
+{
+  const absent = older.filter(k => !en[k]);
+  ok(`en has the ${older.length} older strings the code reads`, absent.length === 0, absent.join(' '));
+}
+// the notification text: only the tokens check.js replaces, the same ones as English
+const TOKENS = ['author_name', 'author_email', 'title', 'summary', 'break'];
+const tokens = text => [...new Set((String(text).match(/\[[^\]]*\]/g) || []).map(s => s.slice(1, -1)))].sort().join(',');
+// a value still in English: Latin letters only, once brand names, the label names a user types,
+// [tokens], $1 and addresses are taken out; looked for only in a language written in another script
+const BRANDS = /Mail Deck|Gmail™?|Google Meet|Google|Chrome|Yahoo|AOL|Proton|Yandex|Mail\.ru|\binbox\b|\bimportant\b|\[[^\]]*\]|\$\d|https?:\/\/\S+|\S+@\S+/g;
+const letters = text => String(text).replace(BRANDS, '').match(/\p{L}/gu) || [];
+const latinOnly = text => {
+  const l = letters(text);
+  return l.length > 0 && l.every(c => /\p{Script=Latin}/u.test(c));
+};
+for (const lang of fs.readdirSync(LOCALES)) {
+  let d;
+  try {
+    d = read(lang);
+  }
+  catch (e) {
+    continue;
+  }
+  const missing = older.filter(k => en[k] && !d[k]?.message);
+  const wrong = older.filter(k => en[k] && d[k] && holes(d[k].message) !== holes(en[k].message));
+  const format = d.notification && en.notification && (tokens(d.notification.message) !== tokens(en.notification.message) ||
+    tokens(d.notification.message).split(',').some(t => t && !TOKENS.includes(t)));
+  ok(`locale ${lang}: ${older.length} older strings, placeholders and notification [tokens] match`,
+    missing.length + wrong.length === 0 && !format,
+    [missing.length && 'missing ' + missing.join(' '), wrong.length && 'placeholders ' + wrong.join(' '),
+      format && 'notification tokens ' + tokens(d.notification.message)].filter(Boolean).join('; '));
+  // a language whose own strings are mostly in another script than Latin
+  const own = keys.map(k => d[k]?.message).filter(Boolean).flatMap(letters);
+  if (lang !== 'en' && own.filter(c => /\p{Script=Latin}/u.test(c)).length < own.length / 2) {
+    const english = [...keys, ...older].filter(k => d[k] && latinOnly(d[k].message));
+    ok(`locale ${lang}: no string the code reads is left in English`, english.length === 0,
+      english.map(k => `${k}="${d[k].message}"`).slice(0, 8).join('; '));
+  }
+}
+
 for (const [name, pass, detail] of results) {
   console.log(pass ? 'ok' : 'not ok', name + (pass || !detail ? '' : ' - ' + detail));
 }

@@ -644,11 +644,11 @@
         "description": ""
     },
     "label_13": {
-        "message": "Για μια προσαρμοσμένη χρονική περίοδο",
+        "message": "Προσαρμογή",
         "description": ""
     },
     "label_10": {
-        "message": "Enable notifications (session)",
+        "message": "Ενεργοποίηση ειδοποιήσεων (συνεδρία)",
         "description": ""
     },
     "label_11": {
@@ -676,7 +676,7 @@
         "description": ""
     },
     "notification": {
-        "message": "Από: [author_email] [break] Τίτλος: [τίτλος] [break] Περίληψη: [περίληψη]",
+        "message": "Από: [author_email][break]Θέμα: [title][break]Περίληψη: [summary]",
         "description": ""
     },
     "options_title": {
@@ -1573,5 +1573,8 @@
     "gmail": {
         "message": "Mail Deck",
         "description": ""
+    },
+    "label_15": {
+        "message": "Γραμματοκιβώτια"
     }
 }

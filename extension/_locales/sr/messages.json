@@ -644,7 +644,7 @@
         "description": ""
     },
     "label_13": {
-        "message": "У прилагођеном временском периоду",
+        "message": "Прилагођено",
         "description": ""
     },
     "label_10": {
@@ -1577,5 +1577,8 @@
     "gmail": {
         "message": "Mail Deck",
         "description": ""
+    },
+    "label_15": {
+        "message": "Сандучићи"
     }
 }

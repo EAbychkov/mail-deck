@@ -597,7 +597,7 @@
     "message": "Beállítások"
   },
   "label_3": {
-    "message": "Összes értesítés tiltása"
+    "message": "Minden értesítés kikapcsolása"
   },
   "label_4": {
     "message": "5 percre"
@@ -618,7 +618,7 @@
     "message": "5 órára"
   },
   "label_13": {
-    "message": "Egyéni időhosszra"
+    "message": "Egyéni"
   },
   "label_10": {
     "message": "Értesítések engedélyezése (munkamenet)"
@@ -1393,5 +1393,8 @@
   },
   "settings_open_label": {
     "message": "Beállítások megnyitása"
+  },
+  "label_15": {
+    "message": "Postafiókok"
   }
 }

@@ -616,7 +616,7 @@
         "description": ""
     },
     "label_3": {
-        "message": "Відключити всі попередження",
+        "message": "Вимкнути всі сповіщення",
         "description": ""
     },
     "label_4": {
@@ -644,11 +644,11 @@
         "description": ""
     },
     "label_13": {
-        "message": "For a custom time period",
+        "message": "Свій час",
         "description": ""
     },
     "label_10": {
-        "message": "Enable notifications (session)",
+        "message": "Увімкнути сповіщення (сеанс)",
         "description": ""
     },
     "label_11": {
@@ -660,7 +660,7 @@
         "description": ""
     },
     "label_14": {
-        "message": "Logged-in accounts",
+        "message": "Відкрити Gmail",
         "description": ""
     },
     "unknown": {
@@ -672,11 +672,11 @@
         "description": ""
     },
     "log_into_your_account": {
-        "message": "Please log into your account",
+        "message": "Увійдіть у свій обліковий запис",
         "description": ""
     },
     "notification": {
-        "message": "From: [author_email][break]Title: [title][break]Summary: [summary]",
+        "message": "Від: [author_email][break]Тема: [title][break]Зміст: [summary]",
         "description": ""
     },
     "options_title": {
@@ -1200,7 +1200,7 @@
         "description": ""
     },
     "popup_archive": {
-        "message": "Archive",
+        "message": "В архів",
         "description": ""
     },
     "popup_spam": {
@@ -1208,7 +1208,7 @@
         "description": ""
     },
     "popup_trash": {
-        "message": "Trash",
+        "message": "Видалити",
         "description": ""
     },
     "popup_refresh": {
@@ -1216,7 +1216,7 @@
         "description": ""
     },
     "popup_read": {
-        "message": "Mark as Read",
+        "message": "Прочитано",
         "description": ""
     },
     "popup_read_all": {
@@ -1573,5 +1573,8 @@
     },
     "panel_keyBack": {
         "message": "назад"
+    },
+    "label_15": {
+        "message": "Скриньки"
     }
 }

@@ -616,7 +616,7 @@
         "description": ""
     },
     "label_3": {
-        "message": "כבה את כל ההתראות",
+        "message": "השבתת כל ההתראות",
         "description": ""
     },
     "label_4": {
@@ -644,7 +644,7 @@
         "description": ""
     },
     "label_13": {
-        "message": "לתקופה",
+        "message": "מותאם",
         "description": ""
     },
     "label_10": {
@@ -676,7 +676,7 @@
         "description": ""
     },
     "notification": {
-        "message": "התקבל מ: [שם הכותב][break]כותרת: [כותרת][break]תקציר: [תקציר]",
+        "message": "מאת: [author_email][break]נושא: [title][break]תקציר: [summary]",
         "description": ""
     },
     "options_title": {
@@ -1573,5 +1573,8 @@
     "gmail": {
         "message": "Mail Deck",
         "description": ""
+    },
+    "label_15": {
+        "message": "תיבות דואר"
     }
 }

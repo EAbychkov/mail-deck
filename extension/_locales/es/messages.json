@@ -644,11 +644,11 @@
         "description": ""
     },
     "label_13": {
-        "message": "Por un período de tiempo personalizado",
+        "message": "Personalizado",
         "description": ""
     },
     "label_10": {
-        "message": "Enable notifications (session)",
+        "message": "Activar notificaciones (sesión)",
         "description": ""
     },
     "label_11": {
@@ -1573,5 +1573,8 @@
     },
     "panel_keyBack": {
         "message": "atrás"
+    },
+    "label_15": {
+        "message": "Bandejas"
     }
 }
