@@ -181,7 +181,7 @@ sound.play = (entries = [], error = () => {}) => new Promise((resolve, reject) =
           soundVolume: prefs.soundVolume
         }
       }).then(b => {
-        if (b !== true && 'error' in b) {
+        if (b && b !== true && 'error' in b) {
           reject(Error(b.error));
         }
         else {
@@ -192,6 +192,18 @@ sound.play = (entries = [], error = () => {}) => new Promise((resolve, reject) =
   });
 });
 
-sound.stop = () => offscreen.command({
-  cmd: 'stop'
-});
+// Without an offscreen document no sound plays: nothing to stop, and no document is made for
+// it. A command on its way may be a sound about to play, so it is stopped then.
+sound.stop = async () => {
+  if (!offscreen.pending && !offscreen.creating) {
+    const contexts = await chrome.runtime.getContexts({
+      contextTypes: ['OFFSCREEN_DOCUMENT']
+    }).catch(() => [null]);
+    if (contexts.length === 0) {
+      return;
+    }
+  }
+  return offscreen.command({
+    cmd: 'stop'
+  });
+};

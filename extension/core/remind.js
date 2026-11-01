@@ -15,15 +15,27 @@
       chrome.alarms.clear('remind');
     }
   };
+  // A reminder closed without a click leaves what its click would have opened in the session
+  // storage; the ones off the screen for a day go before new ones come.
+  const prune = async () => {
+    const shown = await new Promise(resolve => chrome.notifications.getAll(o => resolve(o || {})));
+    const all = await chrome.storage.session.get(null);
+    const gone = Object.keys(all).filter(key => key.startsWith('remind.') && !(key in shown) &&
+      !(Date.now() - all[key]?.at < 24 * 3600 * 1000));
+    if (gone.length) {
+      await chrome.storage.session.remove(gone);
+    }
+  };
   const ring = async () => {
     const list = await Remind.read();
     const due = list.filter(o => o.until <= Date.now());
     if (due.length) {
+      await prune().catch(() => {});
       await Remind.write(Remind.waiting(list));
       for (const o of due) {
         const id = 'remind.' + Math.random();
         chrome.storage.session.set({
-          [id]: {link: o.link, open: o.open || o.link}
+          [id]: {link: o.link, open: o.open || o.link, at: Date.now()}
         });
         chrome.notifications.create(id, {
           type: 'basic',

@@ -15,10 +15,17 @@ const once = () => {
   }, () => chrome.runtime.lastError);
   chrome.contextMenus.create({
     id: 'ignored.ctx',
-    title: chrome.i18n.getMessage('label_15'),
+    title: chrome.i18n.getMessage('opt_inboxes'),
     contexts: ['action'],
     enabled: false
-  }, () => chrome.runtime.lastError);
+  }, () => {
+    // kept from an earlier version: it takes the title of this one
+    if (chrome.runtime.lastError) {
+      chrome.contextMenus.update('ignored.ctx', {
+        title: chrome.i18n.getMessage('opt_inboxes')
+      }, () => chrome.runtime.lastError);
+    }
+  });
   chrome.contextMenus.create({
     title: chrome.i18n.getMessage('label_3'),
     contexts: ['action'],

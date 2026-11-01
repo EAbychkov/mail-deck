@@ -56,6 +56,8 @@ if (typeof importScripts !== 'undefined') {
   };
 
   const isPrivate = false;
+  // a forced check shows the loading icon until a check publishes its result
+  let loading = false;
 
   const read = (prefs, type = 'local') => chrome.storage[type].get(prefs);
 
@@ -136,17 +138,30 @@ if (typeof importScripts !== 'undefined') {
         click
       }
     });
+    // Chrome fires an alarm at most once in 30 seconds (unpacked extensions aside), so the
+    // timer clears the notification on time while the worker is awake; the alarm stays for a
+    // worker that is gone by then
     chrome.alarms.create('clear.notification.' + id, {
       when
     });
+    setTimeout(clear, p1.notificationTime * 1000, id);
     chrome.notifications.create(id, options);
+  };
+  const clear = id => {
+    chrome.notifications.clear(id);
+    chrome.storage.session.remove(id);
+    chrome.alarms.clear('clear.notification.' + id);
   };
   chrome.notifications.onClicked.addListener(id => {
     chrome.notifications.clear(id);
     sound.stop();
     if (id.startsWith('action.')) {
+      chrome.alarms.clear('clear.notification.' + id);
       chrome.storage.session.get(id, prefs => {
         chrome.storage.session.remove(id);
+        if (!prefs[id]) {
+          return;
+        }
         const {click} = prefs[id];
         if (click.cmd === 'open') {
           const {links} = click;
@@ -176,11 +191,15 @@ if (typeof importScripts !== 'undefined') {
     chrome.notifications.onButtonClicked.addListener((id, index) => {
       sound.stop();
 
+      chrome.alarms.clear('clear.notification.' + id);
       chrome.storage.session.get(id, prefs => {
         chrome.storage.session.remove(id);
         chrome.notifications.clear(id);
 
-        const request = prefs[id].buttons[index];
+        const request = prefs[id]?.buttons?.[index];
+        if (!request) {
+          return;
+        }
         // links might be from different accounts; the mail of the other services is one
         // request, which they split by mailbox themselves
         const bases = {};
@@ -239,7 +258,7 @@ if (typeof importScripts !== 'undefined') {
   };
   chrome.storage.onChanged.addListener(ps => {
     if (ps.oldFashion) {
-      self.checkEmails.getCached().then(objs => {
+      self.checkEmails.visible().then(objs => {
         const numberOfAccounts = objs.map(o => o.xml ? o.xml.title : null)
           .filter((o, i, a) => o && a.indexOf(o) === i).length;
         const hasUnread = objs.map(o => o.xml ? o.xml.fullcount : 0)
@@ -271,6 +290,11 @@ if (typeof importScripts !== 'undefined') {
     return feeds.filter((feed, index) => feed && feeds.indexOf(feed) === index).sort();
   };
 
+  /*
+   * The accounts of the last check as the feeds told them, resolved and reminded mail
+   * included: hiding is applied on the way out (visible, refresh, the panel), so mail an
+   * Undo or a failed action brings back is there to show again.
+   */
   self.checkEmails = {
     getCached() {
       if (self.checkEmails.cached) {
@@ -281,12 +305,15 @@ if (typeof importScripts !== 'undefined') {
       }, 'session').then(prefs => prefs['cached-objects']);
     }
   };
+  // the accounts as the panel and the badge show them: without the resolved mail and the
+  // mail waiting for its reminder
+  self.checkEmails.visible = async () => Resolved.apply(Resolved.apply(await self.checkEmails.getCached(),
+    await Resolved.read()), Remind.waiting(await Remind.read()));
   // Show the accounts as they are now: the badge, the panel and, when nothing
   // is left to read, the panel itself. The given objects are expected to be
-  // already filtered by Resolved.apply().
+  // already filtered by Resolved.apply(); the cache keeps the unfiltered ones.
   self.checkEmails.publish = async objs => {
-    self.checkEmails.cached = objs;
-
+    loading = false;
     const active = objs.filter(c => c.meta?.ignored !== true);
     const count = active.reduce((p, c) => p + c.xml.fullcount, 0);
 
@@ -321,11 +348,7 @@ if (typeof importScripts !== 'undefined') {
   };
   // Apply the resolved entries to the cached accounts and publish the result,
   // so the panel and the badge do not wait for the next check
-  self.checkEmails.refresh = async () => {
-    const objs = Resolved.apply(Resolved.apply(await self.checkEmails.getCached(), await Resolved.read()),
-      Remind.waiting(await Remind.read()));
-    return self.checkEmails.publish(objs);
-  };
+  self.checkEmails.refresh = async () => self.checkEmails.publish(await self.checkEmails.visible());
   /*
    * Opening a mail marks it as read in Gmail, so it has to leave the panel and
    * the badge. The feed cannot report it yet, therefore the link is stored like
@@ -368,16 +391,42 @@ if (typeof importScripts !== 'undefined') {
     await Resolved.record([...done], 20000);
     return self.checkEmails.refresh();
   };
+  /*
+   * A check that no Gmail feed answered met a network that is down (offline, a laptop just
+   * awake, a timeout), not accounts that are signed out: the badge, the panel and the
+   * resolved mail stay as they are, and no sign-in tab opens. A forced check shows the last
+   * state again, which also ends its loading icon.
+   */
+  const keep = async forced => {
+    log('[feed]', 'no answer from the network, the last state stays');
+    if (!forced && !loading) {
+      return;
+    }
+    if ((await self.checkEmails.getCached()).length) {
+      await self.checkEmails.refresh();
+    }
+    else {
+      loading = false;
+      button.icon = 'blue';
+      button.badge = 0;
+      chrome.storage.session.set({count: -1});
+    }
+  };
   self.checkEmails.execute = async forced => {
+    if (navigator.onLine === false) {
+      return keep(forced);
+    }
+    // a newer check takes over at once, even from one still reading its settings
+    self.checkEmails.controller?.abort();
+    const controller = self.checkEmails.controller = new AbortController();
+    const signal = controller.signal;
+
     if (forced) {
+      loading = true;
       button.icon = 'load';
       button.badge = 0;
       // do not use -1; if the user is logged out, the loading need to be stopped
       chrome.storage.session.set({count: 0});
-    }
-    // Cancel previous execution?
-    if (self.checkEmails.controller) {
-      self.checkEmails.controller.abort();
     }
     const prefs = await read({
       'url': 'https://mail.google.com/mail/u/0',
@@ -412,9 +461,9 @@ if (typeof importScripts !== 'undefined') {
       'quiet.weekend': false,
       'accounts': {}
     });
-
-    const controller = self.checkEmails.controller = new AbortController();
-    const signal = controller.signal;
+    if (signal.aborted) {
+      return log('[feed]', 'skipped');
+    }
 
     const services = Services.collect(signal, prefs.timeout).catch(e => {
       log('[services]', 'error', e);
@@ -445,6 +494,8 @@ if (typeof importScripts !== 'undefined') {
       const objs = [];
       let mn = -1; // keep track of the last logged-out account
       let top = -1; // the last signed-in account
+      // a feed that answered at all, signed in or not; a signed-out account answers too
+      let answered = false;
       const uids = new Set();
       // The accounts signed in at the last check, and the one after them, which
       // tells a newly added account, are fetched all at once; the walk below
@@ -462,6 +513,7 @@ if (typeof importScripts !== 'undefined') {
         let r;
         if (early.has(feed)) {
           r = await early.get(feed);
+          answered = answered || Boolean(r);
           // fetched out of order: a feed that repeats an earlier one is a logged-out account
           const uid = r?.xml?.id;
           if (uid && uids.has(uid)) {
@@ -485,6 +537,7 @@ if (typeof importScripts !== 'undefined') {
               uids.add(uid);
             }
           }).catch(e => signal.aborted === false && log('[feed]', 'error', e));
+          answered = answered || Boolean(r);
         }
         if (signal.aborted) {
           return log('[feed]', 'skipped');
@@ -502,12 +555,17 @@ if (typeof importScripts !== 'undefined') {
           }
         }
       }
-      for (const r of await services) {
-        meta(r);
-        objs.push(r);
-      }
+      const boxes = await services;
       if (signal.aborted) {
         return log('[feed]', 'skipped');
+      }
+      // every Gmail feed failed (a fetch error or the timeout): the network, not a sign-out
+      if (!answered) {
+        return keep(forced);
+      }
+      for (const r of boxes) {
+        meta(r);
+        objs.push(r);
       }
 
       log('[feed]', 'forced', forced, 'objects', objs);
@@ -521,6 +579,7 @@ if (typeof importScripts !== 'undefined') {
       }, prefs => resolve(prefs.count)));
 
       if (!isAuthorized) {
+        loading = false;
         if (count !== -1) {
           button.icon = 'blue';
           button.badge = 0;
@@ -559,9 +618,8 @@ if (typeof importScripts !== 'undefined') {
         }
         return 0;
       });
-      // simplified version of objs for storing and sending between contexts;
-      // mail waiting for its reminder stays out like a resolved one
-      const cachedObjs = Resolved.apply(Resolved.apply(objs.map(o => {
+      // simplified version of objs for storing and sending between contexts
+      const simple = objs.map(o => {
         const xml = {
           ...o.xml
         };
@@ -571,22 +629,19 @@ if (typeof importScripts !== 'undefined') {
           meta: o.meta,
           xml
         };
-      }), await Resolved.prune(objs)), Remind.waiting(await Remind.read()));
+      });
+      // what the badge, the panel and the notifications take: mail waiting for its
+      // reminder stays out like a resolved one
+      const cachedObjs = Resolved.apply(Resolved.apply(simple, await Resolved.prune(objs)),
+        Remind.waiting(await Remind.read()));
+      if (signal.aborted) {
+        return log('[feed]', 'skipped');
+      }
 
-      self.checkEmails.cached = cachedObjs;
-
-      // Update cache (only copy a minimal object)
+      // the cache keeps the mail as the feeds told it (see getCached)
+      self.checkEmails.cached = simple;
       chrome.storage.session.set({
-        'cached-objects': cachedObjs,
-        // Snapshot clock per mailbox, kept from the run that just finished.
-        // A feed that has not been regenerated cannot report anything we do
-        // not already know, so it can be skipped on the next run.
-        'feed.modified': objs.reduce((p, o) => {
-          if (o.xml.modified) {
-            p[o.xml.link] = o.xml.modified;
-          }
-          return p;
-        }, {})
+        'cached-objects': simple
       });
 
       // save new emails
@@ -619,11 +674,17 @@ if (typeof importScripts !== 'undefined') {
             data: cachedObjs
           });
         });
-        // we could have a new account with no new emails
+        // a forced check that a newer one took over left its loading icon
+        if (loading) {
+          self.checkEmails.publish(cachedObjs);
+        }
+        // we could have a new account with no new emails; the menu lists accounts, not
+        // the label feeds of one
+        const accounts = new Set(objs.map(o => o.xml?.rootLink?.replace(/\?.*/, '')).filter(Boolean));
         chrome.storage.session.get({
           'accounts.keys': []
         }, prefs => {
-          if (prefs['accounts.keys'].length !== objs.length) {
+          if (prefs['accounts.keys'].length !== accounts.size) {
             context.accounts('mismatch');
           }
         });
@@ -640,20 +701,28 @@ if (typeof importScripts !== 'undefined') {
       const parents = new Map();
       // a quiet mailbox and the mail the word lists leave out still count, they only make no noise
       const loud = o => o.meta.ignored !== true && o.meta.quiet !== true;
-      for (const o of cachedObjs) {
-        if (!loud(o)) {
-          continue;
-        }
-
-        (o.xml && o.xml.entries ? o.xml.entries : []).filter(e => {
-          if (anyNewEmails) {
-            return o.newIDs.includes(e.id);
+      // the new mail that may make a noise, each once: a mail in two watched labels of one
+      // account is listed by both feeds. Mail that is not new stays quiet, a forced check too.
+      const fresh = (() => {
+        const told = new Set();
+        const list = [];
+        for (const o of cachedObjs) {
+          if (!loud(o) || !o.xml || !o.xml.entries) {
+            continue;
           }
-          return o.xml.fullcount !== 0;
-        }).filter(e => Quiet.wanted(e, prefs)).forEach(e => {
-          parents.set(e, o);
-          reportArray.push(e);
-        });
+          for (const e of o.xml.entries) {
+            const key = o.xml.rootLink + ' ' + e.id;
+            if (o.newIDs.includes(e.id) && !told.has(key) && Quiet.wanted(e, prefs)) {
+              told.add(key);
+              list.push([e, o]);
+            }
+          }
+        }
+        return list;
+      })();
+      for (const [e, o] of fresh) {
+        parents.set(e, o);
+        reportArray.push(e);
       }
       // keep recent ones
       reportArray.sort((a, b) => {
@@ -679,13 +748,12 @@ if (typeof importScripts !== 'undefined') {
             ' (' + c.xml.fullcount + ')\n';
         }, '').replace(/\n$/, '');
       //
-      if (!forced && !anyNewEmails) {
-        self.checkEmails.publish(cachedObjs);
-      }
-      else if (forced && !newCount) {
+      // nothing new, forced or not: the badge and the panel only
+      if (!anyNewEmails) {
         self.checkEmails.publish(cachedObjs);
       }
       else {
+        loading = false;
         button.icon = 'new';
         button.badge = newCount;
         chrome.storage.session.set({count: newCount});
@@ -710,7 +778,7 @@ if (typeof importScripts !== 'undefined') {
           const buttons = [];
           if (prefs['notification.buttons.markasread']) {
             buttons.push({
-              title: chrome.i18n.getMessage('popup_read'),
+              title: chrome.i18n.getMessage('opt_btnRead'),
               iconUrl: '/data/images/read.png',
               action: {
                 links: reportArray.map(o => o.link),
@@ -721,7 +789,7 @@ if (typeof importScripts !== 'undefined') {
           // a service without an archive (Yandex, Mail.ru) gets no archive button
           if (prefs['notification.buttons.archive'] && reportArray.every(e => Services.of(e.link)?.can.archive !== false)) {
             buttons.push({
-              title: chrome.i18n.getMessage('popup_archive'),
+              title: chrome.i18n.getMessage('opt_btnArchive'),
               iconUrl: '/data/images/archive.png',
               action: {
                 links: reportArray.map(o => o.link),
@@ -731,7 +799,7 @@ if (typeof importScripts !== 'undefined') {
           }
           if (prefs['notification.buttons.trash']) {
             buttons.push({
-              title: chrome.i18n.getMessage('popup_trash'),
+              title: chrome.i18n.getMessage('opt_btnDelete'),
               iconUrl: '/data/images/trash.png',
               action: {
                 links: reportArray.map(o => o.link),
@@ -769,17 +837,8 @@ if (typeof importScripts !== 'undefined') {
           }, buttons.slice(0, 2));
         }
         if (prefs.alert && !hushed) {
-          const entries = []; // new entries only
-          for (const o of cachedObjs) {
-            if (o.xml && o.newIDs.length && loud(o)) {
-              for (const entry of o.xml.entries) {
-                if (o.newIDs.includes(entry.id) && Quiet.wanted(entry, prefs)) {
-                  entries.push(entry);
-                }
-              }
-            }
-          }
-          sound.play(entries).catch(e => toast(e.message));
+          // new entries only, each once
+          sound.play(fresh.map(([e]) => e)).catch(e => toast(e.message));
         }
         chrome.runtime.sendMessage({
           method: 'update-reset',

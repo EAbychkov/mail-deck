@@ -38,7 +38,8 @@ const onClicked = link => {
   }, async prefs => {
     if (prefs.smartOpen) {
       try {
-        const objs = await checkEmails.getCached();
+        // the mail the panel and the badge show: not the resolved or the reminded one
+        const objs = await checkEmails.visible();
         if (objs && objs.length) {
           // Selected account
           const unreadEntries = [].concat([], ...objs.map(obj => obj.xml.entries));
@@ -73,6 +74,38 @@ chrome.runtime.onInstalled.addListener(({reason}) => {
     });
   }
 });
+
+/*
+ * Up to 1.3.3 the notification text of a few locales was broken (placeholders translated,
+ * English labels), and the settings stored it as if the user had typed it. On the update the
+ * stored copy of that old default goes, so the corrected default of the locale applies; a text
+ * the user changed stays.
+ */
+{
+  const OLD = {
+    el: 'Από: [author_email] [break] Τίτλος: [τίτλος] [break] Περίληψη: [περίληψη]',
+    he: 'התקבל מ: [שם הכותב][break]כותרת: [כותרת][break]תקציר: [תקציר]',
+    ar: 'From: [author_email][break]Title: [title][break]Summary: [summary]',
+    tr: 'From: [author_email][break]Title: [title][break]Summary: [summary]',
+    uk: 'From: [author_email][break]Title: [title][break]Summary: [summary]',
+    ja: 'From: [author_email][break] 件名: [title][break] Summary: [summary]'
+  };
+  chrome.runtime.onInstalled.addListener(async ({reason}) => {
+    if (reason !== 'update') {
+      return;
+    }
+    const lang = String(chrome.i18n.getUILanguage?.() || '').toLowerCase().split(/[-_]/)[0];
+    // Chrome has called Hebrew both he and iw
+    const old = OLD[lang === 'iw' ? 'he' : lang];
+    if (!old) {
+      return;
+    }
+    const {notificationFormat} = await chrome.storage.local.get('notificationFormat');
+    if (notificationFormat === old) {
+      await chrome.storage.local.remove('notificationFormat');
+    }
+  });
+}
 
 // user interactions
 chrome.action.onClicked.addListener(() => onClicked());

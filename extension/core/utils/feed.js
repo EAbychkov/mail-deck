@@ -232,8 +232,9 @@ class Feed {
                 }
               }
             }
-            o['author_name'] = o['author_name'] || chrome.i18n.getMessage('msg_1');
             o['author_email'] = o['author_email'] || '';
+            // a sender without a name is told by the address
+            o['author_name'] = o['author_name'] || o['author_email'];
             o.title = o.title || '';
             o.summary = o.summary || '';
 
@@ -241,12 +242,19 @@ class Feed {
           });
         }
       };
-      const key = 'ids.account.' + xml.title;
+      // The mail already told, one list per feed: the label feeds of one account each list
+      // their own mail, and a list shared by them lost what the other feed had told. The
+      // account's list of earlier versions is read until the feed has one of its own.
+      const key = 'ids.feed.' + this.href;
+      const legacy = 'ids.account.' + xml.title;
       return new Promise(resolve => {
         chrome.storage.local.get({
-          [key]: [],
+          [key]: null,
+          [legacy]: [],
           'threatAsNew': 10 // minutes
         }, prefs => {
+          const seen = Array.isArray(prefs[key]) ? prefs[key] : (Array.isArray(prefs[legacy]) ? prefs[legacy] : []);
+          const own = Array.isArray(prefs[key]);
           const newIDs = [];
           const oldIDs = [];
           const now = Date.now();
@@ -255,7 +263,7 @@ class Feed {
             if (age > 1000 * 60 * prefs.threatAsNew) {
               oldIDs.push(id);
             }
-            else if (prefs[key].includes(id)) {
+            else if (seen.includes(id)) {
               oldIDs.push(id);
             }
             else {
@@ -270,7 +278,8 @@ class Feed {
             newIDs,
             // we postpone the save of new ids to make sure the request is not being aborted
             commit() {
-              if (newIDs.length) {
+              // the first commit of a feed writes its own list, so the account's one is read once
+              if (newIDs.length || own === false) {
                 chrome.storage.local.set({
                   [key]: [
                     ...oldIDs,

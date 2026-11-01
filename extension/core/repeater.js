@@ -1,62 +1,95 @@
 /* global log, checkEmails */
 const repeater = {
-  reason: ''
+  reason: '',
+  // a forced reason was asked for since the last check: the next check is a forced one
+  forced: false
 };
-repeater.build = (type = 'normal', reason, delay) => chrome.storage.local.get({
-  'period': 120, // seconds
-  'initialPeriod': 3 // seconds
-}, async prefs => {
-  repeater.reason = reason;
+{
+  // Chrome fires an alarm at most once in 30 seconds unless the extension is unpacked, however
+  // soon it is set. A check asked for sooner runs from a timer while the worker is awake; the
+  // alarm, set a moment after the timer, stays for a worker that is gone by then.
+  const SOON = 30000;
+  const FORCED = ['user.request', 'options.changes', 'change.of.feeds', 'popup.forced'];
+  let soon = null; // the timer of a sooner check: {timer, at}
 
-  if (isNaN(delay)) {
-    if (type === 'normal') {
-      delay = (prefs.initialPeriod || 5) * 1000;
+  // one check at a time: a timer and its alarm run it once, and a check started while another
+  // one runs takes over from it (core/check.js)
+  repeater.fire = () => {
+    if (soon) {
+      clearTimeout(soon.timer);
+      soon = null;
     }
-    else if (type === 'fired') {
-      delay = prefs.period * 1000;
-    }
-    else {
-      delay = 100;
-    }
-  }
+    const forced = repeater.forced;
+    repeater.forced = false;
+    repeater.build('fired', 'alarm.fired'); // the next regular check, counted from now
+    checkEmails.execute(forced);
+  };
 
-  const now = Date.now();
-  const when = now + delay;
-  // ignore
-  if (type !== 'fired') {
-    const next = await chrome.alarms.get('repeater');
-    if (next) {
-      if (next.scheduledTime > now) {
-        if ((when - next.scheduledTime) > 0) {
-          return log('[repeater]', 'ignored', when - next.scheduledTime);
+  repeater.build = (type = 'normal', reason, delay) => {
+    if (FORCED.includes(reason)) {
+      repeater.forced = true;
+    }
+    return chrome.storage.local.get({
+      'period': 120, // seconds
+      'initialPeriod': 3 // seconds
+    }, async prefs => {
+      repeater.reason = reason;
+
+      if (isNaN(delay)) {
+        if (type === 'normal') {
+          // 0 is "right away"
+          delay = (prefs.initialPeriod ?? 3) * 1000 || 100;
+        }
+        else if (type === 'fired') {
+          delay = prefs.period * 1000;
+        }
+        else {
+          delay = 100;
         }
       }
-    }
-  }
-  log('[repeater]', `Reason: "${reason}"`, `Type: "${type}"`, `Delay: ${(delay / 1000).toFixed(2)}s`);
-  chrome.alarms.create('repeater', {
-    when,
-    periodInMinutes: prefs.period / 60
-  });
-});
+
+      const now = Date.now();
+      const when = now + delay;
+      // a check that comes sooner serves this one as well
+      if (type !== 'fired') {
+        if (soon && soon.at <= when) {
+          return log('[repeater]', 'ignored', when - soon.at);
+        }
+        const next = await chrome.alarms.get('repeater');
+        if (next) {
+          if (next.scheduledTime > now) {
+            if ((when - next.scheduledTime) > 0) {
+              return log('[repeater]', 'ignored', when - next.scheduledTime);
+            }
+          }
+        }
+      }
+      log('[repeater]', `Reason: "${reason}"`, `Type: "${type}"`, `Delay: ${(delay / 1000).toFixed(2)}s`);
+      let at = when;
+      if (type !== 'fired' && delay < SOON) {
+        if (soon) {
+          clearTimeout(soon.timer);
+        }
+        soon = {
+          at: when,
+          timer: setTimeout(repeater.fire, delay)
+        };
+        at = when + 1000;
+      }
+      chrome.alarms.create('repeater', {
+        when: at,
+        periodInMinutes: prefs.period / 60
+      });
+    });
+  };
+}
 
 repeater.reset = (reason, delay) => repeater.build('now', reason, delay);
 
 /* alarm */
 chrome.alarms.onAlarm.addListener(o => {
   if (o.name === 'repeater') {
-    repeater.build('fired', 'alarm.fired'); // make sure we can handle less than a minute calls
-
-    const forced = ['user.request', 'options.changes', 'change.of.feeds', 'popup.forced'].includes(repeater.reason);
-    checkEmails.execute(forced);
-
-    chrome.storage.local.get({
-      'initialPeriod': 3 // seconds
-    }, prefs => {
-      if (prefs.initialPeriod === 0) { // manual mode
-        chrome.alarms.onAlarm.remove('repeater');
-      }
-    });
+    repeater.fire();
   }
 });
 /* startup */
@@ -74,28 +107,16 @@ chrome.alarms.onAlarm.addListener(o => {
 
 /* idle */
 {
-  const observe = name => {
+  // Registered at once: the event that wakes a stopped worker reaches only the listeners its
+  // first run registers, so the setting is read when the event comes, not before.
+  chrome.idle.onStateChanged.addListener(async name => {
     if (name === 'active') {
-      repeater.reset('exit.idle');
-    }
-  };
-
-  const run = b => {
-    chrome.idle.onStateChanged.removeListener(observe);
-    if (b) {
-      chrome.idle.onStateChanged.addListener(observe);
-    }
-  };
-
-  chrome.storage.local.get({
-    'idle.watch': true
-  }).then(prefs => {
-    run(prefs['idle.watch']);
-  });
-
-  chrome.storage.onChanged.addListener(ps => {
-    if ('idle.watch' in ps) {
-      run(ps['idle.watch'].newValue);
+      const prefs = await chrome.storage.local.get({
+        'idle.watch': true
+      });
+      if (prefs['idle.watch']) {
+        repeater.reset('exit.idle');
+      }
     }
   });
 
