@@ -22,6 +22,7 @@ Mail Deck собирает непрочитанные письма из всех
 Возможности
 - Все ящики, в которые вы вошли, у каждого свой цвет, в том порядке, в какой вы их перетащите
 - Переписка целиком прямо в панели, вместе с вложениями
+- Вложения письма видны в его строке ещё до открытия, с указанием типа; нажатие открывает файл
 - Одноразовые коды заметны в списке и в письме; нажатие или клавиша C копирует код
 - Gmail: до десяти аккаунтов, поиск по всем аккаунтам, звёздочки, выбранные ярлыки или только вкладка «Несортированные» и видеовстреча в один клик
 - «Напомнить позже»: уберите письмо до вечера, до завтра или до следующей недели
@@ -39,13 +40,17 @@ Mail Deck собирает непрочитанные письма из всех
 У других почтовых сервисов нет для этого публичного интерфейса, поэтому Mail Deck обращается к ним так же, как их собственные веб-приложения, и изменение на их стороне может остановить сервис, пока Mail Deck не обновится.
 
 ИИ-помощник
-Выключен, пока вы не включите его в разделе «Настройки» → «ИИ».
-- Сводка переписки, которую вы читаете: главное, о чём вас просят, и даты, у каждой — ссылка, чтобы добавить её в Google Календарь
-- «Ждут вашего ответа»: отдельный фильтр с непрочитанными письмами от людей, которые ждут ответа
-Он работает на встроенной модели Chrome на вашем компьютере или с вашим собственным API-ключом поддерживаемого ИИ-провайдера. Встроенная модель бесплатна и приватна, но работает не на каждом компьютере. Ключ оплачивается провайдеру по мере использования; подписка на его чат-приложение не даёт доступа к API.
+Его кнопки на месте с самого начала, но ничего никуда не отправляется, пока вы его не включите.
+- Спросите почту своими словами, например «когда мой рейс?» или «счета за октябрь»: помощник ищет во всех аккаунтах Gmail, читает найденное и отвечает со ссылкой на каждое письмо
+- «Что важного»: сводка непрочитанной почты, сначала то, что скоро потребует вашего внимания
+- Новое письмо или ответ на языке переписки, готовые к проверке и отправке из вашего почтового сервиса
+- Сводка переписки, которую вы читаете, с её датами для Google Календаря и ответами на ваши вопросы о ней
+- Непрочитанные письма по группам: ждут вашего ответа, важное и рассылки, которые можно убрать разом
+- Перевод письма на ваш язык встроенным переводчиком Chrome, прямо на вашем компьютере
+Он работает на встроенной модели Chrome на вашем компьютере или с поддерживаемым ИИ-провайдером: с вашим собственным API-ключом или со входом по вашей подписке, если провайдер это позволяет. Встроенная модель бесплатна и приватна, но работает не на каждом компьютере.
 
 Конфиденциальность
-У Mail Deck нет своих серверов и аналитики. Расширение обращается только к Google и к почтовым сервисам, которые вы включили, через сеансы, которые уже есть в браузере, и почта каждого сервиса уходит только в этот сервис. Единственное дополнение — ИИ-помощник, если вы дадите ему свой ключ: тогда для сводки отправляется эта переписка, а для «Ждут вашего ответа» — отправитель, тема и начало непрочитанных писем, из браузера прямо к этому провайдеру. Ключ остаётся на этом компьютере, а со встроенной моделью Chrome почта его не покидает. Адрес открытой страницы читается только внутри панели, не сохраняется и никуда не отправляется. Расширение никогда не спрашивает и не хранит ваш пароль, а настройки остаются в браузере.
+У Mail Deck нет своих серверов и аналитики. Расширение обращается только к Google и к почтовым сервисам, которые вы включили, через сеансы, которые уже есть в браузере, и почта каждого сервиса уходит только в этот сервис. Единственное дополнение — ИИ-помощник, если вы подключите провайдера: тогда то, что нужно для запроса (переписка, по которой вы просите сводку или ответ, письма, найденные по вашему вопросу, отправитель, тема и начало непрочитанных писем, которые он сортирует), уходит из браузера прямо к этому провайдеру. Ключи и данные для входа остаются на этом компьютере, а со встроенной моделью Chrome почта его не покидает. Адрес открытой страницы читается только внутри панели, не сохраняется и никуда не отправляется. Расширение никогда не спрашивает и не хранит ваш пароль, а настройки остаются в браузере.
 
 Mail Deck — проект с открытым кодом под лицензией Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Расширение не создано ни одним почтовым провайдером и не связано ни с одним из них. Gmail — товарный знак Google LLC.
@@ -67,6 +72,7 @@ Mail Deck збирає непрочитані листи з усіх скрин�
 Можливості
 - Усі скриньки, у які ви ввійшли, кожна зі своїм кольором, у тому порядку, у який ви їх перетягнете
 - Усе листування просто в панелі, разом із вкладеннями
+- Вкладення листа видно в його рядку ще до відкриття, із зазначенням типу; натискання відкриває файл
 - Одноразові коди помітні в списку й у листі; натискання або клавіша C копіює код
 - Gmail: до десяти акаунтів, пошук в усіх акаунтах, зірочки, вибрані мітки або лише вкладка «Основні» та відеозустріч в один клік
 - «Нагадати пізніше»: відкладіть лист до вечора, до завтра або до наступного тижня
@@ -84,13 +90,17 @@ Mail Deck збирає непрочитані листи з усіх скрин�
 Інші поштові сервіси не мають для цього публічного інтерфейсу, тож Mail Deck звертається до них так само, як їхні власні вебзастосунки, і зміна з їхнього боку може зупинити сервіс, доки Mail Deck не оновиться.
 
 ШІ-помічник
-Вимкнений, доки ви не ввімкнете його в розділі «Налаштування» → «ШІ».
-- Підсумок листування, яке ви читаєте: головне, про що вас просять, і дати, кожна з посиланням, щоб додати її в Google Календар
-- «Чекають на вашу відповідь»: окремий фільтр із непрочитаними листами від людей, які чекають відповіді
-Він працює на вбудованій моделі Chrome на вашому комп'ютері або з вашим власним API-ключем підтримуваного ШІ-провайдера. Вбудована модель безкоштовна й приватна, але працює не на кожному комп'ютері. Ключ оплачується провайдеру за використання; підписка на його чат-застосунок не дає доступу до API.
+Його кнопки на місці від самого початку, але нічого нікуди не надсилається, доки ви його не ввімкнете.
+- Запитайте пошту своїми словами, наприклад «коли мій рейс?» або «рахунки за жовтень»: помічник шукає в усіх акаунтах Gmail, читає знайдене й відповідає з посиланням на кожен лист
+- «Що важливого»: підсумок непрочитаної пошти, спершу те, що невдовзі потребуватиме вашої уваги
+- Новий лист або відповідь мовою листування, готові до перевірки й надсилання з вашого поштового сервісу
+- Підсумок листування, яке ви читаєте, з його датами для Google Календаря та відповідями на ваші запитання про нього
+- Непрочитані листи за групами: чекають на вашу відповідь, важливе й розсилки, які можна прибрати за один раз
+- Переклад листа вашою мовою вбудованим перекладачем Chrome, просто на вашому комп'ютері
+Він працює на вбудованій моделі Chrome на вашому комп'ютері або з підтримуваним ШІ-провайдером: з вашим власним API-ключем або із входом за вашою підпискою, якщо провайдер це дозволяє. Вбудована модель безкоштовна й приватна, але працює не на кожному комп'ютері.
 
 Конфіденційність
-У Mail Deck немає власних серверів і аналітики. Розширення звертається лише до Google і до поштових сервісів, які ви ввімкнули, через сеанси, які вже є у браузері, і пошта кожного сервісу йде лише до нього. Єдине доповнення — ШІ-помічник, якщо ви дасте йому свій ключ: тоді для підсумку надсилається це листування, а для «Чекають на вашу відповідь» — відправник, тема й початок непрочитаних листів, із браузера просто до цього провайдера. Ключ лишається на цьому комп'ютері, а із вбудованою моделлю Chrome пошта його не залишає. Адреса відкритої сторінки читається лише всередині панелі, не зберігається й нікуди не надсилається. Розширення ніколи не запитує і не зберігає ваш пароль, а налаштування залишаються у браузері.
+У Mail Deck немає власних серверів і аналітики. Розширення звертається лише до Google і до поштових сервісів, які ви ввімкнули, через сеанси, які вже є у браузері, і пошта кожного сервісу йде лише до нього. Єдине доповнення — ШІ-помічник, якщо ви підключите провайдера: тоді те, що потрібно для запиту (листування, для якого ви просите підсумок або відповідь, листи, знайдені за вашим запитанням, відправник, тема й початок непрочитаних листів, які він сортує), іде з браузера просто до цього провайдера. Ключі й дані для входу лишаються на цьому комп'ютері, а із вбудованою моделлю Chrome пошта його не залишає. Адреса відкритої сторінки читається лише всередині панелі, не зберігається й нікуди не надсилається. Розширення ніколи не запитує і не зберігає ваш пароль, а налаштування залишаються у браузері.
 
 Mail Deck — проєкт із відкритим кодом за ліцензією Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Розширення не створене жодним поштовим провайдером і не пов'язане з жодним із них. Gmail — торговельна марка Google LLC.
@@ -112,6 +122,7 @@ Klicke auf eine Mail, um sie direkt im Fenster zu lesen. Du kannst sie als geles
 Funktionen
 - Alle angemeldeten Postfächer, jedes in eigener Farbe und in der Reihenfolge, in die du sie ziehst
 - Ganze Unterhaltungen im Fenster, samt Anhängen
+- Die Anhänge einer Mail siehst du schon vor dem Öffnen in ihrer Zeile, samt Dateityp; ein Klick öffnet die Datei
 - Einmalcodes fallen in der Liste und in der Mail sofort auf; ein Klick oder C kopiert sie
 - Gmail: bis zu zehn Konten, Suche in allen Konten, Sterne, ausgewählte Labels oder nur der Tab „Allgemein“ und eine Videobesprechung mit einem Klick
 - Später erinnern: eine Mail bis heute Abend, morgen oder nächste Woche beiseitelegen
@@ -129,13 +140,17 @@ Funktionen
 Die anderen E-Mail-Dienste haben dafür keine öffentliche Schnittstelle. Mail Deck folgt deshalb ihren eigenen Web-Apps, und eine Änderung auf ihrer Seite kann einen Dienst stoppen, bis Mail Deck aktualisiert ist.
 
 KI-Assistent
-Aus, bis du ihn unter Einstellungen → KI einschaltest.
-- Eine Zusammenfassung der Unterhaltung, die du liest: das Wichtigste, worum sie dich bittet, und ihre Termine, jeder mit einem Link, der ihn zu Google Kalender hinzufügt
-- Wartet auf deine Antwort: ein Filter, der ungelesene Mails von Menschen sammelt, die eine Antwort erwarten
-Er arbeitet mit dem integrierten Modell von Chrome auf deinem Computer oder mit deinem eigenen API-Schlüssel eines unterstützten KI-Anbieters. Das integrierte Modell ist kostenlos und privat, läuft aber nicht auf jedem Computer. Einen Schlüssel rechnet sein Anbieter nach Nutzung ab; ein Abo für dessen Chat-App enthält keinen API-Zugang.
+Seine Schaltflächen sind von Anfang an da, und nichts wird irgendwohin gesendet, bis du ihn einschaltest.
+- Frag deine Mails in eigenen Worten, etwa „Wann geht mein Flug?“ oder „Rechnungen vom Oktober“: Er durchsucht alle Gmail-Konten, liest, was er findet, und antwortet mit einem Verweis auf jede Mail
+- Was wichtig ist: deine ungelesenen Mails zusammengefasst, zuerst das, was bald deine Aufmerksamkeit braucht
+- Eine neue Mail oder eine Antwort in der Sprache der Unterhaltung, zum Prüfen und Senden aus deinem E-Mail-Dienst
+- Eine Zusammenfassung der Unterhaltung, die du liest, mit ihren Terminen für Google Kalender, und Antworten auf deine Fragen dazu
+- Ungelesene Mails sortiert: was auf deine Antwort wartet, Wichtiges und Newsletter, die du in einem Rutsch aufräumst
+- Übersetze eine Mail mit dem eigenen Übersetzer von Chrome in deine Sprache, auf deinem Computer
+Er arbeitet mit dem integrierten Modell von Chrome auf deinem Computer oder mit einem unterstützten KI-Anbieter: mit deinem eigenen API-Schlüssel oder, wo der Anbieter es erlaubt, mit einer Anmeldung über dein Abo. Das integrierte Modell ist kostenlos und privat, läuft aber nicht auf jedem Computer.
 
 Datenschutz
-Mail Deck hat keine eigenen Server und keine Analyse. Es spricht nur mit Google und mit den E-Mail-Diensten, die du einschaltest, jeweils über die Sitzung, die dein Browser schon hat, und die Mails jedes Dienstes gehen nur an diesen Dienst. Hinzu kommt nur der KI-Assistent, wenn du ihm deinen eigenen Schlüssel gibst: Eine Zusammenfassung sendet dann diese Unterhaltung und „Wartet auf deine Antwort“ Absender, Betreff und Vorschau ungelesener Mails, direkt von deinem Browser an diesen Anbieter. Der Schlüssel bleibt auf diesem Computer, und mit dem integrierten Modell von Chrome verlassen deine Mails ihn nicht. Die Adresse der Seite, auf der du bist, wird nur im Fenster gelesen, nie gespeichert oder gesendet. Mail Deck fragt nie nach deinem Passwort und speichert es nicht, und deine Einstellungen bleiben in deinem Browser.
+Mail Deck hat keine eigenen Server und keine Analyse. Es spricht nur mit Google und mit den E-Mail-Diensten, die du einschaltest, jeweils über die Sitzung, die dein Browser schon hat, und die Mails jedes Dienstes gehen nur an diesen Dienst. Hinzu kommt nur der KI-Assistent, wenn du einen Anbieter verbindest: Was eine Anfrage braucht (die Unterhaltung, die du zusammenfassen lässt oder beantwortest, die Mails, die eine Frage gefunden hat, Absender, Betreff und Vorschau der ungelesenen Mails, die er sortiert), geht dann direkt von deinem Browser an diesen Anbieter. Schlüssel und Anmeldungen bleiben auf diesem Computer, und mit dem integrierten Modell von Chrome verlassen deine Mails ihn nicht. Die Adresse der Seite, auf der du bist, wird nur im Fenster gelesen, nie gespeichert oder gesendet. Mail Deck fragt nie nach deinem Passwort und speichert es nicht, und deine Einstellungen bleiben in deinem Browser.
 
 Mail Deck ist Open Source unter der Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Es stammt von keinem E-Mail-Anbieter und ist mit keinem verbunden. Gmail ist eine Marke von Google LLC.
@@ -157,6 +172,7 @@ Abre el panel en un sitio web y el correo de ese sitio aparece arriba, de todos 
 Funciones
 - Todos los buzones con sesión iniciada, cada uno con su color y en el orden en que los arrastres
 - Conversaciones completas en el panel, con los archivos adjuntos
+- Los archivos adjuntos de un mensaje aparecen en su línea antes de abrirlo, con su tipo; un clic abre el archivo
 - Los códigos de un solo uso destacan en la lista y en el mensaje; un clic o la tecla C los copia
 - Gmail: hasta diez cuentas, búsqueda en todas las cuentas, destacados, las etiquetas que elijas o solo la pestaña Principal, y una videorreunión con un clic
 - Recordar más tarde: aparta un mensaje hasta esta tarde, mañana o la semana que viene
@@ -174,13 +190,17 @@ Funciones
 Los demás servicios de correo no tienen una interfaz pública para esto, así que Mail Deck sigue sus propias aplicaciones web, y un cambio por su parte puede detener alguno de ellos hasta que Mail Deck se actualice.
 
 Asistente de IA
-Desactivado hasta que lo actives en Configuración → IA.
-- Un resumen de la conversación que estás leyendo: los puntos clave, lo que te pide y sus fechas, cada una con un enlace para añadirla a Google Calendar
-- Esperan tu respuesta: un filtro que reúne el correo sin leer de personas que esperan una respuesta
-Funciona con el modelo integrado de Chrome en tu ordenador o con tu propia clave de API de un proveedor de IA compatible. El modelo integrado es gratis y privado, pero no funciona en todos los ordenadores. El proveedor cobra la clave por uso; una suscripción a su aplicación de chat no incluye acceso a la API.
+Sus botones están ahí desde el principio, y no se envía nada a ningún sitio hasta que lo actives.
+- Pregunta a tu correo con tus propias palabras, como «¿cuándo es mi vuelo?» o «facturas de octubre»: busca en todas las cuentas de Gmail, lee lo que encuentra y responde con una referencia a cada mensaje
+- Lo importante: un resumen de tu correo sin leer, primero lo que pronto requiere tu atención
+- Un correo nuevo, o una respuesta en el idioma de la conversación, listos para que los revises y envíes desde tu servicio de correo
+- Un resumen de la conversación que estás leyendo, con sus fechas para Google Calendar, y respuestas a tus preguntas sobre ella
+- El correo sin leer, ordenado: lo que espera tu respuesta, lo importante y los boletines que puedes despejar de una vez
+- Traduce un mensaje a tu idioma con el propio traductor de Chrome, en tu ordenador
+Funciona con el modelo integrado de Chrome en tu ordenador o con un proveedor de IA compatible: tu propia clave de API, o un inicio de sesión con tu suscripción si el proveedor lo permite. El modelo integrado es gratis y privado, pero no funciona en todos los ordenadores.
 
 Privacidad
-Mail Deck no tiene servidores propios ni analítica. Solo se comunica con Google y con los servicios de correo que actives, cada uno con la sesión que tu navegador ya tiene, y el correo de cada servicio solo va a ese servicio. Lo único que se añade es el asistente de IA, si le das tu propia clave: entonces un resumen envía esa conversación, y «Esperan tu respuesta», el remitente, el asunto y la vista previa del correo sin leer, directamente desde tu navegador a ese proveedor. La clave se queda en este ordenador, y con el modelo integrado de Chrome tu correo no sale de él. La dirección de la página en la que estás solo se lee dentro del panel; nunca se guarda ni se envía. Mail Deck nunca pide ni guarda tu contraseña, y tus ajustes se quedan en tu navegador.
+Mail Deck no tiene servidores propios ni analítica. Solo se comunica con Google y con los servicios de correo que actives, cada uno con la sesión que tu navegador ya tiene, y el correo de cada servicio solo va a ese servicio. Lo único que se añade es el asistente de IA, si conectas un proveedor: lo que necesita cada petición (la conversación que resumes o a la que respondes, el correo que encontró una pregunta, el remitente, el asunto y la vista previa del correo sin leer que ordena) va entonces directamente desde tu navegador a ese proveedor. Las claves y los inicios de sesión se quedan en este ordenador, y con el modelo integrado de Chrome tu correo no sale de él. La dirección de la página en la que estás solo se lee dentro del panel; nunca se guarda ni se envía. Mail Deck nunca pide ni guarda tu contraseña, y tus ajustes se quedan en tu navegador.
 
 Mail Deck es de código abierto con la licencia Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 No está hecho por ningún proveedor de correo ni está afiliado a ninguno. Gmail es una marca comercial de Google LLC.
@@ -202,6 +222,7 @@ Ouvrez le panneau sur un site web : les e-mails de ce site s'affichent en haut, 
 Fonctionnalités
 - Toutes les boîtes connectées, chacune avec sa couleur et dans l'ordre où vous les faites glisser
 - Conversations entières dans le panneau, pièces jointes comprises
+- Les pièces jointes d'un message s'affichent sur sa ligne avant même de l'ouvrir, avec leur type ; un clic ouvre le fichier
 - Les codes à usage unique ressortent dans la liste et dans le message ; un clic ou la touche C les copie
 - Gmail : jusqu'à dix comptes, recherche dans tous les comptes, messages suivis, libellés choisis ou seulement l'onglet Principale, et une réunion vidéo en un clic
 - Me le rappeler plus tard : mettez un message de côté jusqu'à ce soir, demain ou la semaine prochaine
@@ -219,13 +240,17 @@ Fonctionnalités
 Les autres messageries n'ont pas d'interface publique pour cela : Mail Deck suit donc leurs propres applications web, et un changement de leur côté peut arrêter l'une d'elles jusqu'à une mise à jour de Mail Deck.
 
 Assistant IA
-Désactivé tant que vous ne l'activez pas dans Paramètres → IA.
-- Un résumé de la conversation que vous lisez : les points clés, ce qu'elle vous demande et ses dates, chacune avec un lien pour l'ajouter à Google Agenda
-- En attente de votre réponse : un filtre qui regroupe les messages non lus de personnes qui attendent une réponse
-Il fonctionne avec le modèle intégré de Chrome sur votre ordinateur, ou avec votre propre clé API d'un fournisseur d'IA pris en charge. Le modèle intégré est gratuit et privé, mais ne fonctionne pas sur tous les ordinateurs. Une clé est facturée par son fournisseur à l'usage ; un abonnement à son application de chat n'inclut pas l'accès à l'API.
+Ses boutons sont là dès le départ, et rien n'est envoyé nulle part tant que vous ne l'activez pas.
+- Interrogez votre courrier avec vos propres mots, comme « quand part mon vol ? » ou « factures d'octobre » : il cherche dans tous les comptes Gmail, lit ce qu'il trouve et répond en renvoyant à chaque message
+- L'important : un résumé de vos messages non lus, en commençant par ce qui demande bientôt votre attention
+- Un nouveau message ou une réponse dans la langue de la conversation, à vérifier et envoyer depuis votre messagerie
+- Un résumé de la conversation que vous lisez, avec ses dates pour Google Agenda, et des réponses à vos questions à son sujet
+- Les messages non lus triés : en attente de votre réponse, importants, et newsletters à écarter en une fois
+- Traduisez un message dans votre langue avec le traducteur de Chrome lui-même, sur votre ordinateur
+Il fonctionne avec le modèle intégré de Chrome sur votre ordinateur, ou avec un fournisseur d'IA pris en charge : votre propre clé API, ou une connexion avec votre abonnement quand le fournisseur le permet. Le modèle intégré est gratuit et privé, mais ne fonctionne pas sur tous les ordinateurs.
 
 Confidentialité
-Mail Deck n'a ni serveurs ni outils d'analyse. Il ne communique qu'avec Google et avec les messageries que vous activez, chacune grâce à la session déjà ouverte dans votre navigateur, et le courrier de chaque service ne va qu'à ce service. Seul s'y ajoute l'assistant IA, si vous lui donnez votre propre clé : un résumé envoie alors cette conversation, et « En attente de votre réponse » l'expéditeur, l'objet et l'aperçu des messages non lus, directement depuis votre navigateur vers ce fournisseur. La clé reste sur cet ordinateur, et avec le modèle intégré de Chrome vos messages ne le quittent pas. L'adresse de la page où vous êtes n'est lue que dans le panneau, jamais enregistrée ni envoyée. Mail Deck ne demande ni ne stocke jamais votre mot de passe, et vos réglages restent dans votre navigateur.
+Mail Deck n'a ni serveurs ni outils d'analyse. Il ne communique qu'avec Google et avec les messageries que vous activez, chacune grâce à la session déjà ouverte dans votre navigateur, et le courrier de chaque service ne va qu'à ce service. Seul s'y ajoute l'assistant IA, si vous connectez un fournisseur : ce dont une demande a besoin (la conversation que vous résumez ou à laquelle vous répondez, les messages trouvés pour une question, l'expéditeur, l'objet et l'aperçu des messages non lus qu'il trie) part alors directement de votre navigateur vers ce fournisseur. Les clés et les connexions restent sur cet ordinateur, et avec le modèle intégré de Chrome vos messages ne le quittent pas. L'adresse de la page où vous êtes n'est lue que dans le panneau, jamais enregistrée ni envoyée. Mail Deck ne demande ni ne stocke jamais votre mot de passe, et vos réglages restent dans votre navigateur.
 
 Mail Deck est open source sous licence Mozilla Public License 1.1 : https://github.com/nord-express/mail-deck
 Il n'est ni conçu par un fournisseur de messagerie, ni affilié à l'un d'eux. Gmail est une marque de Google LLC.
@@ -247,6 +272,7 @@ Apri il pannello su un sito e la posta di quel sito compare in cima, da tutte le
 Funzioni
 - Tutte le caselle collegate, ognuna con il suo colore e nell'ordine in cui le trascini
 - Conversazioni intere nel pannello, allegati compresi
+- Gli allegati di un messaggio compaiono sulla sua riga prima di aprirlo, con il loro tipo; un clic apre il file
 - I codici monouso risaltano nell'elenco e nel messaggio; un clic o il tasto C li copia
 - Gmail: fino a dieci account, ricerca in tutti gli account, stelle, etichette scelte o solo la scheda Principale, e una riunione video con un clic
 - Ricordamelo più tardi: metti da parte un messaggio fino a stasera, domani o la settimana prossima
@@ -264,13 +290,17 @@ Funzioni
 Gli altri servizi di posta non hanno un'interfaccia pubblica per questo, quindi Mail Deck segue le loro app web, e una modifica da parte loro può fermarne uno finché Mail Deck non viene aggiornato.
 
 Assistente IA
-Disattivato finché non lo attivi in Impostazioni → IA.
-- Un riepilogo della conversazione che stai leggendo: i punti chiave, cosa ti chiede e le sue date, ognuna con un link per aggiungerla a Google Calendar
-- In attesa della tua risposta: un filtro che raccoglie la posta non letta di persone che aspettano una risposta
-Funziona con il modello integrato di Chrome sul tuo computer, oppure con la tua chiave API di un fornitore di IA supportato. Il modello integrato è gratuito e privato, ma non funziona su tutti i computer. La chiave viene addebitata dal suo fornitore a consumo; un abbonamento alla sua app di chat non include l'accesso all'API.
+I suoi pulsanti ci sono fin dall'inizio, e non viene inviato nulla da nessuna parte finché non lo attivi.
+- Chiedi alla tua posta con parole tue, come «quando parte il mio volo?» o «fatture di ottobre»: cerca in tutti gli account Gmail, legge quello che trova e risponde con un riferimento a ogni messaggio
+- Cosa è importante: un riepilogo della posta non letta, prima ciò che a breve richiede la tua attenzione
+- Un nuovo messaggio o una risposta nella lingua della conversazione, da controllare e inviare dal tuo servizio di posta
+- Un riepilogo della conversazione che stai leggendo, con le sue date per Google Calendar, e risposte alle tue domande su di essa
+- La posta non letta ordinata: in attesa della tua risposta, importante e newsletter da togliere di mezzo in un colpo solo
+- Traduci un messaggio nella tua lingua con il traduttore di Chrome stesso, sul tuo computer
+Funziona con il modello integrato di Chrome sul tuo computer, oppure con un fornitore di IA supportato: la tua chiave API, o un accesso con il tuo abbonamento dove il fornitore lo consente. Il modello integrato è gratuito e privato, ma non funziona su tutti i computer.
 
 Privacy
-Mail Deck non ha server propri né strumenti di analisi. Comunica solo con Google e con i servizi di posta che attivi, ognuno tramite la sessione già aperta nel browser, e la posta di ogni servizio va solo a quel servizio. L'unica aggiunta è l'assistente IA, se gli dai la tua chiave: un riepilogo invia allora quella conversazione, e «In attesa della tua risposta» mittente, oggetto e anteprima della posta non letta, direttamente dal tuo browser a quel fornitore. La chiave resta su questo computer, e con il modello integrato di Chrome la tua posta non lo lascia. L'indirizzo della pagina in cui ti trovi viene letto solo nel pannello, mai salvato né inviato. Mail Deck non chiede né conserva mai la tua password, e le impostazioni restano nel tuo browser.
+Mail Deck non ha server propri né strumenti di analisi. Comunica solo con Google e con i servizi di posta che attivi, ognuno tramite la sessione già aperta nel browser, e la posta di ogni servizio va solo a quel servizio. L'unica aggiunta è l'assistente IA, se colleghi un fornitore: ciò che serve a una richiesta (la conversazione che riassumi o a cui rispondi, la posta trovata da una domanda, mittente, oggetto e anteprima della posta non letta che ordina) va allora direttamente dal tuo browser a quel fornitore. Chiavi e accessi restano su questo computer, e con il modello integrato di Chrome la tua posta non lo lascia. L'indirizzo della pagina in cui ti trovi viene letto solo nel pannello, mai salvato né inviato. Mail Deck non chiede né conserva mai la tua password, e le impostazioni restano nel tuo browser.
 
 Mail Deck è open source con licenza Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Non è realizzato da alcun fornitore di posta né affiliato ad alcuno di essi. Gmail è un marchio di Google LLC.
@@ -292,6 +322,7 @@ Otwórz panel na stronie internetowej, a poczta od tej strony pojawi się na gó
 Funkcje
 - Wszystkie zalogowane skrzynki, każda w swoim kolorze i w kolejności, w jakiej je przeciągniesz
 - Całe rozmowy w panelu, razem z załącznikami
+- Załączniki wiadomości widać w jej wierszu jeszcze przed otwarciem, razem z ich typem; kliknięcie otwiera plik
 - Kody jednorazowe wyróżniają się na liście i w wiadomości; kliknięcie albo klawisz C je kopiuje
 - Gmail: do dziesięciu kont, wyszukiwanie we wszystkich kontach, gwiazdki, wybrane etykiety lub tylko karta Główne oraz spotkanie wideo jednym kliknięciem
 - Przypomnij później: odłóż wiadomość do wieczora, do jutra albo do przyszłego tygodnia
@@ -309,13 +340,17 @@ Funkcje
 Pozostałe usługi pocztowe nie mają do tego publicznego interfejsu, więc Mail Deck postępuje tak jak ich własne aplikacje internetowe, a zmiana po ich stronie może zatrzymać którąś z usług do czasu aktualizacji Mail Deck.
 
 Asystent AI
-Wyłączony, dopóki nie włączysz go w Ustawieniach → AI.
-- Streszczenie czytanej rozmowy: najważniejsze punkty, o co cię prosi i jej daty, każda z linkiem, który dodaje ją do Kalendarza Google
-- Czeka na twoją odpowiedź: filtr, który zbiera nieprzeczytaną pocztę od ludzi czekających na odpowiedź
-Działa na wbudowanym modelu Chrome na twoim komputerze albo z twoim własnym kluczem API od obsługiwanego dostawcy AI. Wbudowany model jest bezpłatny i prywatny, ale nie działa na każdym komputerze. Klucz jest rozliczany przez dostawcę za użycie; subskrypcja jego aplikacji czatu nie obejmuje dostępu do API.
+Jego przyciski są na miejscu od początku, ale nic nie jest nigdzie wysyłane, dopóki go nie włączysz.
+- Pytaj pocztę własnymi słowami, np. „kiedy mam lot?” albo „faktury z października”: asystent przeszukuje wszystkie konta Gmail, czyta, co znajdzie, i odpowiada z odnośnikiem do każdej wiadomości
+- Co ważne: streszczenie nieprzeczytanej poczty, najpierw to, co wkrótce wymaga twojej uwagi
+- Nowa wiadomość albo odpowiedź w języku rozmowy, do sprawdzenia i wysłania z twojej usługi pocztowej
+- Streszczenie czytanej rozmowy z jej datami dla Kalendarza Google oraz odpowiedzi na twoje pytania o nią
+- Nieprzeczytana poczta posortowana: to, co czeka na twoją odpowiedź, ważne i newslettery do uprzątnięcia za jednym zamachem
+- Przetłumacz wiadomość na swój język wbudowanym tłumaczem Chrome, na swoim komputerze
+Działa na wbudowanym modelu Chrome na twoim komputerze albo z obsługiwanym dostawcą AI: z twoim własnym kluczem API albo przez logowanie w ramach twojej subskrypcji, jeśli dostawca na to pozwala. Wbudowany model jest bezpłatny i prywatny, ale nie działa na każdym komputerze.
 
 Prywatność
-Mail Deck nie ma własnych serwerów ani analityki. Łączy się tylko z Google i z usługami pocztowymi, które włączysz, z każdą przez sesję, którą przeglądarka już ma, a poczta każdej usługi trafia tylko do niej. Jedynym dodatkiem jest asystent AI, jeśli dasz mu własny klucz: streszczenie wysyła wtedy tę rozmowę, a „Czeka na twoją odpowiedź” nadawcę, temat i podgląd nieprzeczytanej poczty, prosto z przeglądarki do tego dostawcy. Klucz zostaje na tym komputerze, a przy wbudowanym modelu Chrome poczta go nie opuszcza. Adres strony, na której jesteś, jest odczytywany tylko w panelu i nigdy nie jest zapisywany ani wysyłany. Mail Deck nigdy nie prosi o hasło ani go nie przechowuje, a ustawienia zostają w przeglądarce.
+Mail Deck nie ma własnych serwerów ani analityki. Łączy się tylko z Google i z usługami pocztowymi, które włączysz, z każdą przez sesję, którą przeglądarka już ma, a poczta każdej usługi trafia tylko do niej. Jedynym dodatkiem jest asystent AI, jeśli połączysz dostawcę: to, czego wymaga zapytanie (rozmowa, którą streszczasz lub na którą odpowiadasz, poczta znaleziona dla pytania, nadawca, temat i podgląd nieprzeczytanej poczty, którą sortuje), trafia wtedy prosto z przeglądarki do tego dostawcy. Klucze i dane logowania zostają na tym komputerze, a przy wbudowanym modelu Chrome poczta go nie opuszcza. Adres strony, na której jesteś, jest odczytywany tylko w panelu i nigdy nie jest zapisywany ani wysyłany. Mail Deck nigdy nie prosi o hasło ani go nie przechowuje, a ustawienia zostają w przeglądarce.
 
 Mail Deck jest otwartym oprogramowaniem na licencji Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Nie jest tworzony przez żadnego dostawcę poczty ani z żadnym z nich powiązany. Gmail jest znakiem towarowym Google LLC.
@@ -337,6 +372,7 @@ Paneli bir web sitesinde açın; o sitenin postaları, tüm posta kutularından,
 Özellikler
 - Oturum açılmış tüm posta kutuları, her biri kendi renginde ve sürüklediğiniz sırada
 - Ekleriyle birlikte yazışmanın tamamı panelde
+- Bir iletinin ekleri, iletiyi açmadan önce satırında türleriyle birlikte görünür; tıklayınca dosya açılır
 - Tek kullanımlık kodlar listede ve iletide öne çıkar; bir tıklama veya C tuşu onları kopyalar
 - Gmail: ona kadar hesap, tüm hesaplarda arama, yıldızlar, seçtiğiniz etiketler veya yalnızca Birincil sekmesi ve tek tıkla görüntülü toplantı
 - Sonra hatırlat: bir iletiyi bu akşama, yarına veya gelecek haftaya kadar kenara koyun
@@ -354,13 +390,17 @@ Paneli bir web sitesinde açın; o sitenin postaları, tüm posta kutularından,
 Diğer e-posta hizmetlerinin bunun için herkese açık bir arayüzü yoktur; bu yüzden Mail Deck onların kendi web uygulamalarını izler ve onların tarafındaki bir değişiklik, Mail Deck güncellenene kadar bir hizmeti durdurabilir.
 
 Yapay zekâ asistanı
-Ayarlar → Yapay zekâ bölümünden açana kadar kapalıdır.
-- Okuduğunuz yazışmanın özeti: önemli noktalar, sizden istenenler ve tarihler; her tarih için onu Google Takvim'e ekleyen bir bağlantı
-- Yanıtınızı bekleyenler: yanıt bekleyen kişilerden gelen okunmamış postaları toplayan bir filtre
-Bilgisayarınızda Chrome'un yerleşik modeliyle veya desteklenen bir yapay zekâ sağlayıcısından aldığınız kendi API anahtarınızla çalışır. Yerleşik model ücretsiz ve gizlidir, ama her bilgisayarda çalışmaz. Anahtarı sağlayıcısı kullandıkça faturalandırır; sağlayıcının sohbet uygulamasına abonelik API erişimi içermez.
+Düğmeleri baştan beri yerindedir ve siz açana kadar hiçbir şey hiçbir yere gönderilmez.
+- Postanıza kendi kelimelerinizle sorun, örneğin “uçuşum ne zaman?” veya “ekim faturaları”: tüm Gmail hesaplarında arar, bulduklarını okur ve her iletiye bir bağlantı vererek yanıtlar
+- Önemli olanlar: okunmamış postalarınızın özeti, önce yakında ilgilenmeniz gerekenler
+- Kontrol edip kendi e-posta hizmetinizden göndereceğiniz yeni bir e-posta veya yazışmanın dilinde bir yanıt
+- Okuduğunuz yazışmanın özeti, Google Takvim için tarihleri ve yazışmayla ilgili sorularınıza yanıtlar
+- Okunmamış postalar gruplara ayrılır: yanıtınızı bekleyenler, önemliler ve tek seferde temizleyebileceğiniz bültenler
+- Bir iletiyi Chrome'un kendi çevirmeniyle, bilgisayarınızda kendi dilinize çevirin
+Bilgisayarınızda Chrome'un yerleşik modeliyle veya desteklenen bir yapay zekâ sağlayıcısıyla çalışır: kendi API anahtarınızla ya da sağlayıcının izin verdiği durumlarda aboneliğinizle oturum açarak. Yerleşik model ücretsiz ve gizlidir, ama her bilgisayarda çalışmaz.
 
 Gizlilik
-Mail Deck'in kendi sunucuları ve analitiği yoktur. Yalnızca Google ve etkinleştirdiğiniz e-posta hizmetleriyle, her biri için tarayıcınızda zaten açık olan oturumla konuşur ve her hizmetin postası yalnızca o hizmete gider. Tek ek, kendi anahtarınızı verirseniz yapay zekâ asistanıdır: o zaman özet o yazışmayı, “Yanıtınızı bekleyenler” ise okunmamış postaların göndereni, konusu ve önizlemesini doğrudan tarayıcınızdan o sağlayıcıya gönderir. Anahtar bu bilgisayarda kalır; Chrome'un yerleşik modeliyle de postanız bilgisayardan çıkmaz. Bulunduğunuz sayfanın adresi yalnızca panelin içinde okunur, asla saklanmaz veya gönderilmez. Mail Deck şifrenizi asla istemez veya saklamaz, ayarlarınız tarayıcınızda kalır.
+Mail Deck'in kendi sunucuları ve analitiği yoktur. Yalnızca Google ve etkinleştirdiğiniz e-posta hizmetleriyle, her biri için tarayıcınızda zaten açık olan oturumla konuşur ve her hizmetin postası yalnızca o hizmete gider. Tek ek, bir sağlayıcı bağlarsanız yapay zekâ asistanıdır: o zaman bir isteğin gerektirdikleri (özetlediğiniz veya yanıtladığınız yazışma, bir sorunun bulduğu postalar, sıraladığı okunmamış postaların göndereni, konusu ve önizlemesi) doğrudan tarayıcınızdan o sağlayıcıya gider. Anahtarlar ve oturum açma bilgileri bu bilgisayarda kalır; Chrome'un yerleşik modeliyle de postanız bilgisayardan çıkmaz. Bulunduğunuz sayfanın adresi yalnızca panelin içinde okunur, asla saklanmaz veya gönderilmez. Mail Deck şifrenizi asla istemez veya saklamaz, ayarlarınız tarayıcınızda kalır.
 
 Mail Deck, Mozilla Public License 1.1 lisansıyla açık kaynaklıdır: https://github.com/nord-express/mail-deck
 Hiçbir e-posta sağlayıcısı tarafından yapılmamıştır ve hiçbiriyle bağlantılı değildir. Gmail, Google LLC'nin ticari markasıdır.
@@ -382,6 +422,7 @@ Open het paneel op een website en de mail van die site staat bovenaan, uit elke 
 Functies
 - Alle ingelogde mailboxen, elk met een eigen kleur en in de volgorde waarin je ze sleept
 - Hele gesprekken in het paneel, met bijlagen
+- De bijlagen van een bericht staan al op de regel ervan voordat je het opent, met hun bestandstype; een klik opent het bestand
 - Eenmalige codes springen eruit in de lijst en in het bericht; een klik of C kopieert ze
 - Gmail: tot tien accounts, zoeken in alle accounts, sterren, gekozen labels of alleen het tabblad Primair, en een videovergadering met één klik
 - Later herinneren: leg een bericht weg tot vanavond, morgen of volgende week
@@ -399,13 +440,17 @@ Functies
 De andere maildiensten hebben hiervoor geen openbare interface. Mail Deck volgt daarom hun eigen webapps, en een wijziging aan hun kant kan een dienst stilleggen tot Mail Deck is bijgewerkt.
 
 AI-assistent
-Uit tot je hem aanzet bij Instellingen → AI.
-- Een samenvatting van het gesprek dat je leest: de belangrijkste punten, wat er van je gevraagd wordt en de datums, elk met een link om toe te voegen aan Google Agenda
-- Wacht op je antwoord: een filter dat ongelezen mail verzamelt van mensen die een antwoord verwachten
-Hij werkt met het ingebouwde model van Chrome op je computer, of met je eigen API-sleutel van een ondersteunde AI-aanbieder. Het ingebouwde model is gratis en privé, maar werkt niet op elke computer. Een sleutel wordt door de aanbieder per gebruik afgerekend; een abonnement op de chat-app van die aanbieder geeft geen toegang tot de API.
+De knoppen zijn er vanaf het begin, en er wordt nergens iets heen gestuurd tot je hem aanzet.
+- Vraag je mail iets in gewone woorden, zoals ‘wanneer gaat mijn vlucht?’ of ‘facturen van oktober’: hij zoekt in alle Gmail-accounts, leest wat hij vindt en antwoordt met een verwijzing naar elke mail
+- Wat belangrijk is: je ongelezen mail samengevat, eerst wat binnenkort je aandacht vraagt
+- Een nieuwe e-mail of een antwoord in de taal van het gesprek, om na te kijken en te versturen vanuit je maildienst
+- Een samenvatting van het gesprek dat je leest, met de datums voor Google Agenda, en antwoorden op je vragen erover
+- Ongelezen mail gesorteerd: wacht op je antwoord, belangrijk, en nieuwsbrieven om in één keer op te ruimen
+- Vertaal een bericht naar je eigen taal met de eigen vertaler van Chrome, op je computer
+Hij werkt met het ingebouwde model van Chrome op je computer, of met een ondersteunde AI-aanbieder: je eigen API-sleutel, of inloggen met je abonnement waar de aanbieder dat toestaat. Het ingebouwde model is gratis en privé, maar werkt niet op elke computer.
 
 Privacy
-Mail Deck heeft geen eigen servers en geen analyse. Het praat alleen met Google en met de maildiensten die je aanzet, elk via de sessie die je browser al heeft, en de mail van elke dienst gaat alleen naar die dienst. Het enige wat erbij komt is de AI-assistent, als je hem je eigen sleutel geeft: een samenvatting stuurt dan dat gesprek, en ‘Wacht op je antwoord’ de afzender, het onderwerp en het voorbeeld van ongelezen mail, rechtstreeks vanuit je browser naar die aanbieder. De sleutel blijft op deze computer, en met het ingebouwde model van Chrome verlaat je mail hem niet. Het adres van de pagina waarop je bent, wordt alleen in het paneel gelezen, nooit opgeslagen of verstuurd. Mail Deck vraagt nooit naar je wachtwoord en bewaart het niet, en je instellingen blijven in je browser.
+Mail Deck heeft geen eigen servers en geen analyse. Het praat alleen met Google en met de maildiensten die je aanzet, elk via de sessie die je browser al heeft, en de mail van elke dienst gaat alleen naar die dienst. Het enige wat erbij komt is de AI-assistent, als je een aanbieder koppelt: wat een verzoek nodig heeft (het gesprek dat je samenvat of beantwoordt, de mail die een vraag vond, de afzender, het onderwerp en het voorbeeld van ongelezen mail die hij sorteert) gaat dan rechtstreeks vanuit je browser naar die aanbieder. Sleutels en aanmeldingen blijven op deze computer, en met het ingebouwde model van Chrome verlaat je mail hem niet. Het adres van de pagina waarop je bent, wordt alleen in het paneel gelezen, nooit opgeslagen of verstuurd. Mail Deck vraagt nooit naar je wachtwoord en bewaart het niet, en je instellingen blijven in je browser.
 
 Mail Deck is open source onder de Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Het is niet gemaakt door of verbonden met welke mailprovider dan ook. Gmail is een handelsmerk van Google LLC.
@@ -427,6 +472,7 @@ Mail Deck は、ログインしているすべての受信トレイの未読メ�
 機能
 - ログイン中のすべてのメールボックス。それぞれに色が付き、ドラッグで並べ替え可能
 - 添付ファイルを含むスレッド全体をパネル内で表示
+- メールを開く前から、その行に添付ファイルを種類付きで表示。クリックでファイルを開く
 - ワンタイム コードを一覧とメール内で目立つように表示。クリックか C キーでコピー
 - Gmail: 最大 10 アカウント、全アカウントの検索、スター、選んだラベルまたはメインタブのみの表示、ワンクリックでビデオ会議
 - 後でリマインド: メールを今夜、明日、来週まで一時的に非表示
@@ -444,13 +490,17 @@ Mail Deck は、ログインしているすべての受信トレイの未読メ�
 その他のメールサービスにはこのための公開インターフェースがないため、Mail Deck は各サービスのウェブアプリと同じ方法で動作します。サービス側の変更により、Mail Deck が更新されるまでそのサービスが使えなくなることがあります。
 
 AI アシスタント
-[設定] → [AI アシスタント] でオンにするまでオフです。
-- 読んでいるスレッドの要約: 要点、あなたへの依頼、日時。日時ごとに Google カレンダーに追加するリンク付き
-- 返信待ち: 返事を待っている人からの未読メールをまとめるフィルタ
-お使いのパソコン上の Chrome の内蔵モデル、または対応する AI プロバイダのご自身の API キーで動作します。内蔵モデルは無料でプライベートですが、すべてのパソコンで動くわけではありません。キーの利用料はプロバイダから従量で請求されます。プロバイダのチャット アプリのサブスクリプションに API へのアクセスは含まれません。
+ボタンは最初から表示されていますが、オンにするまでどこにも何も送信されません。
+- 「フライトはいつ？」「10 月の請求書」のように、ふだんの言葉でメールに質問。すべての Gmail アカウントを検索し、見つかったメールを読んで、各メールへの参照付きで回答
+- 重要なこと: 未読メールの要約。早めの対応が必要なものから表示
+- 新しいメールや、スレッドと同じ言語での返信を作成。内容を確認してから、お使いのメールサービスで送信
+- 読んでいるスレッドの要約。日時は Google カレンダーに追加でき、スレッドについての質問にも回答
+- 未読メールを分類: 返信待ち、重要、まとめて片付けられるニュースレター
+- Chrome 自身の翻訳機能を使い、パソコン上でメールをお使いの言語に翻訳
+お使いのパソコン上の Chrome の内蔵モデル、または対応する AI プロバイダで動作します。プロバイダでは、ご自身の API キーか、プロバイダが認めている場合はサブスクリプションでのログインを使います。内蔵モデルは無料でプライベートですが、すべてのパソコンで動くわけではありません。
 
 プライバシー
-Mail Deck は独自のサーバーも分析ツールも持ちません。通信するのは Google と、オンにしたメールサービスだけで、いずれもブラウザにすでにあるセッションを使います。各サービスのメールはそのサービスにだけ送られます。例外は、ご自身のキーを設定した場合の AI アシスタントだけです。このとき要約ではそのスレッドを、返信待ちでは未読メールの送信者、件名、冒頭部分を、ブラウザから直接そのプロバイダに送信します。キーはこのパソコンに保存されたままで、Chrome の内蔵モデルならメールがパソコンの外に出ることはありません。開いているページのアドレスはパネル内でのみ読み取られ、保存も送信もされません。パスワードを尋ねたり保存したりすることはなく、設定はブラウザ内に保存されます。
+Mail Deck は独自のサーバーも分析ツールも持ちません。通信するのは Google と、オンにしたメールサービスだけで、いずれもブラウザにすでにあるセッションを使います。各サービスのメールはそのサービスにだけ送られます。例外は、プロバイダを接続した場合の AI アシスタントだけです。このときはリクエストに必要なもの、つまり要約や返信の対象のスレッド、質問で見つかったメール、分類する未読メールの送信者、件名、冒頭部分を、ブラウザから直接そのプロバイダに送信します。キーとログイン情報はこのパソコンに保存されたままで、Chrome の内蔵モデルならメールがパソコンの外に出ることはありません。開いているページのアドレスはパネル内でのみ読み取られ、保存も送信もされません。パスワードを尋ねたり保存したりすることはなく、設定はブラウザ内に保存されます。
 
 Mail Deck は Mozilla Public License 1.1 のオープンソースです: https://github.com/nord-express/mail-deck
 どのメール プロバイダが作成したものでもなく、いずれのメール プロバイダとも関係ありません。Gmail は Google LLC の商標です。
@@ -472,6 +522,7 @@ Mail Deck 将你已登录的所有邮箱中的未读邮件，集中到工具栏�
 功能
 - 所有已登录的邮箱，每个邮箱一种颜色，可拖动调整顺序
 - 在面板中查看完整会话，包括附件
+- 邮件的附件在打开之前就显示在该邮件所在的行中，并标明类型；点击即可打开文件
 - 一次性验证码在列表和邮件中醒目显示；点击或按 C 即可复制
 - Gmail：最多十个账号，跨账号搜索，星标，选定的标签或仅“主要”标签页，一键发起视频会议
 - 稍后提醒：把邮件暂时放到今晚、明天或下周
@@ -489,13 +540,17 @@ Mail Deck 将你已登录的所有邮箱中的未读邮件，集中到工具栏�
 其他邮件服务没有为此提供公开接口，因此 Mail Deck 采用与它们自己的网页应用相同的方式；如果这些服务做出改动，相应服务可能会停止工作，直到 Mail Deck 更新。
 
 AI 助手
-默认关闭，可在“设置”→“AI 助手”中开启。
-- 你正在阅读的会话的摘要：要点、需要你做的事以及其中的日期，每个日期都附有添加到 Google 日历的链接
-- 等待你回复：一个筛选条件，集中显示正在等你回复的人发来的未读邮件
-它可以使用你电脑上 Chrome 的内置模型，也可以使用你自己从受支持的 AI 服务商获取的 API 密钥。内置模型免费且私密，但并非每台电脑都能运行。密钥由服务商按用量计费；订阅其聊天应用并不包含 API 访问权限。
+它的按钮从一开始就在，但在你开启之前，不会向任何地方发送任何内容。
+- 用日常语言向邮件提问，例如“我的航班是什么时候？”或“十月的发票”：它会搜索所有 Gmail 账号，阅读找到的邮件，并在回答中注明每封邮件的出处
+- 重要事项：汇总你的未读邮件，需要你尽快处理的排在最前
+- 撰写新邮件，或用会话的语言撰写回复，由你检查后从你的邮件服务发送
+- 你正在阅读的会话的摘要，其中的日期可添加到 Google 日历，还能回答你关于该会话的问题
+- 未读邮件分类：等待你回复、重要，以及可一次性清理的订阅邮件
+- 使用 Chrome 自带的翻译功能，在你的电脑上把邮件翻译成你的语言
+它可以使用你电脑上 Chrome 的内置模型，也可以使用受支持的 AI 服务商：用你自己的 API 密钥，或在服务商允许的情况下用你的订阅登录。内置模型免费且私密，但并非每台电脑都能运行。
 
 隐私
-Mail Deck 没有自己的服务器，也不做任何统计分析。它只与 Google 和你开启的邮件服务通信，并且都使用浏览器中已有的会话；每个服务的邮件只发送到该服务。唯一的例外是 AI 助手，前提是你为它提供了自己的密钥：这时摘要会发送该会话，“等待你回复”会发送未读邮件的发件人、主题和预览，都直接从你的浏览器发送到该服务商。密钥保存在这台电脑上；使用 Chrome 的内置模型时，邮件不会离开这台电脑。当前页面的地址只在面板内读取，从不保存或发送。Mail Deck 从不询问或保存你的密码，你的设置只保存在浏览器中。
+Mail Deck 没有自己的服务器，也不做任何统计分析。它只与 Google 和你开启的邮件服务通信，并且都使用浏览器中已有的会话；每个服务的邮件只发送到该服务。唯一的例外是 AI 助手，前提是你连接了服务商：这时，请求所需的内容（你要总结或回复的会话、提问找到的邮件、它所分类的未读邮件的发件人、主题和预览）会直接从你的浏览器发送到该服务商。密钥和登录信息保存在这台电脑上；使用 Chrome 的内置模型时，邮件不会离开这台电脑。当前页面的地址只在面板内读取，从不保存或发送。Mail Deck 从不询问或保存你的密码，你的设置只保存在浏览器中。
 
 Mail Deck 采用 Mozilla Public License 1.1 开源：https://github.com/nord-express/mail-deck
 本扩展并非由任何邮件服务提供商开发，也与它们无关。Gmail 是 Google LLC 的商标。
@@ -517,6 +572,7 @@ Abra o painel em um site e os e-mails desse site aparecem no topo, de todas as c
 Recursos
 - Todas as caixas de entrada conectadas, cada uma com sua cor e na ordem em que você arrastar
 - Conversas inteiras no painel, com os anexos
+- Os anexos de uma mensagem aparecem na linha dela antes de você abri-la, com o tipo de cada um; um clique abre o arquivo
 - Códigos de uso único se destacam na lista e na mensagem; um clique ou a tecla C copia o código
 - Gmail: até dez contas, pesquisa em todas as contas, estrelas, os marcadores escolhidos ou só a guia Principal, e uma reunião por vídeo com um clique
 - Lembrar mais tarde: deixe uma mensagem de lado até hoje à noite, amanhã ou a próxima semana
@@ -534,13 +590,17 @@ Recursos
 Os outros serviços de e-mail não têm uma interface pública para isso, então o Mail Deck segue os próprios apps web deles, e uma mudança do lado deles pode parar um serviço até o Mail Deck ser atualizado.
 
 Assistente de IA
-Desativado até você ativá-lo em Configurações → IA.
-- Um resumo da conversa que você está lendo: os pontos principais, o que ela pede a você e as datas, cada uma com um link para adicioná-la ao Google Agenda
-- Aguardando sua resposta: um filtro que reúne os e-mails não lidos de pessoas que esperam uma resposta
-Ele funciona com o modelo integrado do Chrome no seu computador ou com sua própria chave de API de um provedor de IA compatível. O modelo integrado é gratuito e privado, mas não funciona em todos os computadores. A chave é cobrada pelo provedor conforme o uso; uma assinatura do app de chat dele não inclui acesso à API.
+Os botões dele estão lá desde o início, e nada é enviado a lugar nenhum até você ativá-lo.
+- Pergunte ao seu e-mail com suas próprias palavras, como “quando é meu voo?” ou “faturas de outubro”: ele pesquisa em todas as contas do Gmail, lê o que encontra e responde com uma referência a cada e-mail
+- O que é importante: um resumo dos seus e-mails não lidos, primeiro o que pede sua atenção logo
+- Um novo e-mail, ou uma resposta no idioma da conversa, para você revisar e enviar pelo seu serviço de e-mail
+- Um resumo da conversa que você está lendo, com as datas para o Google Agenda, e respostas às suas perguntas sobre ela
+- E-mails não lidos organizados: aguardando sua resposta, importantes e newsletters para limpar de uma vez
+- Traduza uma mensagem para o seu idioma com o próprio tradutor do Chrome, no seu computador
+Ele funciona com o modelo integrado do Chrome no seu computador ou com um provedor de IA compatível: sua própria chave de API ou um login com sua assinatura, quando o provedor permite. O modelo integrado é gratuito e privado, mas não funciona em todos os computadores.
 
 Privacidade
-O Mail Deck não tem servidores próprios nem análises. Ele se comunica só com o Google e com os serviços de e-mail que você ativar, cada um com a sessão que o navegador já tem, e o e-mail de cada serviço vai só para esse serviço. O único acréscimo é o assistente de IA, se você der a ele sua própria chave: aí um resumo envia essa conversa, e “Aguardando sua resposta” envia o remetente, o assunto e a prévia dos e-mails não lidos, direto do seu navegador para esse provedor. A chave fica neste computador e, com o modelo integrado do Chrome, seus e-mails não saem dele. O endereço da página em que você está é lido só dentro do painel e nunca é salvo nem enviado. O Mail Deck nunca pede nem guarda sua senha, e suas configurações ficam no navegador.
+O Mail Deck não tem servidores próprios nem análises. Ele se comunica só com o Google e com os serviços de e-mail que você ativar, cada um com a sessão que o navegador já tem, e o e-mail de cada serviço vai só para esse serviço. O único acréscimo é o assistente de IA, se você conectar um provedor: aí o que uma solicitação precisa (a conversa que você resume ou à qual responde, os e-mails que uma pergunta encontrou, o remetente, o assunto e a prévia dos e-mails não lidos que ele organiza) vai direto do seu navegador para esse provedor. Chaves e logins ficam neste computador e, com o modelo integrado do Chrome, seus e-mails não saem dele. O endereço da página em que você está é lido só dentro do painel e nunca é salvo nem enviado. O Mail Deck nunca pede nem guarda sua senha, e suas configurações ficam no navegador.
 
 O Mail Deck é de código aberto sob a Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Ele não é feito por nenhum provedor de e-mail nem afiliado a nenhum deles. Gmail é uma marca registrada da Google LLC.
@@ -562,6 +622,7 @@ Ele não é feito por nenhum provedor de e-mail nem afiliado a nenhum deles. Gma
 الميزات
 - كل صناديق البريد التي سجّلت الدخول إليها، لكلٍّ منها لونه الخاص، وبالترتيب الذي تختاره بالسحب
 - المحادثات كاملة داخل اللوحة، مع المرفقات
+- تظهر مرفقات الرسالة في سطرها قبل أن تفتحها، مع نوع كلٍّ منها؛ وبنقرة يُفتح الملف
 - تبرز رموز التحقق لمرة واحدة في القائمة وفي الرسالة، وتنسخها نقرة أو المفتاح C
 - Gmail: حتى عشرة حسابات، والبحث في كل الحسابات، والنجوم، والتصنيفات التي تختارها أو علامة التبويب «الأساسية» فقط، واجتماع فيديو بنقرة واحدة
 - «ذكّرني لاحقًا»: ضع الرسالة جانبًا حتى هذا المساء أو الغد أو الأسبوع القادم
@@ -579,13 +640,17 @@ Ele não é feito por nenhum provedor de e-mail nem afiliado a nenhum deles. Gma
 ليس لدى خدمات البريد الأخرى واجهة عامة لهذا الغرض، لذلك يتبع Mail Deck تطبيقات الويب الخاصة بها، وقد يوقف تغييرٌ من جهتها إحدى الخدمات إلى أن يُحدَّث Mail Deck.
 
 مساعد الذكاء الاصطناعي
-يبقى متوقفًا إلى أن تشغّله من الإعدادات ← الذكاء الاصطناعي.
-- ملخّص للمحادثة التي تقرؤها: أهم النقاط، وما هو مطلوب منك، ومواعيدها، ولكل موعد رابط يضيفه إلى تقويم Google
-- «بانتظار ردّك»: عامل تصفية يجمع البريد غير المقروء من أشخاص ينتظرون ردًا
-يعمل بالنموذج المدمج في Chrome على جهازك، أو بمفتاح API خاص بك من أحد مزوّدي الذكاء الاصطناعي المدعومين. النموذج المدمج مجاني وخاص، لكنه لا يعمل على كل كمبيوتر. يحاسبك المزوّد على المفتاح حسب الاستخدام، ولا يشمل الاشتراك في تطبيق الدردشة الخاص به الوصول إلى API.
+أزراره موجودة منذ البداية، ولا يُرسل أي شيء إلى أي مكان إلى أن تشغّله.
+- اسأل بريدك بكلماتك الخاصة، مثل «متى موعد رحلتي؟» أو «فواتير أكتوبر»: يبحث في كل حسابات Gmail، ويقرأ ما يجده، ويجيب مع إشارة إلى كل رسالة
+- «ما المهم»: ملخّص لبريدك غير المقروء، يبدأ بما يحتاج إلى اهتمامك قريبًا
+- كتابة رسالة جديدة، أو ردّ بلغة المحادثة، لتراجعه وترسله من خدمة البريد التي تستخدمها
+- ملخّص للمحادثة التي تقرؤها، مع مواعيدها لتقويم Google، وإجابات عن أسئلتك حولها
+- فرز البريد غير المقروء: بانتظار ردّك، والمهم، والنشرات البريدية التي يمكنك التخلص منها دفعة واحدة
+- ترجمة الرسالة إلى لغتك بمترجم Chrome نفسه، على جهازك
+يعمل بالنموذج المدمج في Chrome على جهازك، أو مع أحد مزوّدي الذكاء الاصطناعي المدعومين: بمفتاح API خاص بك، أو بتسجيل الدخول باشتراكك حيث يسمح المزوّد بذلك. النموذج المدمج مجاني وخاص، لكنه لا يعمل على كل كمبيوتر.
 
 الخصوصية
-ليس لدى Mail Deck خوادم خاصة به ولا أدوات تحليلات. لا يتواصل إلا مع Google ومع خدمات البريد التي تفعّلها، مستخدمًا لكلٍّ منها الجلسة الموجودة أصلًا في متصفحك، ولا يذهب بريد كل خدمة إلا إليها. والإضافة الوحيدة هي مساعد الذكاء الاصطناعي إذا أعطيته مفتاحك الخاص: عندها يُرسل الملخّص تلك المحادثة، ويُرسل «بانتظار ردّك» المرسل والموضوع ومقتطف البريد غير المقروء، مباشرة من متصفحك إلى ذلك المزوّد. يبقى المفتاح على هذا الكمبيوتر، ومع النموذج المدمج في Chrome لا يغادره بريدك. ولا يُقرأ عنوان الصفحة المفتوحة إلا داخل اللوحة، ولا يُخزَّن ولا يُرسل أبدًا. لا يطلب Mail Deck كلمة مرورك أبدًا ولا يخزّنها، وتبقى إعداداتك في متصفحك.
+ليس لدى Mail Deck خوادم خاصة به ولا أدوات تحليلات. لا يتواصل إلا مع Google ومع خدمات البريد التي تفعّلها، مستخدمًا لكلٍّ منها الجلسة الموجودة أصلًا في متصفحك، ولا يذهب بريد كل خدمة إلا إليها. والإضافة الوحيدة هي مساعد الذكاء الاصطناعي إذا ربطت به مزوّدًا: عندها يذهب ما يحتاج إليه الطلب (المحادثة التي تلخّصها أو تردّ عليها، والبريد الذي وجده سؤال، والمرسل والموضوع ومقتطف البريد غير المقروء الذي يفرزه) مباشرة من متصفحك إلى ذلك المزوّد. تبقى المفاتيح وبيانات تسجيل الدخول على هذا الكمبيوتر، ومع النموذج المدمج في Chrome لا يغادره بريدك. ولا يُقرأ عنوان الصفحة المفتوحة إلا داخل اللوحة، ولا يُخزَّن ولا يُرسل أبدًا. لا يطلب Mail Deck كلمة مرورك أبدًا ولا يخزّنها، وتبقى إعداداتك في متصفحك.
 
 يتوفر Mail Deck كبرنامج مفتوح المصدر بموجب رخصة Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 لم يطوّره أي مزوّد بريد وليس تابعًا لأيٍّ منهم. Gmail علامة تجارية لشركة Google LLC.
@@ -607,6 +672,7 @@ Mail Deck събира в един панел в лентата с инстру�
 Функции
 - Всички пощенски кутии, в които сте влезли, всяка със свой цвят и в реда, в който ги подредите с плъзгане
 - Цели разговори в панела, с прикачените файлове
+- Прикачените файлове на писмото се виждат на реда му още преди да го отворите, заедно с вида им; с щракване файлът се отваря
 - Еднократните кодове се открояват в списъка и в писмото; щракване или клавишът C ги копира
 - Gmail: до десет профила, търсене във всички профили, звезди, избрани етикети или само разделът „Основни“ и видеосреща с едно щракване
 - „Напомняне по-късно“: отложете писмо до довечера, до утре или до следващата седмица
@@ -624,13 +690,17 @@ Mail Deck събира в един панел в лентата с инстру�
 Другите пощенски услуги нямат публичен интерфейс за това, затова Mail Deck следва собствените им уеб приложения, а промяна от тяхна страна може да спре някоя услуга, докато Mail Deck не бъде обновен.
 
 ИИ асистент
-Изключен е, докато не го включите от „Настройки“ → „ИИ“.
-- Обобщение на разговора, който четете: основното, какво се иска от вас и датите в него, всяка с връзка за добавяне в Google Календар
-- „Очаква вашия отговор“: филтър, който събира непрочетените писма от хора, които чакат отговор
-Работи с вградения модел на Chrome на вашия компютър или с ваш собствен API ключ от поддържан доставчик на ИИ. Вграденият модел е безплатен и поверителен, но не работи на всеки компютър. Ключът се таксува от доставчика според употребата; абонамент за неговото чат приложение не включва достъп до API.
+Бутоните му са там от самото начало, но нищо не се изпраща никъде, докато не го включите.
+- Питайте пощата си със свои думи, например „кога е полетът ми?“ или „фактури от октомври“: асистентът търси във всички профили в Gmail, чете намереното и отговаря с препратка към всяко писмо
+- „Кое е важно“: обобщение на непрочетената поща, първо това, което скоро изисква вниманието ви
+- Ново писмо или отговор на езика на разговора, готови да ги прегледате и изпратите от пощенската си услуга
+- Обобщение на разговора, който четете, с датите в него за Google Календар и отговори на въпросите ви за него
+- Непрочетената поща, подредена: очакващи вашия отговор, важни и бюлетини за изчистване наведнъж
+- Превод на писмо на вашия език със собствения преводач на Chrome, на вашия компютър
+Работи с вградения модел на Chrome на вашия компютър или с поддържан доставчик на ИИ: с ваш собствен API ключ или с вход чрез абонамента ви, където доставчикът го позволява. Вграденият модел е безплатен и поверителен, но не работи на всеки компютър.
 
 Поверителност
-Mail Deck няма собствени сървъри и не използва аналитика. Разширението се свързва само с Google и с пощенските услуги, които включите, с всяка чрез сесията, която браузърът ви вече има, и пощата на всяка услуга отива само към нея. Единственото допълнение е ИИ асистентът, ако му дадете свой ключ: тогава обобщението изпраща този разговор, а „Очаква вашия отговор“ – подателя, темата и началото на непрочетените писма, направо от браузъра ви до този доставчик. Ключът остава на този компютър, а с вградения модел на Chrome пощата ви не го напуска. Адресът на страницата, на която сте, се чете само в панела и никога не се съхранява или изпраща. Разширението никога не иска и не съхранява паролата ви, а настройките ви остават в браузъра.
+Mail Deck няма собствени сървъри и не използва аналитика. Разширението се свързва само с Google и с пощенските услуги, които включите, с всяка чрез сесията, която браузърът ви вече има, и пощата на всяка услуга отива само към нея. Единственото допълнение е ИИ асистентът, ако свържете доставчик: тогава това, което е нужно за заявката (разговорът, който обобщавате или на който отговаряте, писмата, намерени по въпрос, подателят, темата и началото на непрочетените писма, които той подрежда), отива направо от браузъра ви до този доставчик. Ключовете и данните за вход остават на този компютър, а с вградения модел на Chrome пощата ви не го напуска. Адресът на страницата, на която сте, се чете само в панела и никога не се съхранява или изпраща. Разширението никога не иска и не съхранява паролата ви, а настройките ви остават в браузъра.
 
 Mail Deck е с отворен код под лиценза Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Разширението не е създадено от пощенски доставчик и не е свързано с никой от тях. Gmail е търговска марка на Google LLC.
@@ -652,6 +722,7 @@ Obre el tauler en un lloc web i el correu d'aquell lloc apareix a dalt de tot, d
 Funcions
 - Totes les bústies amb la sessió iniciada, cadascuna amb el seu color i en l'ordre en què les arrosseguis
 - Converses senceres al tauler, amb els fitxers adjunts
+- Els fitxers adjunts d'un missatge es veuen a la seva línia abans d'obrir-lo, amb el seu tipus; un clic obre el fitxer
 - Els codis d'un sol ús destaquen a la llista i al missatge; un clic o la tecla C els copia
 - Gmail: fins a deu comptes, cerca a tots els comptes, estrelles, les etiquetes que triïs o només la pestanya «Principal», i una reunió de vídeo amb un clic
 - «Recorda-m'ho més tard»: aparta un missatge fins aquesta tarda, fins demà o fins a la setmana que ve
@@ -669,13 +740,17 @@ Funcions
 Els altres serveis de correu no tenen cap interfície pública per a això, així que Mail Deck segueix les seves pròpies aplicacions web, i un canvi per part seva en pot aturar un fins que Mail Deck s'actualitzi.
 
 Assistent d'IA
-Desactivat fins que l'activis a Opcions → IA.
-- Un resum de la conversa que llegeixes: els punts clau, què et demana i les seves dates, cadascuna amb un enllaç per afegir-la a Google Calendar
-- «Esperen la teva resposta»: un filtre que aplega el correu no llegit de persones que esperen una resposta
-Funciona amb el model integrat de Chrome al teu ordinador o amb la teva pròpia clau d'API d'un proveïdor d'IA compatible. El model integrat és gratuït i privat, però no funciona a tots els ordinadors. El proveïdor cobra la clau per ús; una subscripció a la seva aplicació de xat no inclou accés a l'API.
+Els seus botons hi són des del principi, i no s'envia res enlloc fins que l'activis.
+- Pregunta al teu correu amb les teves paraules, com ara «quan és el meu vol?» o «factures d'octubre»: cerca a tots els comptes de Gmail, llegeix el que troba i respon amb una referència a cada missatge
+- «Què és important»: un resum del correu no llegit, primer el que aviat requereix la teva atenció
+- Un correu nou, o una resposta en la llengua de la conversa, per revisar-los i enviar-los des del teu servei de correu
+- Un resum de la conversa que llegeixes, amb les seves dates per a Google Calendar, i respostes a les teves preguntes sobre ella
+- El correu no llegit, ordenat: el que espera la teva resposta, l'important i els butlletins per netejar d'un sol cop
+- Tradueix un missatge a la teva llengua amb el traductor del mateix Chrome, al teu ordinador
+Funciona amb el model integrat de Chrome al teu ordinador o amb un proveïdor d'IA compatible: la teva pròpia clau d'API, o un inici de sessió amb la teva subscripció on el proveïdor ho permeti. El model integrat és gratuït i privat, però no funciona a tots els ordinadors.
 
 Privadesa
-Mail Deck no té servidors propis ni cap eina d'analítica. Només es comunica amb Google i amb els serveis de correu que activis, cadascun amb la sessió que el navegador ja té oberta, i el correu de cada servei només va a aquell servei. L'únic afegit és l'assistent d'IA, si li dones la teva pròpia clau: llavors un resum envia aquella conversa, i «Esperen la teva resposta», el remitent, l'assumpte i la previsualització del correu no llegit, directament del teu navegador a aquell proveïdor. La clau es queda en aquest ordinador, i amb el model integrat de Chrome el teu correu no en surt. L'adreça de la pàgina on ets només es llegeix dins del tauler; mai no es desa ni s'envia. Mail Deck mai no et demana la contrasenya ni la desa, i les teves opcions es queden al navegador.
+Mail Deck no té servidors propis ni cap eina d'analítica. Només es comunica amb Google i amb els serveis de correu que activis, cadascun amb la sessió que el navegador ja té oberta, i el correu de cada servei només va a aquell servei. L'únic afegit és l'assistent d'IA, si connectes un proveïdor: el que necessita una petició (la conversa que resumeixes o a la qual respons, el correu que ha trobat una pregunta, el remitent, l'assumpte i la previsualització del correu no llegit que ordena) va llavors directament del teu navegador a aquell proveïdor. Les claus i els inicis de sessió es queden en aquest ordinador, i amb el model integrat de Chrome el teu correu no en surt. L'adreça de la pàgina on ets només es llegeix dins del tauler; mai no es desa ni s'envia. Mail Deck mai no et demana la contrasenya ni la desa, i les teves opcions es queden al navegador.
 
 Mail Deck és de codi obert, amb la llicència Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 No l'ha creat cap proveïdor de correu ni hi està vinculat. Gmail és una marca comercial de Google LLC.
@@ -697,6 +772,7 @@ No l'ha creat cap proveïdor de correu ni hi està vinculat. Gmail és una marca
 Λειτουργίες
 - Όλα τα γραμματοκιβώτια στα οποία είστε συνδεδεμένοι, το καθένα με δικό του χρώμα και με τη σειρά που ορίζετε σύροντάς τα
 - Ολόκληρες συζητήσεις μέσα στον πίνακα, μαζί με τα συνημμένα
+- Τα συνημμένα ενός μηνύματος εμφανίζονται στη γραμμή του πριν το ανοίξετε, με τον τύπο τους· ένα κλικ ανοίγει το αρχείο
 - Οι κωδικοί μίας χρήσης ξεχωρίζουν στη λίστα και στο μήνυμα· ένα κλικ ή το πλήκτρο C τους αντιγράφει
 - Gmail: έως δέκα λογαριασμοί, αναζήτηση σε όλους τους λογαριασμούς, αστέρια, επιλεγμένες ετικέτες ή μόνο η καρτέλα «Κύρια», και βιντεοσύσκεψη με ένα κλικ
 - «Υπενθύμιση αργότερα»: αφήστε ένα μήνυμα στην άκρη μέχρι σήμερα το απόγευμα, μέχρι αύριο ή μέχρι την επόμενη εβδομάδα
@@ -714,13 +790,17 @@ No l'ha creat cap proveïdor de correu ni hi està vinculat. Gmail és una marca
 Οι άλλες υπηρεσίες αλληλογραφίας δεν έχουν δημόσια διεπαφή για αυτό, γι' αυτό το Mail Deck ακολουθεί τις δικές τους εφαρμογές ιστού, και μια αλλαγή από την πλευρά τους μπορεί να σταματήσει μια υπηρεσία μέχρι να ενημερωθεί το Mail Deck.
 
 Βοηθός τεχνητής νοημοσύνης
-Απενεργοποιημένος μέχρι να τον ενεργοποιήσετε στις Ρυθμίσεις → Τεχνητή νοημοσύνη.
-- Σύνοψη της συζήτησης που διαβάζετε: τα βασικά σημεία, τι σας ζητά και οι ημερομηνίες της, η καθεμία με σύνδεσμο που την προσθέτει στο Ημερολόγιο Google
-- «Περιμένει την απάντησή σας»: ένα φίλτρο που συγκεντρώνει τα αδιάβαστα μηνύματα από ανθρώπους που περιμένουν απάντηση
-Λειτουργεί με το ενσωματωμένο μοντέλο του Chrome στον υπολογιστή σας ή με το δικό σας κλειδί API από έναν υποστηριζόμενο πάροχο τεχνητής νοημοσύνης. Το ενσωματωμένο μοντέλο είναι δωρεάν και ιδιωτικό, αλλά δεν λειτουργεί σε κάθε υπολογιστή. Το κλειδί χρεώνεται από τον πάροχό του ανά χρήση· η συνδρομή στην εφαρμογή συνομιλίας του δεν περιλαμβάνει πρόσβαση στο API.
+Τα κουμπιά του υπάρχουν από την αρχή, και τίποτα δεν στέλνεται πουθενά μέχρι να τον ενεργοποιήσετε.
+- Ρωτήστε την αλληλογραφία σας με δικά σας λόγια, όπως «πότε είναι η πτήση μου;» ή «τιμολόγια Οκτωβρίου»: ψάχνει σε όλους τους λογαριασμούς Gmail, διαβάζει ό,τι βρίσκει και απαντά με αναφορά σε κάθε μήνυμα
+- «Τι είναι σημαντικό»: σύνοψη των αδιάβαστων μηνυμάτων σας, πρώτα ό,τι χρειάζεται σύντομα την προσοχή σας
+- Ένα νέο μήνυμα ή μια απάντηση στη γλώσσα της συζήτησης, για να το ελέγξετε και να το στείλετε από την υπηρεσία αλληλογραφίας σας
+- Σύνοψη της συζήτησης που διαβάζετε, με τις ημερομηνίες της για το Ημερολόγιο Google, και απαντήσεις στις ερωτήσεις σας γι' αυτήν
+- Τα αδιάβαστα ταξινομημένα: όσα περιμένουν την απάντησή σας, τα σημαντικά, και τα ενημερωτικά δελτία που καθαρίζετε μονομιάς
+- Μετάφραση ενός μηνύματος στη γλώσσα σας με τον μεταφραστή του ίδιου του Chrome, στον υπολογιστή σας
+Λειτουργεί με το ενσωματωμένο μοντέλο του Chrome στον υπολογιστή σας ή με έναν υποστηριζόμενο πάροχο τεχνητής νοημοσύνης: με το δικό σας κλειδί API ή με σύνδεση μέσω της συνδρομής σας, όπου το επιτρέπει ο πάροχος. Το ενσωματωμένο μοντέλο είναι δωρεάν και ιδιωτικό, αλλά δεν λειτουργεί σε κάθε υπολογιστή.
 
 Απόρρητο
-Το Mail Deck δεν έχει δικούς του διακομιστές ούτε εργαλεία ανάλυσης. Επικοινωνεί μόνο με την Google και με τις υπηρεσίες αλληλογραφίας που ενεργοποιείτε, με την καθεμία μέσω της περιόδου σύνδεσης που έχει ήδη το πρόγραμμα περιήγησής σας, και η αλληλογραφία κάθε υπηρεσίας πηγαίνει μόνο σε αυτήν. Η μόνη προσθήκη είναι ο βοηθός τεχνητής νοημοσύνης, αν του δώσετε το δικό σας κλειδί: τότε μια σύνοψη στέλνει αυτή τη συζήτηση, και το «Περιμένει την απάντησή σας» τον αποστολέα, το θέμα και την αρχή των αδιάβαστων μηνυμάτων, κατευθείαν από το πρόγραμμα περιήγησής σας σε αυτόν τον πάροχο. Το κλειδί μένει σε αυτόν τον υπολογιστή, και με το ενσωματωμένο μοντέλο του Chrome η αλληλογραφία σας δεν φεύγει από αυτόν. Η διεύθυνση της σελίδας όπου βρίσκεστε διαβάζεται μόνο μέσα στον πίνακα και δεν αποθηκεύεται ούτε στέλνεται ποτέ. Το Mail Deck δεν ζητά ούτε αποθηκεύει ποτέ τον κωδικό πρόσβασής σας, και οι ρυθμίσεις σας μένουν στο πρόγραμμα περιήγησης.
+Το Mail Deck δεν έχει δικούς του διακομιστές ούτε εργαλεία ανάλυσης. Επικοινωνεί μόνο με την Google και με τις υπηρεσίες αλληλογραφίας που ενεργοποιείτε, με την καθεμία μέσω της περιόδου σύνδεσης που έχει ήδη το πρόγραμμα περιήγησής σας, και η αλληλογραφία κάθε υπηρεσίας πηγαίνει μόνο σε αυτήν. Η μόνη προσθήκη είναι ο βοηθός τεχνητής νοημοσύνης, αν συνδέσετε έναν πάροχο: τότε ό,τι χρειάζεται ένα αίτημα (η συζήτηση που συνοψίζετε ή στην οποία απαντάτε, τα μηνύματα που βρήκε μια ερώτηση, ο αποστολέας, το θέμα και η αρχή των αδιάβαστων μηνυμάτων που ταξινομεί) πηγαίνει κατευθείαν από το πρόγραμμα περιήγησής σας σε αυτόν τον πάροχο. Τα κλειδιά και οι συνδέσεις μένουν σε αυτόν τον υπολογιστή, και με το ενσωματωμένο μοντέλο του Chrome η αλληλογραφία σας δεν φεύγει από αυτόν. Η διεύθυνση της σελίδας όπου βρίσκεστε διαβάζεται μόνο μέσα στον πίνακα και δεν αποθηκεύεται ούτε στέλνεται ποτέ. Το Mail Deck δεν ζητά ούτε αποθηκεύει ποτέ τον κωδικό πρόσβασής σας, και οι ρυθμίσεις σας μένουν στο πρόγραμμα περιήγησης.
 
 Το Mail Deck είναι ανοιχτού κώδικα, με την άδεια Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Δεν έχει δημιουργηθεί από κανέναν πάροχο αλληλογραφίας και δεν συνδέεται με κανέναν από αυτούς. Το Gmail είναι εμπορικό σήμα της Google LLC.
@@ -742,6 +822,7 @@ No l'ha creat cap proveïdor de correu ni hi està vinculat. Gmail és una marca
 תכונות
 - כל תיבות הדואר שאליהן התחברתם, כל אחת בצבע משלה ובסדר שתקבעו בגרירה
 - שיחות שלמות בחלונית, כולל קבצים מצורפים
+- הקבצים המצורפים להודעה מופיעים בשורה שלה עוד לפני שפותחים אותה, עם הסוג שלהם; לחיצה פותחת את הקובץ
 - קודים חד-פעמיים בולטים ברשימה ובהודעה; לחיצה או המקש C מעתיקים אותם
 - Gmail: עד עשרה חשבונות, חיפוש בכל החשבונות, כוכבים, תוויות נבחרות או רק הכרטיסייה ״ראשי״, ופגישת וידאו בלחיצה אחת
 - ״הזכר לי מאוחר יותר״: הניחו הודעה בצד עד הערב, עד מחר או עד השבוע הבא
@@ -759,13 +840,17 @@ No l'ha creat cap proveïdor de correu ni hi està vinculat. Gmail és una marca
 לשירותי הדואר האחרים אין ממשק ציבורי לכך, ולכן Mail Deck פועל כמו אפליקציות האינטרנט שלהם עצמם, ושינוי בצד שלהם עלול לעצור שירות עד ש-Mail Deck יעודכן.
 
 עוזר בינה מלאכותית
-כבוי עד שתפעילו אותו בהגדרות ← בינה מלאכותית.
-- סיכום של השיחה שאתם קוראים: עיקרי הדברים, מה מבקשים מכם והתאריכים שבה, ולכל תאריך קישור שמוסיף אותו ליומן Google
-- ״מחכים לתשובה שלך״: מסנן שמרכז דואר שלא נקרא מאנשים שמצפים לתשובה
-הוא פועל עם המודל המובנה של Chrome במחשב שלכם, או עם מפתח API משלכם מספק בינה מלאכותית נתמך. המודל המובנה חינמי ופרטי, אבל לא פועל בכל מחשב. הספק מחייב על המפתח לפי שימוש; מינוי לאפליקציית הצ׳אט שלו לא כולל גישה ל-API.
+הכפתורים שלו שם מההתחלה, ושום דבר לא נשלח לשום מקום עד שתפעילו אותו.
+- שאלו את הדואר שלכם במילים פשוטות, כמו ״מתי הטיסה שלי?״ או ״חשבוניות מאוקטובר״: הוא מחפש בכל חשבונות Gmail, קורא את מה שהוא מוצא ועונה עם הפניה לכל הודעה
+- ״מה חשוב״: סיכום של הדואר שלא נקרא, קודם מה שידרוש את תשומת לבכם בקרוב
+- הודעה חדשה או תשובה בשפת השיחה, לבדיקה ולשליחה משירות הדואר שלכם
+- סיכום של השיחה שאתם קוראים, עם התאריכים שבה ליומן Google, ותשובות לשאלות שלכם עליה
+- מיון הדואר שלא נקרא: מחכים לתשובה שלך, חשוב, וניוזלטרים שאפשר לנקות בבת אחת
+- תרגום הודעה לשפה שלכם עם המתרגם של Chrome עצמו, במחשב שלכם
+הוא פועל עם המודל המובנה של Chrome במחשב שלכם, או עם ספק בינה מלאכותית נתמך: מפתח API משלכם, או התחברות עם המינוי שלכם כשהספק מאפשר זאת. המודל המובנה חינמי ופרטי, אבל לא פועל בכל מחשב.
 
 פרטיות
-ל-Mail Deck אין שרתים משלו ואין כלי ניתוח נתונים. הוא מתקשר רק עם Google ועם שירותי הדואר שהפעלתם, כל אחד דרך ההתחברות שכבר פעילה בדפדפן שלכם, והדואר של כל שירות נשלח רק אליו. התוספת היחידה היא עוזר הבינה המלאכותית, אם תתנו לו מפתח משלכם: אז סיכום שולח את אותה שיחה, ו״מחכים לתשובה שלך״ שולח את השולח, הנושא והתצוגה המקדימה של דואר שלא נקרא, ישירות מהדפדפן שלכם לאותו ספק. המפתח נשאר במחשב הזה, ועם המודל המובנה של Chrome הדואר שלכם לא יוצא ממנו. כתובת הדף שבו אתם נמצאים נקראת רק בתוך החלונית, ולעולם לא נשמרת או נשלחת. Mail Deck אף פעם לא מבקש את הסיסמה שלכם ולא שומר אותה, וההגדרות שלכם נשארות בדפדפן.
+ל-Mail Deck אין שרתים משלו ואין כלי ניתוח נתונים. הוא מתקשר רק עם Google ועם שירותי הדואר שהפעלתם, כל אחד דרך ההתחברות שכבר פעילה בדפדפן שלכם, והדואר של כל שירות נשלח רק אליו. התוספת היחידה היא עוזר הבינה המלאכותית, אם תחברו ספק: אז מה שבקשה צריכה (השיחה שאתם מסכמים או עונים עליה, הדואר שנמצא בעקבות שאלה, השולח, הנושא והתצוגה המקדימה של דואר שלא נקרא שהוא ממיין) נשלח ישירות מהדפדפן שלכם לאותו ספק. המפתחות וההתחברויות נשארים במחשב הזה, ועם המודל המובנה של Chrome הדואר שלכם לא יוצא ממנו. כתובת הדף שבו אתם נמצאים נקראת רק בתוך החלונית, ולעולם לא נשמרת או נשלחת. Mail Deck אף פעם לא מבקש את הסיסמה שלכם ולא שומר אותה, וההגדרות שלכם נשארות בדפדפן.
 
 הקוד של Mail Deck פתוח, ברישיון Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 התוסף לא נוצר על ידי אף ספק דואר ואינו קשור לאף אחד מהם. Gmail הוא סימן מסחרי של Google LLC.
@@ -787,6 +872,7 @@ Nyisd meg a panelt egy weboldalon, és az onnan érkezett levelek kerülnek fel�
 Funkciók
 - Az összes bejelentkezett postafiók, mindegyik saját színnel, abban a sorrendben, ahogy áthúzással elrendezed őket
 - Teljes beszélgetések a panelen, a mellékletekkel együtt
+- Egy levél mellékletei már megnyitás előtt látszanak a sorában, a típusukkal együtt; egy kattintás megnyitja a fájlt
 - Az egyszer használatos kódok kiemelve látszanak a listában és a levélben; egy kattintás vagy a C billentyű kimásolja őket
 - Gmail: legfeljebb tíz fiók, keresés az összes fiókban, csillagok, kiválasztott címkék vagy csak az „Elsődleges” lap, és videomegbeszélés egy kattintással
 - „Emlékeztetés később”: tedd félre a levelet ma estig, holnapig vagy jövő hétig
@@ -804,13 +890,17 @@ Funkciók
 A többi levelezőszolgáltatás nem kínál ehhez nyilvános felületet, ezért a Mail Deck a saját webalkalmazásaikat követi, és egy változás az ő oldalukon leállíthat egy szolgáltatást, amíg a Mail Deck frissítést nem kap.
 
 MI-asszisztens
-Ki van kapcsolva, amíg be nem kapcsolod a Beállítások → Mesterséges intelligencia részben.
-- Az olvasott beszélgetés összefoglalója: a lényeg, hogy mit kérnek tőled, és az időpontok, mindegyik mellett egy hivatkozással, amely hozzáadja a Google Naptárhoz
-- „Válaszodra vár”: egy szűrő, amely összegyűjti a választ váró emberektől érkezett olvasatlan leveleket
-A Chrome beépített modelljével fut a számítógépeden, vagy egy támogatott MI-szolgáltatótól kapott saját API-kulcsoddal. A beépített modell ingyenes és privát, de nem minden számítógépen fut. A kulcsot a szolgáltatója használat szerint számlázza; a szolgáltató csevegőalkalmazására szóló előfizetés nem tartalmaz API-hozzáférést.
+A gombjai kezdettől ott vannak, de semmi nem megy sehová, amíg be nem kapcsolod.
+- Kérdezd a leveleidet a saját szavaiddal, például „mikor indul a járatom?” vagy „októberi számlák”: az összes Gmail-fiókban keres, elolvassa, amit talál, és minden levélre hivatkozva válaszol
+- „Mi a fontos”: az olvasatlan leveleid összefoglalva, elöl az, ami hamarosan a figyelmedet igényli
+- Új levél vagy válasz a beszélgetés nyelvén, amelyet átnézhetsz és elküldhetsz a saját levelezőszolgáltatásodból
+- Az olvasott beszélgetés összefoglalója, az időpontjaival a Google Naptárhoz, és válaszok a vele kapcsolatos kérdéseidre
+- Rendezett olvasatlan levelek: válaszodra vár, fontos, és hírlevelek, amelyeket egy mozdulattal eltakaríthatsz
+- Levél fordítása a saját nyelvedre a Chrome saját fordítójával, a számítógépeden
+A Chrome beépített modelljével fut a számítógépeden, vagy egy támogatott MI-szolgáltatóval: a saját API-kulcsoddal, vagy ahol a szolgáltató engedi, az előfizetéseddel bejelentkezve. A beépített modell ingyenes és privát, de nem minden számítógépen fut.
 
 Adatvédelem
-A Mail Deck nem rendelkezik saját szerverekkel, és nem használ analitikát. Csak a Google-lal és a bekapcsolt levelezőszolgáltatásokkal kommunikál, mindegyikkel a böngésződben már meglévő munkameneten keresztül, és minden szolgáltatás levelei csak az adott szolgáltatáshoz jutnak el. Egyetlen kivétel az MI-asszisztens, ha megadod neki a saját kulcsodat: ekkor az összefoglaló az adott beszélgetést, a „Válaszodra vár” pedig az olvasatlan levelek feladóját, tárgyát és előnézetét küldi el, egyenesen a böngésződből ahhoz a szolgáltatóhoz. A kulcs ezen a számítógépen marad, a Chrome beépített modelljével pedig a leveleid el sem hagyják. A Mail Deck az éppen megnyitott oldal címét csak a panelen belül olvassa, soha nem tárolja és nem küldi el. Soha nem kéri el és nem tárolja a jelszavadat, a beállításaid pedig a böngésződben maradnak.
+A Mail Deck nem rendelkezik saját szerverekkel, és nem használ analitikát. Csak a Google-lal és a bekapcsolt levelezőszolgáltatásokkal kommunikál, mindegyikkel a böngésződben már meglévő munkameneten keresztül, és minden szolgáltatás levelei csak az adott szolgáltatáshoz jutnak el. Egyetlen kivétel az MI-asszisztens, ha összekapcsolod egy szolgáltatóval: ekkor az, amire egy kérésnek szüksége van (az összefoglalt vagy megválaszolt beszélgetés, a kérdésre talált levelek, az általa rendezett olvasatlan levelek feladója, tárgya és előnézete), egyenesen a böngésződből jut el ahhoz a szolgáltatóhoz. A kulcsok és a bejelentkezések ezen a számítógépen maradnak, a Chrome beépített modelljével pedig a leveleid el sem hagyják. A Mail Deck az éppen megnyitott oldal címét csak a panelen belül olvassa, soha nem tárolja és nem küldi el. Soha nem kéri el és nem tárolja a jelszavadat, a beállításaid pedig a böngésződben maradnak.
 
 A Mail Deck nyílt forráskódú, a Mozilla Public License 1.1 feltételei szerint: https://github.com/nord-express/mail-deck
 Egyetlen levelezőszolgáltató sem készítette, és egyikkel sem áll kapcsolatban. A Gmail a Google LLC védjegye.
@@ -832,6 +922,7 @@ Mail Deck окупља у један панел на траци с алатка�
 Функције
 - Сва сандучад на која сте пријављени, свако у својој боји и редоследом који одредите превлачењем
 - Цела преписка у панелу, с прилозима
+- Прилози поруке виде се у њеном реду и пре него што је отворите, заједно са врстом; клик отвара датотеку
 - Једнократни кодови се истичу у листи и у поруци; клик или тастер C их копира
 - Gmail: до десет налога, претрага свих налога, звездице, изабране ознаке или само картица „Примарно“ и видео-састанак једним кликом
 - „Подсети ме касније“: склоните поруку до вечерас, до сутра или до следеће недеље
@@ -849,13 +940,17 @@ Mail Deck окупља у један панел на траци с алатка�
 Остали сервиси е-поште немају јавни интерфејс за ово, па Mail Deck прати њихове сопствене веб-апликације, а промена на њиховој страни може да заустави неки сервис док се Mail Deck не ажурира.
 
 Асистент вештачке интелигенције
-Искључен је док га не укључите у Подешавањима → Вештачка интелигенција.
-- Сажетак преписке коју читате: главне ставке, шта се од вас тражи и њени датуми, сваки са везом која га додаје у Google календар
-- „Чека ваш одговор“: филтер који окупља непрочитане поруке од људи који очекују одговор
-Ради са уграђеним моделом у Chrome-у на вашем рачунару или са вашим сопственим API кључем од подржаног добављача вештачке интелигенције. Уграђени модел је бесплатан и приватан, али не ради на сваком рачунару. Кључ наплаћује његов добављач по коришћењу; претплата на његову апликацију за ћаскање не укључује приступ API-ју.
+Његова дугмад су ту од почетка, а ништа се никуда не шаље док га не укључите.
+- Питајте пошту својим речима, на пример „када је мој лет?“ или „рачуни из октобра“: претражује све Gmail налоге, чита оно што нађе и одговара уз упућивање на сваку поруку
+- „Шта је важно“: сажетак непрочитане поште, прво оно што ускоро тражи вашу пажњу
+- Нова порука или одговор на језику преписке, да их проверите и пошаљете из свог сервиса е-поште
+- Сажетак преписке коју читате, са њеним датумима за Google календар, и одговори на ваша питања о њој
+- Непрочитана пошта разврстана: чека ваш одговор, важно и билтени које можете да очистите одједном
+- Превод поруке на ваш језик сопственим преводиоцем Chrome-а, на вашем рачунару
+Ради са уграђеним моделом у Chrome-у на вашем рачунару или са подржаним добављачем вештачке интелигенције: са вашим сопственим API кључем или пријавом преко ваше претплате, где добављач то дозвољава. Уграђени модел је бесплатан и приватан, али не ради на сваком рачунару.
 
 Приватност
-Mail Deck нема сопствене сервере ни аналитику. Комуницира само са Google-ом и са сервисима е-поште које укључите, са сваким преко сесије коју ваш прегледач већ има, а пошта сваког сервиса иде само том сервису. Једини додатак је асистент вештачке интелигенције, ако му дате сопствени кључ: тада сажетак шаље ту преписку, а „Чека ваш одговор“ пошиљаоца, наслов и почетак непрочитаних порука, право из вашег прегледача том добављачу. Кључ остаје на овом рачунару, а са уграђеним моделом у Chrome-у ваша пошта га не напушта. Адреса странице на којој сте чита се само унутар панела и никада се не чува нити шаље. Mail Deck никада не тражи и не чува вашу лозинку, а ваша подешавања остају у прегледачу.
+Mail Deck нема сопствене сервере ни аналитику. Комуницира само са Google-ом и са сервисима е-поште које укључите, са сваким преко сесије коју ваш прегледач већ има, а пошта сваког сервиса иде само том сервису. Једини додатак је асистент вештачке интелигенције, ако повежете добављача: тада оно што је потребно за захтев (преписка коју сажимате или на коју одговарате, пошта коју је пронашло питање, пошиљалац, наслов и почетак непрочитаних порука које разврстава) иде право из вашег прегледача том добављачу. Кључеви и пријаве остају на овом рачунару, а са уграђеним моделом у Chrome-у ваша пошта га не напушта. Адреса странице на којој сте чита се само унутар панела и никада се не чува нити шаље. Mail Deck никада не тражи и не чува вашу лозинку, а ваша подешавања остају у прегледачу.
 
 Mail Deck је отвореног кода, под лиценцом Mozilla Public License 1.1: https://github.com/nord-express/mail-deck
 Није га направио ниједан добављач е-поште и није повезан ни са једним од њих. Gmail је заштитни знак компаније Google LLC.
