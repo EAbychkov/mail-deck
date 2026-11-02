@@ -2046,6 +2046,12 @@
     "panel_sameLanguage": {
         "message": "Deze mail is al in het $1."
     },
+    "panel_aiNoPlan": {
+        "message": "Dit ChatGPT-account kan zijn abonnement niet in andere apps gebruiken. Kies een andere AI of log in met een ander account."
+    },
+    "panel_aiLimit": {
+        "message": "De gebruikslimiet van je ChatGPT-abonnement is voorlopig bereikt."
+    },
     "opt_ai": {
         "message": "AI"
     },
@@ -2056,7 +2062,7 @@
         "message": "Uit"
     },
     "opt_aiOffText": {
-        "message": "Geen samenvattingen of antwoordmarkeringen. Er wordt niets verstuurd."
+        "message": "Geen assistent, samenvattingen of sortering. Er wordt niets verstuurd."
     },
     "opt_aiBuiltin": {
         "message": "Ingebouwd in Chrome"
@@ -2266,13 +2272,13 @@
         "message": "De knoppen voor samenvatting, antwoord en assistent blijven in het paneel en stellen voor de assistent aan te zetten."
     },
     "opt_aiPrivacy": {
-        "message": "Verzoeken gaan vanuit je browser rechtstreeks naar $1, met je sleutel. Mail Deck heeft geen servers. Een samenvatting stuurt de tekst van dat bericht; ‘Ongelezen mail sorteren’ stuurt de afzender, het onderwerp en het voorbeeld van ongelezen mail."
+        "message": "Verzoeken gaan vanuit je browser rechtstreeks naar $1, met je sleutel. Mail Deck heeft geen servers. Een samenvatting, een antwoord of een vraag stuurt de tekst van dat bericht; de assistent stuurt je verzoek en de gevonden mail; ‘Ongelezen mail sorteren’ stuurt de afzender, het onderwerp en het voorbeeld van ongelezen mail."
     },
     "opt_aiPrivacyLocal": {
         "message": "Chrome draait het model op deze computer, dus je mail wordt nergens heen gestuurd."
     },
     "opt_aiPrivacyPlan": {
-        "message": "Verzoeken gaan vanuit je browser rechtstreeks naar OpenAI, ingelogd met je ChatGPT-account. Mail Deck heeft geen servers. Een samenvatting stuurt de tekst van dat bericht; ‘Ongelezen mail sorteren’ stuurt de afzender, het onderwerp en het voorbeeld van ongelezen mail."
+        "message": "Verzoeken gaan vanuit je browser rechtstreeks naar OpenAI, ingelogd met je ChatGPT-account. Mail Deck heeft geen servers. Een samenvatting, een antwoord of een vraag stuurt de tekst van dat bericht; de assistent stuurt je verzoek en de gevonden mail; ‘Ongelezen mail sorteren’ stuurt de afzender, het onderwerp en het voorbeeld van ongelezen mail."
     },
     "opt_aiWelcome": {
         "message": "Je gebruikt je ChatGPT-abonnement"

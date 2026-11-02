@@ -1904,6 +1904,12 @@
   "panel_sameLanguage": {
     "message": "This mail is already in $1."
   },
+  "panel_aiNoPlan": {
+    "message": "This ChatGPT account cannot use its plan in other apps. Choose another engine, or sign in with another account."
+  },
+  "panel_aiLimit": {
+    "message": "Your ChatGPT plan's usage limit is reached for now."
+  },
   "opt_ai": {
     "message": "AI"
   },
@@ -1914,7 +1920,7 @@
     "message": "Off"
   },
   "opt_aiOffText": {
-    "message": "No summaries or reply marks. Nothing is sent anywhere."
+    "message": "No assistant, summaries or sorting. Nothing is sent anywhere."
   },
   "opt_aiBuiltin": {
     "message": "Chrome built-in"
@@ -2124,13 +2130,13 @@
     "message": "The summary, reply and assistant buttons stay in the panel and offer to turn it on."
   },
   "opt_aiPrivacy": {
-    "message": "Requests go from your browser straight to $1, with your key. Mail Deck has no servers. A summary sends that message’s text; Sort unread mail sends the sender, subject and preview of unread mail."
+    "message": "Requests go from your browser straight to $1, with your key. Mail Deck has no servers. A summary, a reply or a question sends that message’s text; the assistant sends your request and the mail it found; Sort unread mail sends the sender, subject and preview of unread mail."
   },
   "opt_aiPrivacyLocal": {
     "message": "Chrome runs the model on this computer, so your mail is not sent anywhere."
   },
   "opt_aiPrivacyPlan": {
-    "message": "Requests go from your browser straight to OpenAI, signed in with your ChatGPT account. Mail Deck has no servers. A summary sends that message’s text; Sort unread mail sends the sender, subject and preview of unread mail."
+    "message": "Requests go from your browser straight to OpenAI, signed in with your ChatGPT account. Mail Deck has no servers. A summary, a reply or a question sends that message’s text; the assistant sends your request and the mail it found; Sort unread mail sends the sender, subject and preview of unread mail."
   },
   "opt_aiWelcome": {
     "message": "You’re using your ChatGPT plan"

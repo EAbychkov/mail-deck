@@ -1874,6 +1874,12 @@
   "panel_sameLanguage": {
     "message": "Ce message est déjà en $1."
   },
+  "panel_aiNoPlan": {
+    "message": "Ce compte ChatGPT ne peut pas utiliser son abonnement dans d’autres applications. Choisissez un autre moteur ou connectez-vous avec un autre compte."
+  },
+  "panel_aiLimit": {
+    "message": "La limite d’utilisation de votre abonnement ChatGPT est atteinte pour le moment."
+  },
   "opt_ai": {
     "message": "IA"
   },
@@ -1884,7 +1890,7 @@
     "message": "Désactivée"
   },
   "opt_aiOffText": {
-    "message": "Ni résumés ni marques de réponse. Rien n’est envoyé nulle part."
+    "message": "Ni assistant, ni résumés, ni tri. Rien n’est envoyé nulle part."
   },
   "opt_aiBuiltin": {
     "message": "Intégré à Chrome"
@@ -2094,13 +2100,13 @@
     "message": "Les boutons de résumé, de réponse et d’assistant restent dans le panneau et proposent de l’activer."
   },
   "opt_aiPrivacy": {
-    "message": "Les requêtes partent de votre navigateur directement vers $1, avec votre clé. Mail Deck n’a pas de serveurs. Un résumé envoie le texte de ce message ; « Trier les messages non lus » envoie l’expéditeur, l’objet et l’aperçu des messages non lus."
+    "message": "Les requêtes partent de votre navigateur directement vers $1, avec votre clé. Mail Deck n’a pas de serveurs. Un résumé, une réponse ou une question envoie le texte de ce message ; l’assistant envoie votre requête et les messages qu’il a trouvés ; « Trier les messages non lus » envoie l’expéditeur, l’objet et l’aperçu des messages non lus."
   },
   "opt_aiPrivacyLocal": {
     "message": "Chrome exécute le modèle sur cet ordinateur : vos messages ne sont envoyés nulle part."
   },
   "opt_aiPrivacyPlan": {
-    "message": "Les requêtes partent de votre navigateur directement vers OpenAI, sous votre compte ChatGPT. Mail Deck n’a pas de serveurs. Un résumé envoie le texte de ce message ; « Trier les messages non lus » envoie l’expéditeur, l’objet et l’aperçu des messages non lus."
+    "message": "Les requêtes partent de votre navigateur directement vers OpenAI, sous votre compte ChatGPT. Mail Deck n’a pas de serveurs. Un résumé, une réponse ou une question envoie le texte de ce message ; l’assistant envoie votre requête et les messages qu’il a trouvés ; « Trier les messages non lus » envoie l’expéditeur, l’objet et l’aperçu des messages non lus."
   },
   "opt_aiWelcome": {
     "message": "Vous utilisez votre forfait ChatGPT"

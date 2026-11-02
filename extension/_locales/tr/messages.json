@@ -2042,6 +2042,12 @@
     "panel_sameLanguage": {
         "message": "Bu ileti zaten şu dilde: $1."
     },
+    "panel_aiNoPlan": {
+        "message": "Bu ChatGPT hesabı aboneliğini başka uygulamalarda kullanamaz. Başka bir motor seçin veya başka bir hesapla oturum açın."
+    },
+    "panel_aiLimit": {
+        "message": "ChatGPT aboneliğinizin kullanım sınırına şimdilik ulaşıldı."
+    },
     "opt_ai": {
         "message": "Yapay zekâ"
     },
@@ -2052,7 +2058,7 @@
         "message": "Kapalı"
     },
     "opt_aiOffText": {
-        "message": "Özet ya da yanıt işareti yok. Hiçbir şey hiçbir yere gönderilmez."
+        "message": "Asistan, özet ya da sınıflandırma yok. Hiçbir şey hiçbir yere gönderilmez."
     },
     "opt_aiBuiltin": {
         "message": "Chrome’un yerleşik modeli"
@@ -2262,13 +2268,13 @@
         "message": "Özet, yanıt ve asistan düğmeleri panelde kalır ve asistanı açmayı önerir."
     },
     "opt_aiPrivacy": {
-        "message": "İstekler tarayıcınızdan doğrudan $1 sunucularına, anahtarınızla gider. Mail Deck’in sunucusu yoktur. Özet o iletinin metnini gönderir; “Okunmamış postaları sınıflandır” okunmamış postaların göndereni, konusu ve önizlemesini gönderir."
+        "message": "İstekler tarayıcınızdan doğrudan $1 sunucularına, anahtarınızla gider. Mail Deck’in sunucusu yoktur. Özet, yanıt ya da soru o iletinin metnini gönderir; asistan isteğinizi ve bulduğu postaları gönderir; “Okunmamış postaları sınıflandır” okunmamış postaların göndereni, konusu ve önizlemesini gönderir."
     },
     "opt_aiPrivacyLocal": {
         "message": "Chrome modeli bu bilgisayarda çalıştırır, bu yüzden postanız hiçbir yere gönderilmez."
     },
     "opt_aiPrivacyPlan": {
-        "message": "İstekler tarayıcınızdan doğrudan OpenAI sunucularına, ChatGPT hesabınızla oturum açılarak gider. Mail Deck’in sunucusu yoktur. Özet o iletinin metnini gönderir; “Okunmamış postaları sınıflandır” okunmamış postaların göndereni, konusu ve önizlemesini gönderir."
+        "message": "İstekler tarayıcınızdan doğrudan OpenAI sunucularına, ChatGPT hesabınızla oturum açılarak gider. Mail Deck’in sunucusu yoktur. Özet, yanıt ya da soru o iletinin metnini gönderir; asistan isteğinizi ve bulduğu postaları gönderir; “Okunmamış postaları sınıflandır” okunmamış postaların göndereni, konusu ve önizlemesini gönderir."
     },
     "opt_aiWelcome": {
         "message": "ChatGPT planınızı kullanıyorsunuz"

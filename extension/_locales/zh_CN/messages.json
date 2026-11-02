@@ -2046,6 +2046,12 @@
     "panel_sameLanguage": {
         "message": "这封邮件已经是$1了。"
     },
+    "panel_aiNoPlan": {
+        "message": "此 ChatGPT 账号无法在其他应用中使用其套餐。请选择其他引擎，或用其他账号登录。"
+    },
+    "panel_aiLimit": {
+        "message": "你的 ChatGPT 套餐目前已达到使用上限。"
+    },
     "opt_ai": {
         "message": "AI 助手"
     },
@@ -2056,7 +2062,7 @@
         "message": "关闭"
     },
     "opt_aiOffText": {
-        "message": "没有摘要和回复标记。不会向任何地方发送任何内容。"
+        "message": "没有助手、摘要和整理功能。不会向任何地方发送任何内容。"
     },
     "opt_aiBuiltin": {
         "message": "Chrome 内置"
@@ -2266,13 +2272,13 @@
         "message": "摘要、回复和助手按钮会保留在面板中，并提示你开启 AI 助手。"
     },
     "opt_aiPrivacy": {
-        "message": "请求从你的浏览器直接发送到 $1，使用你的密钥。Mail Deck 没有服务器。摘要会发送该邮件的正文；“整理未读邮件”会发送未读邮件的发件人、主题和预览。"
+        "message": "请求从你的浏览器直接发送到 $1，使用你的密钥。Mail Deck 没有服务器。摘要、回复或提问会发送该邮件的正文；助手会发送你的请求和它找到的邮件；“整理未读邮件”会发送未读邮件的发件人、主题和预览。"
     },
     "opt_aiPrivacyLocal": {
         "message": "Chrome 在这台电脑上运行模型，所以你的邮件不会被发送到任何地方。"
     },
     "opt_aiPrivacyPlan": {
-        "message": "请求从你的浏览器直接发送到 OpenAI，并使用你登录的 ChatGPT 账号。Mail Deck 没有服务器。摘要会发送该邮件的正文；“整理未读邮件”会发送未读邮件的发件人、主题和预览。"
+        "message": "请求从你的浏览器直接发送到 OpenAI，并使用你登录的 ChatGPT 账号。Mail Deck 没有服务器。摘要、回复或提问会发送该邮件的正文；助手会发送你的请求和它找到的邮件；“整理未读邮件”会发送未读邮件的发件人、主题和预览。"
     },
     "opt_aiWelcome": {
         "message": "你正在使用 ChatGPT 套餐"

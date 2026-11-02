@@ -2046,6 +2046,12 @@
     "panel_sameLanguage": {
         "message": "Ta wiadomość jest już w tym języku: $1."
     },
+    "panel_aiNoPlan": {
+        "message": "To konto ChatGPT nie może używać subskrypcji w innych aplikacjach. Wybierz inny silnik albo zaloguj się na inne konto."
+    },
+    "panel_aiLimit": {
+        "message": "Limit użycia subskrypcji ChatGPT jest na razie wyczerpany."
+    },
     "opt_ai": {
         "message": "AI"
     },
@@ -2056,7 +2062,7 @@
         "message": "Wyłączona"
     },
     "opt_aiOffText": {
-        "message": "Bez streszczeń i oznaczeń odpowiedzi. Nic nie jest nigdzie wysyłane."
+        "message": "Bez asystenta, streszczeń i porządkowania. Nic nie jest nigdzie wysyłane."
     },
     "opt_aiBuiltin": {
         "message": "Wbudowana w Chrome"
@@ -2266,13 +2272,13 @@
         "message": "Przyciski streszczenia, odpowiedzi i asystenta zostają w panelu i proponują włączenie asystenta."
     },
     "opt_aiPrivacy": {
-        "message": "Żądania idą z twojej przeglądarki prosto do $1, z twoim kluczem. Mail Deck nie ma serwerów. Streszczenie wysyła tekst tej wiadomości; „Porządkuj nieprzeczytaną pocztę” wysyła nadawcę, temat i podgląd nieprzeczytanej poczty."
+        "message": "Żądania idą z twojej przeglądarki prosto do $1, z twoim kluczem. Mail Deck nie ma serwerów. Streszczenie, odpowiedź lub pytanie wysyła tekst tej wiadomości; asystent wysyła twoje zapytanie i znalezione wiadomości; „Porządkuj nieprzeczytaną pocztę” wysyła nadawcę, temat i podgląd nieprzeczytanej poczty."
     },
     "opt_aiPrivacyLocal": {
         "message": "Chrome uruchamia model na tym komputerze, więc twoja poczta nie jest nigdzie wysyłana."
     },
     "opt_aiPrivacyPlan": {
-        "message": "Żądania idą z twojej przeglądarki prosto do OpenAI, z twoim zalogowanym kontem ChatGPT. Mail Deck nie ma serwerów. Streszczenie wysyła tekst tej wiadomości; „Porządkuj nieprzeczytaną pocztę” wysyła nadawcę, temat i podgląd nieprzeczytanej poczty."
+        "message": "Żądania idą z twojej przeglądarki prosto do OpenAI, z twoim zalogowanym kontem ChatGPT. Mail Deck nie ma serwerów. Streszczenie, odpowiedź lub pytanie wysyła tekst tej wiadomości; asystent wysyła twoje zapytanie i znalezione wiadomości; „Porządkuj nieprzeczytaną pocztę” wysyła nadawcę, temat i podgląd nieprzeczytanej poczty."
     },
     "opt_aiWelcome": {
         "message": "Korzystasz ze swojego planu ChatGPT"

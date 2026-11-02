@@ -2046,6 +2046,12 @@
     "panel_sameLanguage": {
         "message": "Aquest missatge ja és en $1."
     },
+    "panel_aiNoPlan": {
+        "message": "Aquest compte de ChatGPT no pot fer servir la subscripció en altres aplicacions. Tria un altre motor o inicia la sessió amb un altre compte."
+    },
+    "panel_aiLimit": {
+        "message": "Has arribat de moment al límit d’ús de la subscripció de ChatGPT."
+    },
     "opt_ai": {
         "message": "IA"
     },
@@ -2056,7 +2062,7 @@
         "message": "Desactivada"
     },
     "opt_aiOffText": {
-        "message": "Sense resums ni marques de resposta. No s’envia res enlloc."
+        "message": "Sense assistent, resums ni ordenació. No s’envia res enlloc."
     },
     "opt_aiBuiltin": {
         "message": "Integrat a Chrome"
@@ -2266,13 +2272,13 @@
         "message": "Els botons de resum, resposta i assistent es queden al tauler i ofereixen activar-lo."
     },
     "opt_aiPrivacy": {
-        "message": "Les sol·licituds van del teu navegador directament a $1, amb la teva clau. Mail Deck no té servidors. Un resum envia el text d’aquell missatge; «Ordena el correu no llegit» envia el remitent, l’assumpte i la previsualització del correu no llegit."
+        "message": "Les sol·licituds van del teu navegador directament a $1, amb la teva clau. Mail Deck no té servidors. Un resum, una resposta o una pregunta envia el text d’aquell missatge; l’assistent envia la teva sol·licitud i el correu que ha trobat; «Ordena el correu no llegit» envia el remitent, l’assumpte i la previsualització del correu no llegit."
     },
     "opt_aiPrivacyLocal": {
         "message": "Chrome executa el model en aquest ordinador, així que el teu correu no s’envia enlloc."
     },
     "opt_aiPrivacyPlan": {
-        "message": "Les sol·licituds van del teu navegador directament a OpenAI, amb la sessió del teu compte de ChatGPT. Mail Deck no té servidors. Un resum envia el text d’aquell missatge; «Ordena el correu no llegit» envia el remitent, l’assumpte i la previsualització del correu no llegit."
+        "message": "Les sol·licituds van del teu navegador directament a OpenAI, amb la sessió del teu compte de ChatGPT. Mail Deck no té servidors. Un resum, una resposta o una pregunta envia el text d’aquell missatge; l’assistent envia la teva sol·licitud i el correu que ha trobat; «Ordena el correu no llegit» envia el remitent, l’assumpte i la previsualització del correu no llegit."
     },
     "opt_aiWelcome": {
         "message": "Estàs fent servir el teu pla de ChatGPT"

@@ -219,6 +219,12 @@ h1 {
 .chips:empty {
   display: none;
 }
+.chips.overflow:not(.at-end) {
+  mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent);
+}
+[dir="rtl"] .chips.overflow:not(.at-end) {
+  mask-image: linear-gradient(to left, #000 calc(100% - 40px), transparent);
+}
 .chip {
   display: flex;
   align-items: center;
@@ -1256,6 +1262,11 @@ kbd {
 }
 .chip.bulk-chip:not(.on) svg {
   color: var(--muted);
+}
+/* beside the mailboxes' chips the sorting's say only their count */
+.chip.sort-chip.compact {
+  gap: 5px;
+  padding: 0 10px;
 }
 .chip.ai-offer {
   background: color-mix(in srgb, var(--accent) 7%, var(--card));

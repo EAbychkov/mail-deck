@@ -740,10 +740,20 @@ const renderChips = objs => {
       render();
     }
   }, state.site.domain, icon('close'));
+  paintChipsEdge.observed ||= ($('chips').addEventListener('scroll', paintChipsEdge, {passive: true}), true);
   $('chips').replaceChildren(...[...sortChips(objs), site, ...(busy.length < 2 || state.search ? [] : [
     chip(null, t('all'), busy.reduce((p, o) => p + o.xml.fullcount, 0)),
     ...busy.map(o => chip(o, short(o, busy) + (o.xml.label ? ` [${o.xml.label}]` : ''), o.xml.fullcount))
   ])].filter(Boolean));
+  paintChipsEdge();
+};
+
+// chips past the panel's edge fade out there, so the row says it scrolls
+const paintChipsEdge = () => {
+  const el = $('chips');
+  const over = el.scrollWidth > el.clientWidth + 1;
+  el.classList.toggle('overflow', over);
+  el.classList.toggle('at-end', !over || Math.abs(el.scrollLeft) + el.clientWidth >= el.scrollWidth - 2);
 };
 
 /* search: every mailbox at once, or the one the chips chose */
@@ -2223,15 +2233,17 @@ const sortChips = objs => {
   if (!chips.length && err) {
     chips.push({kind: 'reply', n: 0});
   }
+  // beside the mailboxes' chips, more than one of these says only its count, its name in its tooltip
+  const compact = chips.length > 1 && objs.filter(o => o.xml.fullcount).length > 1;
   return chips.map(({kind, n}, i) => {
     const dot = err && i === 0;
     const label = t(kind + 'Chip', n);
     return h('button', {
-      'class': 'chip sort-chip ' + kind + '-chip' + (state.sortOnly === kind ? ' on' : ''),
+      'class': 'chip sort-chip ' + kind + '-chip' + (state.sortOnly === kind ? ' on' : '') + (compact ? ' compact' : ''),
       'type': 'button',
       'aria-pressed': String(state.sortOnly === kind),
       'aria-label': label + (dot ? ' · ' + err.message : ''),
-      'title': dot ? err.message : t(kind + 'Tip'),
+      'title': dot ? err.message : compact ? label + ' — ' + t(kind + 'Tip') : t(kind + 'Tip'),
       'data-focus': 'chip:' + kind,
       'onclick': () => {
         if (!n) {
@@ -2243,7 +2255,7 @@ const sortChips = objs => {
         state.focus = FIRST;
         render();
       }
-    }, icon(SORTS[kind].icon), label, dot && h('span', {class: 'err-dot', 'aria-hidden': 'true'}));
+    }, icon(SORTS[kind].icon), compact ? h('span', {class: 'count'}, n) : label, dot && h('span', {class: 'err-dot', 'aria-hidden': 'true'}));
   });
 };
 // over the list narrowed to one kind: how much, and the mail all read or archived at once
@@ -2460,7 +2472,9 @@ const engineLabel = async () => {
   try {
     const d = await AI.describe?.();
     if (d) {
-      return d.local ? t('engineLocal', d.provider) : d.plan ? t('enginePlan', d.provider, d.model || '') : [d.provider, d.model].filter(Boolean).join(' · ');
+      // a plan with no model picked yet says the plan alone
+      return d.local ? t('engineLocal', d.provider) : d.plan ? t('enginePlan', d.provider, d.model || '').replace(/\s*·\s*$/, '') :
+        [d.provider, d.model].filter(Boolean).join(' · ');
     }
   }
   catch (e) {}
@@ -2571,8 +2585,8 @@ const choose = (engine, el) => {
     }, err => note.textContent = err?.message || t('actionFailed'));
 };
 // what keeps an engine that is on from answering, and the way to put it right
-const PROBLEMS = {'no-key': 'aiNoKey', 'no-access': 'aiNoAccess', 'signed-out': 'aiSignedOut', 'downloadable': 'aiDownload',
-  'downloading': 'aiDownloading', 'old-chrome': 'aiOldChrome', 'unavailable': 'aiUnavailable'};
+const PROBLEMS = {'no-key': 'aiNoKey', 'no-access': 'aiNoAccess', 'signed-out': 'aiSignedOut', 'no-plan': 'aiNoPlan', 'limit': 'aiLimit',
+  'downloadable': 'aiDownload', 'downloading': 'aiDownloading', 'old-chrome': 'aiOldChrome', 'unavailable': 'aiUnavailable'};
 const problemCard = () => {
   const card = h('div', {class: 'setup problem'}, h('p', {}, t('checkingAI')));
   loadAI().then(AI => AI?.state()).then(st => {
@@ -2591,7 +2605,8 @@ const problemCard = () => {
       h('p', {}, t(PROBLEMS[st.reason] || 'aiUnavailable')),
       h('div', {class: 'row-btns'},
         download ? h('button', {class: 'primary-btn', type: 'button', onclick: () => choose('builtin', card)}, t('downloadModel')) :
-          h('button', {class: 'primary-btn', type: 'button', onclick: () => openAISettings(state.ai.engine)}, t('fixInSettings')),
+          st.reason === 'limit' ? h('button', {class: 'primary-btn', type: 'button', onclick: manageUsage}, t('manageUsage')) :
+            h('button', {class: 'primary-btn', type: 'button', onclick: () => openAISettings(state.ai.engine)}, t('fixInSettings')),
         h('button', {class: 'text-btn', type: 'button', onclick: () => {
           assist.setup = true;
           paintAssist();
@@ -2738,9 +2753,14 @@ const copyText = (text, el) => navigator.clipboard.writeText(text || '').then(()
 const errorEl = turn => h('div', {class: 'ai-error', role: 'alert'},
   h('p', {}, turn.error.message || t('actionFailed')),
   h('div', {class: 'row-btns'}, ...errorActions(turn.error, () => run(turn))));
+// ChatGPT's usage page; the pause after the limit lets go, so the next request tries again
+const manageUsage = () => {
+  self.AI?.chatgpt?.resume?.();
+  openUrl(self.AI?.chatgpt?.usage || USAGE);
+};
 // what an error lets the user do about it
 const errorActions = (err, again) => [
-  err.code === 'limit' && h('button', {class: 'primary-btn', type: 'button', onclick: () => openUrl(USAGE)}, t('manageUsage')),
+  err.code === 'limit' && h('button', {class: 'primary-btn', type: 'button', onclick: manageUsage}, t('manageUsage')),
   ['auth', 'no-access', 'signed-out', 'model', 'no-plan', 'unavailable', 'quota'].includes(err.code) &&
     h('button', {class: err.code === 'limit' ? 'text-btn' : 'primary-btn', type: 'button', onclick: () => openAISettings(state.ai.engine)}, t('aiSettings')),
   !['auth', 'no-access', 'signed-out', 'no-plan', 'limit'].includes(err.code) &&

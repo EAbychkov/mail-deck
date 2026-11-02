@@ -2042,6 +2042,12 @@
     "panel_sameLanguage": {
         "message": "Este correo ya está en $1."
     },
+    "panel_aiNoPlan": {
+        "message": "Esta cuenta de ChatGPT no puede usar su suscripción en otras aplicaciones. Elige otro motor o inicia sesión con otra cuenta."
+    },
+    "panel_aiLimit": {
+        "message": "Has alcanzado por ahora el límite de uso de tu suscripción de ChatGPT."
+    },
     "opt_ai": {
         "message": "IA"
     },
@@ -2052,7 +2058,7 @@
         "message": "Desactivada"
     },
     "opt_aiOffText": {
-        "message": "Sin resúmenes ni marcas de respuesta. No se envía nada a ningún sitio."
+        "message": "Sin asistente, resúmenes ni ordenación. No se envía nada a ningún sitio."
     },
     "opt_aiBuiltin": {
         "message": "Integrado en Chrome"
@@ -2262,13 +2268,13 @@
         "message": "Los botones de resumen, respuesta y asistente siguen en el panel y ofrecen activarlo."
     },
     "opt_aiPrivacy": {
-        "message": "Las solicitudes van de tu navegador directamente a $1, con tu clave. Mail Deck no tiene servidores. Un resumen envía el texto de ese mensaje; «Ordenar el correo no leído» envía el remitente, el asunto y la vista previa del correo no leído."
+        "message": "Las solicitudes van de tu navegador directamente a $1, con tu clave. Mail Deck no tiene servidores. Un resumen, una respuesta o una pregunta envía el texto de ese mensaje; el asistente envía tu solicitud y el correo que ha encontrado; «Ordenar el correo no leído» envía el remitente, el asunto y la vista previa del correo no leído."
     },
     "opt_aiPrivacyLocal": {
         "message": "Chrome ejecuta el modelo en este ordenador, así que tu correo no se envía a ningún sitio."
     },
     "opt_aiPrivacyPlan": {
-        "message": "Las solicitudes van de tu navegador directamente a OpenAI, con la sesión de tu cuenta de ChatGPT. Mail Deck no tiene servidores. Un resumen envía el texto de ese mensaje; «Ordenar el correo no leído» envía el remitente, el asunto y la vista previa del correo no leído."
+        "message": "Las solicitudes van de tu navegador directamente a OpenAI, con la sesión de tu cuenta de ChatGPT. Mail Deck no tiene servidores. Un resumen, una respuesta o una pregunta envía el texto de ese mensaje; el asistente envía tu solicitud y el correo que ha encontrado; «Ordenar el correo no leído» envía el remitente, el asunto y la vista previa del correo no leído."
     },
     "opt_aiWelcome": {
         "message": "Estás usando tu plan de ChatGPT"

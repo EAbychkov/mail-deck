@@ -1862,6 +1862,12 @@
   "panel_sameLanguage": {
     "message": "Ez a levél már ezen a nyelven van: $1."
   },
+  "panel_aiNoPlan": {
+    "message": "Ez a ChatGPT-fiók nem használhatja az előfizetését más alkalmazásokban. Válasszon másik motort, vagy jelentkezzen be másik fiókkal."
+  },
+  "panel_aiLimit": {
+    "message": "A ChatGPT-előfizetése használati korlátja egyelőre elfogyott."
+  },
   "opt_ai": {
     "message": "Mesterséges intelligencia"
   },
@@ -1872,7 +1878,7 @@
     "message": "Kikapcsolva"
   },
   "opt_aiOffText": {
-    "message": "Nincs összefoglaló és válaszjelölés. Semmi nem megy sehova."
+    "message": "Nincs asszisztens, összefoglaló és szétválogatás. Semmi nem megy sehova."
   },
   "opt_aiBuiltin": {
     "message": "Beépített Chrome-modell"
@@ -2082,13 +2088,13 @@
     "message": "Az összefoglaló, a válasz és az asszisztens gombja a panelen marad, és felajánlja az asszisztens bekapcsolását."
   },
   "opt_aiPrivacy": {
-    "message": "A kérések a böngésződből egyenesen ide mennek: $1, a kulcsoddal. A Mail Deck-nek nincsenek szerverei. Az összefoglaló az adott levél szövegét küldi el; az „Olvasatlan levelek szétválogatása” az olvasatlan levelek feladóját, tárgyát és előnézetét."
+    "message": "A kérések a böngésződből egyenesen ide mennek: $1, a kulcsoddal. A Mail Deck-nek nincsenek szerverei. Az összefoglaló, a válasz vagy a kérdés az adott levél szövegét küldi el; az asszisztens a kérésedet és a talált leveleket; az „Olvasatlan levelek szétválogatása” az olvasatlan levelek feladóját, tárgyát és előnézetét."
   },
   "opt_aiPrivacyLocal": {
     "message": "A Chrome ezen a számítógépen futtatja a modellt, így a leveleid sehova nem kerülnek."
   },
   "opt_aiPrivacyPlan": {
-    "message": "A kérések a böngésződből egyenesen az OpenAI-hoz mennek, a ChatGPT-fiókoddal bejelentkezve. A Mail Deck-nek nincsenek szerverei. Az összefoglaló az adott levél szövegét küldi el; az „Olvasatlan levelek szétválogatása” az olvasatlan levelek feladóját, tárgyát és előnézetét."
+    "message": "A kérések a böngésződből egyenesen az OpenAI-hoz mennek, a ChatGPT-fiókoddal bejelentkezve. A Mail Deck-nek nincsenek szerverei. Az összefoglaló, a válasz vagy a kérdés az adott levél szövegét küldi el; az asszisztens a kérésedet és a talált leveleket; az „Olvasatlan levelek szétválogatása” az olvasatlan levelek feladóját, tárgyát és előnézetét."
   },
   "opt_aiWelcome": {
     "message": "A ChatGPT-előfizetésedet használod"

@@ -1874,6 +1874,12 @@
   "panel_sameLanguage": {
     "message": "Questa email è già in $1."
   },
+  "panel_aiNoPlan": {
+    "message": "Questo account ChatGPT non può usare il suo abbonamento in altre app. Scegli un altro motore o accedi con un altro account."
+  },
+  "panel_aiLimit": {
+    "message": "Per ora hai raggiunto il limite di utilizzo del tuo abbonamento ChatGPT."
+  },
   "opt_ai": {
     "message": "IA"
   },
@@ -1884,7 +1890,7 @@
     "message": "Disattivata"
   },
   "opt_aiOffText": {
-    "message": "Niente riepiloghi né segni di risposta. Non viene inviato nulla da nessuna parte."
+    "message": "Niente assistente, né riepiloghi né ordinamento. Non viene inviato nulla da nessuna parte."
   },
   "opt_aiBuiltin": {
     "message": "Integrato in Chrome"
@@ -2094,13 +2100,13 @@
     "message": "I pulsanti di riepilogo, risposta e assistente restano nel pannello e propongono di attivarlo."
   },
   "opt_aiPrivacy": {
-    "message": "Le richieste vanno dal tuo browser direttamente a $1, con la tua chiave. Mail Deck non ha server. Un riepilogo invia il testo di quel messaggio; «Ordina la posta non letta» invia mittente, oggetto e anteprima della posta non letta."
+    "message": "Le richieste vanno dal tuo browser direttamente a $1, con la tua chiave. Mail Deck non ha server. Un riepilogo, una risposta o una domanda invia il testo di quel messaggio; l’assistente invia la tua richiesta e la posta che ha trovato; «Ordina la posta non letta» invia mittente, oggetto e anteprima della posta non letta."
   },
   "opt_aiPrivacyLocal": {
     "message": "Chrome esegue il modello su questo computer, quindi la tua posta non viene inviata da nessuna parte."
   },
   "opt_aiPrivacyPlan": {
-    "message": "Le richieste vanno dal tuo browser direttamente a OpenAI, con l’accesso del tuo account ChatGPT. Mail Deck non ha server. Un riepilogo invia il testo di quel messaggio; «Ordina la posta non letta» invia mittente, oggetto e anteprima della posta non letta."
+    "message": "Le richieste vanno dal tuo browser direttamente a OpenAI, con l’accesso del tuo account ChatGPT. Mail Deck non ha server. Un riepilogo, una risposta o una domanda invia il testo di quel messaggio; l’assistente invia la tua richiesta e la posta che ha trovato; «Ordina la posta non letta» invia mittente, oggetto e anteprima della posta non letta."
   },
   "opt_aiWelcome": {
     "message": "Stai usando il tuo piano ChatGPT"

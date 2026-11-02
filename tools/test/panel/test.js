@@ -731,7 +731,7 @@
         out.afterPaint = ai.calls[0]?.t > window.__firstRow;
         out.times = {firstRow: window.__firstRow, firstCall: ai.calls[0], script: window.__aiScriptAt};
         out.replyWaited = calls('needsReply')[0]?.t - window.__firstRow >= 750;
-        out.chip = $('chips').firstElementChild?.classList.contains('reply-chip') && $('chips').querySelector('.reply-chip').textContent === t('replyChip', 2);
+        out.chip = $('chips').firstElementChild?.classList.contains('reply-chip') && $('chips').querySelector('.reply-chip').getAttribute('aria-label') === t('replyChip', 2);
         out.asked = {calls: calls('needsReply').length, n: calls('needsReply')[0]?.n, own: calls('needsReply')[0]?.accounts.includes('work@arbitron.example')};
         out.marks = [...document.querySelectorAll('#list .row')].filter(r => r.querySelector('.reply-mark'))
           .map(r => id(r.dataset.link) + ':' + r.querySelector('.reply-mark').title);
@@ -754,7 +754,7 @@
         update(more);
         await until(() => calls('needsReply').length === 2, 2000);
         await wait(50);
-        out.newMail = calls('needsReply')[1]?.n === 1 && $('chips').querySelector('.reply-chip').textContent === t('replyChip', 3);
+        out.newMail = calls('needsReply')[1]?.n === 1 && $('chips').querySelector('.reply-chip').getAttribute('aria-label') === t('replyChip', 3);
 
         // the summary: a button and I, nothing asked before
         await open('a1');
@@ -847,7 +847,7 @@
         update(later);
         await until(() => $('chips').querySelector('.reply-chip .err-dot'), 2500);
         const chip = $('chips').querySelector('.reply-chip');
-        out.errorDot = Boolean(chip?.querySelector('.err-dot')) && chip.title === msg('quota') && chip.textContent === t('replyChip', 4);
+        out.errorDot = Boolean(chip?.querySelector('.err-dot')) && chip.title === msg('quota') && chip.getAttribute('aria-label') === t('replyChip', 4) + ' · ' + msg('quota');
         out.consoleClean = window.__errors.length === 0 ? true : window.__errors;
       }
 

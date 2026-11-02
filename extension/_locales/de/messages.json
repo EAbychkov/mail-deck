@@ -2042,6 +2042,12 @@
     "panel_sameLanguage": {
         "message": "Diese E-Mail ist bereits auf $1."
     },
+    "panel_aiNoPlan": {
+        "message": "Dieses ChatGPT-Konto kann sein Abo nicht in anderen Apps nutzen. Wählen Sie eine andere KI oder melden Sie sich mit einem anderen Konto an."
+    },
+    "panel_aiLimit": {
+        "message": "Das Nutzungslimit Ihres ChatGPT-Abos ist vorerst erreicht."
+    },
     "opt_ai": {
         "message": "KI"
     },
@@ -2052,7 +2058,7 @@
         "message": "Aus"
     },
     "opt_aiOffText": {
-        "message": "Keine Zusammenfassungen, keine Antwort-Markierungen. Nichts wird irgendwohin gesendet."
+        "message": "Kein Assistent, keine Zusammenfassungen, keine Sortierung. Nichts wird irgendwohin gesendet."
     },
     "opt_aiBuiltin": {
         "message": "In Chrome integriert"
@@ -2262,13 +2268,13 @@
         "message": "Die Schaltflächen für Zusammenfassung, Antwort und Assistent bleiben im Panel und bieten an, ihn einzuschalten."
     },
     "opt_aiPrivacy": {
-        "message": "Anfragen gehen direkt von deinem Browser an $1, mit deinem Schlüssel. Mail Deck hat keine Server. Eine Zusammenfassung sendet den Text dieser Nachricht; „Ungelesene Mails sortieren“ sendet Absender, Betreff und Vorschau ungelesener Mails."
+        "message": "Anfragen gehen direkt von deinem Browser an $1, mit deinem Schlüssel. Mail Deck hat keine Server. Eine Zusammenfassung, eine Antwort oder eine Frage sendet den Text dieser Nachricht; der Assistent sendet deine Anfrage und die gefundenen Mails; „Ungelesene Mails sortieren“ sendet Absender, Betreff und Vorschau ungelesener Mails."
     },
     "opt_aiPrivacyLocal": {
         "message": "Chrome führt das Modell auf diesem Computer aus, deine Mails werden also nirgendwohin gesendet."
     },
     "opt_aiPrivacyPlan": {
-        "message": "Anfragen gehen direkt von deinem Browser an OpenAI, angemeldet mit deinem ChatGPT-Konto. Mail Deck hat keine Server. Eine Zusammenfassung sendet den Text dieser Nachricht; „Ungelesene Mails sortieren“ sendet Absender, Betreff und Vorschau ungelesener Mails."
+        "message": "Anfragen gehen direkt von deinem Browser an OpenAI, angemeldet mit deinem ChatGPT-Konto. Mail Deck hat keine Server. Eine Zusammenfassung, eine Antwort oder eine Frage sendet den Text dieser Nachricht; der Assistent sendet deine Anfrage und die gefundenen Mails; „Ungelesene Mails sortieren“ sendet Absender, Betreff und Vorschau ungelesener Mails."
     },
     "opt_aiWelcome": {
         "message": "Du nutzt dein ChatGPT-Abo"
