@@ -20,4 +20,6 @@ dashboard is driven through the `playwright` MCP server (local scope, `@playwrig
 when done: while it runs, any local program can drive it.
 
 Credentials are in `~/.config/mail-deck/` (not in the repo). Commit and bump `version` in
-`extension/manifest.json` before submitting.
+`extension/manifest.json` before submitting, with the version's notes under `## <version>` in
+`CHANGELOG.md`. A pushed version is released on GitHub by `.github/workflows/release.yml` (tag, zip,
+notes); never create releases by hand.

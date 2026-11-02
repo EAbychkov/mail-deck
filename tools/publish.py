@@ -20,6 +20,7 @@ import base64
 import datetime
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -135,7 +136,18 @@ def upload(auth, name):
     print(f'uploaded {version}')
 
 
+# the notes GitHub's release takes (.github/workflows/release.yml); a version without them
+# would reach the store and leave the release failing
+def changelog(version):
+    with open(os.path.join(ROOT, 'CHANGELOG.md'), encoding='utf-8') as f:
+        text = f.read()
+    m = re.search(r'^## ' + re.escape(version) + r'\b[^\n]*\n(.*?)(?=^## |\Z)', text, re.M | re.S)
+    if not m or not m.group(1).strip():
+        fail(f'CHANGELOG.md has no notes for {version}; add a "## {version}" section first')
+
+
 def submit(auth, name, staged):
+    changelog(manifest_version())
     upload(auth, name)
     r = request(f'{API}/v2/{name}:publish',
                 json.dumps({'publishType': 'STAGED_PUBLISH' if staged else 'DEFAULT_PUBLISH'}).encode(),

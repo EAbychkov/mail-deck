@@ -17,7 +17,10 @@ If they are missing, the setup is in the docstring of `tools/publish.py`; the se
 2. `python3 tools/publish.py status`: shows the manifest version, the live version and any revision in review.
    If a revision is already in review, stop: the store takes one at a time.
 3. The version in `extension/manifest.json` must be higher than the live one (the script refuses otherwise).
-   Bump it in the same commit as the change, as earlier commits did ("...; version 1.1.1").
+   Bump it in the same commit as the change, as earlier commits did ("...; version 1.1.1"), and add its
+   `## <version>` section to `CHANGELOG.md` in that commit (`submit` refuses without one).
+   Pushing that commit to `main` makes the GitHub Release by itself (`.github/workflows/release.yml`: the tag,
+   the same zip and the notes of the section), after the tests pass there; no `gh release` by hand.
 4. `tools/test/run.sh`: every test must pass. If one fails, do not submit; report the failing lines.
 5. Ask the user before submitting, unless they have said in this session (or in memory) that submissions need no
    confirmation. Then: `python3 tools/publish.py submit` (add `--staged` to hold it back after approval until
