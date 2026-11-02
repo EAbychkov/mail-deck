@@ -1730,6 +1730,279 @@
     "panel_attachments": {
         "message": "Ekler: $1"
     },
+    "panel_assistant": {
+        "message": "Yapay zekâ asistanı"
+    },
+    "panel_assistHello": {
+        "message": "Postanızla ilgili soru sorun, içinde bir şey arayın ya da bir e-posta yazdırın."
+    },
+    "panel_assistPlaceholder": {
+        "message": "Postanız hakkında sorun: “uçuşum ne zaman?”, “ekim ayı faturaları”, “Anna’ya şunu yaz: …”"
+    },
+    "panel_ask": {
+        "message": "Sor"
+    },
+    "panel_askAI": {
+        "message": "Yapay zekâya sor"
+    },
+    "panel_askAITip": {
+        "message": "Bunun yerine yapay zekâ asistanına sorun: bir soru ya da sade sözcüklerle bir arama"
+    },
+    "panel_askAboutMail": {
+        "message": "Sor"
+    },
+    "panel_askAgain": {
+        "message": "Yeniden sor"
+    },
+    "panel_askMailPlaceholder": {
+        "message": "Bu ileti hakkında ne öğrenmek istiyorsunuz?"
+    },
+    "panel_send": {
+        "message": "Gönder"
+    },
+    "panel_stop": {
+        "message": "Durdur"
+    },
+    "panel_close": {
+        "message": "Kapat"
+    },
+    "panel_clearChat": {
+        "message": "Sohbeti temizle"
+    },
+    "panel_thinking": {
+        "message": "Düşünüyor…"
+    },
+    "panel_searchingMail": {
+        "message": "Postalarınızda aranıyor…"
+    },
+    "panel_searchingFor": {
+        "message": "Aranıyor: $1"
+    },
+    "panel_readingMail": {
+        "message": "İletiler okunuyor…"
+    },
+    "panel_answering": {
+        "message": "Yanıt hazırlanıyor…"
+    },
+    "panel_writing": {
+        "message": "Yazılıyor…"
+    },
+    "panel_translating": {
+        "message": "Çevriliyor…"
+    },
+    "panel_foundMail": {
+        "message": "Bulunan: $1"
+    },
+    "panel_readUnread": {
+        "message": "Okunmamış postalara göre: $1"
+    },
+    "panel_nothingFound": {
+        "message": "Hiçbir şey bulunamadı. Başka sözcükler deneyin."
+    },
+    "panel_nothingUnread": {
+        "message": "Okunmamış posta yok."
+    },
+    "panel_searchInGmail": {
+        "message": "Gmail’de ara"
+    },
+    "panel_mailGone": {
+        "message": "Bu ileti artık listede değil."
+    },
+    "panel_suggestBrief": {
+        "message": "Okunmamış postalarımda önemli ne var?"
+    },
+    "panel_suggestReply": {
+        "message": "Kim yanıtımı bekliyor?"
+    },
+    "panel_suggestFind": {
+        "message": "Bu ayın faturalarını bul"
+    },
+    "panel_suggestFiles": {
+        "message": "Bu haftaki ekli postalar"
+    },
+    "panel_suggestWrite": {
+        "message": "E-posta yaz…"
+    },
+    "panel_suggestWritePrefix": {
+        "message": "Şu kişiye e-posta yaz:"
+    },
+    "panel_toLabel": {
+        "message": "Kime"
+    },
+    "panel_toPlaceholder": {
+        "message": "Adres"
+    },
+    "panel_from": {
+        "message": "Kimden"
+    },
+    "panel_subject": {
+        "message": "Konu"
+    },
+    "panel_emailBody": {
+        "message": "E-posta metni"
+    },
+    "panel_copyText": {
+        "message": "Kopyala"
+    },
+    "panel_tryAgain": {
+        "message": "Yeniden dene"
+    },
+    "panel_manageUsage": {
+        "message": "Kullanımı yönet"
+    },
+    "panel_setupTitle": {
+        "message": "Yapay zekâ asistanını açın"
+    },
+    "panel_setupLede": {
+        "message": "Postaları özetler, okunmamışları ayıklar, postanızda arar ve ona göre yanıt verir, yanıt taslakları yazar. Neyle çalışacağını seçin:"
+    },
+    "panel_setupPrivacy": {
+        "message": "Postalar yalnızca seçtiğiniz motora ve yalnızca siz istediğinizde ya da ayıklamayı açtığınızda gider. Anahtarlar ve oturumlar bu bilgisayarda kalır."
+    },
+    "panel_engineBuiltin": {
+        "message": "Chrome’un yerleşik modeli"
+    },
+    "panel_engineBuiltinNote": {
+        "message": "Ücretsiz ve gizli: bu bilgisayarda çalışır. Hemen burada açılır."
+    },
+    "panel_engineChatGPT": {
+        "message": "ChatGPT aboneliği"
+    },
+    "panel_engineChatGPTNote": {
+        "message": "ChatGPT Plus veya Pro hesabınızla oturum açın."
+    },
+    "panel_engineAnthropic": {
+        "message": "Claude (Anthropic API anahtarı)"
+    },
+    "panel_engineOpenAI": {
+        "message": "OpenAI (API anahtarı)"
+    },
+    "panel_engineZai": {
+        "message": "Z.ai GLM (API anahtarı)"
+    },
+    "panel_engineKeyNote": {
+        "message": "Kendi API anahtarınız; sağlayıcıya kullandıkça ödeme."
+    },
+    "panel_engineLocal": {
+        "message": "$1 · bu bilgisayarda"
+    },
+    "panel_enginePlan": {
+        "message": "$1 aboneliği · $2"
+    },
+    "panel_checkingAI": {
+        "message": "Yapay zekâ motoru denetleniyor…"
+    },
+    "panel_chooseEngine": {
+        "message": "Başka motor seç"
+    },
+    "panel_fixInSettings": {
+        "message": "Ayarlarda düzelt"
+    },
+    "panel_downloadModel": {
+        "message": "Modeli indir"
+    },
+    "panel_downloading": {
+        "message": "İndiriliyor… %$1"
+    },
+    "panel_aiNoKey": {
+        "message": "Bu motoru kullanmak için Ayarlarda API anahtarınızı ekleyin."
+    },
+    "panel_aiNoAccess": {
+        "message": "Chrome’un yapay zekâ sağlayıcısına erişmek için izninize ihtiyacı var."
+    },
+    "panel_aiSignedOut": {
+        "message": "Aboneliğinizi kullanmak için ChatGPT’de yeniden oturum açın."
+    },
+    "panel_aiDownload": {
+        "message": "Chrome’un yerleşik modelinin bir kez indirilmesi gerekiyor."
+    },
+    "panel_aiDownloading": {
+        "message": "Chrome yerleşik modelini indiriyor. İndirme bitince çalışır."
+    },
+    "panel_aiOldChrome": {
+        "message": "Chrome’un yerleşik modeli için Chrome 138 veya daha yenisi gerekiyor."
+    },
+    "panel_aiUnavailable": {
+        "message": "Yerleşik model bu bilgisayarda kullanılamıyor. Başka bir motor seçin."
+    },
+    "panel_sortOffer": {
+        "message": "Yapay zekâyla ayıkla"
+    },
+    "panel_replyTip": {
+        "message": "Yanıt bekleyen kişilerden gelen postalar"
+    },
+    "panel_importantChip": {
+        "message": "Önemli · $1"
+    },
+    "panel_importantTip": {
+        "message": "Yakında görmeniz gereken postalar"
+    },
+    "panel_bulkChip": {
+        "message": "Bültenler · $1"
+    },
+    "panel_bulkTip": {
+        "message": "Okumadan halledebileceğiniz postalar"
+    },
+    "panel_replyShown": {
+        "message": "Yanıtınızı bekliyor: $1"
+    },
+    "panel_importantShown": {
+        "message": "Önemli: $1"
+    },
+    "panel_bulkShown": {
+        "message": "Bültenler ve tanıtımlar: $1"
+    },
+    "panel_replyWithAI": {
+        "message": "Yapay zekâyla yanıtla"
+    },
+    "panel_replyIntentPlaceholder": {
+        "message": "Yanıtta ne yazsın? (isteğe bağlı)"
+    },
+    "panel_writeReply": {
+        "message": "Yaz"
+    },
+    "panel_draft": {
+        "message": "Taslak"
+    },
+    "panel_draftCopied": {
+        "message": "Taslak kopyalandı: yanıta yapıştırın."
+    },
+    "panel_intentYes": {
+        "message": "Evet, kabul et"
+    },
+    "panel_intentNo": {
+        "message": "Kibarca reddet"
+    },
+    "panel_intentMore": {
+        "message": "Ayrıntı iste"
+    },
+    "panel_intentThanks": {
+        "message": "Teşekkür et"
+    },
+    "panel_translate": {
+        "message": "Çevir"
+    },
+    "panel_translateFrom": {
+        "message": "Çevir: $1"
+    },
+    "panel_showOriginal": {
+        "message": "Orijinali göster"
+    },
+    "panel_translation": {
+        "message": "Çeviri"
+    },
+    "panel_translateFailed": {
+        "message": "Çeviri başarısız oldu."
+    },
+    "panel_offerAI": {
+        "message": "Postaları özetlemek, yanıt taslakları hazırlamak ve postalarla ilgili soruları yanıtlamak için yapay zekâ asistanını açın."
+    },
+    "panel_turnOnAI": {
+        "message": "Yapay zekâyı aç"
+    },
+    "panel_sameLanguage": {
+        "message": "Bu ileti zaten şu dilde: $1."
+    },
     "opt_ai": {
         "message": "Yapay zekâ"
     },

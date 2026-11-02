@@ -1589,6 +1589,279 @@
   "panel_attachments": {
     "message": "Далучаныя файлы: $1"
   },
+  "panel_assistant": {
+    "message": "ШІ-асістэнт"
+  },
+  "panel_assistHello": {
+    "message": "Спытайце пра пошту, знайдзіце нешта ў ёй або папрасіце напісаць ліст."
+  },
+  "panel_assistPlaceholder": {
+    "message": "Спытайце пра пошту: «калі мой рэйс?», «рахункі за кастрычнік», «напішы Ганне, што…»"
+  },
+  "panel_ask": {
+    "message": "Спытаць"
+  },
+  "panel_askAI": {
+    "message": "Спытаць ШІ"
+  },
+  "panel_askAITip": {
+    "message": "Спытаць ШІ-асістэнта: пытанне або пошук звычайнымі словамі"
+  },
+  "panel_askAboutMail": {
+    "message": "Спытаць"
+  },
+  "panel_askAgain": {
+    "message": "Спытаць зноў"
+  },
+  "panel_askMailPlaceholder": {
+    "message": "Што вы хочаце даведацца пра гэты ліст?"
+  },
+  "panel_send": {
+    "message": "Адправіць"
+  },
+  "panel_stop": {
+    "message": "Спыніць"
+  },
+  "panel_close": {
+    "message": "Закрыць"
+  },
+  "panel_clearChat": {
+    "message": "Ачысціць размову"
+  },
+  "panel_thinking": {
+    "message": "Думаю…"
+  },
+  "panel_searchingMail": {
+    "message": "Шукаю ў пошце…"
+  },
+  "panel_searchingFor": {
+    "message": "Шукаю: $1"
+  },
+  "panel_readingMail": {
+    "message": "Чытаю лісты…"
+  },
+  "panel_answering": {
+    "message": "Адказваю…"
+  },
+  "panel_writing": {
+    "message": "Пішу…"
+  },
+  "panel_translating": {
+    "message": "Перакладаю…"
+  },
+  "panel_foundMail": {
+    "message": "Знойдзена: $1"
+  },
+  "panel_readUnread": {
+    "message": "Па непрачытаных лістах: $1"
+  },
+  "panel_nothingFound": {
+    "message": "Нічога не знайшлося. Паспрабуйце іншыя словы."
+  },
+  "panel_nothingUnread": {
+    "message": "Непрачытаных лістоў няма."
+  },
+  "panel_searchInGmail": {
+    "message": "Шукаць у Gmail"
+  },
+  "panel_mailGone": {
+    "message": "Гэтага ліста больш няма ў спісе."
+  },
+  "panel_suggestBrief": {
+    "message": "Што важнага ў непрачытаных?"
+  },
+  "panel_suggestReply": {
+    "message": "Хто чакае майго адказу?"
+  },
+  "panel_suggestFind": {
+    "message": "Знайдзі рахункі за гэты месяц"
+  },
+  "panel_suggestFiles": {
+    "message": "Лісты з далучанымі файламі за тыдзень"
+  },
+  "panel_suggestWrite": {
+    "message": "Напісаць ліст…"
+  },
+  "panel_suggestWritePrefix": {
+    "message": "Напішы ліст"
+  },
+  "panel_toLabel": {
+    "message": "Каму"
+  },
+  "panel_toPlaceholder": {
+    "message": "Адрас"
+  },
+  "panel_from": {
+    "message": "Ад"
+  },
+  "panel_subject": {
+    "message": "Тэма"
+  },
+  "panel_emailBody": {
+    "message": "Тэкст ліста"
+  },
+  "panel_copyText": {
+    "message": "Скапіяваць"
+  },
+  "panel_tryAgain": {
+    "message": "Паўтарыць"
+  },
+  "panel_manageUsage": {
+    "message": "Кіраваць лімітам"
+  },
+  "panel_setupTitle": {
+    "message": "Уключыце ШІ-асістэнта"
+  },
+  "panel_setupLede": {
+    "message": "Ён коратка пераказвае лісты, разбірае непрачытаныя, шукае і адказвае па вашай пошце, піша чарнавікі адказаў. Выберыце, на чым ён працуе:"
+  },
+  "panel_setupPrivacy": {
+    "message": "Лісты адпраўляюцца толькі выбранаму вамі рухавіку і толькі калі вы просіце або ўключылі разбор пошты. Ключы і ўваход застаюцца на гэтым камп’ютары."
+  },
+  "panel_engineBuiltin": {
+    "message": "Убудаваная мадэль Chrome"
+  },
+  "panel_engineBuiltinNote": {
+    "message": "Бясплатна і прыватна: працуе на гэтым камп’ютары. Уключаецца проста тут."
+  },
+  "panel_engineChatGPT": {
+    "message": "Падпіска ChatGPT"
+  },
+  "panel_engineChatGPTNote": {
+    "message": "Увайдзіце з уліковым запісам ChatGPT Plus або Pro."
+  },
+  "panel_engineAnthropic": {
+    "message": "Claude (ключ API Anthropic)"
+  },
+  "panel_engineOpenAI": {
+    "message": "OpenAI (ключ API)"
+  },
+  "panel_engineZai": {
+    "message": "Z.ai GLM (ключ API)"
+  },
+  "panel_engineKeyNote": {
+    "message": "Ваш ключ API, аплата правайдару за выкарыстанне."
+  },
+  "panel_engineLocal": {
+    "message": "$1 · на гэтым камп’ютары"
+  },
+  "panel_enginePlan": {
+    "message": "Падпіска $1 · $2"
+  },
+  "panel_checkingAI": {
+    "message": "Правяраю рухавік ШІ…"
+  },
+  "panel_chooseEngine": {
+    "message": "Выбраць іншы рухавік"
+  },
+  "panel_fixInSettings": {
+    "message": "Выправіць у наладах"
+  },
+  "panel_downloadModel": {
+    "message": "Спампаваць мадэль"
+  },
+  "panel_downloading": {
+    "message": "Спампоўванне… $1%"
+  },
+  "panel_aiNoKey": {
+    "message": "Дадайце ключ API ў наладах, каб карыстацца гэтым рухавіком."
+  },
+  "panel_aiNoAccess": {
+    "message": "Chrome патрэбны ваш дазвол на доступ да ШІ-правайдара."
+  },
+  "panel_aiSignedOut": {
+    "message": "Увайдзіце ў ChatGPT зноў, каб карыстацца падпіскай."
+  },
+  "panel_aiDownload": {
+    "message": "Убудаваную мадэль Chrome трэба адзін раз спампаваць."
+  },
+  "panel_aiDownloading": {
+    "message": "Chrome спампоўвае ўбудаваную мадэль. Яна запрацуе, калі спампоўванне скончыцца."
+  },
+  "panel_aiOldChrome": {
+    "message": "Убудаванай мадэлі патрэбны Chrome 138 або навейшы."
+  },
+  "panel_aiUnavailable": {
+    "message": "Убудаваная мадэль недаступная на гэтым камп’ютары. Выберыце іншы рухавік."
+  },
+  "panel_sortOffer": {
+    "message": "Разабраць з ШІ"
+  },
+  "panel_replyTip": {
+    "message": "Лісты ад людзей, якія чакаюць адказу"
+  },
+  "panel_importantChip": {
+    "message": "Важнае · $1"
+  },
+  "panel_importantTip": {
+    "message": "Лісты, якія варта ўбачыць хутка"
+  },
+  "panel_bulkChip": {
+    "message": "Рассылкі · $1"
+  },
+  "panel_bulkTip": {
+    "message": "Лісты, якія можна разабраць не чытаючы"
+  },
+  "panel_replyShown": {
+    "message": "Чакае вашага адказу: $1"
+  },
+  "panel_importantShown": {
+    "message": "Важнае: $1"
+  },
+  "panel_bulkShown": {
+    "message": "Рассылкі і рэклама: $1"
+  },
+  "panel_replyWithAI": {
+    "message": "Адказ з ШІ"
+  },
+  "panel_replyIntentPlaceholder": {
+    "message": "Пра што адказаць? (неабавязкова)"
+  },
+  "panel_writeReply": {
+    "message": "Напісаць"
+  },
+  "panel_draft": {
+    "message": "Чарнавік"
+  },
+  "panel_draftCopied": {
+    "message": "Чарнавік скапіяваны: устаўце яго ў адказ."
+  },
+  "panel_intentYes": {
+    "message": "Так, пагаджаюся"
+  },
+  "panel_intentNo": {
+    "message": "Ветліва адмовіць"
+  },
+  "panel_intentMore": {
+    "message": "Папрасіць падрабязнасці"
+  },
+  "panel_intentThanks": {
+    "message": "Падзякаваць"
+  },
+  "panel_translate": {
+    "message": "Перакласці"
+  },
+  "panel_translateFrom": {
+    "message": "Перакласці: $1"
+  },
+  "panel_showOriginal": {
+    "message": "Паказаць арыгінал"
+  },
+  "panel_translation": {
+    "message": "Пераклад"
+  },
+  "panel_translateFailed": {
+    "message": "Не ўдалося перакласці."
+  },
+  "panel_offerAI": {
+    "message": "Уключыце ШІ-асістэнта, каб атрымліваць кароткі змест лістоў, чарнавікі адказаў і адказы на пытанні пра іх."
+  },
+  "panel_turnOnAI": {
+    "message": "Уключыць ШІ"
+  },
+  "panel_sameLanguage": {
+    "message": "Гэты ліст ужо на мове: $1."
+  },
   "opt_ai": {
     "message": "ШІ"
   },

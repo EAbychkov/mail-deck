@@ -1730,6 +1730,279 @@
     "panel_attachments": {
         "message": "קבצים מצורפים: $1"
     },
+    "panel_assistant": {
+        "message": "עוזר בינה מלאכותית"
+    },
+    "panel_assistHello": {
+        "message": "שאל על הדואר שלך, חפש בו משהו או בקש לכתוב הודעה."
+    },
+    "panel_assistPlaceholder": {
+        "message": "שאל על הדואר שלך: ״מתי הטיסה שלי?״, ״חשבוניות מאוקטובר״, ״כתוב לאנה ש…״"
+    },
+    "panel_ask": {
+        "message": "שאל"
+    },
+    "panel_askAI": {
+        "message": "שאל את העוזר"
+    },
+    "panel_askAITip": {
+        "message": "שאל במקום זאת את עוזר הבינה המלאכותית: שאלה, או חיפוש במילים פשוטות"
+    },
+    "panel_askAboutMail": {
+        "message": "שאל"
+    },
+    "panel_askAgain": {
+        "message": "שאל שוב"
+    },
+    "panel_askMailPlaceholder": {
+        "message": "מה תרצה לדעת על ההודעה הזו?"
+    },
+    "panel_send": {
+        "message": "שלח"
+    },
+    "panel_stop": {
+        "message": "עצור"
+    },
+    "panel_close": {
+        "message": "סגור"
+    },
+    "panel_clearChat": {
+        "message": "נקה את השיחה"
+    },
+    "panel_thinking": {
+        "message": "חושב…"
+    },
+    "panel_searchingMail": {
+        "message": "מחפש בדואר…"
+    },
+    "panel_searchingFor": {
+        "message": "מחפש: $1"
+    },
+    "panel_readingMail": {
+        "message": "קורא את ההודעות…"
+    },
+    "panel_answering": {
+        "message": "עונה…"
+    },
+    "panel_writing": {
+        "message": "כותב…"
+    },
+    "panel_translating": {
+        "message": "מתרגם…"
+    },
+    "panel_foundMail": {
+        "message": "נמצאו: $1"
+    },
+    "panel_readUnread": {
+        "message": "לפי הודעות שלא נקראו: $1"
+    },
+    "panel_nothingFound": {
+        "message": "לא נמצא דבר. נסה מילים אחרות."
+    },
+    "panel_nothingUnread": {
+        "message": "אין דואר שלא נקרא."
+    },
+    "panel_searchInGmail": {
+        "message": "חפש ב-Gmail"
+    },
+    "panel_mailGone": {
+        "message": "ההודעה הזו כבר לא ברשימה."
+    },
+    "panel_suggestBrief": {
+        "message": "מה חשוב בדואר שלא קראתי?"
+    },
+    "panel_suggestReply": {
+        "message": "מי מחכה לתשובה שלי?"
+    },
+    "panel_suggestFind": {
+        "message": "מצא חשבוניות מהחודש"
+    },
+    "panel_suggestFiles": {
+        "message": "הודעות עם קבצים מצורפים מהשבוע"
+    },
+    "panel_suggestWrite": {
+        "message": "כתוב הודעה…"
+    },
+    "panel_suggestWritePrefix": {
+        "message": "כתוב הודעה אל"
+    },
+    "panel_toLabel": {
+        "message": "אל"
+    },
+    "panel_toPlaceholder": {
+        "message": "כתובת"
+    },
+    "panel_from": {
+        "message": "מאת"
+    },
+    "panel_subject": {
+        "message": "נושא"
+    },
+    "panel_emailBody": {
+        "message": "טקסט ההודעה"
+    },
+    "panel_copyText": {
+        "message": "העתק"
+    },
+    "panel_tryAgain": {
+        "message": "נסה שוב"
+    },
+    "panel_manageUsage": {
+        "message": "נהל שימוש"
+    },
+    "panel_setupTitle": {
+        "message": "הפעל את עוזר הבינה המלאכותית"
+    },
+    "panel_setupLede": {
+        "message": "הוא מסכם הודעות, ממיין את מה שלא נקרא, מחפש ועונה מתוך הדואר שלך, ומנסח טיוטות תשובה. בחר על מה הוא יפעל:"
+    },
+    "panel_setupPrivacy": {
+        "message": "הדואר נשלח רק למנוע שבחרת, ורק כשאתה מבקש או מפעיל מיון. המפתחות וההתחברויות נשארים במחשב הזה."
+    },
+    "panel_engineBuiltin": {
+        "message": "המודל המובנה של Chrome"
+    },
+    "panel_engineBuiltinNote": {
+        "message": "חינמי ופרטי: רץ במחשב הזה. מופעל ממש כאן."
+    },
+    "panel_engineChatGPT": {
+        "message": "מינוי ChatGPT"
+    },
+    "panel_engineChatGPTNote": {
+        "message": "התחבר עם חשבון ChatGPT Plus או Pro שלך."
+    },
+    "panel_engineAnthropic": {
+        "message": "Claude (מפתח API של Anthropic)"
+    },
+    "panel_engineOpenAI": {
+        "message": "OpenAI (מפתח API)"
+    },
+    "panel_engineZai": {
+        "message": "Z.ai GLM (מפתח API)"
+    },
+    "panel_engineKeyNote": {
+        "message": "מפתח API משלך, בתשלום לספק לפי שימוש."
+    },
+    "panel_engineLocal": {
+        "message": "$1 · במחשב הזה"
+    },
+    "panel_enginePlan": {
+        "message": "מינוי $1 · $2"
+    },
+    "panel_checkingAI": {
+        "message": "בודק את מנוע הבינה המלאכותית…"
+    },
+    "panel_chooseEngine": {
+        "message": "בחר מנוע אחר"
+    },
+    "panel_fixInSettings": {
+        "message": "תקן בהגדרות"
+    },
+    "panel_downloadModel": {
+        "message": "הורד את המודל"
+    },
+    "panel_downloading": {
+        "message": "מוריד… $1%"
+    },
+    "panel_aiNoKey": {
+        "message": "הוסף את מפתח ה-API שלך בהגדרות כדי להשתמש במנוע הזה."
+    },
+    "panel_aiNoAccess": {
+        "message": "Chrome צריך את הרשאתך כדי להתחבר לספק הבינה המלאכותית."
+    },
+    "panel_aiSignedOut": {
+        "message": "התחבר שוב ל-ChatGPT כדי להשתמש במינוי שלך."
+    },
+    "panel_aiDownload": {
+        "message": "צריך להוריד פעם אחת את המודל המובנה של Chrome."
+    },
+    "panel_aiDownloading": {
+        "message": "Chrome מוריד את המודל המובנה שלו. הוא יעבוד כשההורדה תסתיים."
+    },
+    "panel_aiOldChrome": {
+        "message": "המודל המובנה של Chrome דורש Chrome 138 ומעלה."
+    },
+    "panel_aiUnavailable": {
+        "message": "המודל המובנה לא זמין במחשב הזה. בחר מנוע אחר."
+    },
+    "panel_sortOffer": {
+        "message": "מיין בעזרת בינה מלאכותית"
+    },
+    "panel_replyTip": {
+        "message": "דואר מאנשים שמצפים לתשובה"
+    },
+    "panel_importantChip": {
+        "message": "חשוב · $1"
+    },
+    "panel_importantTip": {
+        "message": "דואר שכדאי לראות בקרוב"
+    },
+    "panel_bulkChip": {
+        "message": "ניוזלטרים · $1"
+    },
+    "panel_bulkTip": {
+        "message": "דואר שאפשר לטפל בו בלי לקרוא"
+    },
+    "panel_replyShown": {
+        "message": "מחכה לתשובה שלך: $1"
+    },
+    "panel_importantShown": {
+        "message": "חשוב: $1"
+    },
+    "panel_bulkShown": {
+        "message": "ניוזלטרים ופרסומות: $1"
+    },
+    "panel_replyWithAI": {
+        "message": "תשובה בעזרת בינה מלאכותית"
+    },
+    "panel_replyIntentPlaceholder": {
+        "message": "מה התשובה צריכה לומר? (לא חובה)"
+    },
+    "panel_writeReply": {
+        "message": "כתוב"
+    },
+    "panel_draft": {
+        "message": "טיוטה"
+    },
+    "panel_draftCopied": {
+        "message": "הטיוטה הועתקה: הדבק אותה בתשובה."
+    },
+    "panel_intentYes": {
+        "message": "כן, להסכים"
+    },
+    "panel_intentNo": {
+        "message": "לסרב בנימוס"
+    },
+    "panel_intentMore": {
+        "message": "לבקש פרטים"
+    },
+    "panel_intentThanks": {
+        "message": "להודות"
+    },
+    "panel_translate": {
+        "message": "תרגם"
+    },
+    "panel_translateFrom": {
+        "message": "תרגם מ$1"
+    },
+    "panel_showOriginal": {
+        "message": "הצג את המקור"
+    },
+    "panel_translation": {
+        "message": "תרגום"
+    },
+    "panel_translateFailed": {
+        "message": "התרגום נכשל."
+    },
+    "panel_offerAI": {
+        "message": "הפעל את עוזר הבינה המלאכותית כדי לסכם הודעות, לנסח תשובות ולענות על שאלות לגביהן."
+    },
+    "panel_turnOnAI": {
+        "message": "הפעל בינה מלאכותית"
+    },
+    "panel_sameLanguage": {
+        "message": "ההודעה הזו כבר כתובה ב$1."
+    },
     "opt_ai": {
         "message": "בינה מלאכותית"
     },

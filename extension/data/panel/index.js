@@ -28,6 +28,12 @@ const ICONS = {
   clock: ['M12 20.5a8.5 8.5 0 1 0 0-17a8.5 8.5 0 0 0 0 17Z', 'M12 7.5V12l3 2'],
   side: ['M4.5 4h15A1.5 1.5 0 0 1 21 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5v-13A1.5 1.5 0 0 1 4.5 4Z', 'M15 4v16'],
   grip: ['M9 6h.01', 'M9 12h.01', 'M9 18h.01', 'M15 6h.01', 'M15 12h.01', 'M15 18h.01'],
+  flag: ['M5.5 21V4.5', 'M5.5 4.5h11.5l-2.4 4.2 2.4 4.3H5.5'],
+  bulk: ['M5 4.5h11a1 1 0 0 1 1 1V18a1.5 1.5 0 0 0 1.5 1.5h-12A1.5 1.5 0 0 1 5 18Z', 'M17 9h2.5a.5.5 0 0 1 .5.5V18a1.5 1.5 0 0 1-3 0', 'M8 8.5h6', 'M8 12h6', 'M8 15.5h3.5'],
+  translate: ['M4 5.5h8', 'M8 3.5v2', 'M10.5 5.5c-.7 3.6-3 6.3-6 7.8', 'M6.2 8.6c1 1.9 2.6 3.4 4.6 4.3', 'M12.5 20.5l4-9.5 4 9.5', 'M13.9 17.2h5.2'],
+  ask: ['M4.5 5h15A1.5 1.5 0 0 1 21 6.5v9a1.5 1.5 0 0 1-1.5 1.5H10l-4.5 3.5V17h-1A1.5 1.5 0 0 1 3 15.5v-9A1.5 1.5 0 0 1 4.5 5Z', 'M10 9.3a2 2 0 1 1 2.7 1.9c-.4.2-.7.6-.7 1.1', 'M12 14.6v.1'],
+  send: ['M12 19V5.5', 'M6.5 11L12 5.5l5.5 5.5'],
+  stop: ['M8 7h8a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z'],
   attach: ['M20 11.5l-7.8 7.8a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8'],
   download: ['M12 4v11', 'M7.5 10.5L12 15l4.5-4.5', 'M5 19.5h14'],
   sparkle: ['M11 3.5l1.9 4.6 4.6 1.9-4.6 1.9L11 16.5l-1.9-4.6L4.5 10l4.6-1.9Z', 'M18.5 14.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9Z'],
@@ -73,9 +79,9 @@ const state = {
   site: null,
   siteOnly: false, // the list narrowed to the site's mail ("N more")
   // the assistant (Settings → AI): its engine and features; ok once AI.state() said it is ready
-  ai: {engine: 'off', summary: 'click', reply: true, ok: false},
+  ai: {engine: 'off', summary: 'click', reply: true, buttons: true, ok: false},
   replies: new Map(), // replyId -> {reply, why}: the mail waiting for a reply, as the assistant sees it
-  replyOnly: false, // the list narrowed to that mail ("Reply · N")
+  sortOnly: null, // the list narrowed to one kind of that sorting: 'reply', 'important' or 'bulk'
   replyError: null, // the assistant's last failure in that, shown as a dot on its chip
   rows: new Map(), // link -> {e, o}
   files: new Map(), // link#version -> [{name, view, download}]: a Gmail thread's attachments, read ahead
@@ -679,6 +685,7 @@ const renderBar = objs => {
   $('sub').replaceChildren(!objs.length ? '' :
     total ? (busy === 1 ? t('summaryOne', total) : t('summaryMany', total, busy)) : h('span', {class: 'ok'}, icon('done'), t('caughtUp')));
   $('tools').replaceChildren(...[
+    showAI() && btn('sparkle', t('assistant') + ' (A)', () => openAssist(), 'assist-btn'),
     btn('refresh', t('checkMail'), ev => {
       refreshing = true;
       ev.currentTarget.classList.add('spin');
@@ -733,7 +740,7 @@ const renderChips = objs => {
       render();
     }
   }, state.site.domain, icon('close'));
-  $('chips').replaceChildren(...[replyChip(objs), site, ...(busy.length < 2 || state.search ? [] : [
+  $('chips').replaceChildren(...[...sortChips(objs), site, ...(busy.length < 2 || state.search ? [] : [
     chip(null, t('all'), busy.reduce((p, o) => p + o.xml.fullcount, 0)),
     ...busy.map(o => chip(o, short(o, busy) + (o.xml.label ? ` [${o.xml.label}]` : ''), o.xml.fullcount))
   ])].filter(Boolean));
@@ -1137,7 +1144,7 @@ const siteBlock = (site, found) => {
       'data-focus': 'site-more',
       'onclick': () => {
         state.siteOnly = true;
-        state.replyOnly = false;
+        state.sortOnly = null;
         state.focus = FIRST;
         render();
       }
@@ -1201,8 +1208,11 @@ const renderList = objs => {
   state.rows.clear();
 
   const shown = state.only ? objs.filter(o => o.xml.link === state.only) : objs;
-  const keep = state.siteOnly ? e => ofSite(e, state.site) : state.replyOnly ? (e, o) => replyOf(e, o)?.reply === true : null;
-  list.replaceChildren(...(state.search ? searchList() : keep ? shown.map(o => section(o, keep)).filter(s => s.querySelector('.row')) : [
+  const keep = state.siteOnly ? e => ofSite(e, state.site) : state.sortOnly ? (e, o) => SORTS[state.sortOnly].has(replyOf(e, o)) : null;
+  list.replaceChildren(...(state.search ? searchList() : keep ? [
+    state.sortOnly && sortBar(shown),
+    ...shown.map(o => section(o, keep)).filter(s => s.querySelector('.row'))
+  ].filter(Boolean) : [
     ...(!objs.length ? [signIn()] : objs.some(o => o.xml.fullcount) ? shown.map(o => section(o)) : [caughtUp(objs)]),
     !state.only && signedOut()
   ].filter(Boolean)));
@@ -1297,9 +1307,9 @@ const render = () => {
   if (state.siteOnly && !(state.site && siteMail(state.site, objs).length)) {
     state.siteOnly = false;
   }
-  // and so does the list narrowed to the mail waiting for a reply
-  if (state.replyOnly && !replyCount(objs)) {
-    state.replyOnly = false;
+  // and so does the list narrowed to one kind of the assistant's sorting
+  if (state.sortOnly && !sortCount(objs, state.sortOnly)) {
+    state.sortOnly = null;
   }
   // the chips drop a choice whose mailbox has no mail left; the bar's compose follows the choice
   renderChips(objs);
@@ -1438,9 +1448,10 @@ const actFromReader = (cmd, e, until) => {
     read(next.e, next.o);
   }
 };
-const read = async (e, o) => {
+// trail: the mail J and K walk, the list's when none is given
+const read = async (e, o, trail) => {
   if (!state.reading) {
-    state.trail = new Map(state.rows);
+    state.trail = trail || new Map(state.rows);
   }
   // the summary of the mail before (J, K) stops with it
   state.reading?.ai.ctl?.abort();
@@ -1450,10 +1461,10 @@ const read = async (e, o) => {
   // next: the line back() focuses should this mail's own leave the list meanwhile (read on open)
   const r = state.reading = {e, o, next: neighbour([e.link])?.dataset.link, code: codeOf(e.title + ' ' + e.summary), ai: {ctl: null}, texts};
   closeMenu();
-  const trail = [...state.trail.keys()].filter(k => k === e.link || !state.hidden.has(k));
+  const walk = [...state.trail.keys()].filter(k => k === e.link || !state.hidden.has(k));
   $('reader-bar').replaceChildren(
     btn('back', t('back') + ' (Esc)', back),
-    h('span', {class: 'pos'}, t('position', trail.indexOf(e.link) + 1, trail.length)),
+    h('span', {class: 'pos'}, t('position', walk.indexOf(e.link) + 1, walk.length)),
     btn('up', t('prevMessage') + ' (K)', () => stepReader(-1), 'prev'),
     btn('down', t('nextMessage') + ' (J)', () => stepReader(1), 'next'),
     ...Object.entries(ACTIONS).filter(([cmd]) => allowed(cmd, o)).map(([cmd, a]) => btn(a.icon, a.title,
@@ -1461,7 +1472,6 @@ const read = async (e, o) => {
     remindBtn([e.link]),
     h('span', {class: 'sep'}),
     !serviceOf(o) && btn('star', t('star') + ' (S)', () => star(e), 'star'),
-    summaryBtn(),
     btn('reply', t('reply'), () => openUrl(replyUrl(e, o))),
     btn('open', openIn(o) + ' (O)', ev => openEntry(e, o, ev))
   );
@@ -1472,6 +1482,8 @@ const read = async (e, o) => {
   $('reader').classList.toggle('no-star', Boolean(serviceOf(o)));
   $('reader').classList.toggle('no-archive', !can(o, 'archive'));
   resetSummary(r);
+  resetTool(r);
+  paintStrip(r);
   $('reader-account').style.setProperty('--c', o.color);
   $('reader-account').lastChild.textContent = accountName(o);
   $('reader-subject').textContent = e.title || t('noSubject');
@@ -1486,6 +1498,7 @@ const read = async (e, o) => {
   paintReaderFiles(state.files.get(fileKey(e)));
   $('app').classList.add('reading');
   shade(true);
+  $('assist').inert = true;
   // the keys and a screen reader follow the reader
   $('reader').focus({preventScroll: true});
 
@@ -1517,6 +1530,7 @@ const read = async (e, o) => {
     fit(doc);
     shown = true;
     gotTexts(messagesOf(doc, e));
+    findLanguage(r);
     // a code the snippet did not reach, from the newest message only: a thread of codes from one
     // sender would offer an older one
     if (!state.reading.code) {
@@ -1561,9 +1575,15 @@ const back = () => {
   // a summary underway stops: no one waits for it any more
   r?.ai.ctl?.abort();
   $('ai-card').hidden = true;
-  shade(false);
+  $('ai-tool').hidden = true;
+  $('assist').inert = false;
+  shade(assist.open);
   $('app').classList.remove('reading');
-  if (r) {
+  // back to the assistant it came from: its mail keeps the focus
+  if (r && assist.open) {
+    ($('assist').querySelector(`[data-focus="${CSS.escape('ref:' + r.e.link)}"]`) || $('assist-input')).focus({preventScroll: true});
+  }
+  else if (r) {
     // the site's pin it opened from, its line, or the line next to it
     (r.from && $('list').querySelector(`[data-focus="${CSS.escape(r.from)}"]`) || rowOf(r.e.link) || (r.next && rowOf(r.next)) ||
       $('list').querySelector('.row, .acc'))?.focus({preventScroll: true});
@@ -1588,14 +1608,8 @@ const AUTO_CHARS = 1500;
 const summaryKey = e => e.link + '#' + (e.modified || '');
 // the summaries hidden here: a mail opened again keeps its summary hidden
 const aiHidden = new Set();
-const summaryBtn = () => {
-  const el = btn('sparkle', t('summary') + ' (I)', () => toggleSummary(), 'ai-btn');
-  el.setAttribute('aria-controls', 'ai-card');
-  el.setAttribute('aria-expanded', 'false');
-  return el;
-};
 const paintSummaryBtn = () => {
-  const el = $('reader-bar').querySelector('.ai-btn');
+  const el = $('reader-ai').querySelector('.ai-btn');
   el?.setAttribute('aria-expanded', String(!$('ai-card').hidden));
   el?.classList.toggle('on', !$('ai-card').hidden);
 };
@@ -1712,8 +1726,9 @@ const paintCard = (r, {summary: s, busy = false, error} = {}) => {
   err.replaceChildren(...(error ? [error.message || t('bodyFailed'), ' ',
     h('button', {type: 'button', class: 'ai-settings', onclick: openAISettings}, t('aiSettings'))] : []));
 };
-const openAISettings = () => {
-  chrome.tabs.create({url: chrome.runtime.getURL('/data/settings/index.html#ai')});
+// Settings → AI, at an engine's key or sign-in when one is named
+const openAISettings = engine => {
+  chrome.tabs.create({url: chrome.runtime.getURL('/data/settings/index.html#ai' + (typeof engine === 'string' && engine !== 'off' ? '-' + engine : ''))});
   if (!SIDE) {
     window.close();
   }
@@ -1757,12 +1772,16 @@ const hideSummary = r => {
   paintSummaryBtn();
   // the card's own Hide: the focus goes to the button that shows it again
   if (inside) {
-    $('reader-bar').querySelector('.ai-btn')?.focus();
+    $('reader-ai').querySelector('.ai-btn')?.focus();
   }
 };
 // the button and I: the summary shows (kept, or asked for) or hides
 const toggleSummary = () => {
   const r = state.reading;
+  if (r && !aiOn()) {
+    openTool(r, 'offer');
+    return;
+  }
   if (!r || !canSummarize(r.o)) {
     return;
   }
@@ -1811,6 +1830,351 @@ const copySummary = (r, el) => {
   }, () => toast(t('copyFailed'), true));
 };
 
+/* the reader's assistant: its buttons under the sender, and a card for a reply, a question or a translation */
+const INTENTS = ['intentYes', 'intentNo', 'intentMore', 'intentThanks'];
+const textBtn = (name, label, onclick, cls = '') => h('button', {class: 'ai-act ' + cls, type: 'button', 'data-focus': 'ai:' + name, onclick}, icon(name), h('span', {}, label));
+// the buttons: the summary (I), a reply, a translation once the mail is in another language, a question
+const paintStrip = r => {
+  const el = $('reader-ai');
+  const on = showAI() && can(r.o, 'body');
+  el.hidden = !on;
+  if (!on) {
+    el.replaceChildren();
+    return;
+  }
+  const summary = textBtn('sparkle', t('summary'), () => toggleSummary(), 'ai-btn');
+  summary.title = t('summary') + ' (I)';
+  summary.setAttribute('aria-controls', 'ai-card');
+  summary.setAttribute('aria-expanded', String(!$('ai-card').hidden));
+  summary.hidden = aiOn() && state.ai.summary === 'off';
+  const from = r.lang && r.lang !== uiLang() ? langName(r.lang) : '';
+  // a language not told yet (Chrome's detector may want a download, which a click allows) is
+  // offered a translation all the same, by the browser or by the engine
+  const offer = from || r.translated || (!r.lang && (aiOn() || typeof self.Translator?.create === 'function'));
+  el.replaceChildren(...[
+    summary,
+    textBtn('reply', t('replyWithAI'), () => openTool(r, 'reply'), 'ai-reply'),
+    offer && textBtn('translate', r.translated ? t('showOriginal') : from ? t('translateFrom', from) : t('translate'), () => toggleTranslate(r),
+      'ai-translate' + (r.translated ? ' on' : '')),
+    textBtn('ask', t('askAboutMail'), () => openTool(r, 'ask'), 'ai-ask')].filter(Boolean));
+  paintSummaryBtn();
+};
+const resetTool = r => {
+  r.tool?.ctl?.abort();
+  r.tool = {mode: '', ctl: null, text: '', intent: '', error: null, busy: false};
+  r.lang = '';
+  r.translated = false;
+  r.originals = null;
+  $('ai-tool').hidden = true;
+  $('ai-tool').replaceChildren();
+};
+const openTool = (r, mode) => {
+  if (r.tool.mode === mode && !$('ai-tool').hidden) {
+    closeTool(r);
+    return;
+  }
+  r.tool.ctl?.abort();
+  Object.assign(r.tool, {mode: aiOn() || mode === 'offer' ? mode : 'offer', ctl: null, text: '', error: null, busy: false, want: mode});
+  paintTool(r);
+  $('ai-tool').querySelector('textarea, input')?.focus();
+};
+const closeTool = r => {
+  r.tool.ctl?.abort();
+  r.tool.mode = '';
+  $('ai-tool').hidden = true;
+  $('reader-ai').querySelector('.ai-act')?.focus();
+};
+const TOOLS = {offer: 'sparkle', reply: 'reply', ask: 'ask', translate: 'translate'};
+const paintTool = r => {
+  const card = $('ai-tool');
+  if (state.reading !== r || !r.tool.mode) {
+    return;
+  }
+  const {mode, busy, error, text} = r.tool;
+  card.hidden = false;
+  card.setAttribute('aria-busy', String(busy));
+  const title = {offer: t('assistant'), reply: t('replyWithAI'), ask: t('askAboutMail'), translate: t('translation')}[mode];
+  const head = h('header', {class: 'ai-head'},
+    h('span', {class: 'ai-mark'}, icon(TOOLS[mode])),
+    h('h3', {}, title),
+    h('span', {class: 'ai-state'}, busy ? t(mode === 'reply' ? 'writing' : mode === 'translate' ? 'translating' : 'answering') : ''),
+    h('span', {class: 'grow'}),
+    btn('close', t('close'), () => closeTool(r), 'ai-hide'));
+  const fail = error && h('div', {class: 'ai-error', role: 'alert'}, h('p', {}, error.message || t('actionFailed')),
+    h('div', {class: 'row-btns'}, ...errorActions(error, () => runTool(r))));
+  if (mode === 'offer') {
+    card.replaceChildren(head, h('p', {class: 'offer'}, t('offerAI')), h('div', {class: 'row-btns'},
+      h('button', {class: 'primary-btn', type: 'button', onclick: () => openAssist({setup: true})}, icon('sparkle'), t('turnOnAI'))));
+    return;
+  }
+  if (mode === 'translate') {
+    card.replaceChildren(...[head, text ? h('div', {class: 'answer translation'}, text) : busy && waitDots(), fail].filter(Boolean));
+    return;
+  }
+  const input = h('textarea', {
+    'class': 'tool-input',
+    'rows': 1,
+    'value': r.tool.intent || '',
+    'placeholder': mode === 'reply' ? t('replyIntentPlaceholder') : t('askMailPlaceholder'),
+    'aria-label': mode === 'reply' ? t('replyIntentPlaceholder') : t('askMailPlaceholder'),
+    'onkeydown': ev => {
+      if (ev.key === 'Enter' && !ev.shiftKey && !ev.isComposing) {
+        ev.preventDefault();
+        r.tool.intent = input.value;
+        runTool(r);
+      }
+      // Esc leaves the field, not the mail
+      else if (ev.key === 'Escape') {
+        ev.preventDefault();
+        ev.stopPropagation();
+        closeTool(r);
+      }
+    },
+    'oninput': () => {
+      r.tool.intent = input.value;
+    }
+  });
+  const go = h('button', {class: 'primary-btn', type: 'button', disabled: busy, onclick: () => {
+    r.tool.intent = input.value;
+    runTool(r);
+  }}, icon(mode === 'reply' ? 'compose' : 'send'), mode === 'reply' ? t('writeReply') : t('ask'));
+  const parts = [head];
+  if (mode === 'reply') {
+    parts.push(h('div', {class: 'intents'}, INTENTS.map(k => h('button', {class: 'suggestion', type: 'button', disabled: busy, onclick: () => {
+      r.tool.intent = t(k);
+      runTool(r);
+    }}, t(k)))));
+  }
+  parts.push(h('div', {class: 'tool-ask'}, input, busy ? h('button', {class: 'text-btn', type: 'button', onclick: () => r.tool.ctl?.abort()}, icon('stop'), t('stop')) : go));
+  if (mode === 'reply' && (text || busy)) {
+    const draft = h('textarea', {class: 'draft', rows: 8, value: text, 'aria-label': t('draft'), readOnly: busy, oninput: () => {
+      r.tool.text = draft.value;
+    }});
+    parts.push(draft, !busy && h('div', {class: 'row-btns'},
+      h('button', {class: 'primary-btn', type: 'button', onclick: () => replyWith(r)}, icon('open'), serviceOf(r.o) ? t('openIn', serviceOf(r.o).name) : t('openInGmail')),
+      h('button', {class: 'text-btn', type: 'button', onclick: ev => copyText(r.tool.text, ev.currentTarget)}, icon('copy'), t('copyText'))));
+  }
+  if (mode === 'ask' && (text || busy)) {
+    parts.push(text ? h('div', {class: 'answer'}, ...richText(text)) : waitDots());
+  }
+  parts.push(fail);
+  card.replaceChildren(...parts.filter(Boolean));
+  // a field being written in keeps its place
+  const active = r.tool.focus;
+  if (active === 'draft') {
+    card.querySelector('.draft')?.focus();
+  }
+};
+const waitDots = () => h('div', {class: 'ai-wait', 'aria-hidden': 'true'}, h('span', {}), h('span', {}), h('span', {}));
+// the reply opens in the mail service with the text in place: Gmail's compose window takes it;
+// another service's opens with the text in the clipboard
+const replyWith = r => {
+  const subject = /^re:/i.test(r.e.title || '') ? r.e.title : 'Re: ' + (r.e.title || '');
+  if (serviceOf(r.o)) {
+    navigator.clipboard.writeText(r.tool.text || '').catch(() => {});
+    toast(t('draftCopied'));
+    openUrl(replyUrl(r.e, r.o));
+    return;
+  }
+  openUrl(composeWith(r.o, {to: r.e.author_email || '', subject, body: r.tool.text || ''}));
+};
+const runTool = async r => {
+  r.tool.ctl?.abort();
+  const ctl = r.tool.ctl = new AbortController();
+  const {mode} = r.tool;
+  Object.assign(r.tool, {busy: true, error: null, text: ''});
+  paintTool(r);
+  const live = () => !ctl.signal.aborted && state.reading === r && r.tool.mode === mode;
+  const onUpdate = text => {
+    if (live()) {
+      r.tool.text = text;
+      paintTool(r);
+    }
+  };
+  try {
+    const [AI, messages] = await Promise.all([loadAI(), r.texts]);
+    if (!AI || !live()) {
+      return;
+    }
+    const subject = r.e.title || '';
+    if (mode === 'reply') {
+      const d = await AI.draft({subject, messages, intent: r.tool.intent, reader: r.o.xml.title, signal: ctl.signal, onUpdate});
+      r.tool.text = d.text;
+    }
+    else if (mode === 'ask') {
+      if (!String(r.tool.intent || '').trim()) {
+        r.tool.busy = false;
+        paintTool(r);
+        return;
+      }
+      const a = await AI.answer({question: r.tool.intent, mail: messages.map(m => ({...m, subject})), signal: ctl.signal, onUpdate});
+      r.tool.text = a.text;
+    }
+    else if (mode === 'translate') {
+      const x = await AI.translate({subject, messages, signal: ctl.signal, onUpdate});
+      r.tool.text = x.text;
+    }
+  }
+  catch (err) {
+    if (live() && err?.code !== 'aborted') {
+      r.tool.error = {code: err?.code || '', message: err?.message || t('actionFailed')};
+    }
+  }
+  finally {
+    if (r.tool.ctl === ctl) {
+      r.tool.ctl = null;
+      r.tool.busy = false;
+      paintTool(r);
+    }
+  }
+};
+
+/* translation: Chrome's own translator, on this computer and free, before any engine */
+const uiLang = () => LANG.split('-')[0].toLowerCase();
+const langName = code => {
+  try {
+    return new Intl.DisplayNames([LANG], {type: 'language'}).of(code) || code;
+  }
+  catch (e) {
+    return code;
+  }
+};
+// click: from a click, which lets Chrome download its detector first
+const detectLang = async (text, click = false) => {
+  const LD = self.LanguageDetector;
+  if (typeof LD?.create !== 'function' || !text.trim()) {
+    return '';
+  }
+  try {
+    const a = typeof LD.availability === 'function' ? await LD.availability() : 'available';
+    if (a === 'unavailable' || (a !== 'available' && !click)) {
+      return '';
+    }
+    const d = await LD.create();
+    try {
+      const [best] = await d.detect(text.slice(0, 2000));
+      return best && best.confidence >= 0.6 && best.detectedLanguage !== 'und' ? best.detectedLanguage.split('-')[0].toLowerCase() : '';
+    }
+    finally {
+      d.destroy?.();
+    }
+  }
+  catch (e) {
+    return '';
+  }
+};
+const browserTranslates = async from => {
+  const T = self.Translator;
+  if (typeof T?.availability !== 'function' || !from || from === uiLang()) {
+    return false;
+  }
+  try {
+    return await T.availability({sourceLanguage: from, targetLanguage: uiLang()}) !== 'unavailable';
+  }
+  catch (e) {
+    return false;
+  }
+};
+// the open mail's language, from its newest message: a Translate button when it is not the UI's
+const findLanguage = async r => {
+  const messages = await r.texts;
+  const lang = await detectLang(messages.at(-1)?.text || '');
+  if (state.reading === r && lang) {
+    r.lang = lang;
+    r.browser = await browserTranslates(lang);
+    if (state.reading === r) {
+      paintStrip(r);
+    }
+  }
+};
+const SKIP = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'CODE', 'PRE', 'TEXTAREA', 'KBD', 'SAMP']);
+// the message's own text translated where it stands, a few pieces at a time; Show original puts it back
+const toggleTranslate = async r => {
+  if (r.translated) {
+    for (const [n, text] of r.originals || []) {
+      n.nodeValue = text;
+    }
+    r.originals = null;
+    r.translated = false;
+    paintStrip(r);
+    return;
+  }
+  // a language not told yet: told now, from the click
+  if (!r.lang) {
+    const messages = await r.texts;
+    r.lang = await detectLang(messages.at(-1)?.text || '', true);
+    r.browser = r.lang ? await browserTranslates(r.lang) : false;
+    if (state.reading !== r) {
+      return;
+    }
+    if (r.lang === uiLang()) {
+      toast(t('sameLanguage', langName(r.lang)));
+      paintStrip(r);
+      return;
+    }
+  }
+  if (!r.browser) {
+    // no translator in this browser for this language: the engine's, as a card
+    openTool(r, 'translate');
+    if (aiOn() && r.tool.mode === 'translate') {
+      runTool(r);
+    }
+    return;
+  }
+  const el = $('reader-ai').querySelector('.ai-translate span');
+  r.tool.ctl?.abort();
+  const ctl = new AbortController();
+  r.translating = ctl;
+  let translator;
+  try {
+    // made in the click: a language pack that needs a download needs one
+    translator = await self.Translator.create({sourceLanguage: r.lang, targetLanguage: uiLang(), signal: ctl.signal, monitor(m) {
+      m.addEventListener('downloadprogress', e => el && (el.textContent = t('downloading', Math.round((e.total > 1 ? e.loaded / e.total : e.loaded) * 100))));
+    }});
+    if (el) {
+      el.textContent = t('translating');
+    }
+    const doc = await frameReady;
+    const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, {
+      acceptNode: n => !SKIP.has(n.parentElement?.tagName) && /\p{L}{2}/u.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
+    });
+    const nodes = [];
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      nodes.push(n);
+    }
+    r.originals = new Map();
+    r.translated = true;
+    let i = 0;
+    const work = async () => {
+      while (i < nodes.length && !ctl.signal.aborted && state.reading === r) {
+        const n = nodes[i++];
+        const text = n.nodeValue;
+        try {
+          const out = await translator.translate(text.trim(), {signal: ctl.signal});
+          if (state.reading === r && r.originals) {
+            r.originals.set(n, text);
+            n.nodeValue = text.match(/^\s*/)[0] + out + text.match(/\s*$/)[0];
+          }
+        }
+        catch (e) {}
+      }
+    };
+    await Promise.all([work(), work(), work()]);
+  }
+  catch (err) {
+    if (state.reading === r && !ctl.signal.aborted) {
+      toast(t('translateFailed'), true);
+      r.translated = Boolean(r.originals?.size);
+    }
+  }
+  finally {
+    translator?.destroy?.();
+    if (state.reading === r) {
+      paintStrip(r);
+    }
+  }
+};
+
 /* waiting for your reply: the assistant reads who, what and the preview of unread mail */
 // once the list has shown, never at each check: only mail not asked about yet is sent
 const REPLY_WAIT = 800;
@@ -1824,38 +2188,76 @@ const replyOf = (e, o) => state.replies.get(replyId(e, o));
 // the mail the list shows, with what Gmail's search added past the feed's 20
 const shownMail = objs => objs.flatMap(o => [...o.xml.entries, ...(state.extra.get(o.xml.link) || [])
   .filter(e => !state.hidden.has(e.link))].map(e => ({e, o})));
-const replyCount = objs => shownMail(objs).filter(({e, o}) => replyOf(e, o)?.reply === true).length;
+// the kinds the assistant sorts unread mail into, each a chip that narrows the list to it
+const SORTS = {
+  reply: {icon: 'reply', has: v => v?.reply === true},
+  important: {icon: 'flag', has: v => v?.important === true},
+  bulk: {icon: 'bulk', has: v => v?.bulk === true}
+};
+const sortCount = (objs, kind) => shownMail(objs).filter(({e, o}) => SORTS[kind].has(replyOf(e, o))).length;
+const replyCount = objs => sortCount(objs, 'reply');
 const replyMark = (e, o) => {
   const v = replyOf(e, o);
   return v?.reply === true && h('span', {'class': 'reply-mark', 'role': 'img', 'title': t('replyWhy', v.why), 'aria-label': t('replyWhy', v.why)}, icon('reply'));
 };
-// first among the chips: a click narrows the list to that mail; with an error and nothing found
-// it opens the AI settings, the error being the dot's tooltip
-const replyChip = objs => {
-  const n = replyCount(objs);
-  const err = state.replyError;
-  if (!aiOn() || !state.ai.reply || state.search || (!n && !err)) {
-    return null;
+// first among the chips, one for each kind with mail in it: a click narrows the list to that
+// mail. An error with nothing found puts its dot on the first one, which then opens the AI
+// settings. With the assistant off, one chip offers it.
+const sortChips = objs => {
+  if (state.search) {
+    return [];
   }
-  const label = t('replyChip', n) + (err ? ' · ' + err.message : '');
-  return h('button', {
-    'class': 'chip reply-chip' + (state.replyOnly ? ' on' : ''),
-    'type': 'button',
-    'aria-pressed': String(state.replyOnly),
-    'aria-label': label,
-    'title': err ? err.message : '',
-    'data-focus': 'chip:reply',
-    'onclick': () => {
-      if (!n) {
-        openAISettings();
-        return;
+  if (!aiOn()) {
+    return showAI() && objs.some(o => o.xml.fullcount) ? [h('button', {
+      'class': 'chip ai-offer',
+      'type': 'button',
+      'data-focus': 'chip:ai',
+      'onclick': () => openAssist({setup: true})
+    }, icon('sparkle'), t('sortOffer'))] : [];
+  }
+  if (!state.ai.reply) {
+    return [];
+  }
+  const err = state.replyError;
+  const chips = Object.keys(SORTS).map(kind => ({kind, n: sortCount(objs, kind)})).filter(({n}) => n > 0);
+  if (!chips.length && err) {
+    chips.push({kind: 'reply', n: 0});
+  }
+  return chips.map(({kind, n}, i) => {
+    const dot = err && i === 0;
+    const label = t(kind + 'Chip', n);
+    return h('button', {
+      'class': 'chip sort-chip ' + kind + '-chip' + (state.sortOnly === kind ? ' on' : ''),
+      'type': 'button',
+      'aria-pressed': String(state.sortOnly === kind),
+      'aria-label': label + (dot ? ' · ' + err.message : ''),
+      'title': dot ? err.message : t(kind + 'Tip'),
+      'data-focus': 'chip:' + kind,
+      'onclick': () => {
+        if (!n) {
+          openAISettings();
+          return;
+        }
+        state.sortOnly = state.sortOnly === kind ? null : kind;
+        state.siteOnly = false;
+        state.focus = FIRST;
+        render();
       }
-      state.replyOnly = !state.replyOnly;
-      state.siteOnly = false;
-      state.focus = FIRST;
-      render();
-    }
-  }, icon('reply'), t('replyChip', n), err && h('span', {class: 'err-dot', 'aria-hidden': 'true'}));
+    }, icon(SORTS[kind].icon), label, dot && h('span', {class: 'err-dot', 'aria-hidden': 'true'}));
+  });
+};
+// over the list narrowed to one kind: how much, and the mail all read or archived at once
+const sortBar = objs => {
+  const mail = shownMail(objs).filter(({e, o}) => SORTS[state.sortOnly].has(replyOf(e, o)));
+  const links = mail.map(({e}) => e.link);
+  const archivable = mail.filter(({o}) => can(o, 'archive')).map(({e}) => e.link);
+  return h('div', {class: 'sort-bar'},
+    h('span', {class: 'sort-what'}, icon(SORTS[state.sortOnly].icon), t(state.sortOnly + 'Shown', mail.length)),
+    h('span', {class: 'grow'}),
+    links.length > 0 && h('button', {class: 'text-btn', type: 'button', 'data-focus': 'sort:read', onclick: () => act('rd', links)},
+      icon('readAll'), t('markAllRead')),
+    archivable.length > 0 && h('button', {class: 'text-btn', type: 'button', 'data-focus': 'sort:archive', onclick: () => act('rc_^i', archivable)},
+      icon('archive'), t('archiveAll')));
 };
 // the answers on the lines as they are, and on the chip: the list is not drawn again for them
 const paintReplies = () => {
@@ -1938,6 +2340,10 @@ const startAI = async () => {
     state.ai.ok = false;
   }
   scheduleReplies();
+  paintAssist();
+  if (state.ai.ok) {
+    runPending();
+  }
 };
 // another engine, key or feature in the settings: what ran for the old ones stops and goes
 const aiChanged = () => {
@@ -1948,19 +2354,593 @@ const aiChanged = () => {
   replySeen.clear();
   state.replies.clear();
   state.replyError = null;
-  state.replyOnly = false;
+  state.sortOnly = null;
+  assist.ctl?.abort();
   if (state.reading) {
     state.reading.ai.ctl?.abort();
     resetSummary(state.reading);
+    closeTool(state.reading);
+    paintStrip(state.reading);
   }
   render();
+  paintAssist();
   startAI();
 };
 // a panel closing stops what it asked for
 addEventListener('pagehide', () => {
   state.reading?.ai.ctl?.abort();
+  state.reading?.tool?.ctl?.abort();
   replyCtl?.abort();
+  assist.ctl?.abort();
 });
+
+/* the assistant: ask the mail anything, find it, sum up what is unread, write a new mail */
+// The assistant's buttons show with an engine on and, unless the settings say not to, without
+// one too: they then offer to turn it on.
+const showAI = () => aiOn() || state.ai.buttons !== false;
+// the conversation stays for the browser session, so a popup that closed shows it again
+const TURNS = 'assist.turns';
+const TURNS_MAX = 8;
+// what an answer reads of the mail found: the first few whole, the rest by their preview
+const READ_WHOLE = 5;
+const FOUND_MAX = 30;
+const BRIEF_MAX = 60;
+const READ_MS = 8000;
+const assist = {turns: [], ctl: null, open: false, loaded: null, setup: false, local: ''};
+const USAGE = 'https://chatgpt.com/settings/usage';
+// the engines the assistant can be turned on with, as the setup offers them
+const CHOICES = [
+  {engine: 'builtin', name: 'engineBuiltin', note: 'engineBuiltinNote'},
+  {engine: 'chatgpt', name: 'engineChatGPT', note: 'engineChatGPTNote'},
+  {engine: 'anthropic', name: 'engineAnthropic', note: 'engineKeyNote'},
+  {engine: 'openai', name: 'engineOpenAI', note: 'engineKeyNote'},
+  {engine: 'zai', name: 'engineZai', note: 'engineKeyNote'}
+];
+const SUGGEST = ['suggestBrief', 'suggestReply', 'suggestFind', 'suggestFiles', 'suggestWrite'];
+
+// a found mail as the conversation keeps it, and back as the reader takes it
+const refOf = (e, o) => ({link: e.link, title: e.title || '', from: e.author_name || e.author_email || '', email: e.author_email || '',
+  date: e.modified || '', snippet: e.summary || '', unread: e.unread !== false, account: o.xml.title, box: o.xml.link});
+const entryOf = m => ({link: m.link, title: m.title, summary: m.snippet, author_name: m.from, author_email: m.email,
+  modified: m.date, unread: m.unread, id: m.link});
+const boxOf = m => view().find(o => o.xml.link === m.box) || view().find(o => o.xml.title === m.account);
+
+const saveTurns = () => chrome.storage.session.set({[TURNS]: assist.turns.slice(-TURNS_MAX).map(t => ({...t, live: undefined}))}).catch(() => {});
+const loadTurns = () => assist.loaded ||= chrome.storage.session.get(TURNS).then(prefs => {
+  // a request the closed panel left underway has stopped with it
+  assist.turns = (prefs[TURNS] || []).map(t => ['plan', 'search', 'read', 'write'].includes(t.status) ? {...t, status: 'stopped'} : t);
+}, () => {});
+
+// question: put in the field, and asked at once with run
+const openAssist = async ({question = '', setup = false, run: now = false} = {}) => {
+  closeMenu();
+  if (state.reading) {
+    back();
+  }
+  if (state.search) {
+    closeSearch();
+  }
+  assist.open = true;
+  assist.setup = setup;
+  $('app').classList.add('assisting');
+  shade(true);
+  const input = $('assist-input');
+  if (question) {
+    input.value = question;
+  }
+  input.focus();
+  await loadTurns();
+  paintAssist();
+  sizeInput();
+  if (aiOn()) {
+    loadAI();
+  }
+  if (now && question) {
+    ask(question);
+  }
+};
+const closeAssist = () => {
+  assist.open = false;
+  $('app').classList.remove('assisting');
+  shade(false);
+  $('tools').querySelector('[data-focus="sparkle"]')?.focus();
+};
+const sizeInput = () => {
+  const input = $('assist-input');
+  input.style.height = 'auto';
+  input.style.height = Math.min(input.scrollHeight, 140) + 'px';
+};
+
+// what the engine says of itself: "ChatGPT plan · gpt-6.1", "Chrome · on this computer"
+const engineLabel = async () => {
+  const AI = aiOn() && await loadAI();
+  if (!AI) {
+    return '';
+  }
+  try {
+    const d = await AI.describe?.();
+    if (d) {
+      return d.local ? t('engineLocal', d.provider) : d.plan ? t('enginePlan', d.provider, d.model || '') : [d.provider, d.model].filter(Boolean).join(' · ');
+    }
+  }
+  catch (e) {}
+  return '';
+};
+const paintAssistBar = () => {
+  const label = h('span', {class: 'engine'});
+  engineLabel().then(text => label.textContent = text);
+  $('assist-bar').replaceChildren(...[
+    btn('back', t('back') + ' (Esc)', closeAssist),
+    h('h2', {class: 'assist-title'}, icon('sparkle'), t('assistant')),
+    label,
+    h('span', {class: 'grow'}),
+    assist.turns.length > 0 && btn('trash', t('clearChat'), () => {
+      assist.ctl?.abort();
+      assist.turns = [];
+      saveTurns();
+      paintAssist();
+      $('assist-input').focus();
+    }, 'clear'),
+    btn('tune', t('aiSettings'), () => openAISettings())
+  ].filter(Boolean));
+};
+const paintAssist = () => {
+  if (!assist.open) {
+    return;
+  }
+  paintAssistBar();
+  const body = $('assist-body');
+  const ready = aiOn() && state.ai.ok;
+  body.replaceChildren(
+    ...(!aiOn() || assist.setup ? [setupCard()] : !ready ? [problemCard()] : []),
+    ...(ready && !assist.turns.length ? [welcome()] : []),
+    ...assist.turns.map(turnEl)
+  );
+  $('assist-send').disabled = false;
+  paintSend();
+  body.scrollTop = body.scrollHeight;
+};
+const paintSend = () => {
+  const running = Boolean(assist.ctl);
+  const el = $('assist-send');
+  el.replaceChildren(icon(running ? 'stop' : 'send'));
+  el.title = running ? t('stop') : t('send') + ' (Enter)';
+  el.setAttribute('aria-label', el.title);
+  el.classList.toggle('stop', running);
+};
+const welcome = () => h('div', {class: 'welcome'},
+  h('p', {class: 'hello'}, t('assistHello')),
+  h('div', {class: 'suggest'}, SUGGEST.map(k => h('button', {
+    'class': 'suggestion',
+    'type': 'button',
+    'onclick': () => {
+      // "write an email…" waits for the rest of the request
+      if (k === 'suggestWrite') {
+        $('assist-input').value = t('suggestWritePrefix') + ' ';
+        sizeInput();
+        $('assist-input').focus();
+        return;
+      }
+      ask(t(k));
+    }
+  }, t(k)))));
+
+// Turning the assistant on: the built-in model right here, the others in Settings → AI, where
+// a key is pasted or ChatGPT signs in. The request typed meanwhile waits for it.
+const setupCard = () => {
+  // the module is ready for a click on the built-in model, whose download must start in it
+  if (self.LanguageModel) {
+    loadAI();
+  }
+  const card = h('div', {class: 'setup'},
+    h('span', {class: 'setup-mark'}, icon('sparkle')),
+    h('h3', {}, t('setupTitle')),
+    h('p', {class: 'setup-lede'}, t('setupLede')),
+    h('div', {class: 'choices'}, CHOICES.filter(c => c.engine !== 'builtin' || self.LanguageModel).map(c => h('button', {
+      'class': 'choice',
+      'type': 'button',
+      'data-engine': c.engine,
+      'onclick': ev => choose(c.engine, ev.currentTarget)
+    }, h('span', {class: 'choice-name'}, t(c.name)), h('span', {class: 'choice-note'}, t(c.note)), icon('open')))),
+    h('p', {class: 'setup-foot'}, t('setupPrivacy')),
+    aiOn() && h('button', {class: 'text-btn', type: 'button', onclick: () => {
+      assist.setup = false;
+      paintAssist();
+    }}, t('back')));
+  return card;
+};
+const choose = (engine, el) => {
+  rememberPending();
+  if (engine !== 'builtin') {
+    openAISettings(engine);
+    return;
+  }
+  // Chrome downloads its model for a click: asked at once, before anything is awaited
+  const AI = self.AI;
+  const note = el.querySelector('.choice-note') || {};
+  chrome.storage.local.set({'ai.engine': 'builtin'});
+  if (!AI) {
+    loadAI();
+    return;
+  }
+  note.textContent = t('downloading', 0);
+  AI.builtin.download(p => note.textContent = t('downloading', Math.round(p * 100)))
+    .then(() => {
+      assist.setup = false;
+      startAI();
+    }, err => note.textContent = err?.message || t('actionFailed'));
+};
+// what keeps an engine that is on from answering, and the way to put it right
+const PROBLEMS = {'no-key': 'aiNoKey', 'no-access': 'aiNoAccess', 'signed-out': 'aiSignedOut', 'downloadable': 'aiDownload',
+  'downloading': 'aiDownloading', 'old-chrome': 'aiOldChrome', 'unavailable': 'aiUnavailable'};
+const problemCard = () => {
+  const card = h('div', {class: 'setup problem'}, h('p', {}, t('checkingAI')));
+  loadAI().then(AI => AI?.state()).then(st => {
+    if (!st || st.ok) {
+      // ready after all: the settings changed, or the state was not asked yet
+      if (st?.ok && !state.ai.ok) {
+        state.ai.ok = true;
+        paintAssist();
+        runPending();
+      }
+      return;
+    }
+    const download = state.ai.engine === 'builtin' && ['downloadable', 'downloading'].includes(st.reason);
+    card.replaceChildren(...[
+      h('span', {class: 'setup-mark'}, icon('sparkle')),
+      h('p', {}, t(PROBLEMS[st.reason] || 'aiUnavailable')),
+      h('div', {class: 'row-btns'},
+        download ? h('button', {class: 'primary-btn', type: 'button', onclick: () => choose('builtin', card)}, t('downloadModel')) :
+          h('button', {class: 'primary-btn', type: 'button', onclick: () => openAISettings(state.ai.engine)}, t('fixInSettings')),
+        h('button', {class: 'text-btn', type: 'button', onclick: () => {
+          assist.setup = true;
+          paintAssist();
+        }}, t('chooseEngine'))),
+      download && h('p', {class: 'choice-note'})].filter(Boolean));
+  });
+  return card;
+};
+// a request typed before the assistant was on runs once it is
+const PENDING = 'assist.pending';
+const rememberPending = () => {
+  const q = $('assist-input').value.trim();
+  if (q) {
+    chrome.storage.session.set({[PENDING]: q}).catch(() => {});
+  }
+};
+const runPending = async () => {
+  const {[PENDING]: q} = await chrome.storage.session.get(PENDING).catch(() => ({}));
+  if (q && aiOn() && state.ai.ok) {
+    chrome.storage.session.remove(PENDING);
+    if (!assist.open) {
+      await openAssist();
+    }
+    ask(q);
+  }
+};
+
+// one turn: what was asked, and what came of it
+const turnEl = turn => h('article', {class: 'turn', 'data-id': turn.id},
+  h('p', {class: 'q'}, turn.q),
+  h('div', {class: 'a'},
+    turn.title && h('p', {class: 'what'}, turn.title),
+    statusEl(turn),
+    turn.text && answerEl(turn),
+    turn.email && emailEl(turn),
+    turn.mail?.length > 0 && foundEl(turn),
+    turn.error && errorEl(turn),
+    turn.status === 'stopped' && h('button', {class: 'text-btn', type: 'button', onclick: () => run(turn)}, icon('refresh'), t('askAgain'))));
+const STATUS = {plan: 'thinking', search: 'searchingMail', read: 'readingMail', write: 'writing', answer: 'answering'};
+const statusEl = turn => STATUS[turn.status] && h('p', {class: 'status', role: 'status'},
+  h('span', {class: 'dots', 'aria-hidden': 'true'}, h('span', {}), h('span', {}), h('span', {})),
+  turn.status === 'search' && turn.query ? t('searchingFor', turn.query) : t(STATUS[turn.status]));
+// the answer: its lines that start with "- " a list, each [n] the mail it cites, which a click opens
+const cited = (text, mail, open) => String(text).split(/(\[\d{1,3}\])/).map(part => {
+  const n = /^\[(\d{1,3})\]$/.exec(part)?.[1];
+  const m = n && mail?.[n - 1];
+  return !n ? part : m && open ? h('button', {class: 'cite', type: 'button', title: m.from + ' — ' + (m.title || t('noSubject')),
+    onclick: () => open(m)}, n) : h('span', {class: 'cite'}, n);
+});
+const richText = (text, mail, open) => {
+  const out = [];
+  let list = null;
+  for (const line of String(text).split('\n')) {
+    const item = /^\s*[-•*]\s+(.*)$/.exec(line);
+    if (item) {
+      list = list || out[out.push(h('ul', {})) - 1];
+      list.append(h('li', {}, ...cited(item[1], mail, open)));
+    }
+    else if (line.trim()) {
+      list = null;
+      out.push(h('p', {}, ...cited(line, mail, open)));
+    }
+    else {
+      list = null;
+    }
+  }
+  return out;
+};
+const answerEl = turn => h('div', {class: 'answer'}, ...richText(turn.text, turn.mail, m => openRef(turn, m)));
+const foundEl = turn => {
+  const cited = new Set(turn.cites || []);
+  const list = h('div', {class: 'found-list'}, turn.mail.map((m, i) => h('button', {
+    'class': 'ref' + (cited.has(i + 1) ? ' cited' : '') + (m.unread ? '' : ' seen'),
+    'type': 'button',
+    'data-focus': 'ref:' + m.link,
+    'onclick': () => openRef(turn, m)
+  },
+  h('span', {class: 'n'}, i + 1),
+  h('span', {class: 'ref-from'}, m.from),
+  h('span', {class: 'ref-when'}, when(m.date)),
+  h('span', {class: 'ref-subject'}, m.title || t('noSubject')),
+  h('span', {class: 'ref-snippet'}, m.snippet))));
+  // an answer shows its sources folded; a search shows what it found
+  const open = turn.action !== 'answer' && turn.action !== 'brief';
+  return h('details', {class: 'found', open},
+    h('summary', {}, icon('down'), t(turn.action === 'brief' ? 'readUnread' : 'foundMail', turn.mail.length)),
+    list,
+    turn.query && h('button', {class: 'text-btn', type: 'button', onclick: () => {
+      const o = view().find(x => !serviceOf(x));
+      o && openUrl(searchUrl(o, turn.query));
+    }}, icon('open'), t('searchInGmail')));
+};
+// a new mail: who, what and the text, all to change before it opens in the mail service
+const emailEl = turn => {
+  const e = turn.email;
+  const gmails = view().filter(o => !serviceOf(o)).filter((o, i, l) => l.findIndex(x => x.xml.title === o.xml.title) === i);
+  const from = gmails.find(o => o.xml.title === e.from) || composeFrom(gmails.length ? gmails : view());
+  const keep = (field, el) => el.addEventListener('input', () => {
+    e[field] = el.value;
+    saveTurns();
+  });
+  const to = h('input', {type: 'email', value: e.to || '', placeholder: t('toPlaceholder'), 'aria-label': t('toLabel')});
+  const subject = h('input', {type: 'text', value: e.subject || '', 'aria-label': t('subject')});
+  const text = h('textarea', {value: e.body || '', rows: 8, 'aria-label': t('emailBody')});
+  [['to', to], ['subject', subject], ['body', text]].forEach(([f, el]) => keep(f, el));
+  const busy = turn.status === 'write';
+  return h('div', {class: 'email' + (busy ? ' busy' : '')},
+    gmails.length > 1 && h('label', {class: 'field'}, h('span', {}, t('from')),
+      h('select', {onchange: ev => {
+        e.from = ev.target.value;
+        saveTurns();
+      }}, gmails.map(o => h('option', {value: o.xml.title, selected: o === from}, o.xml.title)))),
+    h('label', {class: 'field'}, h('span', {}, t('toLabel')), to),
+    h('label', {class: 'field'}, h('span', {}, t('subject')), subject),
+    text,
+    !busy && h('div', {class: 'row-btns'},
+      h('button', {class: 'primary-btn', type: 'button', onclick: () => sendEmail(e, from)}, icon('open'), serviceOf(from) ? t('openIn', serviceOf(from).name) : t('openInGmail')),
+      h('button', {class: 'text-btn', type: 'button', onclick: ev => copyText(e.body, ev.currentTarget)}, icon('copy'), t('copyText')),
+      h('button', {class: 'text-btn', type: 'button', onclick: () => run(turn)}, icon('refresh'), t('regenerate'))));
+};
+// Gmail's compose window takes the address, the subject and the text; another service's takes
+// what it can, the text then waiting in the clipboard
+const composeWith = (o, {to = '', subject = '', body = ''}) => {
+  const s = serviceOf(o);
+  if (s) {
+    return s.compose(to, subject) || composeUrl(o);
+  }
+  return `https://mail.google.com/mail/u/${userOf(o.xml.link)}/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+};
+const sendEmail = (e, o) => {
+  if (serviceOf(o)) {
+    navigator.clipboard.writeText(e.body || '').catch(() => {});
+  }
+  openUrl(composeWith(o, e));
+};
+const copyText = (text, el) => navigator.clipboard.writeText(text || '').then(() => {
+  el.classList.add('copied');
+  el.firstChild?.replaceWith(icon('done'));
+  setTimeout(() => {
+    el.classList.remove('copied');
+    el.firstChild?.replaceWith(icon('copy'));
+  }, 1200);
+}, () => toast(t('copyFailed'), true));
+const errorEl = turn => h('div', {class: 'ai-error', role: 'alert'},
+  h('p', {}, turn.error.message || t('actionFailed')),
+  h('div', {class: 'row-btns'}, ...errorActions(turn.error, () => run(turn))));
+// what an error lets the user do about it
+const errorActions = (err, again) => [
+  err.code === 'limit' && h('button', {class: 'primary-btn', type: 'button', onclick: () => openUrl(USAGE)}, t('manageUsage')),
+  ['auth', 'no-access', 'signed-out', 'model', 'no-plan', 'unavailable', 'quota'].includes(err.code) &&
+    h('button', {class: err.code === 'limit' ? 'text-btn' : 'primary-btn', type: 'button', onclick: () => openAISettings(state.ai.engine)}, t('aiSettings')),
+  !['auth', 'no-access', 'signed-out', 'no-plan', 'limit'].includes(err.code) &&
+    h('button', {class: 'text-btn', type: 'button', onclick: again}, icon('refresh'), t('tryAgain'))
+].filter(Boolean);
+
+// a mail the assistant found, opened in the reader; J and K walk the ones it found
+const openRef = (turn, m) => {
+  const o = boxOf(m);
+  if (!o) {
+    toast(t('mailGone'), true);
+    return;
+  }
+  const trail = new Map(turn.mail.map(x => [x.link, {e: entryOf(x), o: boxOf(x) || o}]));
+  const {e} = trail.get(m.link);
+  if (!can(o, 'body')) {
+    openEntry(e, o);
+    return;
+  }
+  read(e, o, trail);
+};
+
+// Every Gmail account searched at once, and the other services' unread mail by its words: the
+// mail found, newest first
+const searchAll = async (query, words, signal) => {
+  const objs = view();
+  const gmails = objs.filter(o => !serviceOf(o)).filter((o, i, l) => l.findIndex(x => x.xml.title === o.xml.title) === i);
+  const found = (await Promise.all(gmails.map(o => searchIn(o, query).then(list => (list || []).map(e => ({e, o}))))))
+    .flat();
+  if (signal.aborted) {
+    return [];
+  }
+  const needles = words.map(w => w.toLowerCase()).filter(w => w.length > 1);
+  const other = needles.length ? shownMail(objs.filter(o => serviceOf(o))).filter(({e}) => {
+    const hay = [e.author_name, e.author_email, e.title, e.summary].join(' ').toLowerCase();
+    return needles.some(w => hay.includes(w));
+  }) : [];
+  const seen = new Set();
+  return [...found, ...other].filter(({e, o}) => {
+    const k = o.xml.title + '|' + thread(e.link);
+    return !seen.has(k) && seen.add(k);
+  }).sort((a, b) => (Date.parse(b.e.modified) || 0) - (Date.parse(a.e.modified) || 0)).slice(0, FOUND_MAX);
+};
+// the text of the first few mail found, for an answer; the rest keep their preview. A mail of
+// another service is never fetched: that might count it as read.
+const textsOf = async (refs, turn, signal) => {
+  let done = 0;
+  return Promise.all(refs.map(async (m, i) => {
+    let text = m.snippet;
+    const o = boxOf(m);
+    if (i < READ_WHOLE && o && !serviceOf(o) && !signal.aborted) {
+      try {
+        const node = await Promise.race([gmail.body(m.link, false, m.date), new Promise((_, no) => setTimeout(no, READ_MS))]);
+        text = node?.textContent?.trim() || text;
+      }
+      catch (e) {}
+      turn.reading = done += 1;
+      paintTurn(turn);
+    }
+    return {from: m.from + (m.email && m.email !== m.from ? ` <${m.email}>` : ''), date: m.date, subject: m.title, text};
+  }));
+};
+
+const paintTurn = turn => {
+  const el = $('assist-body').querySelector(`.turn[data-id="${CSS.escape(turn.id)}"]`);
+  if (!el) {
+    paintAssist();
+    return;
+  }
+  // a field being typed in keeps its caret
+  if (el.contains(document.activeElement) && document.activeElement.matches('input, textarea, select')) {
+    return;
+  }
+  const body = $('assist-body');
+  const bottom = body.scrollHeight - body.scrollTop - body.clientHeight < 40;
+  el.replaceWith(turnEl(turn));
+  if (bottom) {
+    body.scrollTop = body.scrollHeight;
+  }
+};
+const ask = question => {
+  question = String(question || '').trim();
+  if (!question) {
+    return;
+  }
+  if (!aiOn() || !state.ai.ok) {
+    $('assist-input').value = question;
+    rememberPending();
+    assist.setup = !aiOn();
+    paintAssist();
+    return;
+  }
+  const turn = {id: Math.random().toString(36).slice(2), q: question, status: 'plan', title: '', action: '', query: '', text: '', cites: [], mail: [], email: null, error: null};
+  assist.turns.push(turn);
+  assist.turns = assist.turns.slice(-TURNS_MAX);
+  $('assist-input').value = '';
+  sizeInput();
+  paintAssist();
+  run(turn);
+};
+// a turn, run or run again
+const run = async turn => {
+  assist.ctl?.abort();
+  const ctl = assist.ctl = new AbortController();
+  const {signal} = ctl;
+  Object.assign(turn, {status: 'plan', text: '', cites: [], error: null, reading: 0});
+  if (turn.action !== 'write') {
+    turn.email = null;
+  }
+  paintTurn(turn);
+  paintSend();
+  const live = () => !signal.aborted && assist.turns.includes(turn);
+  try {
+    const AI = await loadAI();
+    if (!AI) {
+      throw Error(t('actionFailed'));
+    }
+    const plan = turn.action ? turn : await AI.plan({request: turn.q, signal});
+    Object.assign(turn, {action: plan.action, query: plan.query || '', title: plan.title || ''});
+    turn.words = plan.words || turn.words || [];
+    if (!live()) {
+      return;
+    }
+    if (turn.action === 'write') {
+      turn.status = 'write';
+      turn.email = {to: '', subject: '', body: '', from: turn.email?.from || ''};
+      paintTurn(turn);
+      const from = turn.email.from;
+      const e = await AI.compose({request: turn.q, signal, onUpdate: x => {
+        turn.email = {...x, from};
+        paintTurn(turn);
+      }});
+      turn.email = {to: e.to, subject: e.subject, body: e.body, from};
+    }
+    else {
+      let refs;
+      if (turn.action === 'brief') {
+        refs = shownMail(view()).filter(({e}) => e.unread !== false)
+          .sort((a, b) => (Date.parse(b.e.modified) || 0) - (Date.parse(a.e.modified) || 0)).slice(0, BRIEF_MAX).map(({e, o}) => refOf(e, o));
+      }
+      else {
+        turn.status = 'search';
+        paintTurn(turn);
+        refs = (await searchAll(turn.query, turn.words, signal)).map(({e, o}) => refOf(e, o));
+      }
+      if (!live()) {
+        return;
+      }
+      turn.mail = refs;
+      if (turn.action === 'find') {
+        turn.status = 'done';
+        if (!refs.length) {
+          turn.text = t('nothingFound');
+        }
+      }
+      // nothing to read from: said so, with no request for it
+      else if (!refs.length) {
+        turn.text = turn.action === 'brief' ? t('nothingUnread') : t('nothingFound');
+      }
+      else {
+        turn.status = 'read';
+        paintTurn(turn);
+        const mail = turn.action === 'brief' ? refs.map(m => ({from: m.from + (m.email ? ` <${m.email}>` : ''), date: m.date, subject: m.title, text: m.snippet})) :
+          await textsOf(refs, turn, signal);
+        if (!live()) {
+          return;
+        }
+        turn.status = 'answer';
+        paintTurn(turn);
+        const a = await AI.answer({question: turn.q, mail, signal, onUpdate: text => {
+          turn.text = text;
+          paintTurn(turn);
+        }});
+        Object.assign(turn, {text: a.text, cites: a.cites});
+      }
+    }
+    turn.status = 'done';
+  }
+  catch (err) {
+    if (!live() || err?.code === 'aborted') {
+      if (assist.turns.includes(turn) && turn.status !== 'done') {
+        turn.status = 'stopped';
+      }
+    }
+    else {
+      turn.status = 'error';
+      turn.error = {code: err?.code || '', message: err?.message || t('actionFailed')};
+    }
+  }
+  finally {
+    if (assist.ctl === ctl) {
+      assist.ctl = null;
+    }
+    saveTurns();
+    if (assist.turns.includes(turn)) {
+      paintTurn(turn);
+    }
+    paintSend();
+  }
+};
 
 /* keyboard: layout independent, so it works with the Russian layout too */
 // Alt+↑/↓ moves the mailbox of the focused line, the keyboard's way to drag it
@@ -2043,17 +3023,33 @@ const onKey = ev => {
   if (ev.code === 'Escape' && state.reading) {
     back();
   }
+  else if (ev.code === 'Escape' && assist.open) {
+    closeAssist();
+  }
   else if (ev.code === 'Escape' && state.search) {
     closeSearch();
   }
-  else if (ev.code === 'Escape' && (state.siteOnly || state.replyOnly)) {
-    state.siteOnly = state.replyOnly = false;
+  else if (ev.code === 'Escape' && (state.siteOnly || state.sortOnly)) {
+    state.siteOnly = false;
+    state.sortOnly = null;
     state.focus = FIRST;
     render();
   }
   // the summary of the open mail
-  else if (ev.code === 'KeyI' && state.reading && canSummarize(state.reading.o)) {
+  else if (ev.code === 'KeyI' && state.reading && showAI() && can(state.reading.o, 'body') && !(aiOn() && state.ai.summary === 'off')) {
     toggleSummary();
+  }
+  // the assistant; in the reader, a question about the open mail
+  else if (ev.code === 'KeyA' && showAI()) {
+    if (state.reading) {
+      can(state.reading.o, 'body') && openTool(state.reading, 'ask');
+    }
+    else if (!assist.open) {
+      openAssist();
+    }
+    else {
+      return;
+    }
   }
   else if (ev.code === 'KeyZ' && state.pending) {
     undo();
@@ -2134,7 +3130,10 @@ frameReady.then(doc => doc.addEventListener('keydown', onKey));
   const input = $('search-input');
   input.placeholder = t('searchPlaceholder');
   $('search').prepend(icon('search'));
-  $('search').append(btn('close', t('closeSearch') + ' (Esc)', closeSearch));
+  // the words typed, asked of the assistant instead: a question, or a search in plain words
+  const askAI = h('button', {class: 'ask-ai', type: 'button', 'data-focus': 'askAI', title: t('askAITip'), onclick: () => openAssist({question: input.value.trim(), run: true})},
+    icon('sparkle'), t('askAI'));
+  $('search').append(askAI, btn('close', t('closeSearch') + ' (Esc)', closeSearch));
   $('search').addEventListener('submit', ev => {
     ev.preventDefault();
     runSearch(input.value);
@@ -2143,6 +3142,34 @@ frameReady.then(doc => doc.addEventListener('keydown', onKey));
     if (ev.code === 'Escape') {
       ev.preventDefault();
       closeSearch();
+    }
+  });
+}
+
+/* the assistant's field: Enter asks, Shift+Enter starts a new line, Esc goes back */
+{
+  const input = $('assist-input');
+  input.placeholder = t('assistPlaceholder');
+  input.addEventListener('input', sizeInput);
+  input.addEventListener('keydown', ev => {
+    if (ev.key === 'Enter' && !ev.shiftKey && !ev.isComposing) {
+      ev.preventDefault();
+      if (!assist.ctl) {
+        ask(input.value);
+      }
+    }
+    else if (ev.key === 'Escape') {
+      ev.preventDefault();
+      closeAssist();
+    }
+  });
+  $('assist-ask').addEventListener('submit', ev => {
+    ev.preventDefault();
+    if (assist.ctl) {
+      assist.ctl.abort();
+    }
+    else {
+      ask(input.value);
     }
   });
 }
@@ -2197,7 +3224,10 @@ const prefsChanged = prefs => {
     state.badgeNew = prefs['badge.count'] === 'new';
   }
   if ('ai.engine' in prefs) {
-    state.ai.engine = ['builtin', 'openai', 'anthropic'].includes(prefs['ai.engine']) ? prefs['ai.engine'] : 'off';
+    state.ai.engine = ['builtin', 'chatgpt', 'openai', 'anthropic', 'zai'].includes(prefs['ai.engine']) ? prefs['ai.engine'] : 'off';
+  }
+  if ('ai.buttons' in prefs) {
+    state.ai.buttons = prefs['ai.buttons'] !== false;
   }
   if ('ai.summary' in prefs) {
     state.ai.summary = ['off', 'click', 'auto'].includes(prefs['ai.summary']) ? prefs['ai.summary'] : 'click';
@@ -2207,7 +3237,7 @@ const prefsChanged = prefs => {
   }
 };
 // what the panel reads of Settings → AI (the keys stay with ai.js)
-const AI_PREFS = {'ai.engine': 'off', 'ai.summary': 'click', 'ai.reply': true};
+const AI_PREFS = {'ai.engine': 'off', 'ai.summary': 'click', 'ai.reply': true, 'ai.buttons': true};
 // With the toolbar count at "mail since the panel was last opened", opening the panel starts it
 // again, and so does a side panel coming back into view. Never a list update: the background
 // sends one for the very redraw this asks for.
@@ -2225,7 +3255,7 @@ chrome.storage.onChanged.addListener((ps, area) => {
     render();
   }
   // the assistant's engine, key, model or features
-  if (area === 'local' && Object.keys(ps).some(k => /^ai\.(engine|summary|reply|openai\.|anthropic\.)/.test(k))) {
+  if (area === 'local' && Object.keys(ps).some(k => /^ai\.(engine|summary|reply|buttons|openai\.|anthropic\.|zai\.|chatgpt\.)/.test(k))) {
     prefsChanged(Object.fromEntries(Object.keys(AI_PREFS).filter(k => k in ps).map(k => [k, ps[k].newValue])));
     aiChanged();
   }

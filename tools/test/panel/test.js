@@ -342,7 +342,8 @@
       out.focusAfterUndo = focus();
 
       // a chip, and "show more", keep the keys where they were
-      const chips = () => [...document.querySelectorAll('#chips .chip')];
+      // (the mailboxes' chips: the assistant's offer stands before them)
+      const chips = () => [...document.querySelectorAll('#chips .chip:not(.ai-offer)')];
       chips()[1]?.focus();
       chips()[1]?.click();
       await wait(50);
@@ -757,7 +758,7 @@
 
         // the summary: a button and I, nothing asked before
         await open('a1');
-        out.button = shown($('reader-bar').querySelector('.ai-btn')) && !shown(card()) && calls('summarize').length === 0;
+        out.button = shown($('reader-ai').querySelector('.ai-btn')) && !shown(card()) && calls('summarize').length === 0;
         key(document, 'KeyI');
         await wait(10);
         out.waiting = shown(card()) && shown(card().querySelector('.ai-wait')) && card().getAttribute('aria-busy') === 'true';
@@ -776,7 +777,7 @@
         // Hide; I again shows it from the session's summaries; Regenerate asks anew
         card().querySelector('.ai-hide').click();
         await wait(30);
-        out.hidden = !shown(card()) && $('reader-bar').querySelector('.ai-btn').getAttribute('aria-expanded') === 'false';
+        out.hidden = !shown(card()) && $('reader-ai').querySelector('.ai-btn').getAttribute('aria-expanded') === 'false';
         key(document, 'KeyI');
         await wait(30);
         out.again = shown(card()) && items('ai-points').length === 3 && card().getAttribute('aria-busy') === 'false';
@@ -865,14 +866,145 @@
         out.longDone = items('ai-points').length === 3;
       }
 
-      if (scenario === 'aioff') {
-        // the engine off: no ai.js, no button, no key, no chip, no call
+      if (scenario === 'aiassist') {
+        await until(() => state.ai.ok, 2000);
+        // the header's button opens it, with its suggestions and the field focused
+        $('tools').querySelector('.assist-btn').click();
+        await until(() => $('app').classList.contains('assisting'));
+        out.focused = document.activeElement?.id === 'assist-input';
+        await until(() => document.querySelectorAll('#assist .suggestion').length);
+        out.opened = out.focused && document.querySelectorAll('#assist .suggestion').length === 5;
+        out.engine = await until(() => $('assist-bar').querySelector('.engine')?.textContent) && $('assist-bar').querySelector('.engine').textContent;
+        const input = $('assist-input');
+        const enter = () => input.dispatchEvent(new KeyboardEvent('keydown', {key: 'Enter', code: 'Enter', bubbles: true, cancelable: true}));
+        const last = () => [...document.querySelectorAll('#assist .turn')].at(-1);
+        const settled = () => until(() => !assist.ctl && last() && !last().querySelector('.status'), 3000);
+        // find: every Gmail account searched with the planned query; what it found, listed
+        input.value = 'find invoices';
+        enter();
+        await settled();
+        out.findQuery = sent('gmail.search').filter(m => m.query === 'invoice').length;
+        out.found = last().querySelectorAll('.ref').length;
+        out.foundOpen = last().querySelector('.found')?.open;
+        // a question: the first mail found read whole, an answer that cites it
+        input.value = 'how much was the invoice?';
+        enter();
+        await settled();
+        out.answer = last().querySelector('.answer')?.textContent;
+        out.answerMail = calls('answer').at(-1)?.n;
+        out.readWhole = calls('answer').at(-1)?.mail[0]?.text.length > 30;
+        out.cite = Boolean(last().querySelector('button.cite'));
+        // its citation opens that mail in the reader; Esc comes back to the assistant
+        last().querySelector('button.cite').click();
+        await until(() => $('app').classList.contains('reading'));
+        out.citeOpens = $('reader-subject').textContent.startsWith('Invoice #1042');
+        key(document, 'Escape');
+        await wait(50);
+        out.backToAssist = $('app').classList.contains('assisting') && !$('app').classList.contains('reading');
+        // a new mail: its fields to change, then Gmail's compose window with all of it
+        input.value = 'write to Anna that the meeting moves to Friday';
+        enter();
+        await settled();
+        const email = last().querySelector('.email');
+        out.email = email && [email.querySelector('input[type=email]').value, email.querySelector('input[type=text]').value];
+        const subject = email.querySelector('input[type=text]');
+        subject.value = 'Встреча: пятница';
+        subject.dispatchEvent(new Event('input'));
+        email.querySelector('.primary-btn').click();
+        await wait(30);
+        out.compose = sent('open').at(-1)?.url || '';
+        // what is important: the unread mail read by its preview
+        input.value = 'what is important?';
+        enter();
+        await settled();
+        out.brief = calls('answer').at(-1)?.n;
+        out.kept = (chrome.storage.session.area['assist.turns'] || []).length;
+        // stopped while it answers
+        window.__ai.hold = true;
+        input.value = 'how much was the invoice?';
+        enter();
+        await until(() => last().querySelector('.status') && assist.ctl, 2000);
+        await until(() => calls('answer').length === 3, 2000);
+        $('assist-send').click();
+        await until(() => !assist.ctl, 2000);
+        out.stopped = Boolean(last().querySelector('.text-btn')) && !last().querySelector('.status');
+        window.__ai.hold = false;
+        // a usage limit: Manage usage first
+        window.__ai.planFail = 'limit';
+        input.value = 'find invoices';
+        enter();
+        await settled();
+        out.limit = last().querySelector('.ai-error .primary-btn')?.textContent === t('manageUsage');
+        window.__ai.planFail = null;
+        // Esc closes it
+        input.focus();
+        input.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', code: 'Escape', bubbles: true, cancelable: true}));
+        await wait(50);
+        out.closed = !$('app').classList.contains('assisting');
+      }
+
+      if (scenario === 'aitools') {
+        await until(() => state.ai.ok && $('chips').querySelector('.reply-chip'), 3000);
+        // the sorting: a chip for each kind, the list narrowed with all of it read at once
+        out.chips = [...$('chips').querySelectorAll('.sort-chip')].map(c => c.className.match(/\b(reply|important|bulk)-chip/)[1]);
+        $('chips').querySelector('.important-chip')?.click();
+        await wait(50);
+        out.bar = $('list').querySelector('.sort-bar .sort-what')?.textContent;
+        out.narrowed = document.querySelectorAll('#list .row').length;
+        $('list').querySelector('.sort-bar .text-btn').click();
+        await wait(50);
+        out.readAll = sent('gmail.action').at(-1)?.cmd === 'rd' && sent('gmail.action').at(-1)?.links.length === out.narrowed;
+        key(document, 'KeyZ');
+        await wait(50);
+        key(document, 'Escape');
+        await wait(50);
+        // the open mail's buttons: summary, reply, translation (the engine's, with no detector here), question
+        await open('a1');
+        out.strip = [...$('reader-ai').querySelectorAll('.ai-act')].filter(b => !b.hidden).map(b => b.dataset.focus);
+        // a reply: an intent drafts it, Gmail's compose window takes it
+        $('reader-ai').querySelector('.ai-reply').click();
+        $('ai-tool').querySelector('.intents .suggestion').click();
+        await until(() => $('ai-tool').querySelector('.draft') && $('ai-tool').getAttribute('aria-busy') === 'false');
+        out.draft = $('ai-tool').querySelector('.draft').value;
+        out.draftCall = calls('draft').at(-1);
+        $('ai-tool').querySelector('.row-btns .primary-btn').click();
+        await wait(30);
+        out.replyUrl = sent('open').at(-1)?.url || '';
+        // a question about the mail: its messages, an answer
+        $('reader-ai').querySelector('.ai-ask').click();
+        const q = $('ai-tool').querySelector('.tool-input');
+        out.askFocused = document.activeElement === q;
+        q.value = 'Когда дедлайн?';
+        q.dispatchEvent(new Event('input'));
+        q.dispatchEvent(new KeyboardEvent('keydown', {key: 'Enter', bubbles: true, cancelable: true}));
+        await until(() => $('ai-tool').querySelector('.answer') && $('ai-tool').getAttribute('aria-busy') === 'false');
+        out.ask = calls('answer').at(-1)?.question === 'Когда дедлайн?' && calls('answer').at(-1)?.n === 3;
+        // Esc in its field closes the card, not the mail
+        $('ai-tool').querySelector('.tool-input').dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true, cancelable: true}));
+        await wait(30);
+        out.escCard = $('ai-tool').hidden && $('app').classList.contains('reading');
+        // a translation by the engine, as a card
+        $('reader-ai').querySelector('.ai-translate').click();
+        await until(() => $('ai-tool').querySelector('.translation') && $('ai-tool').getAttribute('aria-busy') === 'false');
+        out.translation = $('ai-tool').querySelector('.translation')?.textContent;
+        // A asks about the open mail
+        $('ai-tool').querySelector('.ai-hide').click();
+        key(document, 'KeyA');
+        await wait(30);
+        out.keyA = !$('ai-tool').hidden && $('ai-tool').querySelector('.tool-input') === document.activeElement;
+      }
+
+      if (scenario === 'aioff' || scenario === 'ainone') {
+        // the engine off: no ai.js and no call. Its buttons offer it (I too), unless the settings say not to
         await wait(1200);
+        const offer = Boolean($('chips').querySelector('.ai-offer'));
+        const header = Boolean($('tools').querySelector('.assist-btn'));
         await open('a1');
         key(document, 'KeyI');
         await wait(300);
-        out.off = {calls: ai.calls.length, button: shown($('reader-bar').querySelector('.ai-btn')), card: shown(card()),
-          chip: Boolean($('chips').querySelector('.reply-chip')), script: Boolean(document.querySelector('script[src*="/ai/ai.js"]')),
+        out.off = {calls: ai.calls.length, button: shown($('reader-ai').querySelector('.ai-btn')), card: shown(card()),
+          offerCard: shown($('ai-tool')) && Boolean($('ai-tool').querySelector('.primary-btn')),
+          chip: Boolean($('chips').querySelector('.reply-chip')), offer, header, script: Boolean(document.querySelector('script[src*="/ai/ai.js"]')),
           hint: shown(document.querySelector('.keys > span:has([data-i18n="summaryKey"])'))};
         out.firstRow = window.__firstRow;
       }

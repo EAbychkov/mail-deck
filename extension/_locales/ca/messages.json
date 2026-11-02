@@ -1734,6 +1734,279 @@
     "panel_attachments": {
         "message": "Fitxers adjunts: $1"
     },
+    "panel_assistant": {
+        "message": "Assistent d'IA"
+    },
+    "panel_assistHello": {
+        "message": "Pregunta sobre el teu correu, busca-hi alguna cosa o demana que t'escrigui un missatge."
+    },
+    "panel_assistPlaceholder": {
+        "message": "Pregunta sobre el correu: «quan surt el meu vol?», «factures d'octubre», «escriu a l'Anna que…»"
+    },
+    "panel_ask": {
+        "message": "Pregunta"
+    },
+    "panel_askAI": {
+        "message": "Pregunta a la IA"
+    },
+    "panel_askAITip": {
+        "message": "Pregunta a l'assistent d'IA: una pregunta o una cerca amb paraules normals"
+    },
+    "panel_askAboutMail": {
+        "message": "Pregunta"
+    },
+    "panel_askAgain": {
+        "message": "Torna a preguntar"
+    },
+    "panel_askMailPlaceholder": {
+        "message": "Què vols saber d'aquest missatge?"
+    },
+    "panel_send": {
+        "message": "Envia"
+    },
+    "panel_stop": {
+        "message": "Atura"
+    },
+    "panel_close": {
+        "message": "Tanca"
+    },
+    "panel_clearChat": {
+        "message": "Esborra la conversa"
+    },
+    "panel_thinking": {
+        "message": "Pensant…"
+    },
+    "panel_searchingMail": {
+        "message": "S'està cercant al correu…"
+    },
+    "panel_searchingFor": {
+        "message": "S'està cercant: $1"
+    },
+    "panel_readingMail": {
+        "message": "S'estan llegint els missatges…"
+    },
+    "panel_answering": {
+        "message": "S'està responent…"
+    },
+    "panel_writing": {
+        "message": "S'està escrivint…"
+    },
+    "panel_translating": {
+        "message": "S'està traduint…"
+    },
+    "panel_foundMail": {
+        "message": "Trobats: $1"
+    },
+    "panel_readUnread": {
+        "message": "A partir del correu no llegit: $1"
+    },
+    "panel_nothingFound": {
+        "message": "No s'ha trobat res. Prova amb altres paraules."
+    },
+    "panel_nothingUnread": {
+        "message": "No hi ha correu sense llegir."
+    },
+    "panel_searchInGmail": {
+        "message": "Cerca a Gmail"
+    },
+    "panel_mailGone": {
+        "message": "Aquest missatge ja no és a la llista."
+    },
+    "panel_suggestBrief": {
+        "message": "Què hi ha d'important al correu no llegit?"
+    },
+    "panel_suggestReply": {
+        "message": "Qui espera la meva resposta?"
+    },
+    "panel_suggestFind": {
+        "message": "Troba les factures d'aquest mes"
+    },
+    "panel_suggestFiles": {
+        "message": "Correu amb fitxers adjunts d'aquesta setmana"
+    },
+    "panel_suggestWrite": {
+        "message": "Escriu un missatge…"
+    },
+    "panel_suggestWritePrefix": {
+        "message": "Escriu un missatge a"
+    },
+    "panel_toLabel": {
+        "message": "Per a"
+    },
+    "panel_toPlaceholder": {
+        "message": "Adreça"
+    },
+    "panel_from": {
+        "message": "De"
+    },
+    "panel_subject": {
+        "message": "Assumpte"
+    },
+    "panel_emailBody": {
+        "message": "Text del missatge"
+    },
+    "panel_copyText": {
+        "message": "Copia"
+    },
+    "panel_tryAgain": {
+        "message": "Torna-ho a provar"
+    },
+    "panel_manageUsage": {
+        "message": "Gestiona l'ús"
+    },
+    "panel_setupTitle": {
+        "message": "Activa l'assistent d'IA"
+    },
+    "panel_setupLede": {
+        "message": "Resumeix el correu, ordena el que no has llegit, busca i respon a partir del teu correu i redacta esborranys de resposta. Tria com funciona:"
+    },
+    "panel_setupPrivacy": {
+        "message": "El correu només va al motor que triïs, i només quan ho demanis o activis la classificació. Les claus i els inicis de sessió es queden en aquest ordinador."
+    },
+    "panel_engineBuiltin": {
+        "message": "Model integrat de Chrome"
+    },
+    "panel_engineBuiltinNote": {
+        "message": "Gratuït i privat: funciona en aquest ordinador. S'activa aquí mateix."
+    },
+    "panel_engineChatGPT": {
+        "message": "Subscripció a ChatGPT"
+    },
+    "panel_engineChatGPTNote": {
+        "message": "Inicia la sessió amb el teu compte de ChatGPT Plus o Pro."
+    },
+    "panel_engineAnthropic": {
+        "message": "Claude (clau d'API d'Anthropic)"
+    },
+    "panel_engineOpenAI": {
+        "message": "OpenAI (clau d'API)"
+    },
+    "panel_engineZai": {
+        "message": "Z.ai GLM (clau d'API)"
+    },
+    "panel_engineKeyNote": {
+        "message": "La teva pròpia clau d'API, de pagament per ús al proveïdor."
+    },
+    "panel_engineLocal": {
+        "message": "$1 · en aquest ordinador"
+    },
+    "panel_enginePlan": {
+        "message": "Subscripció a $1 · $2"
+    },
+    "panel_checkingAI": {
+        "message": "S'està comprovant el motor d'IA…"
+    },
+    "panel_chooseEngine": {
+        "message": "Tria un altre motor"
+    },
+    "panel_fixInSettings": {
+        "message": "Corregeix-ho a Opcions"
+    },
+    "panel_downloadModel": {
+        "message": "Baixa el model"
+    },
+    "panel_downloading": {
+        "message": "S'està baixant… $1%"
+    },
+    "panel_aiNoKey": {
+        "message": "Afegeix la teva clau d'API a Opcions per fer servir aquest motor."
+    },
+    "panel_aiNoAccess": {
+        "message": "Chrome necessita el teu permís per accedir al proveïdor d'IA."
+    },
+    "panel_aiSignedOut": {
+        "message": "Torna a iniciar la sessió a ChatGPT per fer servir la teva subscripció."
+    },
+    "panel_aiDownload": {
+        "message": "Cal baixar una vegada el model integrat de Chrome."
+    },
+    "panel_aiDownloading": {
+        "message": "Chrome està baixant el seu model integrat. Funcionarà quan acabi la baixada."
+    },
+    "panel_aiOldChrome": {
+        "message": "El model integrat de Chrome necessita Chrome 138 o posterior."
+    },
+    "panel_aiUnavailable": {
+        "message": "El model integrat no està disponible en aquest ordinador. Tria un altre motor."
+    },
+    "panel_sortOffer": {
+        "message": "Ordena amb IA"
+    },
+    "panel_replyTip": {
+        "message": "Correu de persones que esperen resposta"
+    },
+    "panel_importantChip": {
+        "message": "Important · $1"
+    },
+    "panel_importantTip": {
+        "message": "Correu que convé veure aviat"
+    },
+    "panel_bulkChip": {
+        "message": "Butlletins · $1"
+    },
+    "panel_bulkTip": {
+        "message": "Correu que pots enllestir sense llegir"
+    },
+    "panel_replyShown": {
+        "message": "Espera la teva resposta: $1"
+    },
+    "panel_importantShown": {
+        "message": "Important: $1"
+    },
+    "panel_bulkShown": {
+        "message": "Butlletins i promocions: $1"
+    },
+    "panel_replyWithAI": {
+        "message": "Resposta amb IA"
+    },
+    "panel_replyIntentPlaceholder": {
+        "message": "Què ha de dir la resposta? (opcional)"
+    },
+    "panel_writeReply": {
+        "message": "Escriu"
+    },
+    "panel_draft": {
+        "message": "Esborrany"
+    },
+    "panel_draftCopied": {
+        "message": "S'ha copiat l'esborrany: enganxa'l a la resposta."
+    },
+    "panel_intentYes": {
+        "message": "Sí, d'acord"
+    },
+    "panel_intentNo": {
+        "message": "Declina amb amabilitat"
+    },
+    "panel_intentMore": {
+        "message": "Demana'n detalls"
+    },
+    "panel_intentThanks": {
+        "message": "Dona les gràcies"
+    },
+    "panel_translate": {
+        "message": "Tradueix"
+    },
+    "panel_translateFrom": {
+        "message": "Tradueix: $1"
+    },
+    "panel_showOriginal": {
+        "message": "Mostra l'original"
+    },
+    "panel_translation": {
+        "message": "Traducció"
+    },
+    "panel_translateFailed": {
+        "message": "No s'ha pogut traduir."
+    },
+    "panel_offerAI": {
+        "message": "Activa l'assistent d'IA per resumir el correu, redactar respostes i respondre preguntes sobre els missatges."
+    },
+    "panel_turnOnAI": {
+        "message": "Activa la IA"
+    },
+    "panel_sameLanguage": {
+        "message": "Aquest missatge ja és en $1."
+    },
     "opt_ai": {
         "message": "IA"
     },

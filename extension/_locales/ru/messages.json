@@ -1734,6 +1734,279 @@
     "panel_attachments": {
         "message": "Вложения: $1"
     },
+    "panel_assistant": {
+        "message": "ИИ-ассистент"
+    },
+    "panel_assistHello": {
+        "message": "Спросите о почте, найдите что-нибудь в ней или попросите написать письмо."
+    },
+    "panel_assistPlaceholder": {
+        "message": "Спросите о почте: «когда мой рейс?», «счета за октябрь», «напиши Анне, что…»"
+    },
+    "panel_ask": {
+        "message": "Спросить"
+    },
+    "panel_askAI": {
+        "message": "Спросить ИИ"
+    },
+    "panel_askAITip": {
+        "message": "Спросить ИИ-ассистента: вопрос или поиск обычными словами"
+    },
+    "panel_askAboutMail": {
+        "message": "Спросить"
+    },
+    "panel_askAgain": {
+        "message": "Спросить снова"
+    },
+    "panel_askMailPlaceholder": {
+        "message": "Что вы хотите узнать об этом письме?"
+    },
+    "panel_send": {
+        "message": "Отправить"
+    },
+    "panel_stop": {
+        "message": "Остановить"
+    },
+    "panel_close": {
+        "message": "Закрыть"
+    },
+    "panel_clearChat": {
+        "message": "Очистить разговор"
+    },
+    "panel_thinking": {
+        "message": "Думаю…"
+    },
+    "panel_searchingMail": {
+        "message": "Ищу в почте…"
+    },
+    "panel_searchingFor": {
+        "message": "Ищу: $1"
+    },
+    "panel_readingMail": {
+        "message": "Читаю письма…"
+    },
+    "panel_answering": {
+        "message": "Отвечаю…"
+    },
+    "panel_writing": {
+        "message": "Пишу…"
+    },
+    "panel_translating": {
+        "message": "Перевожу…"
+    },
+    "panel_foundMail": {
+        "message": "Найдено: $1"
+    },
+    "panel_readUnread": {
+        "message": "По $1 непрочитанным письмам"
+    },
+    "panel_nothingFound": {
+        "message": "Ничего не нашлось. Попробуйте другие слова."
+    },
+    "panel_nothingUnread": {
+        "message": "Непрочитанных писем нет."
+    },
+    "panel_searchInGmail": {
+        "message": "Искать в Gmail"
+    },
+    "panel_mailGone": {
+        "message": "Этого письма больше нет в списке."
+    },
+    "panel_suggestBrief": {
+        "message": "Что важного в непрочитанных?"
+    },
+    "panel_suggestReply": {
+        "message": "Кто ждёт моего ответа?"
+    },
+    "panel_suggestFind": {
+        "message": "Найди счета за этот месяц"
+    },
+    "panel_suggestFiles": {
+        "message": "Письма с вложениями за неделю"
+    },
+    "panel_suggestWrite": {
+        "message": "Написать письмо…"
+    },
+    "panel_suggestWritePrefix": {
+        "message": "Напиши письмо"
+    },
+    "panel_toLabel": {
+        "message": "Кому"
+    },
+    "panel_toPlaceholder": {
+        "message": "Адрес"
+    },
+    "panel_from": {
+        "message": "От"
+    },
+    "panel_subject": {
+        "message": "Тема"
+    },
+    "panel_emailBody": {
+        "message": "Текст письма"
+    },
+    "panel_copyText": {
+        "message": "Копировать"
+    },
+    "panel_tryAgain": {
+        "message": "Повторить"
+    },
+    "panel_manageUsage": {
+        "message": "Управлять лимитом"
+    },
+    "panel_setupTitle": {
+        "message": "Включите ИИ-ассистента"
+    },
+    "panel_setupLede": {
+        "message": "Он кратко пересказывает письма, разбирает непрочитанные, ищет и отвечает по вашей почте, пишет черновики ответов. Выберите, на чём он работает:"
+    },
+    "panel_setupPrivacy": {
+        "message": "Письма уходят только выбранному вами движку и только когда вы просите или включили разбор почты. Ключи и вход остаются на этом компьютере."
+    },
+    "panel_engineBuiltin": {
+        "message": "Встроенная модель Chrome"
+    },
+    "panel_engineBuiltinNote": {
+        "message": "Бесплатно и приватно: работает на этом компьютере. Включается прямо здесь."
+    },
+    "panel_engineChatGPT": {
+        "message": "Подписка ChatGPT"
+    },
+    "panel_engineChatGPTNote": {
+        "message": "Войдите с аккаунтом ChatGPT Plus или Pro."
+    },
+    "panel_engineAnthropic": {
+        "message": "Claude (ключ API Anthropic)"
+    },
+    "panel_engineOpenAI": {
+        "message": "OpenAI (ключ API)"
+    },
+    "panel_engineZai": {
+        "message": "Z.ai GLM (ключ API)"
+    },
+    "panel_engineKeyNote": {
+        "message": "Ваш ключ API, оплата провайдеру по использованию."
+    },
+    "panel_engineLocal": {
+        "message": "$1 · на этом компьютере"
+    },
+    "panel_enginePlan": {
+        "message": "Подписка $1 · $2"
+    },
+    "panel_checkingAI": {
+        "message": "Проверяю ИИ-движок…"
+    },
+    "panel_chooseEngine": {
+        "message": "Выбрать другой движок"
+    },
+    "panel_fixInSettings": {
+        "message": "Исправить в настройках"
+    },
+    "panel_downloadModel": {
+        "message": "Скачать модель"
+    },
+    "panel_downloading": {
+        "message": "Загрузка… $1%"
+    },
+    "panel_aiNoKey": {
+        "message": "Добавьте ключ API в настройках, чтобы пользоваться этим движком."
+    },
+    "panel_aiNoAccess": {
+        "message": "Chrome нужно ваше разрешение на доступ к ИИ-провайдеру."
+    },
+    "panel_aiSignedOut": {
+        "message": "Войдите в ChatGPT снова, чтобы пользоваться подпиской."
+    },
+    "panel_aiDownload": {
+        "message": "Встроенную модель Chrome нужно один раз скачать."
+    },
+    "panel_aiDownloading": {
+        "message": "Chrome скачивает встроенную модель. Она заработает, когда загрузка закончится."
+    },
+    "panel_aiOldChrome": {
+        "message": "Встроенной модели нужен Chrome 138 или новее."
+    },
+    "panel_aiUnavailable": {
+        "message": "Встроенная модель недоступна на этом компьютере. Выберите другой движок."
+    },
+    "panel_sortOffer": {
+        "message": "Разобрать с ИИ"
+    },
+    "panel_replyTip": {
+        "message": "Письма от людей, которые ждут ответа"
+    },
+    "panel_importantChip": {
+        "message": "Важное · $1"
+    },
+    "panel_importantTip": {
+        "message": "Письма, которые стоит увидеть скоро"
+    },
+    "panel_bulkChip": {
+        "message": "Рассылки · $1"
+    },
+    "panel_bulkTip": {
+        "message": "Письма, которые можно разобрать не читая"
+    },
+    "panel_replyShown": {
+        "message": "Ждут вашего ответа: $1"
+    },
+    "panel_importantShown": {
+        "message": "Важное: $1"
+    },
+    "panel_bulkShown": {
+        "message": "Рассылки и реклама: $1"
+    },
+    "panel_replyWithAI": {
+        "message": "Ответ с ИИ"
+    },
+    "panel_replyIntentPlaceholder": {
+        "message": "О чём ответить? (необязательно)"
+    },
+    "panel_writeReply": {
+        "message": "Написать"
+    },
+    "panel_draft": {
+        "message": "Черновик"
+    },
+    "panel_draftCopied": {
+        "message": "Черновик скопирован: вставьте его в ответ."
+    },
+    "panel_intentYes": {
+        "message": "Да, согласен"
+    },
+    "panel_intentNo": {
+        "message": "Вежливо отказать"
+    },
+    "panel_intentMore": {
+        "message": "Попросить подробности"
+    },
+    "panel_intentThanks": {
+        "message": "Поблагодарить"
+    },
+    "panel_translate": {
+        "message": "Перевести"
+    },
+    "panel_translateFrom": {
+        "message": "Перевести: $1"
+    },
+    "panel_showOriginal": {
+        "message": "Показать оригинал"
+    },
+    "panel_translation": {
+        "message": "Перевод"
+    },
+    "panel_translateFailed": {
+        "message": "Не удалось перевести."
+    },
+    "panel_offerAI": {
+        "message": "Включите ИИ-ассистента, чтобы получать краткое содержание писем, черновики ответов и ответы на вопросы о них."
+    },
+    "panel_turnOnAI": {
+        "message": "Включить ИИ"
+    },
+    "panel_sameLanguage": {
+        "message": "Это письмо уже на языке: $1."
+    },
     "opt_ai": {
         "message": "ИИ"
     },

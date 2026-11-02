@@ -1734,6 +1734,279 @@
     "panel_attachments": {
         "message": "Прилози: $1"
     },
+    "panel_assistant": {
+        "message": "Асистент вештачке интелигенције"
+    },
+    "panel_assistHello": {
+        "message": "Питајте нешто о пошти, пронађите нешто у њој или затражите да се напише порука."
+    },
+    "panel_assistPlaceholder": {
+        "message": "Питајте о пошти: „када ми је лет?“, „рачуни за октобар“, „напиши Ани да…“"
+    },
+    "panel_ask": {
+        "message": "Питај"
+    },
+    "panel_askAI": {
+        "message": "Питај асистента"
+    },
+    "panel_askAITip": {
+        "message": "Питајте асистента вештачке интелигенције: питање или претрага обичним речима"
+    },
+    "panel_askAboutMail": {
+        "message": "Питај"
+    },
+    "panel_askAgain": {
+        "message": "Питај поново"
+    },
+    "panel_askMailPlaceholder": {
+        "message": "Шта желите да сазнате о овој поруци?"
+    },
+    "panel_send": {
+        "message": "Пошаљи"
+    },
+    "panel_stop": {
+        "message": "Заустави"
+    },
+    "panel_close": {
+        "message": "Затвори"
+    },
+    "panel_clearChat": {
+        "message": "Обриши разговор"
+    },
+    "panel_thinking": {
+        "message": "Размишљам…"
+    },
+    "panel_searchingMail": {
+        "message": "Претражујем пошту…"
+    },
+    "panel_searchingFor": {
+        "message": "Тражим: $1"
+    },
+    "panel_readingMail": {
+        "message": "Читам поруке…"
+    },
+    "panel_answering": {
+        "message": "Одговарам…"
+    },
+    "panel_writing": {
+        "message": "Пишем…"
+    },
+    "panel_translating": {
+        "message": "Преводим…"
+    },
+    "panel_foundMail": {
+        "message": "Пронађено: $1"
+    },
+    "panel_readUnread": {
+        "message": "На основу непрочитаних порука: $1"
+    },
+    "panel_nothingFound": {
+        "message": "Ништа није пронађено. Пробајте другим речима."
+    },
+    "panel_nothingUnread": {
+        "message": "Нема непрочитаних порука."
+    },
+    "panel_searchInGmail": {
+        "message": "Претражи у Gmail-у"
+    },
+    "panel_mailGone": {
+        "message": "Ова порука више није на листи."
+    },
+    "panel_suggestBrief": {
+        "message": "Шта је важно у непрочитаним порукама?"
+    },
+    "panel_suggestReply": {
+        "message": "Ко чека мој одговор?"
+    },
+    "panel_suggestFind": {
+        "message": "Пронађи рачуне за овај месец"
+    },
+    "panel_suggestFiles": {
+        "message": "Поруке са прилозима од ове недеље"
+    },
+    "panel_suggestWrite": {
+        "message": "Напиши поруку…"
+    },
+    "panel_suggestWritePrefix": {
+        "message": "Напиши поруку"
+    },
+    "panel_toLabel": {
+        "message": "За"
+    },
+    "panel_toPlaceholder": {
+        "message": "Адреса"
+    },
+    "panel_from": {
+        "message": "Од"
+    },
+    "panel_subject": {
+        "message": "Наслов"
+    },
+    "panel_emailBody": {
+        "message": "Текст поруке"
+    },
+    "panel_copyText": {
+        "message": "Копирај"
+    },
+    "panel_tryAgain": {
+        "message": "Покушај поново"
+    },
+    "panel_manageUsage": {
+        "message": "Управљај ограничењем"
+    },
+    "panel_setupTitle": {
+        "message": "Укључите асистента вештачке интелигенције"
+    },
+    "panel_setupLede": {
+        "message": "Сажима поруке, разврстава непрочитане, тражи и одговара на основу ваше поште и пише нацрте одговора. Изаберите на чему ради:"
+    },
+    "panel_setupPrivacy": {
+        "message": "Пошта иде само моделу који изаберете, и то само када затражите или укључите разврставање. Кључеви и пријаве остају на овом рачунару."
+    },
+    "panel_engineBuiltin": {
+        "message": "Уграђени модел у Chrome-у"
+    },
+    "panel_engineBuiltinNote": {
+        "message": "Бесплатно и приватно: ради на овом рачунару. Укључује се одмах овде."
+    },
+    "panel_engineChatGPT": {
+        "message": "Претплата на ChatGPT"
+    },
+    "panel_engineChatGPTNote": {
+        "message": "Пријавите се ChatGPT Plus или Pro налогом."
+    },
+    "panel_engineAnthropic": {
+        "message": "Claude (Anthropic API кључ)"
+    },
+    "panel_engineOpenAI": {
+        "message": "OpenAI (API кључ)"
+    },
+    "panel_engineZai": {
+        "message": "Z.ai GLM (API кључ)"
+    },
+    "panel_engineKeyNote": {
+        "message": "Ваш API кључ, плаћање добављачу по коришћењу."
+    },
+    "panel_engineLocal": {
+        "message": "$1 · на овом рачунару"
+    },
+    "panel_enginePlan": {
+        "message": "Претплата на $1 · $2"
+    },
+    "panel_checkingAI": {
+        "message": "Проверавам модел…"
+    },
+    "panel_chooseEngine": {
+        "message": "Изабери други модел"
+    },
+    "panel_fixInSettings": {
+        "message": "Исправи у подешавањима"
+    },
+    "panel_downloadModel": {
+        "message": "Преузми модел"
+    },
+    "panel_downloading": {
+        "message": "Преузимање… $1%"
+    },
+    "panel_aiNoKey": {
+        "message": "Додајте API кључ у подешавањима да бисте користили овај модел."
+    },
+    "panel_aiNoAccess": {
+        "message": "Chrome-у је потребна ваша дозвола за приступ добављачу вештачке интелигенције."
+    },
+    "panel_aiSignedOut": {
+        "message": "Поново се пријавите на ChatGPT да бисте користили претплату."
+    },
+    "panel_aiDownload": {
+        "message": "Уграђени модел у Chrome-у треба једном преузети."
+    },
+    "panel_aiDownloading": {
+        "message": "Chrome преузима свој уграђени модел. Радиће када се преузимање заврши."
+    },
+    "panel_aiOldChrome": {
+        "message": "Уграђеном моделу је потребан Chrome 138 или новији."
+    },
+    "panel_aiUnavailable": {
+        "message": "Уграђени модел није доступан на овом рачунару. Изаберите други модел."
+    },
+    "panel_sortOffer": {
+        "message": "Разврстај уз помоћ асистента"
+    },
+    "panel_replyTip": {
+        "message": "Поруке од људи који очекују одговор"
+    },
+    "panel_importantChip": {
+        "message": "Важно · $1"
+    },
+    "panel_importantTip": {
+        "message": "Поруке које треба ускоро да видите"
+    },
+    "panel_bulkChip": {
+        "message": "Билтени · $1"
+    },
+    "panel_bulkTip": {
+        "message": "Поруке које можете да средите без читања"
+    },
+    "panel_replyShown": {
+        "message": "Чека ваш одговор: $1"
+    },
+    "panel_importantShown": {
+        "message": "Важно: $1"
+    },
+    "panel_bulkShown": {
+        "message": "Билтени и рекламе: $1"
+    },
+    "panel_replyWithAI": {
+        "message": "Одговор уз помоћ асистента"
+    },
+    "panel_replyIntentPlaceholder": {
+        "message": "Шта треба да пише у одговору? (необавезно)"
+    },
+    "panel_writeReply": {
+        "message": "Напиши"
+    },
+    "panel_draft": {
+        "message": "Нацрт"
+    },
+    "panel_draftCopied": {
+        "message": "Нацрт је копиран: налепите га у одговор."
+    },
+    "panel_intentYes": {
+        "message": "Да, слажем се"
+    },
+    "panel_intentNo": {
+        "message": "Љубазно одбиј"
+    },
+    "panel_intentMore": {
+        "message": "Тражи детаље"
+    },
+    "panel_intentThanks": {
+        "message": "Захвали се"
+    },
+    "panel_translate": {
+        "message": "Преведи"
+    },
+    "panel_translateFrom": {
+        "message": "Преведи: $1"
+    },
+    "panel_showOriginal": {
+        "message": "Прикажи оригинал"
+    },
+    "panel_translation": {
+        "message": "Превод"
+    },
+    "panel_translateFailed": {
+        "message": "Превођење није успело."
+    },
+    "panel_offerAI": {
+        "message": "Укључите асистента вештачке интелигенције да сажима поруке, пише нацрте одговора и одговара на питања о њима."
+    },
+    "panel_turnOnAI": {
+        "message": "Укључи асистента"
+    },
+    "panel_sameLanguage": {
+        "message": "Ова порука је већ на језику: $1."
+    },
     "opt_ai": {
         "message": "Вештачка интелигенција"
     },

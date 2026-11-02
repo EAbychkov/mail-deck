@@ -1562,6 +1562,279 @@
   "panel_attachments": {
     "message": "Allegati: $1"
   },
+  "panel_assistant": {
+    "message": "Assistente IA"
+  },
+  "panel_assistHello": {
+    "message": "Chiedi qualcosa sulla tua posta, cercaci dentro o fatti scrivere un’email."
+  },
+  "panel_assistPlaceholder": {
+    "message": "Chiedi sulla tua posta: «quando parte il mio volo?», «fatture di ottobre», «scrivi ad Anna che…»"
+  },
+  "panel_ask": {
+    "message": "Chiedi"
+  },
+  "panel_askAI": {
+    "message": "Chiedi all’IA"
+  },
+  "panel_askAITip": {
+    "message": "Chiedi invece all’assistente IA: una domanda o una ricerca con parole tue"
+  },
+  "panel_askAboutMail": {
+    "message": "Chiedi"
+  },
+  "panel_askAgain": {
+    "message": "Chiedi di nuovo"
+  },
+  "panel_askMailPlaceholder": {
+    "message": "Cosa vuoi sapere di questa email?"
+  },
+  "panel_send": {
+    "message": "Invia"
+  },
+  "panel_stop": {
+    "message": "Interrompi"
+  },
+  "panel_close": {
+    "message": "Chiudi"
+  },
+  "panel_clearChat": {
+    "message": "Cancella la conversazione"
+  },
+  "panel_thinking": {
+    "message": "Sto pensando…"
+  },
+  "panel_searchingMail": {
+    "message": "Ricerca nella posta…"
+  },
+  "panel_searchingFor": {
+    "message": "Ricerca: $1"
+  },
+  "panel_readingMail": {
+    "message": "Lettura delle email…"
+  },
+  "panel_answering": {
+    "message": "Risposta in corso…"
+  },
+  "panel_writing": {
+    "message": "Scrittura in corso…"
+  },
+  "panel_translating": {
+    "message": "Traduzione in corso…"
+  },
+  "panel_foundMail": {
+    "message": "Trovate: $1"
+  },
+  "panel_readUnread": {
+    "message": "Dalle email non lette: $1"
+  },
+  "panel_nothingFound": {
+    "message": "Nessun risultato. Prova con altre parole."
+  },
+  "panel_nothingUnread": {
+    "message": "Nessuna email da leggere."
+  },
+  "panel_searchInGmail": {
+    "message": "Cerca in Gmail"
+  },
+  "panel_mailGone": {
+    "message": "Questa email non è più nell’elenco."
+  },
+  "panel_suggestBrief": {
+    "message": "Cosa c’è di importante nelle email non lette?"
+  },
+  "panel_suggestReply": {
+    "message": "Chi aspetta una mia risposta?"
+  },
+  "panel_suggestFind": {
+    "message": "Trova le fatture di questo mese"
+  },
+  "panel_suggestFiles": {
+    "message": "Email con allegati di questa settimana"
+  },
+  "panel_suggestWrite": {
+    "message": "Scrivi un’email…"
+  },
+  "panel_suggestWritePrefix": {
+    "message": "Scrivi un’email a"
+  },
+  "panel_toLabel": {
+    "message": "A"
+  },
+  "panel_toPlaceholder": {
+    "message": "Indirizzo"
+  },
+  "panel_from": {
+    "message": "Da"
+  },
+  "panel_subject": {
+    "message": "Oggetto"
+  },
+  "panel_emailBody": {
+    "message": "Testo dell’email"
+  },
+  "panel_copyText": {
+    "message": "Copia"
+  },
+  "panel_tryAgain": {
+    "message": "Riprova"
+  },
+  "panel_manageUsage": {
+    "message": "Gestisci l’utilizzo"
+  },
+  "panel_setupTitle": {
+    "message": "Attiva l’assistente IA"
+  },
+  "panel_setupLede": {
+    "message": "Riassume la posta, smista quella non letta, cerca e risponde in base alla tua posta e prepara bozze di risposta. Scegli con cosa funziona:"
+  },
+  "panel_setupPrivacy": {
+    "message": "La posta va solo al motore che scegli, e solo quando lo chiedi o attivi lo smistamento. Chiavi e accessi restano su questo computer."
+  },
+  "panel_engineBuiltin": {
+    "message": "Modello integrato di Chrome"
+  },
+  "panel_engineBuiltinNote": {
+    "message": "Gratuito e privato: funziona su questo computer. Si attiva proprio qui."
+  },
+  "panel_engineChatGPT": {
+    "message": "Abbonamento ChatGPT"
+  },
+  "panel_engineChatGPTNote": {
+    "message": "Accedi con il tuo account ChatGPT Plus o Pro."
+  },
+  "panel_engineAnthropic": {
+    "message": "Claude (chiave API di Anthropic)"
+  },
+  "panel_engineOpenAI": {
+    "message": "OpenAI (chiave API)"
+  },
+  "panel_engineZai": {
+    "message": "Z.ai GLM (chiave API)"
+  },
+  "panel_engineKeyNote": {
+    "message": "La tua chiave API, pagata al fornitore a consumo."
+  },
+  "panel_engineLocal": {
+    "message": "$1 · su questo computer"
+  },
+  "panel_enginePlan": {
+    "message": "Abbonamento $1 · $2"
+  },
+  "panel_checkingAI": {
+    "message": "Verifica del motore IA…"
+  },
+  "panel_chooseEngine": {
+    "message": "Scegli un altro motore"
+  },
+  "panel_fixInSettings": {
+    "message": "Correggi nelle impostazioni"
+  },
+  "panel_downloadModel": {
+    "message": "Scarica il modello"
+  },
+  "panel_downloading": {
+    "message": "Download… $1%"
+  },
+  "panel_aiNoKey": {
+    "message": "Aggiungi la tua chiave API nelle impostazioni per usare questo motore."
+  },
+  "panel_aiNoAccess": {
+    "message": "Chrome ha bisogno del tuo permesso per raggiungere il fornitore di IA."
+  },
+  "panel_aiSignedOut": {
+    "message": "Accedi di nuovo a ChatGPT per usare il tuo abbonamento."
+  },
+  "panel_aiDownload": {
+    "message": "Il modello integrato di Chrome va scaricato una volta."
+  },
+  "panel_aiDownloading": {
+    "message": "Chrome sta scaricando il suo modello integrato. Funzionerà al termine del download."
+  },
+  "panel_aiOldChrome": {
+    "message": "Il modello integrato di Chrome richiede Chrome 138 o successivo."
+  },
+  "panel_aiUnavailable": {
+    "message": "Il modello integrato non è disponibile su questo computer. Scegli un altro motore."
+  },
+  "panel_sortOffer": {
+    "message": "Smista con l’IA"
+  },
+  "panel_replyTip": {
+    "message": "Posta di persone che aspettano una risposta"
+  },
+  "panel_importantChip": {
+    "message": "Importanti · $1"
+  },
+  "panel_importantTip": {
+    "message": "Posta da vedere presto"
+  },
+  "panel_bulkChip": {
+    "message": "Newsletter · $1"
+  },
+  "panel_bulkTip": {
+    "message": "Posta da sbrigare senza leggerla"
+  },
+  "panel_replyShown": {
+    "message": "Attende la tua risposta: $1"
+  },
+  "panel_importantShown": {
+    "message": "Importanti: $1"
+  },
+  "panel_bulkShown": {
+    "message": "Newsletter e promozioni: $1"
+  },
+  "panel_replyWithAI": {
+    "message": "Rispondi con l’IA"
+  },
+  "panel_replyIntentPlaceholder": {
+    "message": "Cosa deve dire la risposta? (facoltativo)"
+  },
+  "panel_writeReply": {
+    "message": "Scrivi"
+  },
+  "panel_draft": {
+    "message": "Bozza"
+  },
+  "panel_draftCopied": {
+    "message": "Bozza copiata: incollala nella risposta."
+  },
+  "panel_intentYes": {
+    "message": "Sì, d’accordo"
+  },
+  "panel_intentNo": {
+    "message": "Rifiuta con garbo"
+  },
+  "panel_intentMore": {
+    "message": "Chiedi dettagli"
+  },
+  "panel_intentThanks": {
+    "message": "Ringrazia"
+  },
+  "panel_translate": {
+    "message": "Traduci"
+  },
+  "panel_translateFrom": {
+    "message": "Traduci: $1"
+  },
+  "panel_showOriginal": {
+    "message": "Mostra originale"
+  },
+  "panel_translation": {
+    "message": "Traduzione"
+  },
+  "panel_translateFailed": {
+    "message": "La traduzione non è riuscita."
+  },
+  "panel_offerAI": {
+    "message": "Attiva l’assistente IA per riassumere la posta, preparare risposte e rispondere a domande sui messaggi."
+  },
+  "panel_turnOnAI": {
+    "message": "Attiva l’IA"
+  },
+  "panel_sameLanguage": {
+    "message": "Questa email è già in $1."
+  },
   "opt_ai": {
     "message": "IA"
   },

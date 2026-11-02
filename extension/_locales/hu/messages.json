@@ -1550,6 +1550,279 @@
   "panel_attachments": {
     "message": "Mellékletek: $1"
   },
+  "panel_assistant": {
+    "message": "MI-asszisztens"
+  },
+  "panel_assistHello": {
+    "message": "Kérdezzen a leveleiről, keressen bennük, vagy írasson egy levelet."
+  },
+  "panel_assistPlaceholder": {
+    "message": "Kérdezzen a leveleiről: „mikor indul a járatom?”, „októberi számlák”, „írd meg Annának, hogy…”"
+  },
+  "panel_ask": {
+    "message": "Kérdezés"
+  },
+  "panel_askAI": {
+    "message": "Kérdezze az MI-t"
+  },
+  "panel_askAITip": {
+    "message": "Kérdezze inkább az MI-asszisztenst: egy kérdés vagy keresés hétköznapi szavakkal"
+  },
+  "panel_askAboutMail": {
+    "message": "Kérdezés"
+  },
+  "panel_askAgain": {
+    "message": "Kérdezés újra"
+  },
+  "panel_askMailPlaceholder": {
+    "message": "Mit szeretne tudni erről a levélről?"
+  },
+  "panel_send": {
+    "message": "Küldés"
+  },
+  "panel_stop": {
+    "message": "Leállítás"
+  },
+  "panel_close": {
+    "message": "Bezárás"
+  },
+  "panel_clearChat": {
+    "message": "Beszélgetés törlése"
+  },
+  "panel_thinking": {
+    "message": "Gondolkodik…"
+  },
+  "panel_searchingMail": {
+    "message": "Keresés a levelekben…"
+  },
+  "panel_searchingFor": {
+    "message": "Keresés: $1"
+  },
+  "panel_readingMail": {
+    "message": "Levelek olvasása…"
+  },
+  "panel_answering": {
+    "message": "Válasz készítése…"
+  },
+  "panel_writing": {
+    "message": "Írás…"
+  },
+  "panel_translating": {
+    "message": "Fordítás…"
+  },
+  "panel_foundMail": {
+    "message": "Találat: $1"
+  },
+  "panel_readUnread": {
+    "message": "Az olvasatlan levelek alapján: $1"
+  },
+  "panel_nothingFound": {
+    "message": "Nincs találat. Próbálkozzon más szavakkal."
+  },
+  "panel_nothingUnread": {
+    "message": "Nincs olvasatlan levél."
+  },
+  "panel_searchInGmail": {
+    "message": "Keresés a Gmailben"
+  },
+  "panel_mailGone": {
+    "message": "Ez a levél már nincs a listában."
+  },
+  "panel_suggestBrief": {
+    "message": "Mi a fontos az olvasatlan leveleimben?"
+  },
+  "panel_suggestReply": {
+    "message": "Ki vár a válaszomra?"
+  },
+  "panel_suggestFind": {
+    "message": "Keresd meg az e havi számlákat"
+  },
+  "panel_suggestFiles": {
+    "message": "Mellékletes levelek a héten"
+  },
+  "panel_suggestWrite": {
+    "message": "Levél írása…"
+  },
+  "panel_suggestWritePrefix": {
+    "message": "Írj levelet"
+  },
+  "panel_toLabel": {
+    "message": "Címzett"
+  },
+  "panel_toPlaceholder": {
+    "message": "Cím"
+  },
+  "panel_from": {
+    "message": "Feladó"
+  },
+  "panel_subject": {
+    "message": "Tárgy"
+  },
+  "panel_emailBody": {
+    "message": "Levél szövege"
+  },
+  "panel_copyText": {
+    "message": "Másolás"
+  },
+  "panel_tryAgain": {
+    "message": "Újrapróbálás"
+  },
+  "panel_manageUsage": {
+    "message": "Használat kezelése"
+  },
+  "panel_setupTitle": {
+    "message": "Kapcsolja be az MI-asszisztenst"
+  },
+  "panel_setupLede": {
+    "message": "Összefoglalja a leveleket, rendezi az olvasatlanokat, keres és válaszol a levelei alapján, és válaszvázlatokat ír. Válassza ki, mivel működjön:"
+  },
+  "panel_setupPrivacy": {
+    "message": "A levelek csak az Ön által választott motorhoz kerülnek, és csak akkor, ha kéri, vagy bekapcsolja a rendezést. A kulcsok és a bejelentkezések ezen a számítógépen maradnak."
+  },
+  "panel_engineBuiltin": {
+    "message": "A Chrome beépített modellje"
+  },
+  "panel_engineBuiltinNote": {
+    "message": "Ingyenes és privát: ezen a számítógépen fut. Itt helyben bekapcsolható."
+  },
+  "panel_engineChatGPT": {
+    "message": "ChatGPT-előfizetés"
+  },
+  "panel_engineChatGPTNote": {
+    "message": "Jelentkezzen be ChatGPT Plus- vagy Pro-fiókjával."
+  },
+  "panel_engineAnthropic": {
+    "message": "Claude (Anthropic API-kulcs)"
+  },
+  "panel_engineOpenAI": {
+    "message": "OpenAI (API-kulcs)"
+  },
+  "panel_engineZai": {
+    "message": "Z.ai GLM (API-kulcs)"
+  },
+  "panel_engineKeyNote": {
+    "message": "Saját API-kulcs, a szolgáltatónak használat szerint fizetve."
+  },
+  "panel_engineLocal": {
+    "message": "$1 · ezen a számítógépen"
+  },
+  "panel_enginePlan": {
+    "message": "$1-előfizetés · $2"
+  },
+  "panel_checkingAI": {
+    "message": "Az MI-motor ellenőrzése…"
+  },
+  "panel_chooseEngine": {
+    "message": "Másik motor választása"
+  },
+  "panel_fixInSettings": {
+    "message": "Javítás a beállításokban"
+  },
+  "panel_downloadModel": {
+    "message": "A modell letöltése"
+  },
+  "panel_downloading": {
+    "message": "Letöltés… $1%"
+  },
+  "panel_aiNoKey": {
+    "message": "A motor használatához adja meg API-kulcsát a beállításokban."
+  },
+  "panel_aiNoAccess": {
+    "message": "A Chrome-nak az Ön engedélyére van szüksége, hogy elérje az MI-szolgáltatót."
+  },
+  "panel_aiSignedOut": {
+    "message": "Jelentkezzen be újra a ChatGPT-be az előfizetése használatához."
+  },
+  "panel_aiDownload": {
+    "message": "A Chrome beépített modelljét egyszer le kell tölteni."
+  },
+  "panel_aiDownloading": {
+    "message": "A Chrome letölti a beépített modelljét. A letöltés végeztével működik."
+  },
+  "panel_aiOldChrome": {
+    "message": "A Chrome beépített modelljéhez Chrome 138 vagy újabb kell."
+  },
+  "panel_aiUnavailable": {
+    "message": "A beépített modell ezen a számítógépen nem érhető el. Válasszon másik motort."
+  },
+  "panel_sortOffer": {
+    "message": "Rendezés MI-vel"
+  },
+  "panel_replyTip": {
+    "message": "Levelek olyanoktól, akik választ várnak"
+  },
+  "panel_importantChip": {
+    "message": "Fontos · $1"
+  },
+  "panel_importantTip": {
+    "message": "Levelek, amelyeket hamarosan érdemes megnézni"
+  },
+  "panel_bulkChip": {
+    "message": "Hírlevelek · $1"
+  },
+  "panel_bulkTip": {
+    "message": "Levelek, amelyeket elolvasás nélkül is elintézhet"
+  },
+  "panel_replyShown": {
+    "message": "Válaszra vár: $1"
+  },
+  "panel_importantShown": {
+    "message": "Fontos: $1"
+  },
+  "panel_bulkShown": {
+    "message": "Hírlevelek és reklámok: $1"
+  },
+  "panel_replyWithAI": {
+    "message": "Válasz MI-vel"
+  },
+  "panel_replyIntentPlaceholder": {
+    "message": "Mit írjon a válasz? (nem kötelező)"
+  },
+  "panel_writeReply": {
+    "message": "Írás"
+  },
+  "panel_draft": {
+    "message": "Vázlat"
+  },
+  "panel_draftCopied": {
+    "message": "A vázlat a vágólapon van: illessze be a válaszba."
+  },
+  "panel_intentYes": {
+    "message": "Igen, elfogadom"
+  },
+  "panel_intentNo": {
+    "message": "Udvarias elutasítás"
+  },
+  "panel_intentMore": {
+    "message": "Részletek kérése"
+  },
+  "panel_intentThanks": {
+    "message": "Köszönet"
+  },
+  "panel_translate": {
+    "message": "Fordítás"
+  },
+  "panel_translateFrom": {
+    "message": "Fordítás innen: $1"
+  },
+  "panel_showOriginal": {
+    "message": "Eredeti megjelenítése"
+  },
+  "panel_translation": {
+    "message": "Fordítás"
+  },
+  "panel_translateFailed": {
+    "message": "A fordítás nem sikerült."
+  },
+  "panel_offerAI": {
+    "message": "Kapcsolja be az MI-asszisztenst, hogy összefoglalja a leveleket, válaszvázlatokat írjon, és válaszoljon a velük kapcsolatos kérdésekre."
+  },
+  "panel_turnOnAI": {
+    "message": "MI bekapcsolása"
+  },
+  "panel_sameLanguage": {
+    "message": "Ez a levél már ezen a nyelven van: $1."
+  },
   "opt_ai": {
     "message": "Mesterséges intelligencia"
   },

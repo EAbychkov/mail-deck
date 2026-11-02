@@ -1730,6 +1730,279 @@
     "panel_attachments": {
         "message": "Συνημμένα: $1"
     },
+    "panel_assistant": {
+        "message": "Βοηθός τεχνητής νοημοσύνης"
+    },
+    "panel_assistHello": {
+        "message": "Ρωτήστε για την αλληλογραφία σας, βρείτε κάτι σε αυτή ή ζητήστε να γραφτεί ένα μήνυμα."
+    },
+    "panel_assistPlaceholder": {
+        "message": "Ρωτήστε για την αλληλογραφία σας: «πότε είναι η πτήση μου;», «τιμολόγια Οκτωβρίου», «γράψε στην Άννα ότι…»"
+    },
+    "panel_ask": {
+        "message": "Ερώτηση"
+    },
+    "panel_askAI": {
+        "message": "Ερώτηση στον βοηθό"
+    },
+    "panel_askAITip": {
+        "message": "Ρωτήστε τον βοηθό τεχνητής νοημοσύνης: μια ερώτηση ή μια αναζήτηση με απλά λόγια"
+    },
+    "panel_askAboutMail": {
+        "message": "Ερώτηση"
+    },
+    "panel_askAgain": {
+        "message": "Επανάληψη ερώτησης"
+    },
+    "panel_askMailPlaceholder": {
+        "message": "Τι θέλετε να μάθετε για αυτό το μήνυμα;"
+    },
+    "panel_send": {
+        "message": "Αποστολή"
+    },
+    "panel_stop": {
+        "message": "Διακοπή"
+    },
+    "panel_close": {
+        "message": "Κλείσιμο"
+    },
+    "panel_clearChat": {
+        "message": "Εκκαθάριση συζήτησης"
+    },
+    "panel_thinking": {
+        "message": "Σκέφτομαι…"
+    },
+    "panel_searchingMail": {
+        "message": "Αναζήτηση στην αλληλογραφία…"
+    },
+    "panel_searchingFor": {
+        "message": "Αναζήτηση: $1"
+    },
+    "panel_readingMail": {
+        "message": "Ανάγνωση μηνυμάτων…"
+    },
+    "panel_answering": {
+        "message": "Σύνταξη απάντησης…"
+    },
+    "panel_writing": {
+        "message": "Σύνταξη…"
+    },
+    "panel_translating": {
+        "message": "Μετάφραση…"
+    },
+    "panel_foundMail": {
+        "message": "Βρέθηκαν: $1"
+    },
+    "panel_readUnread": {
+        "message": "Από τα μη αναγνωσμένα: $1"
+    },
+    "panel_nothingFound": {
+        "message": "Δεν βρέθηκε τίποτα. Δοκιμάστε άλλες λέξεις."
+    },
+    "panel_nothingUnread": {
+        "message": "Δεν υπάρχουν μη αναγνωσμένα μηνύματα."
+    },
+    "panel_searchInGmail": {
+        "message": "Αναζήτηση στο Gmail"
+    },
+    "panel_mailGone": {
+        "message": "Αυτό το μήνυμα δεν βρίσκεται πια στη λίστα."
+    },
+    "panel_suggestBrief": {
+        "message": "Τι σημαντικό υπάρχει στα μη αναγνωσμένα;"
+    },
+    "panel_suggestReply": {
+        "message": "Ποιος περιμένει απάντησή μου;"
+    },
+    "panel_suggestFind": {
+        "message": "Βρες τα τιμολόγια αυτού του μήνα"
+    },
+    "panel_suggestFiles": {
+        "message": "Μηνύματα με συνημμένα αυτής της εβδομάδας"
+    },
+    "panel_suggestWrite": {
+        "message": "Σύνταξη μηνύματος…"
+    },
+    "panel_suggestWritePrefix": {
+        "message": "Γράψε μήνυμα προς"
+    },
+    "panel_toLabel": {
+        "message": "Προς"
+    },
+    "panel_toPlaceholder": {
+        "message": "Διεύθυνση"
+    },
+    "panel_from": {
+        "message": "Από"
+    },
+    "panel_subject": {
+        "message": "Θέμα"
+    },
+    "panel_emailBody": {
+        "message": "Κείμενο μηνύματος"
+    },
+    "panel_copyText": {
+        "message": "Αντιγραφή"
+    },
+    "panel_tryAgain": {
+        "message": "Επανάληψη"
+    },
+    "panel_manageUsage": {
+        "message": "Διαχείριση χρήσης"
+    },
+    "panel_setupTitle": {
+        "message": "Ενεργοποιήστε τον βοηθό τεχνητής νοημοσύνης"
+    },
+    "panel_setupLede": {
+        "message": "Συνοψίζει μηνύματα, ταξινομεί τα μη αναγνωσμένα, ψάχνει και απαντά από την αλληλογραφία σας, και γράφει πρόχειρες απαντήσεις. Επιλέξτε με τι θα λειτουργεί:"
+    },
+    "panel_setupPrivacy": {
+        "message": "Τα μηνύματα πηγαίνουν μόνο στη μηχανή που επιλέγετε, και μόνο όταν το ζητάτε ή ενεργοποιείτε την ταξινόμηση. Τα κλειδιά και οι συνδέσεις μένουν σε αυτόν τον υπολογιστή."
+    },
+    "panel_engineBuiltin": {
+        "message": "Ενσωματωμένο μοντέλο του Chrome"
+    },
+    "panel_engineBuiltinNote": {
+        "message": "Δωρεάν και ιδιωτικό: τρέχει σε αυτόν τον υπολογιστή. Ενεργοποιείται εδώ."
+    },
+    "panel_engineChatGPT": {
+        "message": "Συνδρομή ChatGPT"
+    },
+    "panel_engineChatGPTNote": {
+        "message": "Συνδεθείτε με τον λογαριασμό σας ChatGPT Plus ή Pro."
+    },
+    "panel_engineAnthropic": {
+        "message": "Claude (κλειδί API της Anthropic)"
+    },
+    "panel_engineOpenAI": {
+        "message": "OpenAI (κλειδί API)"
+    },
+    "panel_engineZai": {
+        "message": "Z.ai GLM (κλειδί API)"
+    },
+    "panel_engineKeyNote": {
+        "message": "Το δικό σας κλειδί API, με χρέωση ανά χρήση από τον πάροχο."
+    },
+    "panel_engineLocal": {
+        "message": "$1 · σε αυτόν τον υπολογιστή"
+    },
+    "panel_enginePlan": {
+        "message": "Συνδρομή $1 · $2"
+    },
+    "panel_checkingAI": {
+        "message": "Έλεγχος της μηχανής τεχνητής νοημοσύνης…"
+    },
+    "panel_chooseEngine": {
+        "message": "Επιλογή άλλης μηχανής"
+    },
+    "panel_fixInSettings": {
+        "message": "Διόρθωση στις Ρυθμίσεις"
+    },
+    "panel_downloadModel": {
+        "message": "Λήψη του μοντέλου"
+    },
+    "panel_downloading": {
+        "message": "Λήψη… $1%"
+    },
+    "panel_aiNoKey": {
+        "message": "Προσθέστε το κλειδί API σας στις Ρυθμίσεις για να χρησιμοποιήσετε αυτή τη μηχανή."
+    },
+    "panel_aiNoAccess": {
+        "message": "Το Chrome χρειάζεται την άδειά σας για να συνδεθεί με τον πάροχο τεχνητής νοημοσύνης."
+    },
+    "panel_aiSignedOut": {
+        "message": "Συνδεθείτε ξανά στο ChatGPT για να χρησιμοποιήσετε τη συνδρομή σας."
+    },
+    "panel_aiDownload": {
+        "message": "Το ενσωματωμένο μοντέλο του Chrome πρέπει να ληφθεί μία φορά."
+    },
+    "panel_aiDownloading": {
+        "message": "Το Chrome κατεβάζει το ενσωματωμένο μοντέλο του. Θα λειτουργήσει μόλις ολοκληρωθεί η λήψη."
+    },
+    "panel_aiOldChrome": {
+        "message": "Το ενσωματωμένο μοντέλο του Chrome χρειάζεται Chrome 138 ή νεότερο."
+    },
+    "panel_aiUnavailable": {
+        "message": "Το ενσωματωμένο μοντέλο δεν είναι διαθέσιμο σε αυτόν τον υπολογιστή. Επιλέξτε άλλη μηχανή."
+    },
+    "panel_sortOffer": {
+        "message": "Ταξινόμηση με τεχνητή νοημοσύνη"
+    },
+    "panel_replyTip": {
+        "message": "Μηνύματα από ανθρώπους που περιμένουν απάντηση"
+    },
+    "panel_importantChip": {
+        "message": "Σημαντικά · $1"
+    },
+    "panel_importantTip": {
+        "message": "Μηνύματα που πρέπει να δείτε σύντομα"
+    },
+    "panel_bulkChip": {
+        "message": "Ενημερωτικά · $1"
+    },
+    "panel_bulkTip": {
+        "message": "Μηνύματα που μπορείτε να τακτοποιήσετε χωρίς να τα διαβάσετε"
+    },
+    "panel_replyShown": {
+        "message": "Περιμένει την απάντησή σας: $1"
+    },
+    "panel_importantShown": {
+        "message": "Σημαντικά: $1"
+    },
+    "panel_bulkShown": {
+        "message": "Ενημερωτικά και προωθητικά: $1"
+    },
+    "panel_replyWithAI": {
+        "message": "Απάντηση με τεχνητή νοημοσύνη"
+    },
+    "panel_replyIntentPlaceholder": {
+        "message": "Τι να λέει η απάντηση; (προαιρετικό)"
+    },
+    "panel_writeReply": {
+        "message": "Σύνταξη"
+    },
+    "panel_draft": {
+        "message": "Πρόχειρο"
+    },
+    "panel_draftCopied": {
+        "message": "Το πρόχειρο αντιγράφηκε: επικολλήστε το στην απάντηση."
+    },
+    "panel_intentYes": {
+        "message": "Ναι, συμφωνώ"
+    },
+    "panel_intentNo": {
+        "message": "Ευγενική άρνηση"
+    },
+    "panel_intentMore": {
+        "message": "Ζήτηση λεπτομερειών"
+    },
+    "panel_intentThanks": {
+        "message": "Ευχαριστίες"
+    },
+    "panel_translate": {
+        "message": "Μετάφραση"
+    },
+    "panel_translateFrom": {
+        "message": "Μετάφραση από τα $1"
+    },
+    "panel_showOriginal": {
+        "message": "Εμφάνιση πρωτοτύπου"
+    },
+    "panel_translation": {
+        "message": "Μετάφραση"
+    },
+    "panel_translateFailed": {
+        "message": "Η μετάφραση απέτυχε."
+    },
+    "panel_offerAI": {
+        "message": "Ενεργοποιήστε τον βοηθό τεχνητής νοημοσύνης για συνόψεις μηνυμάτων, πρόχειρες απαντήσεις και απαντήσεις σε ερωτήσεις για αυτά."
+    },
+    "panel_turnOnAI": {
+        "message": "Ενεργοποίηση τεχνητής νοημοσύνης"
+    },
+    "panel_sameLanguage": {
+        "message": "Αυτό το μήνυμα είναι ήδη στα $1."
+    },
     "opt_ai": {
         "message": "Τεχνητή νοημοσύνη"
     },

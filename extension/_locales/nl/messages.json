@@ -1734,6 +1734,279 @@
     "panel_attachments": {
         "message": "Bijlagen: $1"
     },
+    "panel_assistant": {
+        "message": "AI-assistent"
+    },
+    "panel_assistHello": {
+        "message": "Stel een vraag over je mail, zoek er iets in of laat een e-mail schrijven."
+    },
+    "panel_assistPlaceholder": {
+        "message": "Vraag iets over je mail: ‘wanneer gaat mijn vlucht?’, ‘facturen van oktober’, ‘schrijf Anna dat…’"
+    },
+    "panel_ask": {
+        "message": "Vragen"
+    },
+    "panel_askAI": {
+        "message": "AI vragen"
+    },
+    "panel_askAITip": {
+        "message": "Vraag het liever de AI-assistent: een vraag, of zoeken in gewone woorden"
+    },
+    "panel_askAboutMail": {
+        "message": "Vragen"
+    },
+    "panel_askAgain": {
+        "message": "Opnieuw vragen"
+    },
+    "panel_askMailPlaceholder": {
+        "message": "Wat wil je weten over deze e-mail?"
+    },
+    "panel_send": {
+        "message": "Versturen"
+    },
+    "panel_stop": {
+        "message": "Stoppen"
+    },
+    "panel_close": {
+        "message": "Sluiten"
+    },
+    "panel_clearChat": {
+        "message": "Gesprek wissen"
+    },
+    "panel_thinking": {
+        "message": "Nadenken…"
+    },
+    "panel_searchingMail": {
+        "message": "Je mail doorzoeken…"
+    },
+    "panel_searchingFor": {
+        "message": "Zoeken: $1"
+    },
+    "panel_readingMail": {
+        "message": "E-mails lezen…"
+    },
+    "panel_answering": {
+        "message": "Antwoord schrijven…"
+    },
+    "panel_writing": {
+        "message": "Schrijven…"
+    },
+    "panel_translating": {
+        "message": "Vertalen…"
+    },
+    "panel_foundMail": {
+        "message": "Gevonden: $1"
+    },
+    "panel_readUnread": {
+        "message": "Op basis van ongelezen mail: $1"
+    },
+    "panel_nothingFound": {
+        "message": "Niets gevonden. Probeer andere woorden."
+    },
+    "panel_nothingUnread": {
+        "message": "Geen ongelezen mail."
+    },
+    "panel_searchInGmail": {
+        "message": "Zoeken in Gmail"
+    },
+    "panel_mailGone": {
+        "message": "Deze mail staat niet meer in de lijst."
+    },
+    "panel_suggestBrief": {
+        "message": "Wat is belangrijk in mijn ongelezen mail?"
+    },
+    "panel_suggestReply": {
+        "message": "Wie wacht op mijn antwoord?"
+    },
+    "panel_suggestFind": {
+        "message": "Zoek facturen van deze maand"
+    },
+    "panel_suggestFiles": {
+        "message": "Mail met bijlagen van deze week"
+    },
+    "panel_suggestWrite": {
+        "message": "E-mail schrijven…"
+    },
+    "panel_suggestWritePrefix": {
+        "message": "Schrijf een e-mail aan"
+    },
+    "panel_toLabel": {
+        "message": "Aan"
+    },
+    "panel_toPlaceholder": {
+        "message": "Adres"
+    },
+    "panel_from": {
+        "message": "Van"
+    },
+    "panel_subject": {
+        "message": "Onderwerp"
+    },
+    "panel_emailBody": {
+        "message": "Tekst van de e-mail"
+    },
+    "panel_copyText": {
+        "message": "Kopiëren"
+    },
+    "panel_tryAgain": {
+        "message": "Opnieuw proberen"
+    },
+    "panel_manageUsage": {
+        "message": "Gebruik beheren"
+    },
+    "panel_setupTitle": {
+        "message": "Zet de AI-assistent aan"
+    },
+    "panel_setupLede": {
+        "message": "Hij vat mail samen, sorteert ongelezen mail, zoekt en antwoordt op basis van je mail en schrijft conceptantwoorden. Kies waarop hij draait:"
+    },
+    "panel_setupPrivacy": {
+        "message": "Mail gaat alleen naar de AI die je kiest, en alleen als je erom vraagt of sorteren aanzet. Sleutels en logins blijven op deze computer."
+    },
+    "panel_engineBuiltin": {
+        "message": "Ingebouwd model van Chrome"
+    },
+    "panel_engineBuiltinNote": {
+        "message": "Gratis en privé: draait op deze computer. Gaat hier meteen aan."
+    },
+    "panel_engineChatGPT": {
+        "message": "ChatGPT-abonnement"
+    },
+    "panel_engineChatGPTNote": {
+        "message": "Log in met je ChatGPT Plus- of Pro-account."
+    },
+    "panel_engineAnthropic": {
+        "message": "Claude (API-sleutel van Anthropic)"
+    },
+    "panel_engineOpenAI": {
+        "message": "OpenAI (API-sleutel)"
+    },
+    "panel_engineZai": {
+        "message": "Z.ai GLM (API-sleutel)"
+    },
+    "panel_engineKeyNote": {
+        "message": "Je eigen API-sleutel, je betaalt de aanbieder per gebruik."
+    },
+    "panel_engineLocal": {
+        "message": "$1 · op deze computer"
+    },
+    "panel_enginePlan": {
+        "message": "$1-abonnement · $2"
+    },
+    "panel_checkingAI": {
+        "message": "AI controleren…"
+    },
+    "panel_chooseEngine": {
+        "message": "Andere AI kiezen"
+    },
+    "panel_fixInSettings": {
+        "message": "Oplossen in Instellingen"
+    },
+    "panel_downloadModel": {
+        "message": "Model downloaden"
+    },
+    "panel_downloading": {
+        "message": "Downloaden… $1%"
+    },
+    "panel_aiNoKey": {
+        "message": "Voeg je API-sleutel toe in Instellingen om deze AI te gebruiken."
+    },
+    "panel_aiNoAccess": {
+        "message": "Chrome heeft je toestemming nodig om de AI-aanbieder te bereiken."
+    },
+    "panel_aiSignedOut": {
+        "message": "Log opnieuw in bij ChatGPT om je abonnement te gebruiken."
+    },
+    "panel_aiDownload": {
+        "message": "Het ingebouwde model van Chrome moet één keer worden gedownload."
+    },
+    "panel_aiDownloading": {
+        "message": "Chrome downloadt zijn ingebouwde model. Het werkt zodra de download klaar is."
+    },
+    "panel_aiOldChrome": {
+        "message": "Het ingebouwde model van Chrome vereist Chrome 138 of nieuwer."
+    },
+    "panel_aiUnavailable": {
+        "message": "Het ingebouwde model is niet beschikbaar op deze computer. Kies een andere AI."
+    },
+    "panel_sortOffer": {
+        "message": "Sorteren met AI"
+    },
+    "panel_replyTip": {
+        "message": "Mail van mensen die een antwoord verwachten"
+    },
+    "panel_importantChip": {
+        "message": "Belangrijk · $1"
+    },
+    "panel_importantTip": {
+        "message": "Mail die je snel moet zien"
+    },
+    "panel_bulkChip": {
+        "message": "Nieuwsbrieven · $1"
+    },
+    "panel_bulkTip": {
+        "message": "Mail die je ongelezen kunt afhandelen"
+    },
+    "panel_replyShown": {
+        "message": "Wacht op je antwoord: $1"
+    },
+    "panel_importantShown": {
+        "message": "Belangrijk: $1"
+    },
+    "panel_bulkShown": {
+        "message": "Nieuwsbrieven en reclame: $1"
+    },
+    "panel_replyWithAI": {
+        "message": "Antwoord met AI"
+    },
+    "panel_replyIntentPlaceholder": {
+        "message": "Wat moet er in het antwoord staan? (optioneel)"
+    },
+    "panel_writeReply": {
+        "message": "Schrijven"
+    },
+    "panel_draft": {
+        "message": "Concept"
+    },
+    "panel_draftCopied": {
+        "message": "Concept gekopieerd: plak het in je antwoord."
+    },
+    "panel_intentYes": {
+        "message": "Ja, akkoord"
+    },
+    "panel_intentNo": {
+        "message": "Beleefd weigeren"
+    },
+    "panel_intentMore": {
+        "message": "Om details vragen"
+    },
+    "panel_intentThanks": {
+        "message": "Bedanken"
+    },
+    "panel_translate": {
+        "message": "Vertalen"
+    },
+    "panel_translateFrom": {
+        "message": "Vertalen uit het $1"
+    },
+    "panel_showOriginal": {
+        "message": "Origineel tonen"
+    },
+    "panel_translation": {
+        "message": "Vertaling"
+    },
+    "panel_translateFailed": {
+        "message": "Vertalen is mislukt."
+    },
+    "panel_offerAI": {
+        "message": "Zet de AI-assistent aan om mail samen te vatten, antwoorden op te stellen en vragen erover te beantwoorden."
+    },
+    "panel_turnOnAI": {
+        "message": "AI aanzetten"
+    },
+    "panel_sameLanguage": {
+        "message": "Deze mail is al in het $1."
+    },
     "opt_ai": {
         "message": "AI"
     },

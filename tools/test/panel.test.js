@@ -226,9 +226,35 @@ const checks = {
   aiauto: r => ({
     '"automatically for long mail": a short thread waits for a click, a long one summarizes itself': r.shortWaits && r.longStarts && r.longDone
   }),
+  aiassist: r => ({
+    'the assistant opens from the header, its field focused, its suggestions and engine shown': r.opened && r.engine === 'OpenAI · gpt-test',
+    'find: every Gmail account searched with the planned query, what it found listed': r.findQuery === 3 && r.found === 4 && r.foundOpen === true,
+    'a question: the mail found read whole, an answer with a citation': r.answer === 'The invoice #1042 is ready 1.' && r.answerMail === 4 && r.readWhole && r.cite,
+    'a citation opens its mail in the reader, and Esc comes back to the assistant': r.citeOpens && r.backToAssist,
+    'a new mail: its fields filled and changed, then Gmail\'s compose window with them': JSON.stringify(r.email) === '["anna@figma.com","Встреча в пятницу"]' &&
+      r.compose.includes('view=cm') && r.compose.includes('to=anna%40figma.com') && r.compose.includes('su=' + encodeURIComponent('Встреча: пятница')) && r.compose.includes('body=' + encodeURIComponent('Анна, привет!')),
+    'what is important: the unread mail read by its preview; the conversation kept for the session': r.brief >= 5 && r.kept === 4,
+    'stop ends an answer underway, with Ask again': r.stopped,
+    'a usage limit offers Manage usage first': r.limit,
+    'Esc in its field closes it': r.closed
+  }),
+  aitools: r => ({
+    'the sorting: a chip for each kind found, the list narrowed with all of it read at once': JSON.stringify(r.chips) === '["reply","important","bulk"]' &&
+      r.bar === T('importantShown', 1) && r.narrowed === 1 && r.readAll,
+    'the open mail offers a summary, a reply, a translation and a question': JSON.stringify(r.strip) === '["ai:sparkle","ai:reply","ai:translate","ai:ask"]',
+    'a reply drafted from an intent opens in Gmail\'s compose window with the text': r.draft.startsWith('Привет, Аня!') && r.draftCall.intent === T('intentYes') &&
+      r.draftCall.reader === 'evgeny@example.com' && r.replyUrl.includes('to=anna%40figma.com') && r.replyUrl.includes('su=Re%3A') && r.replyUrl.includes('body=' + encodeURIComponent('Привет, Аня!')),
+    'a question about the mail is answered from its messages; Esc in the field closes the card only': r.askFocused && r.ask && r.escCard,
+    'a translation by the engine shows as a card': r.translation === 'Hi! The mockups are attached; please look before Friday.',
+    'A asks about the open mail': r.keyA
+  }),
   aioff: r => ({
-    'the assistant off: no ai.js, no button, no I, no card, no chip, not one call': JSON.stringify(r.off) ===
-      '{"calls":0,"button":false,"card":false,"chip":false,"script":false,"hint":false}'
+    'the assistant off: its buttons offer it, I too, with no ai.js, no summary, no sorting and not one call': JSON.stringify(r.off) ===
+      '{"calls":0,"button":true,"card":false,"offerCard":true,"chip":false,"offer":true,"header":true,"script":false,"hint":false}'
+  }),
+  ainone: r => ({
+    'the assistant off and its buttons too: nothing of it shows, and nothing is loaded or asked': JSON.stringify(r.off) ===
+      '{"calls":0,"button":false,"card":false,"offerCard":false,"chip":false,"offer":false,"header":false,"script":false,"hint":false}'
   }),
   aireal: r => ({
     'the real ai.js comes after the list\'s first frame; with no key the card says so, and nothing is classified':
@@ -247,7 +273,7 @@ server.listen(0, '127.0.0.1', async () => {
   for (const [scenario, query, frame] of [['main', ''], ['speed', ''], ['services', '&s=services'], ['wide', '&wide=1'], ['keys', ''], ['narrow', '&side', 320],
     ['files', ''], ['codes', '&s=codes'], ['advance', '&advance=1'], ['readnext', '&read=1'], ['seen', '&badge=new'],
     ['site', '&s=site&url=' + encodeURIComponent('https://github.com/login?return_to=%2Fsettings')],
-    ['ai', '&ai=on'], ['aiauto', '&ai=on&summary=auto'], ['aioff', '&ai=off'], ['aireal', '&ai=real']]) {
+    ['ai', '&ai=on'], ['aiassist', '&ai=on'], ['aitools', '&ai=on'], ['aiauto', '&ai=on&summary=auto'], ['aioff', '&ai=off'], ['ainone', '&ai=off&buttons=0'], ['aireal', '&ai=real']]) {
     const r = await run(port, scenario, query, frame);
     if (r.error) {
       failed += 1;

@@ -1734,6 +1734,279 @@
     "panel_attachments": {
         "message": "附件：$1"
     },
+    "panel_assistant": {
+        "message": "AI 助手"
+    },
+    "panel_assistHello": {
+        "message": "问问你的邮件、在邮件中查找内容，或者让我帮你写邮件。"
+    },
+    "panel_assistPlaceholder": {
+        "message": "问问你的邮件：“我的航班是什么时候？”“10 月的发票”“给安娜写信说…”"
+    },
+    "panel_ask": {
+        "message": "提问"
+    },
+    "panel_askAI": {
+        "message": "问 AI"
+    },
+    "panel_askAITip": {
+        "message": "改为向 AI 助手提问：提出问题，或用日常用语搜索"
+    },
+    "panel_askAboutMail": {
+        "message": "提问"
+    },
+    "panel_askAgain": {
+        "message": "再问一次"
+    },
+    "panel_askMailPlaceholder": {
+        "message": "关于这封邮件，你想了解什么？"
+    },
+    "panel_send": {
+        "message": "发送"
+    },
+    "panel_stop": {
+        "message": "停止"
+    },
+    "panel_close": {
+        "message": "关闭"
+    },
+    "panel_clearChat": {
+        "message": "清空对话"
+    },
+    "panel_thinking": {
+        "message": "正在思考…"
+    },
+    "panel_searchingMail": {
+        "message": "正在搜索你的邮件…"
+    },
+    "panel_searchingFor": {
+        "message": "正在搜索：$1"
+    },
+    "panel_readingMail": {
+        "message": "正在阅读邮件…"
+    },
+    "panel_answering": {
+        "message": "正在回答…"
+    },
+    "panel_writing": {
+        "message": "正在撰写…"
+    },
+    "panel_translating": {
+        "message": "正在翻译…"
+    },
+    "panel_foundMail": {
+        "message": "找到 $1 封邮件"
+    },
+    "panel_readUnread": {
+        "message": "依据 $1 封未读邮件"
+    },
+    "panel_nothingFound": {
+        "message": "什么也没找到。换个说法试试。"
+    },
+    "panel_nothingUnread": {
+        "message": "没有未读邮件。"
+    },
+    "panel_searchInGmail": {
+        "message": "在 Gmail 中搜索"
+    },
+    "panel_mailGone": {
+        "message": "这封邮件已不在列表中。"
+    },
+    "panel_suggestBrief": {
+        "message": "未读邮件里有什么重要的？"
+    },
+    "panel_suggestReply": {
+        "message": "谁在等我回复？"
+    },
+    "panel_suggestFind": {
+        "message": "查找本月的发票"
+    },
+    "panel_suggestFiles": {
+        "message": "本周带附件的邮件"
+    },
+    "panel_suggestWrite": {
+        "message": "写邮件…"
+    },
+    "panel_suggestWritePrefix": {
+        "message": "写一封邮件给"
+    },
+    "panel_toLabel": {
+        "message": "收件人"
+    },
+    "panel_toPlaceholder": {
+        "message": "地址"
+    },
+    "panel_from": {
+        "message": "发件人"
+    },
+    "panel_subject": {
+        "message": "主题"
+    },
+    "panel_emailBody": {
+        "message": "邮件正文"
+    },
+    "panel_copyText": {
+        "message": "复制"
+    },
+    "panel_tryAgain": {
+        "message": "重试"
+    },
+    "panel_manageUsage": {
+        "message": "管理用量"
+    },
+    "panel_setupTitle": {
+        "message": "开启 AI 助手"
+    },
+    "panel_setupLede": {
+        "message": "它能总结邮件、整理未读邮件、在邮件中查找并据此回答问题，还能起草回复。选择它的运行方式："
+    },
+    "panel_setupPrivacy": {
+        "message": "邮件只会发送给你选择的引擎，而且只在你提出请求或开启整理时发送。密钥和登录信息都保留在这台电脑上。"
+    },
+    "panel_engineBuiltin": {
+        "message": "Chrome 内置模型"
+    },
+    "panel_engineBuiltinNote": {
+        "message": "免费且私密：在这台电脑上运行。在这里即可开启。"
+    },
+    "panel_engineChatGPT": {
+        "message": "ChatGPT 订阅"
+    },
+    "panel_engineChatGPTNote": {
+        "message": "使用你的 ChatGPT Plus 或 Pro 账号登录。"
+    },
+    "panel_engineAnthropic": {
+        "message": "Claude（Anthropic API 密钥）"
+    },
+    "panel_engineOpenAI": {
+        "message": "OpenAI（API 密钥）"
+    },
+    "panel_engineZai": {
+        "message": "Z.ai GLM（API 密钥）"
+    },
+    "panel_engineKeyNote": {
+        "message": "你自己的 API 密钥，按用量向服务商付费。"
+    },
+    "panel_engineLocal": {
+        "message": "$1 · 在这台电脑上"
+    },
+    "panel_enginePlan": {
+        "message": "$1 订阅 · $2"
+    },
+    "panel_checkingAI": {
+        "message": "正在检查 AI 引擎…"
+    },
+    "panel_chooseEngine": {
+        "message": "选择其他引擎"
+    },
+    "panel_fixInSettings": {
+        "message": "在设置中修复"
+    },
+    "panel_downloadModel": {
+        "message": "下载模型"
+    },
+    "panel_downloading": {
+        "message": "正在下载… $1%"
+    },
+    "panel_aiNoKey": {
+        "message": "请在设置中添加你的 API 密钥，才能使用此引擎。"
+    },
+    "panel_aiNoAccess": {
+        "message": "Chrome 需要你的许可才能访问 AI 服务商。"
+    },
+    "panel_aiSignedOut": {
+        "message": "请重新登录 ChatGPT 以使用你的订阅。"
+    },
+    "panel_aiDownload": {
+        "message": "Chrome 的内置模型需要下载一次。"
+    },
+    "panel_aiDownloading": {
+        "message": "Chrome 正在下载其内置模型。下载完成后即可使用。"
+    },
+    "panel_aiOldChrome": {
+        "message": "Chrome 的内置模型需要 Chrome 138 或更高版本。"
+    },
+    "panel_aiUnavailable": {
+        "message": "这台电脑上无法使用内置模型。请选择其他引擎。"
+    },
+    "panel_sortOffer": {
+        "message": "用 AI 整理"
+    },
+    "panel_replyTip": {
+        "message": "来自等待你回复的人的邮件"
+    },
+    "panel_importantChip": {
+        "message": "重要 · $1"
+    },
+    "panel_importantTip": {
+        "message": "你应尽快查看的邮件"
+    },
+    "panel_bulkChip": {
+        "message": "订阅邮件 · $1"
+    },
+    "panel_bulkTip": {
+        "message": "无需阅读即可处理的邮件"
+    },
+    "panel_replyShown": {
+        "message": "等待你回复：$1"
+    },
+    "panel_importantShown": {
+        "message": "重要：$1"
+    },
+    "panel_bulkShown": {
+        "message": "订阅和推广邮件：$1"
+    },
+    "panel_replyWithAI": {
+        "message": "用 AI 回复"
+    },
+    "panel_replyIntentPlaceholder": {
+        "message": "回复要说些什么？（可选）"
+    },
+    "panel_writeReply": {
+        "message": "撰写"
+    },
+    "panel_draft": {
+        "message": "草稿"
+    },
+    "panel_draftCopied": {
+        "message": "草稿已复制：请粘贴到回复中。"
+    },
+    "panel_intentYes": {
+        "message": "好的，同意"
+    },
+    "panel_intentNo": {
+        "message": "礼貌拒绝"
+    },
+    "panel_intentMore": {
+        "message": "询问详情"
+    },
+    "panel_intentThanks": {
+        "message": "表示感谢"
+    },
+    "panel_translate": {
+        "message": "翻译"
+    },
+    "panel_translateFrom": {
+        "message": "从$1翻译"
+    },
+    "panel_showOriginal": {
+        "message": "显示原文"
+    },
+    "panel_translation": {
+        "message": "译文"
+    },
+    "panel_translateFailed": {
+        "message": "翻译失败。"
+    },
+    "panel_offerAI": {
+        "message": "开启 AI 助手，即可总结邮件、起草回复，并回答有关邮件的问题。"
+    },
+    "panel_turnOnAI": {
+        "message": "开启 AI"
+    },
+    "panel_sameLanguage": {
+        "message": "这封邮件已经是$1了。"
+    },
     "opt_ai": {
         "message": "AI 助手"
     },

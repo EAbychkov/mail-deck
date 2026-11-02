@@ -33,7 +33,8 @@ svg {
   overflow: hidden;
 }
 /* a message gets the widest popup Chrome allows, 800px; the list goes back to 560 */
-.app.reading {
+.app.reading,
+.app.assisting {
   width: calc(800px / var(--zoom, 1));
   height: calc(600px / var(--zoom, 1));
 }
@@ -842,8 +843,7 @@ h1 {
 .no-star .keys > span:has([data-i18n="keyStar"]),
 .no-archive .keys > span:has([data-i18n="keyArchive"]),
 .no-ai .keys > span:has([data-i18n="summaryKey"]),
-.no-ai .reader-bar .ai-btn,
-.no-ai .ai-card {
+.no-ai .ai-card:not(.ai-tool) {
   display: none;
 }
 kbd {
@@ -1241,13 +1241,25 @@ kbd {
 }
 
 /* waiting for your reply: the chip first, a mark on the lines */
-.chip.reply-chip svg {
+.chip.sort-chip svg,
+.chip.ai-offer svg {
   width: 13px;
   height: 13px;
   stroke-width: 2.2;
 }
-.chip.reply-chip:not(.on) svg {
+.chip.sort-chip:not(.on) svg,
+.chip.ai-offer svg {
   color: var(--accent);
+}
+.chip.important-chip:not(.on) svg {
+  color: #d9822b;
+}
+.chip.bulk-chip:not(.on) svg {
+  color: var(--muted);
+}
+.chip.ai-offer {
+  background: color-mix(in srgb, var(--accent) 7%, var(--card));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 24%, var(--line));
 }
 .err-dot {
   width: 7px;
@@ -1662,4 +1674,700 @@ kbd {
 }
 .reader-files .file-dl:dir(rtl) {
   border-radius: 10px 0 0 10px;
+}
+
+/* buttons with words: a quiet one, and the one that does what the card is for */
+.text-btn,
+.primary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.text-btn {
+  background: none;
+  color: var(--soft);
+}
+.text-btn:hover {
+  background: var(--hover);
+}
+.primary-btn {
+  background: var(--accent);
+  color: #fff;
+}
+.primary-btn:hover {
+  background: color-mix(in srgb, var(--accent) 88%, #000);
+}
+.primary-btn:disabled {
+  opacity: .5;
+  cursor: default;
+}
+.text-btn svg,
+.primary-btn svg {
+  width: 15px;
+  height: 15px;
+}
+.text-btn.copied {
+  color: var(--ok);
+}
+.text-btn:focus-visible,
+.primary-btn:focus-visible,
+.ask-ai:focus-visible,
+.suggestion:focus-visible,
+.choice:focus-visible,
+.ref:focus-visible,
+.cite:focus-visible,
+.ai-act:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+.row-btns {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+/* the header's assistant button: the one coloured tool */
+#tools .assist-btn {
+  color: var(--accent);
+}
+#tools .assist-btn svg {
+  fill: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+/* the list narrowed to one kind of the sorting: how much, and all of it at once */
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 12px;
+  padding-block: 6px;
+  padding-inline: 14px 6px;
+  border-radius: 12px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+.sort-what {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.sort-what svg {
+  width: 15px;
+  height: 15px;
+  color: var(--accent);
+}
+.sort-bar .grow {
+  flex: 1;
+}
+
+/* the search field's way to the assistant */
+.ask-ai {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--accent);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.ask-ai:hover {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.ask-ai svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* the assistant: over the list like the reader, its conversation above the field */
+.assist {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  transform: translateY(14px);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform .22s var(--ease), opacity .18s, visibility 0s .22s;
+}
+.app.assisting .assist {
+  transform: none;
+  opacity: 1;
+  visibility: visible;
+  transition: transform .22s var(--ease), opacity .18s;
+}
+.assist:focus {
+  outline: none;
+}
+.assist-bar {
+  gap: 6px;
+  padding-block: 12px 8px;
+  padding-inline: 10px 12px;
+}
+.assist-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+.assist-title svg {
+  width: 17px;
+  height: 17px;
+  color: var(--accent);
+  fill: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.assist-bar .engine {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.assist-bar .grow {
+  flex: 1;
+}
+.assist-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 4px 16px 16px;
+  scrollbar-width: thin;
+}
+.assist-ask {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin: 0 12px 12px;
+  padding: 8px 8px 8px 14px;
+  border-radius: 14px;
+  background: var(--card);
+  box-shadow: var(--shadow), var(--lift);
+}
+.assist-ask:focus-within {
+  box-shadow: 0 0 0 2px var(--focus), var(--lift);
+}
+#assist-input {
+  flex: 1;
+  min-width: 0;
+  max-height: 140px;
+  padding: 6px 0;
+  border: 0;
+  outline: none;
+  resize: none;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.assist-ask .send {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+}
+.assist-ask .send:hover {
+  background: color-mix(in srgb, var(--accent) 88%, #000);
+  color: #fff;
+}
+.assist-ask .send.stop {
+  background: var(--ink);
+  color: var(--paper);
+}
+.welcome {
+  padding: 28px 4px 8px;
+}
+.hello {
+  margin: 0 0 14px;
+  color: var(--soft);
+  font-size: 15px;
+  font-weight: 600;
+}
+.suggest,
+.intents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.suggestion {
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--soft);
+  font: inherit;
+  font-size: 12.5px;
+  text-align: start;
+  cursor: pointer;
+  transition: border-color .12s, background .12s;
+}
+.suggestion:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+  background: color-mix(in srgb, var(--accent) 5%, var(--card));
+}
+.suggestion:disabled {
+  opacity: .5;
+  cursor: default;
+}
+
+/* turning it on */
+.setup {
+  margin: 16px 0;
+  padding: 18px;
+  border-radius: 14px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+.setup-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent) 12%, var(--card));
+  color: var(--accent);
+}
+.setup-mark svg {
+  width: 19px;
+  height: 19px;
+  fill: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.setup h3 {
+  margin: 12px 0 4px;
+  font-size: 16px;
+}
+.setup p {
+  margin: 8px 0 0;
+  color: var(--soft);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.setup-lede {
+  color: var(--muted) !important;
+}
+.choices {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+.choice {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "name go" "note go";
+  align-items: center;
+  column-gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition: border-color .12s, background .12s;
+}
+.choice:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  background: color-mix(in srgb, var(--accent) 4%, var(--card));
+}
+.choice-name {
+  grid-area: name;
+  font-size: 13.5px;
+  font-weight: 650;
+}
+.choice-note {
+  grid-area: note;
+  color: var(--muted);
+  font-size: 12px;
+}
+.choice svg {
+  grid-area: go;
+  width: 16px;
+  height: 16px;
+  color: var(--muted);
+}
+.choice[data-engine="builtin"] svg {
+  display: none;
+}
+.setup-foot {
+  color: var(--muted) !important;
+  font-size: 12px !important;
+}
+
+/* a turn: the request on the right, what came of it under it */
+.turn {
+  margin-top: 16px;
+}
+.turn .q {
+  width: fit-content;
+  max-width: 85%;
+  margin: 0 0 8px auto;
+  padding: 8px 12px;
+  border-radius: 14px 14px 4px 14px;
+  background: color-mix(in srgb, var(--accent) 12%, var(--card));
+  color: var(--ink);
+  font-size: 13.5px;
+  white-space: pre-wrap;
+  unicode-bidi: plaintext;
+}
+[dir="rtl"] .turn .q {
+  border-radius: 14px 14px 14px 4px;
+}
+.turn .a {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+.what {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 650;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+.dots {
+  display: inline-flex;
+  gap: 3px;
+}
+.dots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: glow .9s ease-in-out infinite alternate;
+}
+.dots span:nth-child(2) {
+  animation-delay: .15s;
+}
+.dots span:nth-child(3) {
+  animation-delay: .3s;
+}
+.answer {
+  color: var(--ink);
+}
+.answer p,
+.answer li {
+  margin: 0;
+  unicode-bidi: plaintext;
+}
+.answer p + p,
+.answer ul + p,
+.answer p + ul {
+  margin-top: 8px;
+}
+.answer ul {
+  margin: 0;
+  padding-inline-start: 18px;
+}
+.answer li + li {
+  margin-top: 4px;
+}
+.answer li::marker {
+  color: color-mix(in srgb, var(--accent) 70%, var(--muted));
+}
+.answer.translation {
+  white-space: pre-wrap;
+}
+.status + .answer {
+  margin-top: 6px;
+}
+.cite {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 17px;
+  margin-inline: 1px;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--accent) 14%, var(--card));
+  color: var(--accent);
+  font: inherit;
+  font-size: 10.5px;
+  font-weight: 700;
+  vertical-align: 1px;
+  cursor: pointer;
+}
+span.cite {
+  cursor: default;
+}
+button.cite:hover {
+  background: var(--accent);
+  color: #fff;
+}
+.found {
+  margin-top: 10px;
+}
+.found summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+.found summary::-webkit-details-marker {
+  display: none;
+}
+.found summary svg {
+  width: 14px;
+  height: 14px;
+  transform: rotate(-90deg);
+  transition: transform .15s;
+}
+[dir="rtl"] .found summary svg {
+  transform: rotate(90deg);
+}
+.found[open] summary svg {
+  transform: none;
+}
+.found-list {
+  display: grid;
+  margin: 8px -6px 4px;
+}
+.ref {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  grid-template-areas: "n from when" "n subj subj" "n snip snip";
+  column-gap: 8px;
+  padding: 8px 6px;
+  border: 0;
+  border-radius: 9px;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.ref:hover {
+  background: var(--hover);
+}
+.ref + .ref {
+  box-shadow: 0 -1px 0 var(--line);
+}
+.ref .n {
+  grid-area: n;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border-radius: 6px;
+  background: var(--hover);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+.ref.cited .n {
+  background: color-mix(in srgb, var(--accent) 14%, var(--card));
+  color: var(--accent);
+}
+.ref-from {
+  grid-area: from;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ref.seen .ref-from {
+  font-weight: 500;
+}
+.ref-when {
+  grid-area: when;
+  color: var(--muted);
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+.ref-subject,
+.ref-snippet {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+.ref-subject {
+  grid-area: subj;
+  color: var(--soft);
+  font-size: 12.5px;
+}
+.ref-snippet {
+  grid-area: snip;
+  color: var(--faint);
+  font-size: 12px;
+}
+
+/* a new mail or a reply, to change before it opens in the mail service */
+.email {
+  display: grid;
+  gap: 6px;
+}
+.field {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+  font-size: 12.5px;
+}
+.field > span {
+  color: var(--muted);
+}
+.field input,
+.field select,
+.email textarea,
+.tool-input,
+.draft {
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+}
+.email textarea,
+.draft {
+  width: 100%;
+  min-height: 120px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  resize: vertical;
+  line-height: 1.5;
+  unicode-bidi: plaintext;
+}
+.email textarea:focus,
+.draft:focus {
+  border-color: var(--focus);
+}
+.email.busy textarea {
+  color: var(--soft);
+}
+
+/* the open mail's assistant: its buttons under the sender, its cards over the message */
+.reader-ai {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 22px 0;
+}
+.reader-ai[hidden] {
+  display: none;
+}
+.ai-act {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 11px;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 5%, var(--card));
+  color: var(--soft);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .12s, border-color .12s, color .12s;
+}
+.ai-act[hidden] {
+  display: none;
+}
+.ai-act:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  background: color-mix(in srgb, var(--accent) 10%, var(--card));
+}
+.ai-act svg {
+  width: 15px;
+  height: 15px;
+  color: var(--accent);
+}
+.ai-act.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.ai-act.on svg {
+  color: #fff;
+}
+[dir="rtl"] .ai-reply svg {
+  transform: scaleX(-1);
+}
+.ai-tool .offer {
+  margin: 4px 0 0;
+  color: var(--soft);
+}
+.tool-ask {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 6px 6px 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--card);
+}
+.tool-ask:focus-within {
+  border-color: var(--focus);
+}
+.tool-input {
+  flex: 1;
+  max-height: 90px;
+  padding: 5px 0;
+  resize: none;
+  field-sizing: content;
+}
+.intents {
+  margin-top: 6px;
+}
+.ai-tool .draft,
+.ai-tool .answer,
+.ai-tool .ai-wait {
+  margin-top: 10px;
+}
+.ai-tool .ai-error p {
+  margin: 0;
 }

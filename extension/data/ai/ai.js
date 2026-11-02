@@ -2035,7 +2035,7 @@
     });
   };
   // A mail in the UI's language by the engine, plain text: {text, truncated, engine, model}. The
-  // browser's own translator, when it has one, is the panel's first choice (local, below).
+  // browser's own translator, when it has one, is the panel's first choice.
   const translate = async ({subject = '', messages = [], signal: outer, onUpdate} = {}) => {
     const signal = link(outer);
     return withEngine('translate', translateSystem, signal, async c => {
@@ -2048,71 +2048,6 @@
       }
       return {text, truncated: fitted.truncated, engine: c.engine, model: got.model || c.model};
     });
-  };
-
-  // Chrome's own language detector and translator, on this computer and free: no engine needed
-  const local = {
-    async detect(text) {
-      const LD = self.LanguageDetector;
-      if (typeof LD?.create !== 'function' || !line(text)) {
-        return '';
-      }
-      try {
-        if (typeof LD.availability === 'function' && await LD.availability() !== 'available') {
-          return '';
-        }
-        const d = await LD.create();
-        try {
-          const [best] = await d.detect(clip(line(text), 2000));
-          return best && best.confidence >= 0.6 && best.detectedLanguage !== 'und' ? primary(best.detectedLanguage) : '';
-        }
-        finally {
-          d.destroy?.();
-        }
-      }
-      catch (e) {
-        return '';
-      }
-    },
-    async availability(from, to = primary(ui())) {
-      const T = self.Translator;
-      if (typeof T?.availability !== 'function' || !from || from === to) {
-        return 'unavailable';
-      }
-      try {
-        const a = await T.availability({sourceLanguage: from, targetLanguage: to});
-        return STATES.includes(a) ? a : 'unavailable';
-      }
-      catch (e) {
-        return 'unavailable';
-      }
-    },
-    // a translator of from into the UI's language; called from a click, as a download needs one
-    async translator(from, onProgress, signal) {
-      const T = self.Translator;
-      if (typeof T?.create !== 'function') {
-        throw new AIError('unavailable', 'no Translator');
-      }
-      try {
-        return await T.create({
-          sourceLanguage: from,
-          targetLanguage: primary(ui()),
-          signal,
-          monitor(m) {
-            m.addEventListener('downloadprogress', e => {
-              try {
-                onProgress?.(e.total > 1 ? e.loaded / e.total : Number(e.loaded) || 0);
-              }
-              catch (x) {}
-            });
-          }
-        });
-      }
-      catch (e) {
-        throw lmError(e, {signal});
-      }
-    },
-    language: () => primary(ui())
   };
 
   /* the built-in model's download, and the key check */
@@ -2230,7 +2165,6 @@
     draft,
     compose,
     translate,
-    local,
     models,
     check,
     builtin,

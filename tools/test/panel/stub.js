@@ -64,7 +64,8 @@
     accountOrder: [], panelScale: Number(q.get('scale') || 1), readOnOpen: q.get('read') === '1', 'remind.links': [],
     autoAdvance: q.get('advance') === '1', 'badge.count': q.get('badge') || 'all',
     // ?ai=on|off|real: the assistant's engine (real: the real ai.js, loaded by the panel, with no key)
-    ...(q.get('ai') ? {'ai.engine': q.get('ai') === 'off' ? 'off' : 'openai', 'ai.summary': q.get('summary') || 'click', 'ai.reply': q.get('reply') !== '0'} : {})};
+    ...(q.get('ai') ? {'ai.engine': q.get('ai') === 'off' ? 'off' : 'openai', 'ai.summary': q.get('summary') || 'click', 'ai.reply': q.get('reply') !== '0',
+      'ai.buttons': q.get('buttons') !== '0'} : {})};
   window.__sent = []; window.__set = [];
   window.__tabUrl = q.get('url') || ''; window.__tabEvents = {};
   // what the panel copies (__copied): a page under test has no clipboard of its own to ask
@@ -145,12 +146,55 @@
       needsReply: async ({items, accounts}) => {
         call('needsReply', {n: items.length, ids: items.map(it => it.id), accounts});
         await new Promise(r => setTimeout(r, 20));
+        // a question waits for a reply; GitHub's sign-in is important, a digest bulk
         const out = new Map(items.map(it => [it.id, /\?|пожалуйста/.test(it.snippet) ?
-          {reply: true, why: it.snippet.includes('?') ? 'asks a question' : 'asks for the mockups'} : {reply: false, why: ''}]));
+          {reply: true, important: false, bulk: false, why: it.snippet.includes('?') ? 'asks a question' : 'asks for the mockups'} :
+          {reply: false, important: /sign-in/i.test(it.subject), bulk: /digest|newsletter/i.test(it.subject), why: ''}]));
         if (ai.replyFail) {
           throw Object.assign(err(ai.replyFail), {results: out});
         }
         return out;
+      },
+      // the assistant: a plan by the words of the request, answers that cite the first mail;
+      // __ai.planFail fails the plan with that code, __ai.hold keeps an answer going until stopped
+      describe: async () => ({engine: 'openai', provider: 'OpenAI', model: 'gpt-test', plan: false, local: false}),
+      plan: async ({request, signal}) => {
+        call('plan', {request});
+        await new Promise(r => setTimeout(r, 20));
+        if (ai.planFail) {
+          throw err(ai.planFail);
+        }
+        return /^write|напиши/i.test(request) ? {action: 'write', query: '', words: [], title: 'A note'} :
+          /important|важн/i.test(request) ? {action: 'brief', query: '', words: [], title: 'Unread mail'} :
+            /^find/i.test(request) ? {action: 'find', query: 'invoice', words: ['invoice'], title: 'Invoices'} :
+              {action: 'answer', query: 'invoice', words: ['invoice'], title: 'The invoice'};
+      },
+      answer: ({question, mail, signal, onUpdate}) => new Promise((resolve, reject) => {
+        call('answer', {question, n: mail.length, mail});
+        const text = 'The invoice #1042 is ready [1].';
+        onUpdate?.('The invoice');
+        signal?.addEventListener('abort', () => reject(err('aborted')), {once: true});
+        if (!ai.hold) {
+          setTimeout(() => resolve({text, cites: [1], engine: 'openai', model: 'gpt-test'}), 30);
+        }
+      }),
+      compose: async ({request, onUpdate}) => {
+        call('compose', {request});
+        onUpdate?.({to: '', subject: 'Встреча', body: ''});
+        await new Promise(r => setTimeout(r, 20));
+        return {to: 'anna@figma.com', subject: 'Встреча в пятницу', body: 'Анна, привет!\n\nВстреча переносится на пятницу.'};
+      },
+      draft: async ({intent, reader, messages, onUpdate}) => {
+        call('draft', {intent, reader, n: messages.length});
+        onUpdate?.('Привет');
+        await new Promise(r => setTimeout(r, 20));
+        return {text: 'Привет, Аня!\n\nСпасибо, посмотрю до пятницы.'};
+      },
+      translate: async ({messages, onUpdate}) => {
+        call('translate', {n: messages.length});
+        onUpdate?.('Hi! The mockups');
+        await new Promise(r => setTimeout(r, 20));
+        return {text: 'Hi! The mockups are attached; please look before Friday.'};
       },
       calendarUrl: (ev, {account} = {}) => 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(ev.title) +
         (account ? '&authuser=' + encodeURIComponent(account) : '')

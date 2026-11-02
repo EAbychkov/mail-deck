@@ -1730,6 +1730,279 @@
     "panel_attachments": {
         "message": "Anhänge: $1"
     },
+    "panel_assistant": {
+        "message": "KI-Assistent"
+    },
+    "panel_assistHello": {
+        "message": "Fragen Sie etwas zu Ihren E-Mails, suchen Sie darin oder lassen Sie eine E-Mail schreiben."
+    },
+    "panel_assistPlaceholder": {
+        "message": "Fragen Sie zu Ihren E-Mails: „wann geht mein Flug?“, „Rechnungen vom Oktober“, „schreib Anna, dass…“"
+    },
+    "panel_ask": {
+        "message": "Fragen"
+    },
+    "panel_askAI": {
+        "message": "KI fragen"
+    },
+    "panel_askAITip": {
+        "message": "Stattdessen den KI-Assistenten fragen: eine Frage oder eine Suche in eigenen Worten"
+    },
+    "panel_askAboutMail": {
+        "message": "Fragen"
+    },
+    "panel_askAgain": {
+        "message": "Erneut fragen"
+    },
+    "panel_askMailPlaceholder": {
+        "message": "Was möchten Sie über diese E-Mail wissen?"
+    },
+    "panel_send": {
+        "message": "Senden"
+    },
+    "panel_stop": {
+        "message": "Stoppen"
+    },
+    "panel_close": {
+        "message": "Schließen"
+    },
+    "panel_clearChat": {
+        "message": "Unterhaltung löschen"
+    },
+    "panel_thinking": {
+        "message": "Denkt nach…"
+    },
+    "panel_searchingMail": {
+        "message": "E-Mails werden durchsucht…"
+    },
+    "panel_searchingFor": {
+        "message": "Suche: $1"
+    },
+    "panel_readingMail": {
+        "message": "E-Mails werden gelesen…"
+    },
+    "panel_answering": {
+        "message": "Antwort wird verfasst…"
+    },
+    "panel_writing": {
+        "message": "Wird geschrieben…"
+    },
+    "panel_translating": {
+        "message": "Wird übersetzt…"
+    },
+    "panel_foundMail": {
+        "message": "Gefunden: $1"
+    },
+    "panel_readUnread": {
+        "message": "Aus ungelesenen E-Mails: $1"
+    },
+    "panel_nothingFound": {
+        "message": "Nichts gefunden. Versuchen Sie andere Wörter."
+    },
+    "panel_nothingUnread": {
+        "message": "Keine ungelesenen E-Mails."
+    },
+    "panel_searchInGmail": {
+        "message": "In Gmail suchen"
+    },
+    "panel_mailGone": {
+        "message": "Diese E-Mail ist nicht mehr in der Liste."
+    },
+    "panel_suggestBrief": {
+        "message": "Was ist wichtig in meinen ungelesenen E-Mails?"
+    },
+    "panel_suggestReply": {
+        "message": "Wer wartet auf meine Antwort?"
+    },
+    "panel_suggestFind": {
+        "message": "Finde Rechnungen von diesem Monat"
+    },
+    "panel_suggestFiles": {
+        "message": "E-Mails mit Anhängen von dieser Woche"
+    },
+    "panel_suggestWrite": {
+        "message": "E-Mail schreiben…"
+    },
+    "panel_suggestWritePrefix": {
+        "message": "Schreib eine E-Mail an"
+    },
+    "panel_toLabel": {
+        "message": "An"
+    },
+    "panel_toPlaceholder": {
+        "message": "Adresse"
+    },
+    "panel_from": {
+        "message": "Von"
+    },
+    "panel_subject": {
+        "message": "Betreff"
+    },
+    "panel_emailBody": {
+        "message": "Text der E-Mail"
+    },
+    "panel_copyText": {
+        "message": "Kopieren"
+    },
+    "panel_tryAgain": {
+        "message": "Erneut versuchen"
+    },
+    "panel_manageUsage": {
+        "message": "Nutzung verwalten"
+    },
+    "panel_setupTitle": {
+        "message": "KI-Assistenten einschalten"
+    },
+    "panel_setupLede": {
+        "message": "Er fasst E-Mails zusammen, sortiert Ungelesenes, sucht in Ihren E-Mails und antwortet daraus und entwirft Antworten. Wählen Sie, womit er arbeitet:"
+    },
+    "panel_setupPrivacy": {
+        "message": "E-Mails gehen nur an die KI, die Sie wählen, und nur, wenn Sie fragen oder das Sortieren einschalten. Schlüssel und Anmeldungen bleiben auf diesem Computer."
+    },
+    "panel_engineBuiltin": {
+        "message": "Integriertes Modell von Chrome"
+    },
+    "panel_engineBuiltinNote": {
+        "message": "Kostenlos und privat: läuft auf diesem Computer. Wird direkt hier eingeschaltet."
+    },
+    "panel_engineChatGPT": {
+        "message": "ChatGPT-Abo"
+    },
+    "panel_engineChatGPTNote": {
+        "message": "Melden Sie sich mit Ihrem ChatGPT-Plus- oder -Pro-Konto an."
+    },
+    "panel_engineAnthropic": {
+        "message": "Claude (Anthropic-API-Schlüssel)"
+    },
+    "panel_engineOpenAI": {
+        "message": "OpenAI (API-Schlüssel)"
+    },
+    "panel_engineZai": {
+        "message": "Z.ai GLM (API-Schlüssel)"
+    },
+    "panel_engineKeyNote": {
+        "message": "Ihr eigener API-Schlüssel, Abrechnung nach Nutzung beim Anbieter."
+    },
+    "panel_engineLocal": {
+        "message": "$1 · auf diesem Computer"
+    },
+    "panel_enginePlan": {
+        "message": "$1-Abo · $2"
+    },
+    "panel_checkingAI": {
+        "message": "KI wird geprüft…"
+    },
+    "panel_chooseEngine": {
+        "message": "Andere KI wählen"
+    },
+    "panel_fixInSettings": {
+        "message": "In den Einstellungen beheben"
+    },
+    "panel_downloadModel": {
+        "message": "Modell herunterladen"
+    },
+    "panel_downloading": {
+        "message": "Wird heruntergeladen… $1 %"
+    },
+    "panel_aiNoKey": {
+        "message": "Fügen Sie in den Einstellungen Ihren API-Schlüssel hinzu, um diese KI zu nutzen."
+    },
+    "panel_aiNoAccess": {
+        "message": "Chrome braucht Ihre Erlaubnis, um den KI-Anbieter zu erreichen."
+    },
+    "panel_aiSignedOut": {
+        "message": "Melden Sie sich erneut bei ChatGPT an, um Ihr Abo zu nutzen."
+    },
+    "panel_aiDownload": {
+        "message": "Das integrierte Modell von Chrome muss einmal heruntergeladen werden."
+    },
+    "panel_aiDownloading": {
+        "message": "Chrome lädt sein integriertes Modell herunter. Es funktioniert, sobald der Download fertig ist."
+    },
+    "panel_aiOldChrome": {
+        "message": "Das integrierte Modell von Chrome benötigt Chrome 138 oder neuer."
+    },
+    "panel_aiUnavailable": {
+        "message": "Das integrierte Modell ist auf diesem Computer nicht verfügbar. Wählen Sie eine andere KI."
+    },
+    "panel_sortOffer": {
+        "message": "Mit KI sortieren"
+    },
+    "panel_replyTip": {
+        "message": "E-Mails von Menschen, die eine Antwort erwarten"
+    },
+    "panel_importantChip": {
+        "message": "Wichtig · $1"
+    },
+    "panel_importantTip": {
+        "message": "E-Mails, die Sie bald sehen sollten"
+    },
+    "panel_bulkChip": {
+        "message": "Newsletter · $1"
+    },
+    "panel_bulkTip": {
+        "message": "E-Mails, die Sie ungelesen erledigen können"
+    },
+    "panel_replyShown": {
+        "message": "Wartet auf Antwort: $1"
+    },
+    "panel_importantShown": {
+        "message": "Wichtig: $1"
+    },
+    "panel_bulkShown": {
+        "message": "Newsletter und Werbung: $1"
+    },
+    "panel_replyWithAI": {
+        "message": "Antwort mit KI"
+    },
+    "panel_replyIntentPlaceholder": {
+        "message": "Was soll in der Antwort stehen? (optional)"
+    },
+    "panel_writeReply": {
+        "message": "Schreiben"
+    },
+    "panel_draft": {
+        "message": "Entwurf"
+    },
+    "panel_draftCopied": {
+        "message": "Der Entwurf ist kopiert: Fügen Sie ihn in die Antwort ein."
+    },
+    "panel_intentYes": {
+        "message": "Ja, zustimmen"
+    },
+    "panel_intentNo": {
+        "message": "Höflich ablehnen"
+    },
+    "panel_intentMore": {
+        "message": "Nach Details fragen"
+    },
+    "panel_intentThanks": {
+        "message": "Bedanken"
+    },
+    "panel_translate": {
+        "message": "Übersetzen"
+    },
+    "panel_translateFrom": {
+        "message": "Übersetzen: $1"
+    },
+    "panel_showOriginal": {
+        "message": "Original anzeigen"
+    },
+    "panel_translation": {
+        "message": "Übersetzung"
+    },
+    "panel_translateFailed": {
+        "message": "Die Übersetzung ist fehlgeschlagen."
+    },
+    "panel_offerAI": {
+        "message": "Schalten Sie den KI-Assistenten ein, um E-Mails zusammenzufassen, Antworten zu entwerfen und Fragen dazu zu beantworten."
+    },
+    "panel_turnOnAI": {
+        "message": "KI einschalten"
+    },
+    "panel_sameLanguage": {
+        "message": "Diese E-Mail ist bereits auf $1."
+    },
     "opt_ai": {
         "message": "KI"
     },

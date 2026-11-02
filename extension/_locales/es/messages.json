@@ -1730,6 +1730,279 @@
     "panel_attachments": {
         "message": "Archivos adjuntos: $1"
     },
+    "panel_assistant": {
+        "message": "Asistente de IA"
+    },
+    "panel_assistHello": {
+        "message": "Pregunta sobre tu correo, busca algo en él o pide que te escriba un correo."
+    },
+    "panel_assistPlaceholder": {
+        "message": "Pregunta sobre tu correo: «¿cuándo sale mi vuelo?», «facturas de octubre», «escribe a Ana que…»"
+    },
+    "panel_ask": {
+        "message": "Preguntar"
+    },
+    "panel_askAI": {
+        "message": "Preguntar a la IA"
+    },
+    "panel_askAITip": {
+        "message": "Pregunta al asistente de IA: una pregunta o una búsqueda con tus propias palabras"
+    },
+    "panel_askAboutMail": {
+        "message": "Preguntar"
+    },
+    "panel_askAgain": {
+        "message": "Volver a preguntar"
+    },
+    "panel_askMailPlaceholder": {
+        "message": "¿Qué quieres saber de este correo?"
+    },
+    "panel_send": {
+        "message": "Enviar"
+    },
+    "panel_stop": {
+        "message": "Detener"
+    },
+    "panel_close": {
+        "message": "Cerrar"
+    },
+    "panel_clearChat": {
+        "message": "Borrar la conversación"
+    },
+    "panel_thinking": {
+        "message": "Pensando…"
+    },
+    "panel_searchingMail": {
+        "message": "Buscando en tu correo…"
+    },
+    "panel_searchingFor": {
+        "message": "Buscando: $1"
+    },
+    "panel_readingMail": {
+        "message": "Leyendo los correos…"
+    },
+    "panel_answering": {
+        "message": "Respondiendo…"
+    },
+    "panel_writing": {
+        "message": "Escribiendo…"
+    },
+    "panel_translating": {
+        "message": "Traduciendo…"
+    },
+    "panel_foundMail": {
+        "message": "Encontrados: $1"
+    },
+    "panel_readUnread": {
+        "message": "Según el correo sin leer: $1"
+    },
+    "panel_nothingFound": {
+        "message": "No se encontró nada. Prueba con otras palabras."
+    },
+    "panel_nothingUnread": {
+        "message": "No hay correo sin leer."
+    },
+    "panel_searchInGmail": {
+        "message": "Buscar en Gmail"
+    },
+    "panel_mailGone": {
+        "message": "Este correo ya no está en la lista."
+    },
+    "panel_suggestBrief": {
+        "message": "¿Qué es importante en mi correo sin leer?"
+    },
+    "panel_suggestReply": {
+        "message": "¿Quién espera mi respuesta?"
+    },
+    "panel_suggestFind": {
+        "message": "Busca las facturas de este mes"
+    },
+    "panel_suggestFiles": {
+        "message": "Correos con adjuntos de esta semana"
+    },
+    "panel_suggestWrite": {
+        "message": "Escribir un correo…"
+    },
+    "panel_suggestWritePrefix": {
+        "message": "Escribe un correo a"
+    },
+    "panel_toLabel": {
+        "message": "Para"
+    },
+    "panel_toPlaceholder": {
+        "message": "Dirección"
+    },
+    "panel_from": {
+        "message": "De"
+    },
+    "panel_subject": {
+        "message": "Asunto"
+    },
+    "panel_emailBody": {
+        "message": "Texto del correo"
+    },
+    "panel_copyText": {
+        "message": "Copiar"
+    },
+    "panel_tryAgain": {
+        "message": "Reintentar"
+    },
+    "panel_manageUsage": {
+        "message": "Gestionar el uso"
+    },
+    "panel_setupTitle": {
+        "message": "Activa el asistente de IA"
+    },
+    "panel_setupLede": {
+        "message": "Resume correos, ordena los no leídos, busca y responde a partir de tu correo y redacta borradores de respuesta. Elige con qué funciona:"
+    },
+    "panel_setupPrivacy": {
+        "message": "El correo solo va al motor que elijas, y solo cuando lo pidas o actives la clasificación. Las claves y los inicios de sesión se quedan en este ordenador."
+    },
+    "panel_engineBuiltin": {
+        "message": "Modelo integrado de Chrome"
+    },
+    "panel_engineBuiltinNote": {
+        "message": "Gratis y privado: funciona en este ordenador. Se activa aquí mismo."
+    },
+    "panel_engineChatGPT": {
+        "message": "Suscripción a ChatGPT"
+    },
+    "panel_engineChatGPTNote": {
+        "message": "Inicia sesión con tu cuenta de ChatGPT Plus o Pro."
+    },
+    "panel_engineAnthropic": {
+        "message": "Claude (clave de API de Anthropic)"
+    },
+    "panel_engineOpenAI": {
+        "message": "OpenAI (clave de API)"
+    },
+    "panel_engineZai": {
+        "message": "Z.ai GLM (clave de API)"
+    },
+    "panel_engineKeyNote": {
+        "message": "Tu propia clave de API, de pago por uso al proveedor."
+    },
+    "panel_engineLocal": {
+        "message": "$1 · en este ordenador"
+    },
+    "panel_enginePlan": {
+        "message": "Suscripción a $1 · $2"
+    },
+    "panel_checkingAI": {
+        "message": "Comprobando el motor de IA…"
+    },
+    "panel_chooseEngine": {
+        "message": "Elegir otro motor"
+    },
+    "panel_fixInSettings": {
+        "message": "Corregir en Configuración"
+    },
+    "panel_downloadModel": {
+        "message": "Descargar el modelo"
+    },
+    "panel_downloading": {
+        "message": "Descargando… $1 %"
+    },
+    "panel_aiNoKey": {
+        "message": "Añade tu clave de API en Configuración para usar este motor."
+    },
+    "panel_aiNoAccess": {
+        "message": "Chrome necesita tu permiso para acceder al proveedor de IA."
+    },
+    "panel_aiSignedOut": {
+        "message": "Vuelve a iniciar sesión en ChatGPT para usar tu suscripción."
+    },
+    "panel_aiDownload": {
+        "message": "El modelo integrado de Chrome debe descargarse una vez."
+    },
+    "panel_aiDownloading": {
+        "message": "Chrome está descargando su modelo integrado. Funcionará cuando termine la descarga."
+    },
+    "panel_aiOldChrome": {
+        "message": "El modelo integrado de Chrome necesita Chrome 138 o posterior."
+    },
+    "panel_aiUnavailable": {
+        "message": "El modelo integrado no está disponible en este ordenador. Elige otro motor."
+    },
+    "panel_sortOffer": {
+        "message": "Ordenar con IA"
+    },
+    "panel_replyTip": {
+        "message": "Correo de personas que esperan una respuesta"
+    },
+    "panel_importantChip": {
+        "message": "Importante · $1"
+    },
+    "panel_importantTip": {
+        "message": "Correo que conviene ver pronto"
+    },
+    "panel_bulkChip": {
+        "message": "Boletines · $1"
+    },
+    "panel_bulkTip": {
+        "message": "Correo que puedes despachar sin leer"
+    },
+    "panel_replyShown": {
+        "message": "Espera tu respuesta: $1"
+    },
+    "panel_importantShown": {
+        "message": "Importante: $1"
+    },
+    "panel_bulkShown": {
+        "message": "Boletines y promociones: $1"
+    },
+    "panel_replyWithAI": {
+        "message": "Respuesta con IA"
+    },
+    "panel_replyIntentPlaceholder": {
+        "message": "¿Qué debe decir la respuesta? (opcional)"
+    },
+    "panel_writeReply": {
+        "message": "Redactar"
+    },
+    "panel_draft": {
+        "message": "Borrador"
+    },
+    "panel_draftCopied": {
+        "message": "Borrador copiado: pégalo en la respuesta."
+    },
+    "panel_intentYes": {
+        "message": "Sí, de acuerdo"
+    },
+    "panel_intentNo": {
+        "message": "Rechazar con amabilidad"
+    },
+    "panel_intentMore": {
+        "message": "Pedir detalles"
+    },
+    "panel_intentThanks": {
+        "message": "Dar las gracias"
+    },
+    "panel_translate": {
+        "message": "Traducir"
+    },
+    "panel_translateFrom": {
+        "message": "Traducir del $1"
+    },
+    "panel_showOriginal": {
+        "message": "Mostrar original"
+    },
+    "panel_translation": {
+        "message": "Traducción"
+    },
+    "panel_translateFailed": {
+        "message": "No se pudo traducir."
+    },
+    "panel_offerAI": {
+        "message": "Activa el asistente de IA para resumir correos, redactar respuestas y responder preguntas sobre ellos."
+    },
+    "panel_turnOnAI": {
+        "message": "Activar IA"
+    },
+    "panel_sameLanguage": {
+        "message": "Este correo ya está en $1."
+    },
     "opt_ai": {
         "message": "IA"
     },

@@ -1730,6 +1730,279 @@
     "panel_attachments": {
         "message": "المرفقات: $1"
     },
+    "panel_assistant": {
+        "message": "مساعد الذكاء الاصطناعي"
+    },
+    "panel_assistHello": {
+        "message": "اسأل عن بريدك، أو ابحث فيه عن شيء، أو اطلب كتابة رسالة."
+    },
+    "panel_assistPlaceholder": {
+        "message": "اسأل عن بريدك: «متى رحلتي؟»، «فواتير أكتوبر»، «اكتب لآنا أن…»"
+    },
+    "panel_ask": {
+        "message": "اسأل"
+    },
+    "panel_askAI": {
+        "message": "اسأل الذكاء الاصطناعي"
+    },
+    "panel_askAITip": {
+        "message": "اسأل مساعد الذكاء الاصطناعي بدلًا من ذلك: سؤالًا أو بحثًا بكلمات عادية"
+    },
+    "panel_askAboutMail": {
+        "message": "اسأل"
+    },
+    "panel_askAgain": {
+        "message": "اسأل مجددًا"
+    },
+    "panel_askMailPlaceholder": {
+        "message": "ماذا تريد أن تعرف عن هذه الرسالة؟"
+    },
+    "panel_send": {
+        "message": "إرسال"
+    },
+    "panel_stop": {
+        "message": "إيقاف"
+    },
+    "panel_close": {
+        "message": "إغلاق"
+    },
+    "panel_clearChat": {
+        "message": "مسح المحادثة"
+    },
+    "panel_thinking": {
+        "message": "جارٍ التفكير…"
+    },
+    "panel_searchingMail": {
+        "message": "جارٍ البحث في بريدك…"
+    },
+    "panel_searchingFor": {
+        "message": "جارٍ البحث عن: $1"
+    },
+    "panel_readingMail": {
+        "message": "جارٍ قراءة الرسائل…"
+    },
+    "panel_answering": {
+        "message": "جارٍ إعداد الإجابة…"
+    },
+    "panel_writing": {
+        "message": "جارٍ الكتابة…"
+    },
+    "panel_translating": {
+        "message": "جارٍ الترجمة…"
+    },
+    "panel_foundMail": {
+        "message": "تم العثور على: $1"
+    },
+    "panel_readUnread": {
+        "message": "استنادًا إلى الرسائل غير المقروءة: $1"
+    },
+    "panel_nothingFound": {
+        "message": "لم يُعثر على شيء. جرّب كلمات أخرى."
+    },
+    "panel_nothingUnread": {
+        "message": "لا يوجد بريد غير مقروء."
+    },
+    "panel_searchInGmail": {
+        "message": "البحث في Gmail"
+    },
+    "panel_mailGone": {
+        "message": "لم تعد هذه الرسالة في القائمة."
+    },
+    "panel_suggestBrief": {
+        "message": "ما المهم في بريدي غير المقروء؟"
+    },
+    "panel_suggestReply": {
+        "message": "مَن ينتظر ردّي؟"
+    },
+    "panel_suggestFind": {
+        "message": "ابحث عن فواتير هذا الشهر"
+    },
+    "panel_suggestFiles": {
+        "message": "رسائل بمرفقات من هذا الأسبوع"
+    },
+    "panel_suggestWrite": {
+        "message": "كتابة رسالة…"
+    },
+    "panel_suggestWritePrefix": {
+        "message": "اكتب رسالة إلى"
+    },
+    "panel_toLabel": {
+        "message": "إلى"
+    },
+    "panel_toPlaceholder": {
+        "message": "العنوان"
+    },
+    "panel_from": {
+        "message": "من"
+    },
+    "panel_subject": {
+        "message": "الموضوع"
+    },
+    "panel_emailBody": {
+        "message": "نص الرسالة"
+    },
+    "panel_copyText": {
+        "message": "نسخ"
+    },
+    "panel_tryAgain": {
+        "message": "إعادة المحاولة"
+    },
+    "panel_manageUsage": {
+        "message": "إدارة الاستخدام"
+    },
+    "panel_setupTitle": {
+        "message": "تفعيل مساعد الذكاء الاصطناعي"
+    },
+    "panel_setupLede": {
+        "message": "يلخّص الرسائل، ويفرز غير المقروء، ويبحث في بريدك ويجيب منه، ويكتب مسودات الردود. اختر ما يعمل به:"
+    },
+    "panel_setupPrivacy": {
+        "message": "لا يذهب البريد إلا إلى المحرك الذي تختاره، ولا يحدث ذلك إلا عندما تطلب أو تفعّل الفرز. تبقى المفاتيح وبيانات تسجيل الدخول على هذا الكمبيوتر."
+    },
+    "panel_engineBuiltin": {
+        "message": "النموذج المدمج في Chrome"
+    },
+    "panel_engineBuiltinNote": {
+        "message": "مجاني وخاص: يعمل على هذا الكمبيوتر. يُفعَّل من هنا مباشرة."
+    },
+    "panel_engineChatGPT": {
+        "message": "اشتراك ChatGPT"
+    },
+    "panel_engineChatGPTNote": {
+        "message": "سجّل الدخول بحساب ChatGPT Plus أو Pro."
+    },
+    "panel_engineAnthropic": {
+        "message": "Claude (مفتاح API من Anthropic)"
+    },
+    "panel_engineOpenAI": {
+        "message": "OpenAI (مفتاح API)"
+    },
+    "panel_engineZai": {
+        "message": "Z.ai GLM (مفتاح API)"
+    },
+    "panel_engineKeyNote": {
+        "message": "مفتاح API خاص بك، والدفع للمزوّد حسب الاستخدام."
+    },
+    "panel_engineLocal": {
+        "message": "$1 · على هذا الكمبيوتر"
+    },
+    "panel_enginePlan": {
+        "message": "اشتراك $1 · $2"
+    },
+    "panel_checkingAI": {
+        "message": "جارٍ التحقق من محرك الذكاء الاصطناعي…"
+    },
+    "panel_chooseEngine": {
+        "message": "اختيار محرك آخر"
+    },
+    "panel_fixInSettings": {
+        "message": "الإصلاح في الإعدادات"
+    },
+    "panel_downloadModel": {
+        "message": "تنزيل النموذج"
+    },
+    "panel_downloading": {
+        "message": "جارٍ التنزيل… $1%"
+    },
+    "panel_aiNoKey": {
+        "message": "أضف مفتاح API في الإعدادات لاستخدام هذا المحرك."
+    },
+    "panel_aiNoAccess": {
+        "message": "يحتاج Chrome إلى إذنك للوصول إلى مزوّد الذكاء الاصطناعي."
+    },
+    "panel_aiSignedOut": {
+        "message": "سجّل الدخول إلى ChatGPT مجددًا لاستخدام اشتراكك."
+    },
+    "panel_aiDownload": {
+        "message": "يجب تنزيل النموذج المدمج في Chrome مرة واحدة."
+    },
+    "panel_aiDownloading": {
+        "message": "ينزّل Chrome نموذجه المدمج. سيعمل عند اكتمال التنزيل."
+    },
+    "panel_aiOldChrome": {
+        "message": "يحتاج النموذج المدمج في Chrome إلى Chrome 138 أو أحدث."
+    },
+    "panel_aiUnavailable": {
+        "message": "النموذج المدمج غير متاح على هذا الكمبيوتر. اختر محركًا آخر."
+    },
+    "panel_sortOffer": {
+        "message": "الفرز بالذكاء الاصطناعي"
+    },
+    "panel_replyTip": {
+        "message": "رسائل من أشخاص ينتظرون ردًا"
+    },
+    "panel_importantChip": {
+        "message": "مهم · $1"
+    },
+    "panel_importantTip": {
+        "message": "رسائل يحسن أن تراها قريبًا"
+    },
+    "panel_bulkChip": {
+        "message": "النشرات · $1"
+    },
+    "panel_bulkTip": {
+        "message": "رسائل يمكنك التعامل معها دون قراءتها"
+    },
+    "panel_replyShown": {
+        "message": "بانتظار ردّك: $1"
+    },
+    "panel_importantShown": {
+        "message": "مهم: $1"
+    },
+    "panel_bulkShown": {
+        "message": "النشرات والعروض الترويجية: $1"
+    },
+    "panel_replyWithAI": {
+        "message": "الرد بالذكاء الاصطناعي"
+    },
+    "panel_replyIntentPlaceholder": {
+        "message": "ماذا يجب أن يقول الرد؟ (اختياري)"
+    },
+    "panel_writeReply": {
+        "message": "كتابة"
+    },
+    "panel_draft": {
+        "message": "مسودة"
+    },
+    "panel_draftCopied": {
+        "message": "نُسخت المسودة: الصقها في الرد."
+    },
+    "panel_intentYes": {
+        "message": "نعم، موافق"
+    },
+    "panel_intentNo": {
+        "message": "الرفض بلباقة"
+    },
+    "panel_intentMore": {
+        "message": "طلب التفاصيل"
+    },
+    "panel_intentThanks": {
+        "message": "الشكر"
+    },
+    "panel_translate": {
+        "message": "ترجمة"
+    },
+    "panel_translateFrom": {
+        "message": "ترجمة من $1"
+    },
+    "panel_showOriginal": {
+        "message": "عرض الأصل"
+    },
+    "panel_translation": {
+        "message": "الترجمة"
+    },
+    "panel_translateFailed": {
+        "message": "تعذّرت الترجمة."
+    },
+    "panel_offerAI": {
+        "message": "فعّل مساعد الذكاء الاصطناعي لتلخيص الرسائل وكتابة مسودات الردود والإجابة عن الأسئلة حولها."
+    },
+    "panel_turnOnAI": {
+        "message": "تفعيل الذكاء الاصطناعي"
+    },
+    "panel_sameLanguage": {
+        "message": "هذه الرسالة مكتوبة أصلًا باللغة $1."
+    },
     "opt_ai": {
         "message": "الذكاء الاصطناعي"
     },

@@ -1562,6 +1562,279 @@
   "panel_attachments": {
     "message": "Pièces jointes : $1"
   },
+  "panel_assistant": {
+    "message": "Assistant IA"
+  },
+  "panel_assistHello": {
+    "message": "Posez une question sur vos messages, cherchez-y quelque chose ou faites écrire un message."
+  },
+  "panel_assistPlaceholder": {
+    "message": "Interrogez vos messages : « quand part mon vol ? », « factures d’octobre », « écris à Anna que… »"
+  },
+  "panel_ask": {
+    "message": "Demander"
+  },
+  "panel_askAI": {
+    "message": "Demander à l’IA"
+  },
+  "panel_askAITip": {
+    "message": "Demander plutôt à l’assistant IA : une question, ou une recherche en langage courant"
+  },
+  "panel_askAboutMail": {
+    "message": "Demander"
+  },
+  "panel_askAgain": {
+    "message": "Redemander"
+  },
+  "panel_askMailPlaceholder": {
+    "message": "Que voulez-vous savoir sur ce message ?"
+  },
+  "panel_send": {
+    "message": "Envoyer"
+  },
+  "panel_stop": {
+    "message": "Arrêter"
+  },
+  "panel_close": {
+    "message": "Fermer"
+  },
+  "panel_clearChat": {
+    "message": "Effacer la conversation"
+  },
+  "panel_thinking": {
+    "message": "Réflexion…"
+  },
+  "panel_searchingMail": {
+    "message": "Recherche dans vos messages…"
+  },
+  "panel_searchingFor": {
+    "message": "Recherche : $1"
+  },
+  "panel_readingMail": {
+    "message": "Lecture des messages…"
+  },
+  "panel_answering": {
+    "message": "Rédaction de la réponse…"
+  },
+  "panel_writing": {
+    "message": "Rédaction…"
+  },
+  "panel_translating": {
+    "message": "Traduction…"
+  },
+  "panel_foundMail": {
+    "message": "Trouvés : $1"
+  },
+  "panel_readUnread": {
+    "message": "D’après les messages non lus : $1"
+  },
+  "panel_nothingFound": {
+    "message": "Aucun résultat. Essayez d’autres mots."
+  },
+  "panel_nothingUnread": {
+    "message": "Aucun message non lu."
+  },
+  "panel_searchInGmail": {
+    "message": "Rechercher dans Gmail"
+  },
+  "panel_mailGone": {
+    "message": "Ce message n’est plus dans la liste."
+  },
+  "panel_suggestBrief": {
+    "message": "Qu’y a-t-il d’important dans mes messages non lus ?"
+  },
+  "panel_suggestReply": {
+    "message": "Qui attend ma réponse ?"
+  },
+  "panel_suggestFind": {
+    "message": "Trouve les factures de ce mois-ci"
+  },
+  "panel_suggestFiles": {
+    "message": "Messages avec pièces jointes de cette semaine"
+  },
+  "panel_suggestWrite": {
+    "message": "Écrire un message…"
+  },
+  "panel_suggestWritePrefix": {
+    "message": "Écris un message à"
+  },
+  "panel_toLabel": {
+    "message": "À"
+  },
+  "panel_toPlaceholder": {
+    "message": "Adresse"
+  },
+  "panel_from": {
+    "message": "De"
+  },
+  "panel_subject": {
+    "message": "Objet"
+  },
+  "panel_emailBody": {
+    "message": "Texte du message"
+  },
+  "panel_copyText": {
+    "message": "Copier"
+  },
+  "panel_tryAgain": {
+    "message": "Réessayer"
+  },
+  "panel_manageUsage": {
+    "message": "Gérer l’utilisation"
+  },
+  "panel_setupTitle": {
+    "message": "Activer l’assistant IA"
+  },
+  "panel_setupLede": {
+    "message": "Il résume les messages, trie les non-lus, cherche et répond à partir de vos messages, et rédige des brouillons de réponse. Choisissez comment il fonctionne :"
+  },
+  "panel_setupPrivacy": {
+    "message": "Les messages ne vont qu’au moteur que vous choisissez, et seulement quand vous le demandez ou activez le tri. Les clés et les connexions restent sur cet ordinateur."
+  },
+  "panel_engineBuiltin": {
+    "message": "Modèle intégré de Chrome"
+  },
+  "panel_engineBuiltinNote": {
+    "message": "Gratuit et privé : fonctionne sur cet ordinateur. S’active ici même."
+  },
+  "panel_engineChatGPT": {
+    "message": "Abonnement ChatGPT"
+  },
+  "panel_engineChatGPTNote": {
+    "message": "Connectez-vous avec votre compte ChatGPT Plus ou Pro."
+  },
+  "panel_engineAnthropic": {
+    "message": "Claude (clé API Anthropic)"
+  },
+  "panel_engineOpenAI": {
+    "message": "OpenAI (clé API)"
+  },
+  "panel_engineZai": {
+    "message": "Z.ai GLM (clé API)"
+  },
+  "panel_engineKeyNote": {
+    "message": "Votre propre clé API, facturée à l’usage par le fournisseur."
+  },
+  "panel_engineLocal": {
+    "message": "$1 · sur cet ordinateur"
+  },
+  "panel_enginePlan": {
+    "message": "Abonnement $1 · $2"
+  },
+  "panel_checkingAI": {
+    "message": "Vérification du moteur d’IA…"
+  },
+  "panel_chooseEngine": {
+    "message": "Choisir un autre moteur"
+  },
+  "panel_fixInSettings": {
+    "message": "Corriger dans les paramètres"
+  },
+  "panel_downloadModel": {
+    "message": "Télécharger le modèle"
+  },
+  "panel_downloading": {
+    "message": "Téléchargement… $1 %"
+  },
+  "panel_aiNoKey": {
+    "message": "Ajoutez votre clé API dans les paramètres pour utiliser ce moteur."
+  },
+  "panel_aiNoAccess": {
+    "message": "Chrome a besoin de votre autorisation pour joindre le fournisseur d’IA."
+  },
+  "panel_aiSignedOut": {
+    "message": "Reconnectez-vous à ChatGPT pour utiliser votre abonnement."
+  },
+  "panel_aiDownload": {
+    "message": "Le modèle intégré de Chrome doit être téléchargé une fois."
+  },
+  "panel_aiDownloading": {
+    "message": "Chrome télécharge son modèle intégré. Il fonctionnera une fois le téléchargement terminé."
+  },
+  "panel_aiOldChrome": {
+    "message": "Le modèle intégré de Chrome nécessite Chrome 138 ou plus récent."
+  },
+  "panel_aiUnavailable": {
+    "message": "Le modèle intégré n’est pas disponible sur cet ordinateur. Choisissez un autre moteur."
+  },
+  "panel_sortOffer": {
+    "message": "Trier avec l’IA"
+  },
+  "panel_replyTip": {
+    "message": "Messages de personnes qui attendent une réponse"
+  },
+  "panel_importantChip": {
+    "message": "Important · $1"
+  },
+  "panel_importantTip": {
+    "message": "Messages à voir bientôt"
+  },
+  "panel_bulkChip": {
+    "message": "Newsletters · $1"
+  },
+  "panel_bulkTip": {
+    "message": "Messages à traiter sans les lire"
+  },
+  "panel_replyShown": {
+    "message": "Attend votre réponse : $1"
+  },
+  "panel_importantShown": {
+    "message": "Important : $1"
+  },
+  "panel_bulkShown": {
+    "message": "Newsletters et promotions : $1"
+  },
+  "panel_replyWithAI": {
+    "message": "Réponse avec l’IA"
+  },
+  "panel_replyIntentPlaceholder": {
+    "message": "Que doit dire la réponse ? (facultatif)"
+  },
+  "panel_writeReply": {
+    "message": "Rédiger"
+  },
+  "panel_draft": {
+    "message": "Brouillon"
+  },
+  "panel_draftCopied": {
+    "message": "Brouillon copié : collez-le dans la réponse."
+  },
+  "panel_intentYes": {
+    "message": "Oui, d’accord"
+  },
+  "panel_intentNo": {
+    "message": "Refuser poliment"
+  },
+  "panel_intentMore": {
+    "message": "Demander des précisions"
+  },
+  "panel_intentThanks": {
+    "message": "Remercier"
+  },
+  "panel_translate": {
+    "message": "Traduire"
+  },
+  "panel_translateFrom": {
+    "message": "Traduire : $1"
+  },
+  "panel_showOriginal": {
+    "message": "Afficher l’original"
+  },
+  "panel_translation": {
+    "message": "Traduction"
+  },
+  "panel_translateFailed": {
+    "message": "La traduction a échoué."
+  },
+  "panel_offerAI": {
+    "message": "Activez l’assistant IA pour résumer les messages, rédiger des réponses et répondre à vos questions à leur sujet."
+  },
+  "panel_turnOnAI": {
+    "message": "Activer l’IA"
+  },
+  "panel_sameLanguage": {
+    "message": "Ce message est déjà en $1."
+  },
   "opt_ai": {
     "message": "IA"
   },

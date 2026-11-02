@@ -1238,27 +1238,13 @@ check('compose: TO, SUBJECT and the body are read as they are written; an addres
   await failsWith(t.AI.compose({request: ''}), 'bad-output');
 });
 
-check('translate: the newest message by the engine into the UI language; the browser\'s detector and translator when there', async () => {
+check('translate: the newest message by the engine into the UI language', async () => {
   const t = load({lang: 'ru', local: OPENAI});
   t.answers.push(stream(openaiEvents('Пожалуйста, пришлите бюджет до пятницы.')));
   const tr = await t.AI.translate({subject: 'Budget', messages: [{from: 'A', text: 'old'}, {from: 'Anna', text: 'Please send the budget by Friday.'}]});
   assert.strictEqual(tr.text, 'Пожалуйста, пришлите бюджет до пятницы.');
   assert.match(t.requests[0].body.messages[0].content, /translate an email into Russian/);
   assert.ok(!t.requests[0].body.messages[1].content.includes('old'), 'the newest message alone');
-  // no translator in this browser
-  assert.strictEqual(await t.AI.local.detect('Please send the budget'), '');
-  assert.strictEqual(await t.AI.local.availability('en'), 'unavailable');
-  // one with them
-  const u = load({lang: 'ru', local: OPENAI});
-  u.ctx.LanguageDetector = {availability: async () => 'available', create: async () => ({detect: async () => [{detectedLanguage: 'en-US', confidence: 0.93}], destroy() {}})};
-  u.ctx.Translator = {availability: async ({sourceLanguage, targetLanguage}) => sourceLanguage === 'en' && targetLanguage === 'ru' ? 'downloadable' : 'unavailable',
-    create: async o => ({o, translate: async s => 'RU:' + s})};
-  assert.strictEqual(await u.AI.local.detect('Please send the budget by Friday'), 'en');
-  assert.strictEqual(await u.AI.local.availability('en'), 'downloadable');
-  assert.strictEqual(await u.AI.local.availability('ru'), 'unavailable');
-  const x = await u.AI.local.translator('en');
-  assert.strictEqual(x.o.targetLanguage, 'ru');
-  assert.strictEqual(await x.translate('Hi'), 'RU:Hi');
 });
 
 check('the assistant asks nothing with the engine off or without a key', async () => {

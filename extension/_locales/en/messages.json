@@ -1592,6 +1592,279 @@
   "panel_attachments": {
     "message": "Attachments: $1"
   },
+  "panel_assistant": {
+    "message": "AI assistant"
+  },
+  "panel_assistHello": {
+    "message": "Ask about your mail, find something in it, or have an email written."
+  },
+  "panel_assistPlaceholder": {
+    "message": "Ask about your mail: “when is my flight?”, “invoices from October”, “write to Anna that…”"
+  },
+  "panel_ask": {
+    "message": "Ask"
+  },
+  "panel_askAI": {
+    "message": "Ask AI"
+  },
+  "panel_askAITip": {
+    "message": "Ask the AI assistant instead: a question, or a search in plain words"
+  },
+  "panel_askAboutMail": {
+    "message": "Ask"
+  },
+  "panel_askAgain": {
+    "message": "Ask again"
+  },
+  "panel_askMailPlaceholder": {
+    "message": "What do you want to know about this email?"
+  },
+  "panel_send": {
+    "message": "Send"
+  },
+  "panel_stop": {
+    "message": "Stop"
+  },
+  "panel_close": {
+    "message": "Close"
+  },
+  "panel_clearChat": {
+    "message": "Clear the conversation"
+  },
+  "panel_thinking": {
+    "message": "Thinking…"
+  },
+  "panel_searchingMail": {
+    "message": "Searching your mail…"
+  },
+  "panel_searchingFor": {
+    "message": "Searching: $1"
+  },
+  "panel_readingMail": {
+    "message": "Reading the emails…"
+  },
+  "panel_answering": {
+    "message": "Answering…"
+  },
+  "panel_writing": {
+    "message": "Writing…"
+  },
+  "panel_translating": {
+    "message": "Translating…"
+  },
+  "panel_foundMail": {
+    "message": "Found: $1"
+  },
+  "panel_readUnread": {
+    "message": "Read from $1 unread emails"
+  },
+  "panel_nothingFound": {
+    "message": "Nothing found. Try other words."
+  },
+  "panel_nothingUnread": {
+    "message": "No unread mail."
+  },
+  "panel_searchInGmail": {
+    "message": "Search in Gmail"
+  },
+  "panel_mailGone": {
+    "message": "This mail is no longer in the list."
+  },
+  "panel_suggestBrief": {
+    "message": "What's important in my unread mail?"
+  },
+  "panel_suggestReply": {
+    "message": "Who is waiting for my reply?"
+  },
+  "panel_suggestFind": {
+    "message": "Find invoices from this month"
+  },
+  "panel_suggestFiles": {
+    "message": "Mail with attachments from this week"
+  },
+  "panel_suggestWrite": {
+    "message": "Write an email…"
+  },
+  "panel_suggestWritePrefix": {
+    "message": "Write an email to"
+  },
+  "panel_toLabel": {
+    "message": "To"
+  },
+  "panel_toPlaceholder": {
+    "message": "Address"
+  },
+  "panel_from": {
+    "message": "From"
+  },
+  "panel_subject": {
+    "message": "Subject"
+  },
+  "panel_emailBody": {
+    "message": "Text of the email"
+  },
+  "panel_copyText": {
+    "message": "Copy"
+  },
+  "panel_tryAgain": {
+    "message": "Try again"
+  },
+  "panel_manageUsage": {
+    "message": "Manage usage"
+  },
+  "panel_setupTitle": {
+    "message": "Turn on the AI assistant"
+  },
+  "panel_setupLede": {
+    "message": "It summarizes mail, sorts what is unread, finds things and answers from your mail, and drafts replies. Choose how it runs:"
+  },
+  "panel_setupPrivacy": {
+    "message": "Mail goes only to the engine you choose, and only when you ask or turn sorting on. Keys and sign-ins stay on this computer."
+  },
+  "panel_engineBuiltin": {
+    "message": "Chrome's built-in model"
+  },
+  "panel_engineBuiltinNote": {
+    "message": "Free and private: runs on this computer. Turns on right here."
+  },
+  "panel_engineChatGPT": {
+    "message": "ChatGPT plan"
+  },
+  "panel_engineChatGPTNote": {
+    "message": "Sign in with your ChatGPT Plus or Pro account."
+  },
+  "panel_engineAnthropic": {
+    "message": "Claude (Anthropic API key)"
+  },
+  "panel_engineOpenAI": {
+    "message": "OpenAI (API key)"
+  },
+  "panel_engineZai": {
+    "message": "Z.ai GLM (API key)"
+  },
+  "panel_engineKeyNote": {
+    "message": "Your own API key, paid by use to the provider."
+  },
+  "panel_engineLocal": {
+    "message": "$1 · on this computer"
+  },
+  "panel_enginePlan": {
+    "message": "$1 plan · $2"
+  },
+  "panel_checkingAI": {
+    "message": "Checking the AI engine…"
+  },
+  "panel_chooseEngine": {
+    "message": "Choose another engine"
+  },
+  "panel_fixInSettings": {
+    "message": "Fix in Settings"
+  },
+  "panel_downloadModel": {
+    "message": "Download the model"
+  },
+  "panel_downloading": {
+    "message": "Downloading… $1%"
+  },
+  "panel_aiNoKey": {
+    "message": "Add your API key in Settings to use this engine."
+  },
+  "panel_aiNoAccess": {
+    "message": "Chrome needs your permission to reach the AI provider."
+  },
+  "panel_aiSignedOut": {
+    "message": "Sign in to ChatGPT again to use your plan."
+  },
+  "panel_aiDownload": {
+    "message": "Chrome's built-in model has to be downloaded once."
+  },
+  "panel_aiDownloading": {
+    "message": "Chrome is downloading its built-in model. It works once the download is done."
+  },
+  "panel_aiOldChrome": {
+    "message": "Chrome's built-in model needs Chrome 138 or later."
+  },
+  "panel_aiUnavailable": {
+    "message": "The built-in model is not available on this computer. Choose another engine."
+  },
+  "panel_sortOffer": {
+    "message": "Sort with AI"
+  },
+  "panel_replyTip": {
+    "message": "Mail from people who expect an answer"
+  },
+  "panel_importantChip": {
+    "message": "Important · $1"
+  },
+  "panel_importantTip": {
+    "message": "Mail you should see soon"
+  },
+  "panel_bulkChip": {
+    "message": "Newsletters · $1"
+  },
+  "panel_bulkTip": {
+    "message": "Mail you can clear without reading"
+  },
+  "panel_replyShown": {
+    "message": "Waiting for your reply: $1"
+  },
+  "panel_importantShown": {
+    "message": "Important: $1"
+  },
+  "panel_bulkShown": {
+    "message": "Newsletters and promotions: $1"
+  },
+  "panel_replyWithAI": {
+    "message": "Reply with AI"
+  },
+  "panel_replyIntentPlaceholder": {
+    "message": "What should the reply say? (optional)"
+  },
+  "panel_writeReply": {
+    "message": "Write"
+  },
+  "panel_draft": {
+    "message": "Draft"
+  },
+  "panel_draftCopied": {
+    "message": "The draft is copied: paste it into the reply."
+  },
+  "panel_intentYes": {
+    "message": "Yes, agree"
+  },
+  "panel_intentNo": {
+    "message": "Decline politely"
+  },
+  "panel_intentMore": {
+    "message": "Ask for details"
+  },
+  "panel_intentThanks": {
+    "message": "Thank them"
+  },
+  "panel_translate": {
+    "message": "Translate"
+  },
+  "panel_translateFrom": {
+    "message": "Translate from $1"
+  },
+  "panel_showOriginal": {
+    "message": "Show original"
+  },
+  "panel_translation": {
+    "message": "Translation"
+  },
+  "panel_translateFailed": {
+    "message": "The translation failed."
+  },
+  "panel_offerAI": {
+    "message": "Turn on the AI assistant to summarize mail, draft replies and answer questions about it."
+  },
+  "panel_turnOnAI": {
+    "message": "Turn on AI"
+  },
+  "panel_sameLanguage": {
+    "message": "This mail is already in $1."
+  },
   "opt_ai": {
     "message": "AI"
   },

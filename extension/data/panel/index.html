@@ -22,6 +22,16 @@
       <nav class="chips" id="chips" aria-label="Mailboxes" data-i18n-label="mailboxes"></nav>
       <div class="list" id="list"></div>
 
+      <!-- the assistant: a request in plain words about the mail, and what came of it -->
+      <section class="assist" id="assist" tabindex="-1" aria-label="Assistant" data-i18n-label="assistant">
+        <header class="bar assist-bar" id="assist-bar"></header>
+        <div class="assist-body" id="assist-body"></div>
+        <form class="assist-ask" id="assist-ask">
+          <textarea id="assist-input" rows="1" autocomplete="off" enterkeyhint="send" aria-label="Ask" data-i18n-label="ask"></textarea>
+          <button class="icon-btn send" id="assist-send" type="submit"></button>
+        </form>
+      </section>
+
       <section class="reader" id="reader" tabindex="-1" aria-label="Message" data-i18n-label="message">
         <header class="bar reader-bar" id="reader-bar"></header>
         <div class="reader-card">
@@ -39,8 +49,10 @@
           <!-- the thread's files, where they cannot be missed -->
           <div class="reader-files" id="reader-files" hidden></div>
         </div>
-        <!-- the assistant's summary of the open mail (Settings → AI): over the message, not in it -->
+        <!-- the assistant's buttons for the open mail, and its summary, reply, answer or translation: over the message, not in it -->
+        <div class="reader-ai" id="reader-ai" hidden></div>
         <section class="ai-card" id="ai-card" aria-labelledby="ai-title" aria-live="polite" hidden></section>
+        <section class="ai-card ai-tool" id="ai-tool" aria-live="polite" hidden></section>
         <div class="reader-body">
           <div class="progress"></div>
           <iframe id="body" src="body/index.html" title="Message body" data-i18n-label="messageBody"></iframe>

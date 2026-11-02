@@ -1562,6 +1562,279 @@
   "panel_attachments": {
     "message": "添付ファイル: $1"
   },
+  "panel_assistant": {
+    "message": "AI アシスタント"
+  },
+  "panel_assistHello": {
+    "message": "メールについて質問したり、メールの中を探したり、メールを書いてもらったりできます。"
+  },
+  "panel_assistPlaceholder": {
+    "message": "メールについて質問: 「フライトはいつ？」、「10 月の請求書」、「アンナに…と書いて」"
+  },
+  "panel_ask": {
+    "message": "質問"
+  },
+  "panel_askAI": {
+    "message": "AI に質問"
+  },
+  "panel_askAITip": {
+    "message": "代わりに AI アシスタントに質問します（質問や、ふだんの言葉での検索）"
+  },
+  "panel_askAboutMail": {
+    "message": "質問"
+  },
+  "panel_askAgain": {
+    "message": "もう一度質問"
+  },
+  "panel_askMailPlaceholder": {
+    "message": "このメールについて何を知りたいですか？"
+  },
+  "panel_send": {
+    "message": "送信"
+  },
+  "panel_stop": {
+    "message": "停止"
+  },
+  "panel_close": {
+    "message": "閉じる"
+  },
+  "panel_clearChat": {
+    "message": "会話を消去"
+  },
+  "panel_thinking": {
+    "message": "考えています…"
+  },
+  "panel_searchingMail": {
+    "message": "メールを検索しています…"
+  },
+  "panel_searchingFor": {
+    "message": "検索中: $1"
+  },
+  "panel_readingMail": {
+    "message": "メールを読んでいます…"
+  },
+  "panel_answering": {
+    "message": "回答しています…"
+  },
+  "panel_writing": {
+    "message": "書いています…"
+  },
+  "panel_translating": {
+    "message": "翻訳しています…"
+  },
+  "panel_foundMail": {
+    "message": "見つかったメール: $1 件"
+  },
+  "panel_readUnread": {
+    "message": "未読メール $1 件から"
+  },
+  "panel_nothingFound": {
+    "message": "見つかりませんでした。別の言葉で試してください。"
+  },
+  "panel_nothingUnread": {
+    "message": "未読メールはありません。"
+  },
+  "panel_searchInGmail": {
+    "message": "Gmail で検索"
+  },
+  "panel_mailGone": {
+    "message": "このメールはもう一覧にありません。"
+  },
+  "panel_suggestBrief": {
+    "message": "未読メールで大事なものは？"
+  },
+  "panel_suggestReply": {
+    "message": "返信を待っているのは誰？"
+  },
+  "panel_suggestFind": {
+    "message": "今月の請求書を探して"
+  },
+  "panel_suggestFiles": {
+    "message": "今週の添付ファイル付きメール"
+  },
+  "panel_suggestWrite": {
+    "message": "メールを書く…"
+  },
+  "panel_suggestWritePrefix": {
+    "message": "次の宛先にメールを書いて:"
+  },
+  "panel_toLabel": {
+    "message": "宛先"
+  },
+  "panel_toPlaceholder": {
+    "message": "アドレス"
+  },
+  "panel_from": {
+    "message": "差出人"
+  },
+  "panel_subject": {
+    "message": "件名"
+  },
+  "panel_emailBody": {
+    "message": "メール本文"
+  },
+  "panel_copyText": {
+    "message": "コピー"
+  },
+  "panel_tryAgain": {
+    "message": "再試行"
+  },
+  "panel_manageUsage": {
+    "message": "使用量を管理"
+  },
+  "panel_setupTitle": {
+    "message": "AI アシスタントをオンにする"
+  },
+  "panel_setupLede": {
+    "message": "メールの要約、未読メールの仕分け、メールからの検索と回答、返信の下書きを行います。動かし方を選んでください:"
+  },
+  "panel_setupPrivacy": {
+    "message": "メールは選んだエンジンにだけ、依頼したときか仕分けをオンにしたときにだけ送られます。キーとログイン情報はこのパソコンに残ります。"
+  },
+  "panel_engineBuiltin": {
+    "message": "Chrome の内蔵モデル"
+  },
+  "panel_engineBuiltinNote": {
+    "message": "無料でプライベート。このパソコン上で動作し、ここですぐにオンにできます。"
+  },
+  "panel_engineChatGPT": {
+    "message": "ChatGPT のプラン"
+  },
+  "panel_engineChatGPTNote": {
+    "message": "ChatGPT Plus または Pro のアカウントでログインします。"
+  },
+  "panel_engineAnthropic": {
+    "message": "Claude（Anthropic API キー）"
+  },
+  "panel_engineOpenAI": {
+    "message": "OpenAI（API キー）"
+  },
+  "panel_engineZai": {
+    "message": "Z.ai GLM（API キー）"
+  },
+  "panel_engineKeyNote": {
+    "message": "ご自身の API キーを使用（プロバイダへの従量課金）。"
+  },
+  "panel_engineLocal": {
+    "message": "$1 · このパソコン上"
+  },
+  "panel_enginePlan": {
+    "message": "$1 のプラン · $2"
+  },
+  "panel_checkingAI": {
+    "message": "AI エンジンを確認しています…"
+  },
+  "panel_chooseEngine": {
+    "message": "別のエンジンを選ぶ"
+  },
+  "panel_fixInSettings": {
+    "message": "設定で修正"
+  },
+  "panel_downloadModel": {
+    "message": "モデルをダウンロード"
+  },
+  "panel_downloading": {
+    "message": "ダウンロード中… $1%"
+  },
+  "panel_aiNoKey": {
+    "message": "このエンジンを使うには、設定で API キーを追加してください。"
+  },
+  "panel_aiNoAccess": {
+    "message": "Chrome が AI プロバイダにアクセスするには、許可が必要です。"
+  },
+  "panel_aiSignedOut": {
+    "message": "プランを使うには、ChatGPT にもう一度ログインしてください。"
+  },
+  "panel_aiDownload": {
+    "message": "Chrome の内蔵モデルを一度ダウンロードする必要があります。"
+  },
+  "panel_aiDownloading": {
+    "message": "Chrome が内蔵モデルをダウンロードしています。ダウンロードが終わると使えます。"
+  },
+  "panel_aiOldChrome": {
+    "message": "Chrome の内蔵モデルには Chrome 138 以降が必要です。"
+  },
+  "panel_aiUnavailable": {
+    "message": "このパソコンでは内蔵モデルを使用できません。別のエンジンを選んでください。"
+  },
+  "panel_sortOffer": {
+    "message": "AI で仕分け"
+  },
+  "panel_replyTip": {
+    "message": "返事を待っている人からのメール"
+  },
+  "panel_importantChip": {
+    "message": "重要 · $1"
+  },
+  "panel_importantTip": {
+    "message": "早めに見ておきたいメール"
+  },
+  "panel_bulkChip": {
+    "message": "ニュースレター · $1"
+  },
+  "panel_bulkTip": {
+    "message": "読まずに片付けてよいメール"
+  },
+  "panel_replyShown": {
+    "message": "返信待ち: $1"
+  },
+  "panel_importantShown": {
+    "message": "重要: $1"
+  },
+  "panel_bulkShown": {
+    "message": "ニュースレターと宣伝: $1"
+  },
+  "panel_replyWithAI": {
+    "message": "AI で返信"
+  },
+  "panel_replyIntentPlaceholder": {
+    "message": "返信で伝えたいこと（任意）"
+  },
+  "panel_writeReply": {
+    "message": "作成"
+  },
+  "panel_draft": {
+    "message": "下書き"
+  },
+  "panel_draftCopied": {
+    "message": "下書きをコピーしました。返信に貼り付けてください。"
+  },
+  "panel_intentYes": {
+    "message": "はい、同意する"
+  },
+  "panel_intentNo": {
+    "message": "丁寧に断る"
+  },
+  "panel_intentMore": {
+    "message": "詳細を尋ねる"
+  },
+  "panel_intentThanks": {
+    "message": "お礼を伝える"
+  },
+  "panel_translate": {
+    "message": "翻訳"
+  },
+  "panel_translateFrom": {
+    "message": "$1から翻訳"
+  },
+  "panel_showOriginal": {
+    "message": "原文を表示"
+  },
+  "panel_translation": {
+    "message": "翻訳"
+  },
+  "panel_translateFailed": {
+    "message": "翻訳できませんでした。"
+  },
+  "panel_offerAI": {
+    "message": "AI アシスタントをオンにすると、メールの要約、返信の下書き、メールに関する質問への回答ができます。"
+  },
+  "panel_turnOnAI": {
+    "message": "AI をオンにする"
+  },
+  "panel_sameLanguage": {
+    "message": "このメールはすでに$1です。"
+  },
   "opt_ai": {
     "message": "AI アシスタント"
   },
