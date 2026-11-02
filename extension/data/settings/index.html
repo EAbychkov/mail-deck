@@ -316,16 +316,24 @@
             <input type="radio" name="ai.engine" value="off" aria-labelledby="ai-off-name" aria-describedby="ai-off-text">
           </label>
           <label class="row">
-            <span class="text"><b id="ai-builtin-name" data-i18n="aiBuiltin">On this computer</b><small id="ai-builtin-desc" data-i18n="aiBuiltinText">Chrome’s built-in model. Free and private, but not on every computer.</small></span>
+            <span class="text"><b id="ai-builtin-name" data-i18n="aiBuiltin">Chrome built-in</b><small id="ai-builtin-desc" data-i18n="aiBuiltinText">Runs on this computer: free and private, but not on every computer.</small></span>
             <input type="radio" name="ai.engine" value="builtin" aria-labelledby="ai-builtin-name" aria-describedby="ai-builtin-desc">
           </label>
           <label class="row">
-            <span class="text"><b id="ai-openai-name">OpenAI</b><small id="ai-openai-text" data-i18n="aiCloudText" data-i18n-arg="OpenAI">With your own OpenAI API key, paid per use.</small></span>
+            <span class="text"><b id="ai-chatgpt-name" data-i18n="aiPlan">ChatGPT plan</b><small id="ai-chatgpt-text" data-i18n="aiPlanText">The ChatGPT plan you already have, with no API key.</small></span>
+            <input type="radio" name="ai.engine" value="chatgpt" aria-labelledby="ai-chatgpt-name" aria-describedby="ai-chatgpt-text">
+          </label>
+          <label class="row">
+            <span class="text"><b id="ai-openai-name" data-i18n="aiKey" data-i18n-arg="OpenAI">OpenAI API key</b><small id="ai-openai-text" data-i18n="aiCloudText" data-i18n-arg="GPT">GPT models, paid per use.</small></span>
             <input type="radio" name="ai.engine" value="openai" aria-labelledby="ai-openai-name" aria-describedby="ai-openai-text">
           </label>
           <label class="row">
-            <span class="text"><b id="ai-anthropic-name">Anthropic (Claude)</b><small id="ai-anthropic-text" data-i18n="aiCloudText" data-i18n-arg="Anthropic">With your own Anthropic API key, paid per use.</small></span>
+            <span class="text"><b id="ai-anthropic-name" data-i18n="aiKey" data-i18n-arg="Anthropic">Anthropic API key</b><small id="ai-anthropic-text" data-i18n="aiCloudText" data-i18n-arg="Claude">Claude models, paid per use.</small></span>
             <input type="radio" name="ai.engine" value="anthropic" aria-labelledby="ai-anthropic-name" aria-describedby="ai-anthropic-text">
+          </label>
+          <label class="row">
+            <span class="text"><b id="ai-zai-name" data-i18n="aiKey" data-i18n-arg="Z.ai">Z.ai API key</b><small id="ai-zai-text" data-i18n="aiZaiText">GLM models, paid per use; some are free.</small></span>
+            <input type="radio" name="ai.engine" value="zai" aria-labelledby="ai-zai-name" aria-describedby="ai-zai-text">
           </label>
         </div>
         <!-- the built-in model: ready, to download once, downloading, or not on this computer -->
@@ -339,6 +347,21 @@
           </span>
           <button type="button" class="ghost primary" id="ai-download" data-i18n="aiDownload" hidden>Download</button>
         </div>
+        <!-- the ChatGPT plan: a sign-in instead of a key; signed in, its account and its usage -->
+        <div class="row sub" id="ai-plan" hidden>
+          <span class="text">
+            <b class="state" id="ai-plan-title" data-state="none" data-i18n="aiPlanUse">Use your ChatGPT plan</b>
+            <small id="ai-plan-text" data-i18n="aiPlanUseText">Complete eligible AI requests in Mail Deck with usage included in your ChatGPT plan.</small>
+            <small id="ai-plan-plus" data-i18n="aiPlanPlus">ChatGPT Plus has a five-hour usage limit, shared across all the apps that use it.</small>
+            <small id="ai-plan-wait" aria-live="polite" hidden></small>
+            <small class="note" id="ai-plan-note" role="alert" hidden></small>
+          </span>
+          <span class="inline">
+            <button type="button" class="ghost primary" id="ai-plan-allow" data-i18n="aiAllow" hidden>Allow access</button>
+            <button type="button" class="ghost primary" id="ai-signin" data-i18n="aiSignIn">Continue with ChatGPT</button>
+            <button type="button" class="ghost" id="ai-signout" data-i18n="aiSignOut" hidden>Sign out</button>
+          </span>
+        </div>
         <!-- a provider without a key: the key, its page, and what it costs -->
         <div class="row stack sub" id="ai-key-row" hidden>
           <span class="text">
@@ -346,10 +369,11 @@
             <small id="ai-key-text"><span id="ai-key-plan"></span> <a id="ai-key-link" href="https://platform.openai.com/api-keys" target="_blank" rel="noopener" data-i18n="aiGetKey">Get a key</a></small>
           </span>
           <span class="key">
-            <input type="password" id="ai-key" autocomplete="off" spellcheck="false" autocapitalize="off" dir="ltr" aria-labelledby="ai-key-label" aria-describedby="ai-key-text ai-error">
+            <input type="password" id="ai-key" autocomplete="off" spellcheck="false" autocapitalize="off" dir="ltr" aria-labelledby="ai-key-label" aria-describedby="ai-key-text ai-key-hint ai-error">
             <button type="button" class="ghost" id="ai-key-show" aria-controls="ai-key" data-i18n="aiShow">Show</button>
             <button type="button" class="ghost primary" id="ai-connect" data-i18n="aiConnect">Connect</button>
           </span>
+          <small class="tip" id="ai-key-hint" hidden></small>
           <small class="note error" id="ai-error" role="alert" hidden></small>
         </div>
         <!-- a provider with a key: connected, or without the access Chrome gave it -->
@@ -365,8 +389,8 @@
           </span>
         </div>
         <label class="row sub" id="ai-model-row" hidden>
-          <span class="text"><b data-i18n="aiModel">Model</b><small data-i18n="aiModelText">Larger models summarize better; smaller ones answer faster and cost less.</small><small class="note" id="ai-model-note" hidden></small></span>
-          <select id="ai-model" aria-describedby="ai-model-note"></select>
+          <span class="text"><b data-i18n="aiModel">Model</b><small id="ai-model-text" data-i18n="aiModelText">Larger models summarize better; smaller ones answer faster and cost less.</small><small class="note" id="ai-model-note" hidden></small></span>
+          <select id="ai-model" aria-describedby="ai-model-text ai-model-note"></select>
         </label>
         <label class="row" data-ai>
           <span class="text"><b data-i18n="aiSummary">Summary in the reader</b><small data-i18n="aiSummaryText">Key points, things to do and dates, above the message.</small></span>
@@ -377,12 +401,23 @@
           </select>
         </label>
         <label class="row" data-ai>
-          <span class="text"><b data-i18n="aiReply">Waiting for your reply</b><small data-i18n="aiReplyText">Marks unread mail from people who expect an answer and gathers it under a chip in the panel.</small></span>
+          <span class="text"><b data-i18n="aiReply">Sort unread mail</b><small data-i18n="aiReplyText">Finds mail waiting for your reply, important mail, and newsletters you can clear in one go.</small></span>
           <input type="checkbox" role="switch" data-key="ai.reply">
+        </label>
+        <!-- what the panel offers while the AI is off: so it stays on while the rows above fade -->
+        <label class="row">
+          <span class="text"><b data-i18n="aiButtons">Show AI buttons while the assistant is off</b><small data-i18n="aiButtonsText">The summary, reply and assistant buttons stay in the panel and offer to turn it on.</small></span>
+          <input type="checkbox" role="switch" data-key="ai.buttons">
         </label>
       </div>
       <p class="hint" id="ai-privacy" hidden></p>
     </section>
+    <!-- once, after the first sign-in with the ChatGPT plan -->
+    <dialog class="welcome" id="ai-welcome" aria-labelledby="ai-welcome-title" aria-describedby="ai-welcome-text">
+      <h3 id="ai-welcome-title" data-i18n="aiWelcome">You’re using your ChatGPT plan</h3>
+      <p id="ai-welcome-text" data-i18n="aiWelcomeText">Eligible AI requests in Mail Deck use the usage included in your ChatGPT plan. Manage usage in your ChatGPT settings.</p>
+      <button type="button" class="ghost primary" id="ai-welcome-ok" data-i18n="aiGotIt">Got it</button>
+    </dialog>
 
     <section class="group">
       <h2 data-i18n="opening">Opening mail</h2>

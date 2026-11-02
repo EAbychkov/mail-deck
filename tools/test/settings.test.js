@@ -18,7 +18,16 @@ const element = id => {
     elements.set(id, {
       id, hidden: false, value: '', checked: false, dataset: {}, style: {setProperty() {}},
       classList: {add() {}, remove() {}, toggle() {}},
-      setAttribute() {}, removeAttribute() {}, focus() {}, add() {}, click() {},
+      setAttribute(name, value) {
+        (this.attrs ||= {})[name] = String(value);
+      },
+      getAttribute(name) {
+        return this.attrs?.[name] ?? null;
+      },
+      removeAttribute() {}, add() {}, click() {}, scrollIntoView() {},
+      focus() {
+        focused = this.id;
+      },
       // what the page puts in an element, for the checks that look
       append(...kids) {
         this.kids = [...(this.kids || []), ...kids];
@@ -33,6 +42,8 @@ const element = id => {
 };
 const listeners = {};
 let made = 0;
+// the element focused last
+let focused = null;
 const document = {
   getElementById: element,
   querySelector: () => element('(query)'),
@@ -51,7 +62,8 @@ const removed = [];
 const forgotten = [];
 const synced = [];
 // the AI providers' sites: given only when a check gives them; every other site is given
-const AI_SITES = ['https://api.openai.com/*', 'https://api.anthropic.com/*'];
+const AI_SITES = ['https://api.openai.com/*', 'https://api.anthropic.com/*', 'https://api.z.ai/*', 'https://auth.openai.com/*', 'http://127.0.0.1/*'];
+const PLAN_SITES = ['https://api.openai.com/*', 'https://auth.openai.com/*'];
 const granted = new Set();
 const requested = [];
 let grant = true;
@@ -128,7 +140,7 @@ for (const [, src] of html.matchAll(/<script src="([^"]+)"/g)) {
 // self.AI as data/ai/ai.js gives it, with answers a check sets: what is asked, in order
 const asked = [];
 const ai = {
-  availability: 'available', state: null, checkError: null, modelsError: null,
+  availability: 'available', state: null, checkError: null, modelsError: null, account: null, revoked: true,
   models: [
     {id: 'claude-opus-5-5', name: 'Claude Opus 5.5', recommended: true, tag: 'best', default: true},
     {id: 'claude-haiku-5-5', name: 'Claude Haiku 5.5', recommended: true, tag: 'fast'},
@@ -138,7 +150,7 @@ const ai = {
   downloaded: null
 };
 ctx.AI = {
-  ENGINES: ['off', 'builtin', 'openai', 'anthropic'],
+  ENGINES: ['off', 'builtin', 'chatgpt', 'openai', 'anthropic', 'zai'],
   state: async p => {
     asked.push(['state', p.engine]);
     return ai.state || {ok: ai.availability === 'available', reason: ai.availability, lang: 'en'};
@@ -156,6 +168,33 @@ ctx.AI = {
       throw ai.modelsError;
     }
     return ai.models.map(m => ({...m}));
+  },
+  // the ChatGPT plan: the account as the module tells it, a sign-in that asks Chrome for the
+  // sites from the click as the module does, a sign-out that may not be confirmed
+  chatgpt: {
+    usage: 'https://chatgpt.com/settings/usage',
+    account: async () => {
+      asked.push(['account']);
+      return ai.account && {...ai.account};
+    },
+    signIn: () => {
+      const p = chrome.permissions.request({origins: [...PLAN_SITES, 'http://127.0.0.1/*']});
+      asked.push(['signIn']);
+      return p.then(ok => {
+        if (!ok) {
+          throw {code: 'no-access'};
+        }
+        return true;
+      });
+    },
+    signOut: async () => {
+      asked.push(['signOut']);
+      ai.account = null;
+      return {revoked: ai.revoked};
+    },
+    resume: async () => {
+      asked.push(['resume']);
+    }
   },
   builtin: {
     availability: async lang => {
@@ -338,6 +377,12 @@ const msg = (key, ...subs) => chrome.i18n.getMessage(key, subs.map(String));
 const tick = () => new Promise(r => setTimeout(r, 0));
 const OPENAI_KEY = 'sk-proj-SECRET-openai-0123456789';
 const ANTHROPIC_KEY = 'sk-ant-api03-SECRET-anthropic-0123456789';
+const ZAI_KEY = '0123456789abcdef0123456789abcdef.SECRETzai01234';
+const PLAN_TOKEN = 'eyJhbGciOiJSUzI1NiJ9.SECRET-plan.sig';
+// the ChatGPT sign-in as data/ai/ai.js keeps it in storage: never shown, exported or synced
+const PLAN_AUTH = {client_id: 'oaiapp_SECRET', email: 'me@example.com', sub: 'user-SECRET', access_token: PLAN_TOKEN,
+  refresh_token: 'rt-SECRET-plan', id_token: PLAN_TOKEN, expires_at: 1, scopes: []};
+const ACCOUNT = {email: 'me@example.com', plan: true, limit: false};
 // a fresh card for each check: the defaults, no key, no provider's site, the stub's answers
 const freshAI = (values = {}) => {
   for (const k of Object.keys(local)) {
@@ -349,32 +394,46 @@ const freshAI = (values = {}) => {
   for (const list of [set, removed, forgotten, synced, requested, asked]) {
     list.length = 0;
   }
-  Object.assign(ai, {availability: 'available', state: null, checkError: null, modelsError: null, progress: [], downloaded: null});
+  Object.assign(ai, {availability: 'available', state: null, checkError: null, modelsError: null, progress: [], downloaded: null,
+    account: null, revoked: true});
   page(`prefs = {...DEFAULTS, ...${JSON.stringify(values)}}; aiKeys = {}; aiConnecting = false; aiDownload = null;
+    aiAccount = null; aiSigning = false; aiPlanNote = '';
     for (const id of Object.keys(aiLists)) delete aiLists[id];
     for (const id of Object.keys(aiAccess)) delete aiAccess[id];
     clearTimeout(aiPoll);`);
-  for (const id of ['ai-key', 'ai-error', 'ai-model', 'ai-model-note', 'ai-builtin-error', 'ai-builtin-lang']) {
+  for (const id of ['ai-key', 'ai-error', 'ai-model', 'ai-model-note', 'ai-builtin-error', 'ai-builtin-lang', 'ai-plan-note', 'ai-plan-wait',
+    'ai-plan-text', 'ai-key-hint']) {
     Object.assign(element(id), {value: '', textContent: '', hidden: false, kids: []});
   }
   element('ai-key').type = 'password';
-  return Promise.all([page('readAIKeys()'), page('syncAIAccess()')]);
+  element('ai-signout').attrs = {};
+  focused = null;
+  // what the card reads to start is not what a check asks
+  return Promise.all([page('readAIKeys()'), page('syncAIAccess()'), page('readAccount()')]).then(() => {
+    asked.length = 0;
+  });
 };
 const has = (value, secret) => JSON.stringify(value).includes(secret);
 
 check('the AI settings default as the module does; a backup keeps them and never a key', () => {
   const defaults = page('DEFAULTS');
-  assert.deepStrictEqual(['ai.engine', 'ai.openai.model', 'ai.anthropic.model', 'ai.summary', 'ai.reply'].map(k => defaults[k]),
-    ['off', '', '', 'click', true]);
-  assert.ok(!Object.keys(defaults).some(k => k.endsWith('.key')), 'no key among the settings a backup is made of');
+  assert.deepStrictEqual(['ai.engine', 'ai.chatgpt.model', 'ai.openai.model', 'ai.anthropic.model', 'ai.zai.model', 'ai.summary', 'ai.reply',
+    'ai.buttons'].map(k => defaults[k]), ['off', '', '', '', '', 'click', true, true]);
+  assert.ok(!Object.keys(defaults).some(k => k.endsWith('.key') || k.startsWith('ai.chatgpt.') && !k.endsWith('.model')),
+    'no key and nothing of the ChatGPT sign-in among the settings a backup is made of');
   const sanitize = page('sanitize');
   const good = {'ai.engine': 'anthropic', 'ai.anthropic.model': 'claude-opus-5-5', 'ai.openai.model': 'gpt-5.1-mini',
-    'ai.summary': 'auto', 'ai.reply': false};
+    'ai.summary': 'auto', 'ai.reply': false, 'ai.zai.model': 'glm-5.3', 'ai.chatgpt.model': 'gpt-5.5', 'ai.buttons': false};
   assert.deepStrictEqual({...sanitize(good)}, good);
+  for (const engine of ['chatgpt', 'zai']) {
+    assert.deepStrictEqual({...sanitize({'ai.engine': engine})}, {'ai.engine': engine});
+  }
   assert.deepStrictEqual({...sanitize({'ai.engine': 'builtin', 'ai.summary': 'off', 'ai.openai.model': ''})},
     {'ai.engine': 'builtin', 'ai.summary': 'off', 'ai.openai.model': ''});
   const bad = {'ai.engine': 'gemini', 'ai.summary': 'always', 'ai.reply': 'yes', 'ai.openai.model': 'gpt 5',
     'ai.anthropic.model': 'c'.repeat(101), 'ai.openai.key': OPENAI_KEY, 'ai.anthropic.key': ANTHROPIC_KEY,
+    'ai.zai.key': ZAI_KEY, 'ai.zai.model': 'glm 5', 'ai.buttons': 'no', 'ai.chatgpt.auth': {access_token: PLAN_TOKEN},
+    'ai.chatgpt.client': {id: 'oaiapp_x'}, 'ai.chatgpt.host': 'urn:uuid:x', 'ai.chatgpt.welcomed': true,
     'ai.replies': {x: {r: 1, w: 'asks', t: 1}}};
   assert.deepStrictEqual({...sanitize(bad)}, {});
   // what the page offers is what a backup may hold, its default among it
@@ -387,13 +446,16 @@ check('the AI settings default as the module does; a backup keeps them and never
 });
 check('a key is never in an export, in Chrome sync or in the diagnostics', async () => {
   await freshAI({'ai.engine': 'openai', 'ai.openai.model': 'gpt-5-mini', 'ai.openai.key': OPENAI_KEY,
-    'ai.anthropic.key': ANTHROPIC_KEY, 'sync.settings': true});
+    'ai.anthropic.key': ANTHROPIC_KEY, 'ai.zai.key': ZAI_KEY, 'ai.chatgpt.auth': PLAN_AUTH, 'ai.chatgpt.client': {id: 'oaiapp_SECRET', sub: 'user-SECRET'},
+    'ai.chatgpt.host': 'urn:uuid:SECRET', 'ai.chatgpt.model': 'gpt-5.5', 'sync.settings': true});
   granted.add('https://api.openai.com/*');
+  const secret = v => ['SECRET', 'me@example.com'].some(s => has(v, s));
   for (const files of [true, false]) {
     const out = await page(`collect(${files})`);
     assert.strictEqual(out['ai.engine'], 'openai');
     assert.strictEqual(out['ai.openai.model'], 'gpt-5-mini');
-    assert.ok(!has(out, OPENAI_KEY) && !has(out, ANTHROPIC_KEY) && !Object.keys(out).some(k => k.endsWith('.key')));
+    assert.strictEqual(out['ai.chatgpt.model'], 'gpt-5.5');
+    assert.ok(!secret(out) && !Object.keys(out).some(k => k.endsWith('.key') || /^ai\.chatgpt\.(auth|client|host)$/.test(k)));
   }
   // the copy in Chrome sync, made at once instead of 1.5 s later
   ctx.setTimeout = fn => fn();
@@ -406,7 +468,7 @@ check('a key is never in an export, in Chrome sync or in the diagnostics', async
     ctx.setTimeout = later;
   }
   assert.ok(synced.length > 0, 'a copy went to Chrome sync');
-  assert.ok(synced.every(v => !has(v, OPENAI_KEY) && !has(v, ANTHROPIC_KEY)));
+  assert.ok(synced.every(v => !secret(v)));
   assert.ok(synced.some(v => has(v, 'gpt-5-mini')), 'the model goes along');
   // the diagnostics ask the provider with the key and say how it went, without it
   const line = await page('aiDiag()');
@@ -419,6 +481,20 @@ check('a key is never in an export, in Chrome sync or in the diagnostics', async
   assert.deepStrictEqual([...await page('aiDiag()')], ['ai', false, 'OpenAI: ' + msg('opt_aiDiagNoAccess', 'api.openai.com')]);
   delete local['ai.openai.key'];
   assert.deepStrictEqual([...await page('aiDiag()')], ['ai', false, 'OpenAI: ' + msg('opt_aiDiagNoKey')]);
+  // the plan: checked with its sign-in, said without the account or a token
+  page(`prefs['ai.engine'] = 'chatgpt'`);
+  assert.deepStrictEqual([...await page('aiDiag()')], ['ai', false, 'ChatGPT: ' + msg('opt_aiDiagSignedOut')]);
+  ai.account = {...ACCOUNT};
+  assert.deepStrictEqual([...await page('aiDiag()')], ['ai', false, 'ChatGPT: ' + msg('opt_aiDiagNoAccess', 'api.openai.com')]);
+  granted.add('https://api.openai.com/*');
+  granted.add('https://auth.openai.com/*');
+  ai.checkError = null;
+  const planLine = await page('aiDiag()');
+  assert.deepStrictEqual([...planLine], ['ai', true, msg('opt_aiPlan') + ' · gpt-5.5']);
+  assert.ok(asked.some(([what, engine]) => what === 'check' && engine === 'chatgpt'));
+  ai.checkError = {code: 'limit'};
+  assert.deepStrictEqual([...await page('aiDiag()')], ['ai', false, 'ChatGPT: ' + msg('ai_err_limit')]);
+  assert.ok(!secret(planLine) && !secret(await page('aiDiag()')));
   page(`prefs['ai.engine'] = 'off'`);
   assert.deepStrictEqual([...await page('aiDiag()')], ['ai', null, msg('opt_aiOff')]);
   // the line is one of the browser's
@@ -451,10 +527,22 @@ check('the engine and what the AI does are saved as they change, and the keys lo
   assert.strictEqual(element('ai-key-link').href, 'https://platform.openai.com/api-keys');
   assert.strictEqual(element('ai-key-plan').textContent, msg('opt_aiKeyText', 'ChatGPT Plus', 'OpenAI'));
   assert.strictEqual(element('ai-key-label').textContent, msg('opt_aiKey', 'OpenAI'));
+  // under the field: a ChatGPT plan is used without a key
+  assert.strictEqual(element('ai-key-hint').textContent, msg('opt_aiOpenAIHint'));
+  assert.strictEqual(element('ai-key-hint').hidden, false);
   page(`prefs['ai.engine'] = 'anthropic'; aiKeys['ai.anthropic.key'] = ''`);
   page('paintCloud()');
   assert.strictEqual(element('ai-key-link').href, 'https://console.anthropic.com/settings/keys');
-  assert.strictEqual(element('ai-key-plan').textContent, msg('opt_aiKeyText', 'Claude Pro', 'Anthropic'));
+  // a Claude subscription cannot be used by other apps: the word under the field says so, for a key
+  assert.strictEqual(element('ai-key-plan').textContent, '');
+  assert.strictEqual(element('ai-key-hint').textContent, msg('opt_aiAnthropicHint'));
+  assert.ok(/Claude Pro and Max.*console\.anthropic\.com/.test(msg('opt_aiAnthropicHint')));
+  page(`prefs['ai.engine'] = 'zai'`);
+  page('paintCloud()');
+  assert.strictEqual(element('ai-key-label').textContent, msg('opt_aiKey', 'Z.ai'));
+  assert.strictEqual(element('ai-key-link').href, 'https://z.ai/manage-apikey/apikey-list');
+  assert.strictEqual(element('ai-key-hint').textContent, msg('opt_aiZaiHint'));
+  assert.ok(/standard API key from z\.ai.*GLM Coding Plan key works only in coding tools/.test(msg('opt_aiZaiHint')));
   // the field never shows a stored key
   assert.ok(!has(element('ai-key').value, ANTHROPIC_KEY));
   // the key field: a password, nothing filled in or checked by the browser
@@ -564,6 +652,21 @@ check('every AIError code reads as what to do', () => {
   }
   assert.strictEqual(text(new TypeError('Failed to fetch'), 'openai'), msg('opt_aiErrOther'));
   assert.strictEqual(text({code: 'auth'}, 'anthropic'), msg('opt_aiErrAuth', 'Anthropic'));
+  assert.strictEqual(text({code: 'auth'}, 'zai'), msg('opt_aiErrAuth', 'Z.ai'));
+  assert.strictEqual(text({code: 'no-access'}, 'zai'), msg('opt_aiErrAccess', 'api.z.ai'));
+  // the plan has no key: its own words, the module's for the rest, OpenAI's for a policy
+  const plan = {
+    'no-access': msg('opt_aiPlanAccess'), 'model': msg('opt_aiPlanNoModels'), 'no-models': msg('opt_aiPlanNoModels'),
+    'limit': msg('ai_err_limit'), 'no-plan': msg('ai_err_no_plan'), 'signed-out': msg('ai_err_signed_out'),
+    'denied': msg('ai_err_denied'), 'sign-in': msg('ai_err_sign_in'), 'other-account': msg('ai_err_other_account'),
+    'server': msg('ai_err_server'), 'aborted': ''
+  };
+  for (const [code, want] of Object.entries(plan)) {
+    assert.strictEqual(text({code}, 'chatgpt'), want, 'chatgpt ' + code);
+    assert.ok(code === 'aborted' || want, code + ' has words');
+  }
+  assert.strictEqual(text({code: 'auth', message: 'Country, region, or territory not supported'}, 'chatgpt'), 'Country, region, or territory not supported');
+  assert.ok(!/key/i.test(text({code: 'auth'}, 'chatgpt')), 'no key to check');
 });
 check('Disconnect forgets the key and the model and gives the provider\'s site back', async () => {
   await freshAI({'ai.engine': 'anthropic', 'ai.anthropic.key': ANTHROPIC_KEY, 'ai.anthropic.model': 'claude-haiku-5-5',
@@ -579,14 +682,21 @@ check('Disconnect forgets the key and the model and gives the provider\'s site b
   assert.strictEqual(element('ai-key-row').hidden, false);
   assert.strictEqual(element('ai-connected').hidden, true);
 });
-check('a reset forgets both keys and gives back both providers\' sites', async () => {
-  await freshAI({'ai.engine': 'openai', 'ai.openai.key': OPENAI_KEY, 'ai.anthropic.key': ANTHROPIC_KEY,
-    'ai.openai.model': 'gpt-5-mini', 'ai.replies': {x: {r: 1, w: 'asks', t: 1}}});
+check('a reset forgets every key and the ChatGPT sign-in, and gives back every provider\'s site', async () => {
+  await freshAI({'ai.engine': 'openai', 'ai.openai.key': OPENAI_KEY, 'ai.anthropic.key': ANTHROPIC_KEY, 'ai.zai.key': ZAI_KEY,
+    'ai.openai.model': 'gpt-5-mini', 'ai.replies': {x: {r: 1, w: 'asks', t: 1}}, 'ai.chatgpt.auth': PLAN_AUTH,
+    'ai.chatgpt.client': {id: 'oaiapp_1'}, 'ai.chatgpt.host': 'urn:uuid:1', 'ai.chatgpt.model': 'gpt-5.5'});
+  ai.account = {...ACCOUNT};
   AI_SITES.forEach(o => granted.add(o));
   await element('reset').onclick();
-  assert.ok(!('ai.openai.key' in local) && !('ai.anthropic.key' in local) && !('ai.replies' in local));
+  assert.ok(!('ai.openai.key' in local) && !('ai.anthropic.key' in local) && !('ai.zai.key' in local) && !('ai.replies' in local));
+  // revoked at OpenAI first, while its site is still given
+  assert.ok(asked.some(([what]) => what === 'signOut'));
+  assert.ok(!('ai.chatgpt.auth' in local));
+  assert.deepStrictEqual([local['ai.chatgpt.client'], local['ai.chatgpt.host']], [{id: 'oaiapp_1'}, 'urn:uuid:1'], 'kept for a later sign-in');
   assert.strictEqual(local['ai.engine'], 'off');
   assert.strictEqual(local['ai.openai.model'], '');
+  assert.strictEqual(local['ai.chatgpt.model'], '');
   assert.ok(AI_SITES.every(o => removed.includes(o) && !granted.has(o)));
   assert.ok(en.opt_resetConfirm.message.includes('AI'));
 });
@@ -716,6 +826,248 @@ check('the card follows what changes elsewhere: another tab, chrome://extensions
   // the page follows storage and Chrome's access in its start
   const code = fs.readFileSync(path.join(EXT, 'data/settings/index.js'), 'utf8');
   assert.ok(/followAI\(ps\)/.test(code) && /onRemoved\?\.addListener\(followAccess\)/.test(code));
+});
+check('Z.ai connects as the other keys do: its site from the click, the key checked, its models with what they are for', async () => {
+  await freshAI({'ai.engine': 'zai'});
+  const claude = ai.models;
+  ai.models = [
+    {id: 'glm-5.3', name: 'GLM-5.3', recommended: true, tag: 'best', default: true},
+    {id: 'glm-5.3-flash', name: 'GLM-5.3-Flash', recommended: true, tag: 'fast'},
+    {id: 'glm-4.7-flash', name: 'GLM-4.7-Flash', tag: 'free'}
+  ];
+  try {
+    element('ai-key').value = ZAI_KEY;
+    const done = element('ai-connect').onclick();
+    assert.deepStrictEqual(requested.map(o => [...o]), [['https://api.z.ai/*']]);
+    assert.strictEqual(await done, true);
+    assert.deepStrictEqual(asked.map(a => a.slice(0, 2).join(' ')), ['check zai', 'models zai']);
+    assert.strictEqual(local['ai.zai.key'], ZAI_KEY);
+    assert.strictEqual(local['ai.zai.model'], 'glm-5.3');
+    const [best, rest] = element('ai-model').kids;
+    assert.deepStrictEqual(best.kids.map(o => o.textContent), ['GLM-5.3 · ' + msg('opt_aiBest'), 'GLM-5.3-Flash · ' + msg('opt_aiFast')]);
+    assert.deepStrictEqual(rest.kids.map(o => o.textContent), ['GLM-4.7-Flash · ' + msg('opt_aiFree')]);
+    page('paintAI()');
+    assert.strictEqual(element('ai-privacy').textContent, msg('opt_aiPrivacy', 'Z.ai'));
+    // a key of another provider pasted here is said to be one
+    await freshAI({'ai.engine': 'zai'});
+    element('ai-key').value = OPENAI_KEY;
+    assert.strictEqual(await element('ai-connect').onclick(), false);
+    assert.strictEqual(element('ai-error').textContent, msg('opt_aiKeyOther', 'OpenAI', 'Z.ai'));
+  }
+  finally {
+    ai.models = claude;
+  }
+});
+check('the ChatGPT plan: Continue with ChatGPT asks for its sites from the click, then waits for the sign-in', async () => {
+  await freshAI({'ai.engine': 'chatgpt'});
+  page('paintAI()');
+  // signed out: the offer in OpenAI's words, the Plus limit; no key, no model
+  assert.strictEqual(element('ai-plan').hidden, false);
+  assert.strictEqual(element('ai-key-row').hidden, true);
+  assert.strictEqual(element('ai-connected').hidden, true);
+  assert.strictEqual(element('ai-model-row').hidden, true);
+  assert.strictEqual(element('ai-plan-title').textContent, msg('opt_aiPlanUse'));
+  assert.strictEqual(element('ai-plan-title').dataset.state, 'none');
+  assert.deepStrictEqual(element('ai-plan-text').kids, [msg('opt_aiPlanUseText')]);
+  assert.strictEqual(element('ai-plan-plus').hidden, false);
+  assert.ok(/five-hour usage limit, shared across all the apps/.test(msg('opt_aiPlanPlus')));
+  assert.strictEqual(element('ai-signin').hidden, false);
+  assert.strictEqual(element('ai-signout').hidden, true);
+  assert.strictEqual(msg('opt_aiSignIn'), 'Continue with ChatGPT');
+  assert.ok(/data-i18n="aiSignIn">Continue with ChatGPT</.test(html) && !/chatgpt[\w-]*\.(svg|png)/i.test(html), 'a text button, no logo');
+  assert.strictEqual(element('ai-privacy').textContent, msg('opt_aiPrivacyPlan'));
+  // the click: the sites first, before anything is awaited, then the module's sign-in
+  const done = element('ai-signin').onclick();
+  assert.deepStrictEqual(requested.map(o => [...o]), [[...PLAN_SITES, 'http://127.0.0.1/*']]);
+  await done;
+  assert.ok(asked.some(([what]) => what === 'signIn'));
+  assert.strictEqual(element('ai-plan-wait').hidden, false);
+  assert.strictEqual(element('ai-plan-wait').textContent, msg('opt_aiSignInWait'));
+  assert.strictEqual(focused, 'ai-signin');
+  // the sign-in comes back, in storage: the account, its usage, Sign out, the models
+  ai.account = {...ACCOUNT};
+  page('followAI')({'ai.chatgpt.auth': {newValue: {}}});
+  for (let i = 0; i < 4; i += 1) {
+    await tick();
+  }
+  assert.strictEqual(element('ai-plan-title').textContent, msg('opt_aiSignedIn', 'me@example.com'));
+  assert.strictEqual(element('ai-plan-title').dataset.state, 'ok');
+  const [using, dot, usage] = element('ai-plan-text').kids;
+  assert.deepStrictEqual([using, dot], [msg('opt_aiPlanUsing'), ' · ']);
+  assert.deepStrictEqual([usage.href, usage.target, usage.textContent], ['https://chatgpt.com/settings/usage', '_blank', msg('opt_aiManageUsage')]);
+  usage.onclick();
+  assert.ok(asked.some(([what]) => what === 'resume'), 'Manage usage lets what waited for the limit go again');
+  assert.strictEqual(element('ai-signin').hidden, true);
+  assert.strictEqual(element('ai-signout').hidden, false);
+  assert.strictEqual(element('ai-plan-wait').hidden, true);
+  assert.strictEqual(element('ai-plan-note').hidden, true);
+  assert.strictEqual(element('ai-model-row').hidden, false);
+  assert.strictEqual(element('ai-model-text').textContent, msg('opt_aiPlanModelText'));
+  assert.ok(asked.some(([what, engine, key]) => what === 'models' && engine === 'chatgpt' && key === ''));
+  // the sites refused: said, and nothing waits
+  await freshAI({'ai.engine': 'chatgpt'});
+  grant = false;
+  await element('ai-signin').onclick();
+  assert.strictEqual(element('ai-plan-note').textContent, msg('opt_aiPlanAccess'));
+  assert.strictEqual(element('ai-plan-wait').hidden, true);
+  // the page follows a sign-in underway or over in the session
+  const code = fs.readFileSync(path.join(EXT, 'data/settings/index.js'), 'utf8');
+  assert.ok(/area === 'session' && \('ai\.chatgpt\.pending' in ps/.test(code));
+});
+check('the plan says why it does not work now: no access, the usage limit, not this account\'s', async () => {
+  await freshAI({'ai.engine': 'chatgpt'});
+  ai.account = {...ACCOUNT};
+  await page('readAccount()');
+  page('paintAI()');
+  // signed in, its sites taken back: a button to give them again
+  assert.strictEqual(element('ai-plan-title').dataset.state, 'bad');
+  assert.strictEqual(element('ai-plan-note').textContent, msg('opt_aiNoAccess', 'api.openai.com'));
+  assert.strictEqual(element('ai-plan-allow').hidden, false);
+  assert.strictEqual(element('ai-model-row').hidden, true);
+  await element('ai-plan-allow').onclick();
+  assert.deepStrictEqual(requested.map(o => [...o]), [PLAN_SITES]);
+  assert.strictEqual(element('ai-plan-allow').hidden, true);
+  assert.strictEqual(element('ai-model-row').hidden, false);
+  // the usage limit: said, with Manage usage at hand
+  ai.account = {...ACCOUNT, limit: true};
+  await page('followPlan()');
+  assert.strictEqual(element('ai-plan-title').dataset.state, 'wait');
+  assert.strictEqual(element('ai-plan-note').textContent, msg('ai_err_limit'));
+  assert.ok(element('ai-plan-text').kids.some(k => k.href === 'https://chatgpt.com/settings/usage'));
+  // not this account's plan: said, and a new sign-in may allow it
+  ai.account = {...ACCOUNT, plan: false};
+  await page('followPlan()');
+  assert.strictEqual(element('ai-plan-title').dataset.state, 'bad');
+  assert.strictEqual(element('ai-plan-note').textContent, msg('ai_err_no_plan'));
+  assert.strictEqual(element('ai-signin').hidden, false);
+  assert.strictEqual(element('ai-signout').hidden, false);
+  assert.strictEqual(element('ai-model-row').hidden, true);
+  assert.strictEqual(element('ai-plan-plus').hidden, true);
+});
+check('Sign out: revoked and forgotten; OpenAI\'s API stays for an OpenAI key; an unconfirmed one says where to finish', async () => {
+  await freshAI({'ai.engine': 'chatgpt', 'ai.openai.key': OPENAI_KEY});
+  ai.account = {...ACCOUNT};
+  [...PLAN_SITES, 'http://127.0.0.1/*'].forEach(o => granted.add(o));
+  await page('readAccount()');
+  await page('syncAIAccess()');
+  await element('ai-signout').onclick();
+  assert.ok(asked.some(([what]) => what === 'signOut'));
+  assert.deepStrictEqual(removed, ['https://auth.openai.com/*', 'http://127.0.0.1/*'], 'api.openai.com stays for the key');
+  assert.strictEqual(element('toast').textContent, msg('opt_aiSignedOut'));
+  assert.strictEqual(element('ai-plan-note').hidden, true);
+  assert.strictEqual(element('ai-signin').hidden, false);
+  assert.strictEqual(focused, 'ai-signin');
+  // OpenAI did not confirm it; no key: every site goes
+  await freshAI({'ai.engine': 'chatgpt'});
+  ai.account = {...ACCOUNT};
+  ai.revoked = false;
+  await page('readAccount()');
+  await element('ai-signout').onclick();
+  assert.deepStrictEqual(removed, [...PLAN_SITES, 'http://127.0.0.1/*']);
+  assert.strictEqual(element('ai-plan-note').textContent, msg('opt_aiSignOutUnconfirmed'));
+  assert.ok(/disconnect Mail Deck in your ChatGPT settings/.test(msg('opt_aiSignOutUnconfirmed')));
+  // a key's Disconnect leaves OpenAI's API while the plan is signed in
+  await freshAI({'ai.engine': 'openai', 'ai.openai.key': OPENAI_KEY});
+  ai.account = {...ACCOUNT};
+  await page('readAccount()');
+  await element('ai-disconnect').onclick();
+  assert.ok(!('ai.openai.key' in local));
+  assert.deepStrictEqual(removed, [], 'api.openai.com stays for the plan');
+});
+check('the word after the first sign-in with the plan: once, with Got it', async () => {
+  await freshAI({'ai.engine': 'chatgpt'});
+  const dialog = element('ai-welcome');
+  let shown = 0;
+  // as a <dialog> does: close() fires close, as Esc does
+  Object.assign(dialog, {open: false, showModal() {
+    shown += 1;
+    this.open = true;
+  }, close() {
+    this.open = false;
+    this.onclose?.();
+  }});
+  try {
+    ai.account = {...ACCOUNT, plan: false};
+    await page('followPlan()');
+    assert.strictEqual(shown, 0, 'not without the plan');
+    ai.account = {...ACCOUNT};
+    await page('followPlan()');
+    assert.strictEqual(shown, 1);
+    assert.strictEqual(focused, 'ai-welcome-ok');
+    await page('followPlan()');
+    assert.strictEqual(shown, 1, 'not twice while it is open');
+    element('ai-welcome-ok').onclick();
+    await tick();
+    assert.strictEqual(dialog.open, false);
+    assert.strictEqual(local['ai.chatgpt.welcomed'], true);
+    assert.strictEqual(focused, 'ai-signout', 'the focus back in the card');
+    await page('followPlan()');
+    assert.strictEqual(shown, 1, 'once');
+    // dismissed with Esc: seen as well
+    delete local['ai.chatgpt.welcomed'];
+    await page('followPlan()');
+    dialog.close();
+    await tick();
+    assert.strictEqual(local['ai.chatgpt.welcomed'], true);
+  }
+  finally {
+    delete dialog.showModal;
+  }
+  assert.strictEqual(msg('opt_aiWelcome'), 'You’re using your ChatGPT plan');
+  assert.ok(/^Eligible AI requests in Mail Deck use the usage included in your ChatGPT plan\. Manage usage in your ChatGPT settings\.$/.test(msg('opt_aiWelcomeText')));
+  assert.strictEqual(msg('opt_aiGotIt'), 'Got it');
+  assert.ok(!('ai.chatgpt.welcomed' in page('DEFAULTS')), 'not a setting a backup carries');
+});
+check('a link to an engine (#ai-chatgpt, #ai-openai, …) picks it and focuses its next step', async () => {
+  const go = async (hash, values = {}, account = null, sites = []) => {
+    await freshAI(values);
+    ai.account = account;
+    sites.forEach(o => granted.add(o));
+    await Promise.all([page('readAccount()'), page('syncAIAccess()')]);
+    ctx.location.hash = hash;
+    page('followHash()');
+    return focused;
+  };
+  try {
+    assert.strictEqual(await go('#ai-chatgpt'), 'ai-signin');
+    assert.strictEqual(local['ai.engine'], 'chatgpt');
+    assert.strictEqual(await go('#ai-zai'), 'ai-key');
+    assert.strictEqual(local['ai.engine'], 'zai');
+    assert.strictEqual(element('ai-key-label').textContent, msg('opt_aiKey', 'Z.ai'));
+    assert.strictEqual(await go('#ai-openai'), 'ai-key');
+    assert.strictEqual(await go('#ai-anthropic', {'ai.anthropic.key': ANTHROPIC_KEY}), 'ai-allow', 'a key without its site: give it');
+    granted.add('https://api.anthropic.com/*');
+    await page('syncAIAccess()');
+    page('paintCloud(); followHash()');
+    assert.strictEqual(focused, 'ai-model');
+    assert.strictEqual(await go('#ai-builtin'), '(query)');
+    assert.strictEqual(local['ai.engine'], 'builtin');
+    assert.strictEqual(await go('#ai-chatgpt', {}, {...ACCOUNT}), 'ai-plan-allow', 'signed in without its sites: give them');
+    assert.strictEqual(await go('#ai-chatgpt', {}, {...ACCOUNT}, PLAN_SITES), 'ai-model');
+    assert.strictEqual(await go('#ai-chatgpt', {}, {...ACCOUNT, plan: false}, PLAN_SITES), 'ai-signin', 'no plan: sign in again');
+    // nothing for an engine there is none of, or the AI off
+    for (const hash of ['#ai-gemini', '#ai-off', '#ai', '#services', '']) {
+      await go(hash, {'ai.engine': 'openai'});
+      assert.strictEqual(page(`prefs['ai.engine']`), 'openai', hash);
+      assert.strictEqual(set.length, 0, hash);
+    }
+  }
+  finally {
+    ctx.location.hash = '';
+  }
+  const code = fs.readFileSync(path.join(EXT, 'data/settings/index.js'), 'utf8');
+  assert.ok(/\.then\(paintAI\)\.then\(followHash\)/.test(code) && /addEventListener\('hashchange', followHash\)/.test(code));
+});
+check('the AI buttons switch: on by default, saved, in a backup, and usable while the AI is off', () => {
+  assert.strictEqual(page('DEFAULTS')['ai.buttons'], true);
+  const row = /<label class="row"( data-ai)?>\s*<span class="text"><b data-i18n="aiButtons">[^<]*<\/b><small data-i18n="aiButtonsText">[^<]*<\/small><\/span>\s*<input type="checkbox" role="switch" data-key="ai\.buttons">/.exec(html);
+  assert.ok(row, 'its row');
+  assert.ok(!row[1], 'it does not fade with the AI off: that is when it matters');
+  assert.strictEqual(msg('opt_aiButtons'), 'Show AI buttons while the assistant is off');
+  assert.strictEqual(msg('opt_aiButtonsText'), 'The summary, reply and assistant buttons stay in the panel and offer to turn it on.');
+  assert.strictEqual(msg('opt_aiReply'), 'Sort unread mail');
+  assert.strictEqual(msg('opt_aiReplyText'), 'Finds mail waiting for your reply, important mail, and newsletters you can clear in one go.');
+  assert.ok(/data-key="ai\.reply"/.test(html));
 });
 check('the AI card has its strings and loads the module before the page', () => {
   assert.ok(html.indexOf('<script src="../ai/ai.js">') > 0 && html.indexOf('<script src="../ai/ai.js">') < html.indexOf('<script src="index.js">'));

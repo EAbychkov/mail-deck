@@ -55,28 +55,45 @@ const DEFAULTS = {
   'senderLogos': true,
   // the other mail services turned on (core/services/)
   'services': [],
-  // the AI (data/ai/ai.js): which engine, each provider's model, what it does. The keys are
-  // kept apart from these (AI_SECRETS): never in a backup, in Chrome sync or on the screen.
+  // the AI (data/ai/ai.js): which engine, each one's model, what it does. The keys and the
+  // ChatGPT sign-in are kept apart from these (AI_SECRETS): never in a backup, in Chrome sync
+  // or on the screen.
   'ai.engine': 'off',
+  'ai.chatgpt.model': '',
   'ai.openai.model': '',
   'ai.anthropic.model': '',
+  'ai.zai.model': '',
   'ai.summary': 'click',
   'ai.reply': true,
+  // the panel's AI buttons while the AI is off: they offer to turn it on
+  'ai.buttons': true,
   'sync.settings': false
 };
-const AI_ENGINES = ['off', 'builtin', 'openai', 'anthropic'];
+const AI_ENGINES = ['off', 'builtin', 'chatgpt', 'openai', 'anthropic', 'zai'];
+// the providers of a key: its page, the subscription that does not give one (plan), a word under the field (hint)
 const AI_PROVIDERS = {
   openai: {
-    name: 'OpenAI', plan: 'ChatGPT Plus', origin: 'https://api.openai.com/*', host: 'api.openai.com',
+    name: 'OpenAI', plan: 'ChatGPT Plus', hint: 'aiOpenAIHint', origin: 'https://api.openai.com/*', host: 'api.openai.com',
     keys: 'https://platform.openai.com/api-keys', placeholder: 'sk-…'
   },
   anthropic: {
-    name: 'Anthropic', plan: 'Claude Pro', origin: 'https://api.anthropic.com/*', host: 'api.anthropic.com',
+    name: 'Anthropic', hint: 'aiAnthropicHint', origin: 'https://api.anthropic.com/*', host: 'api.anthropic.com',
     keys: 'https://console.anthropic.com/settings/keys', placeholder: 'sk-ant-…'
+  },
+  zai: {
+    name: 'Z.ai', hint: 'aiZaiHint', origin: 'https://api.z.ai/*', host: 'api.z.ai',
+    keys: 'https://z.ai/manage-apikey/apikey-list', placeholder: ''
   }
 };
-const AI_SECRETS = Object.keys(AI_PROVIDERS).map(id => `ai.${id}.key`);
-const AI_ORIGINS = Object.values(AI_PROVIDERS).map(p => p.origin);
+// the ChatGPT plan: a sign-in instead of a key, which needs OpenAI's API, its sign-in site and,
+// while it is underway, the loopback address it comes back to (data/ai/ai.js)
+const AI_PLAN = {
+  name: 'ChatGPT', origins: ['https://api.openai.com/*', 'https://auth.openai.com/*'], host: 'api.openai.com',
+  loopback: 'http://127.0.0.1/*', usage: 'https://chatgpt.com/settings/usage'
+};
+const AI_KEYS = Object.keys(AI_PROVIDERS).map(id => `ai.${id}.key`);
+const AI_SECRETS = [...AI_KEYS, 'ai.chatgpt.auth', 'ai.chatgpt.client', 'ai.chatgpt.host'];
+const AI_ORIGINS = [...new Set([...Object.values(AI_PROVIDERS).map(p => p.origin), ...AI_PLAN.origins, AI_PLAN.loopback])];
 const SERVICES = Object.values(self.MailServices || {});
 // the default sound and five special ones, each a type (0-3 built in, 4 own file), a file and a mime
 const MEDIA = ['default', 'custom0', 'custom1', 'custom2', 'custom3', 'custom4'].map(n => 'notification.sound.media.' + n);
@@ -98,6 +115,8 @@ const int = (min, max) => v => Number.isInteger(v) && v >= min && v <= max;
 const oneOf = (...list) => v => list.includes(v);
 const upTo = n => v => v.length <= n;
 const TIME = v => /^([01]\d|2[0-3]):[0-5]\d$/.test(v);
+// a model id as the providers write them (gpt-5-mini, claude-opus-5-5, glm-5.3, o4-mini); empty: not picked yet
+const MODEL = v => /^([\w][\w.:\/-]{0,99})?$/.test(v);
 const VALID = {
   'period': int(30, 3600), // seconds; Chrome's alarms come no faster than every 30 s
   'initialPeriod': int(0, 600),
@@ -118,9 +137,10 @@ const VALID = {
   'badge.count': oneOf('all', 'new'),
   'ai.engine': oneOf(...AI_ENGINES),
   'ai.summary': oneOf('off', 'click', 'auto'),
-  // a model id as the providers write them (gpt-5-mini, claude-opus-5-5, o4-mini); empty: not picked yet
-  'ai.openai.model': v => /^([\w][\w.:\/-]{0,99})?$/.test(v),
-  'ai.anthropic.model': v => /^([\w][\w.:\/-]{0,99})?$/.test(v)
+  'ai.chatgpt.model': MODEL,
+  'ai.openai.model': MODEL,
+  'ai.anthropic.model': MODEL,
+  'ai.zai.model': MODEL
 };
 for (const m of MEDIA.slice(1)) {
   VALID[m + '.selector'] = oneOf(0, 1, 2);
@@ -493,22 +513,28 @@ const revokeOff = ids => {
   const origins = SERVICES.filter(s => !ids.includes(s.id)).flatMap(s => s.origins);
   return origins.length ? chrome.permissions.remove({origins}).catch(() => false) : Promise.resolve(true);
 };
-// the panel's links to a section: #services, #ai
-if (location.hash === '#services' || location.hash === '#ai') {
-  addEventListener('load', () => $(location.hash.slice(1)).scrollIntoView({block: 'start'}));
+// the panel's links to a section: #services, #ai, and #ai-chatgpt or another engine (followHash)
+const section = /^#(services|ai)\b/.exec(location.hash)?.[1];
+if (section) {
+  addEventListener('load', () => $(section).scrollIntoView({block: 'start'}));
 }
 $('forget').onclick = () => store.remove('accounts').then(() => {
   toast(t('forgotten'));
   paintAccounts();
 });
 
-/* AI: an engine, a provider's key and model, and what it does (self.AI, data/ai/ai.js) */
+/* AI: an engine, a provider's key or the ChatGPT sign-in, a model, and what it does (self.AI, data/ai/ai.js) */
 // The page works without the module as well: the card then says the AI is not available.
 const aiModule = () => self.AI;
 const uiLang = () => chrome.i18n.getUILanguage();
 // each provider's key as chrome.storage.local holds it: never in prefs (a backup's source),
 // never written into the page; the field is for a new key only
 let aiKeys = {};
+// the ChatGPT plan as the module tells it, {email, plan, limit} or null: never a token
+let aiAccount = null;
+// while a sign-in waits in its tab; what went wrong with the last one, or a sign-out OpenAI did not confirm
+let aiSigning = false;
+let aiPlanNote = '';
 // whether Chrome gives the provider's site: a key without it is of no use
 const aiAccess = {};
 // the models a provider's key may use, as this page last heard, or {error}
@@ -522,12 +548,27 @@ let builtinRun = 0;
 let builtinLang = '';
 const aiKeyOf = engine => aiKeys[`ai.${engine}.key`] || '';
 const aiModelKey = engine => `ai.${engine}.model`;
-const readAIKeys = () => store.get(Object.fromEntries(AI_SECRETS.map(k => [k, '']))).then(r => {
+// an engine with what it needs to list its models: a key, or the plan signed in
+const aiReady = engine => AI_PROVIDERS[engine] ? Boolean(aiKeyOf(engine)) : engine === 'chatgpt' && Boolean(aiAccount);
+const readAIKeys = () => store.get(Object.fromEntries(AI_KEYS.map(k => [k, '']))).then(r => {
   aiKeys = r;
 });
+const readAccount = () => Promise.resolve().then(() => aiModule()?.chatgpt?.account()).catch(() => null).then(a => {
+  // signed in or out, or another account: its models are asked for anew
+  if (Boolean(a) !== Boolean(aiAccount) || a?.email !== aiAccount?.email) {
+    delete aiLists.chatgpt;
+  }
+  aiAccount = a && typeof a === 'object' ? a : null;
+});
+// the sites another engine still needs: a key kept, or the plan signed in
+const aiNeeded = except => new Set([
+  ...Object.keys(AI_PROVIDERS).filter(id => id !== except && aiKeyOf(id)).map(id => AI_PROVIDERS[id].origin),
+  ...(except !== 'chatgpt' && aiAccount ? AI_PLAN.origins : [])
+]);
+const aiOrigins = engine => AI_PROVIDERS[engine] ? [AI_PROVIDERS[engine].origin] : AI_PLAN.origins;
 const syncAIAccess = async () => {
-  const ids = Object.keys(AI_PROVIDERS);
-  const granted = await Promise.all(ids.map(id => chrome.permissions.contains({origins: [AI_PROVIDERS[id].origin]}).catch(() => false)));
+  const ids = [...Object.keys(AI_PROVIDERS), 'chatgpt'];
+  const granted = await Promise.all(ids.map(id => chrome.permissions.contains({origins: aiOrigins(id)}).catch(() => false)));
   ids.forEach((id, i) => {
     // access given again (or taken) asks for the list anew
     if (aiAccess[id] !== granted[i]) {
@@ -544,6 +585,10 @@ const aiErrorText = (e, engine) => {
   const code = e?.code;
   if (code === 'aborted') {
     return '';
+  }
+  // the plan has no key: what OpenAI said keeps it out (a region, say), or its sites not given
+  if (engine === 'chatgpt' && (code === 'auth' || code === 'no-access' || code === 'model' || code === 'no-models')) {
+    return code === 'auth' ? e.message || t('aiErrOther') : code === 'no-access' ? t('aiPlanAccess') : t('aiPlanNoModels');
   }
   if (code === 'auth') {
     return t('aiErrAuth', p ? p.name : '');
@@ -572,7 +617,8 @@ const aiDefaultModel = (engine, list) => {
   return ids.find(id => /^gpt-\d+(\.\d+)?-mini$/.test(id)) || ids.find(id => id.startsWith('gpt-')) || ids[0] || '';
 };
 const aiPrefsFor = engine => ({
-  engine, model: prefs[aiModelKey(engine)] || '', summary: prefs['ai.summary'], reply: prefs['ai.reply'], key: aiKeyOf(engine)
+  engine, model: prefs[aiModelKey(engine)] || '', summary: prefs['ai.summary'], reply: prefs['ai.reply'],
+  ...(AI_PROVIDERS[engine] ? {key: aiKeyOf(engine)} : {})
 });
 // a setting the page sets on its own, as a model picked for a new key: saved without a toast
 const keep = values => {
@@ -707,7 +753,7 @@ const aiError = text => {
 };
 const listModels = engine => {
   const key = aiKeyOf(engine);
-  if (aiListing.has(engine) || !key) {
+  if (aiListing.has(engine) || !aiReady(engine)) {
     return;
   }
   aiListing.add(engine);
@@ -732,8 +778,8 @@ const paintModels = engine => {
   const note = $('ai-model-note');
   const stored = prefs[aiModelKey(engine)];
   const list = aiLists[engine];
-  // a recommended model says what for: the best summaries, or the fastest and cheapest
-  const TAGS = {best: 'aiBest', fast: 'aiFast'};
+  // a model says what it is for: the best summaries, the fastest and cheapest, or no cost at all
+  const TAGS = {best: 'aiBest', fast: 'aiFast', free: 'aiFree'};
   const option = (m, label = [m.name || m.id, TAGS[m.tag] && t(TAGS[m.tag])].filter(Boolean).join(' · ')) =>
     h('option', {value: m.id, textContent: label, selected: m.id === stored});
   if (!Array.isArray(list)) {
@@ -763,19 +809,64 @@ const paintModels = engine => {
   note.textContent = gone ? t('aiModelGone', stored) : '';
   note.hidden = !gone;
 };
+// The ChatGPT plan: the offer to sign in, or the account signed in with its usage. A note says
+// why it does not work now: no access, a plan that is not this account's, its usage limit.
+const paintPlan = () => {
+  const on = prefs['ai.engine'] === 'chatgpt';
+  $('ai-plan').hidden = !on;
+  if (!on) {
+    return;
+  }
+  const a = aiAccount;
+  const access = aiAccess.chatgpt === true;
+  const title = $('ai-plan-title');
+  if (!a) {
+    title.textContent = t('aiPlanUse');
+    title.dataset.state = 'none';
+    $('ai-plan-text').replaceChildren(t('aiPlanUseText'));
+  }
+  else {
+    title.textContent = a.email ? t('aiSignedIn', a.email) : t('aiSignedInPlain');
+    title.dataset.state = !access || !a.plan ? 'bad' : a.limit ? 'wait' : 'ok';
+    const usage = h('a', {href: AI_PLAN.usage, target: '_blank', rel: 'noopener', textContent: t('aiManageUsage')});
+    // there the user may raise the limit: what waited for it is asked again
+    usage.onclick = () => aiModule()?.chatgpt?.resume?.();
+    $('ai-plan-text').replaceChildren(...(a.plan ? [t('aiPlanUsing'), ' · '] : []), usage);
+  }
+  $('ai-plan-plus').hidden = Boolean(a) && !a.plan;
+  const note = aiPlanNote || (!a ? '' : !access ? t('aiNoAccess', AI_PLAN.host) : !a.plan ? chrome.i18n.getMessage('ai_err_no_plan') :
+    a.limit ? chrome.i18n.getMessage('ai_err_limit') : '');
+  $('ai-plan-note').textContent = note;
+  $('ai-plan-note').hidden = !note;
+  $('ai-plan-wait').textContent = aiSigning && !a ? t('aiSignInWait') : '';
+  $('ai-plan-wait').hidden = !$('ai-plan-wait').textContent;
+  // signed in without the plan's use: a new sign-in may allow it
+  $('ai-signin').hidden = Boolean(a) && a.plan;
+  $('ai-signout').hidden = !a;
+  $('ai-plan-allow').hidden = !a || access;
+};
 const paintCloud = () => {
   const engine = prefs['ai.engine'];
   const p = AI_PROVIDERS[engine];
   const key = p ? aiKeyOf(engine) : '';
   $('ai-key-row').hidden = !p || Boolean(key);
   $('ai-connected').hidden = !p || !key;
-  $('ai-model-row').hidden = !p || !key || !aiAccess[engine];
+  // the models of a key Chrome lets Mail Deck use, or of the plan signed in
+  const plan = engine === 'chatgpt' && Boolean(aiAccount?.plan) && aiAccess.chatgpt === true;
+  $('ai-model-row').hidden = !(p ? key && aiAccess[engine] : plan);
+  $('ai-model-text').textContent = t(engine === 'chatgpt' ? 'aiPlanModelText' : 'aiModelText');
+  paintPlan();
+  if (plan) {
+    paintModels(engine);
+  }
   if (!p) {
     return;
   }
   if (!key) {
     $('ai-key-label').textContent = t('aiKey', p.name);
-    $('ai-key-plan').textContent = t('aiKeyText', p.plan, p.name);
+    $('ai-key-plan').textContent = p.plan ? t('aiKeyText', p.plan, p.name) : '';
+    $('ai-key-hint').textContent = p.hint ? t(p.hint) : '';
+    $('ai-key-hint').hidden = !p.hint;
     $('ai-key-link').href = p.keys;
     $('ai-key').placeholder = p.placeholder;
     $('ai-key').readOnly = aiConnecting;
@@ -806,7 +897,8 @@ const paintAI = () => {
     row.querySelectorAll('input, select').forEach(el => el.disabled = off);
   }
   const p = AI_PROVIDERS[engine];
-  $('ai-privacy').textContent = p ? t('aiPrivacy', p.name) : engine === 'builtin' ? t('aiPrivacyLocal') : '';
+  $('ai-privacy').textContent = p ? t('aiPrivacy', p.name) : engine === 'builtin' ? t('aiPrivacyLocal') :
+    engine === 'chatgpt' ? t('aiPrivacyPlan') : '';
   $('ai-privacy').hidden = !$('ai-privacy').textContent;
   $('ai-builtin').hidden = engine !== 'builtin';
   paintBuiltin();
@@ -825,6 +917,7 @@ const pickEngine = engine => {
   // a key typed for one provider never goes to another
   resetKeyField();
   builtinError('');
+  aiPlanNote = '';
   save({'ai.engine': engine});
   paintAI();
 };
@@ -901,7 +994,8 @@ const connect = () => {
     return ok;
   });
 };
-// Disconnect: the key and the model forgotten, the provider's site given back to Chrome
+// Disconnect: the key and the model forgotten, the provider's site given back to Chrome (but
+// not OpenAI's while the ChatGPT plan, signed in, uses it too)
 const disconnect = () => {
   const engine = prefs['ai.engine'];
   const p = AI_PROVIDERS[engine];
@@ -912,9 +1006,10 @@ const disconnect = () => {
   aiKeys[`ai.${engine}.key`] = '';
   prefs[aiModelKey(engine)] = '';
   aiAccess[engine] = false;
+  const origins = [p.origin].filter(o => !aiNeeded(engine).has(o));
   return Promise.all([
     store.remove([`ai.${engine}.key`, aiModelKey(engine)]),
-    chrome.permissions.remove({origins: [p.origin]}).catch(() => false)
+    origins.length ? chrome.permissions.remove({origins}).catch(() => false) : true
   ]).then(() => {
     toast(t('aiDisconnected', p.name));
     if (prefs['sync.settings']) {
@@ -957,17 +1052,129 @@ $('ai-allow').onclick = () => {
     }
   });
 };
+
+/* the ChatGPT plan: Continue with ChatGPT, Sign out, and the word after the first sign-in */
+// Sign-in: the module asks Chrome for the sites from the click itself, before anything is
+// awaited, then opens ChatGPT in a tab. The sign-in comes back there (data/ai/callback.html);
+// this page follows it in storage.
+$('ai-signin').onclick = () => {
+  const AI = aiModule();
+  if (!AI?.chatgpt) {
+    return;
+  }
+  let started;
+  try {
+    started = Promise.resolve(AI.chatgpt.signIn());
+  }
+  catch (e) {
+    started = Promise.reject(e);
+  }
+  aiPlanNote = '';
+  aiSigning = true;
+  paintPlan();
+  return started.then(() => {
+    // Chrome's access was asked for and given: the card shows it as it is
+    aiAccess.chatgpt = true;
+  }, e => {
+    aiSigning = false;
+    aiPlanNote = aiErrorText(e, 'chatgpt');
+  }).then(() => {
+    paintCloud();
+    $('ai-signin').focus();
+  });
+};
+// Sign out: revoked at OpenAI and forgotten here; the sites go back to Chrome, but not OpenAI's
+// API while an OpenAI key uses it. When OpenAI did not confirm it, the card says where to finish it.
+$('ai-signout').onclick = () => {
+  const AI = aiModule();
+  const button = $('ai-signout');
+  if (!AI?.chatgpt || button.getAttribute('aria-disabled') === 'true') {
+    return;
+  }
+  button.setAttribute('aria-disabled', 'true');
+  return Promise.resolve().then(() => AI.chatgpt.signOut()).then(r => {
+    aiAccount = null;
+    delete aiLists.chatgpt;
+    aiPlanNote = r?.revoked === false ? t('aiSignOutUnconfirmed') : '';
+    const origins = [...AI_PLAN.origins, AI_PLAN.loopback].filter(o => !aiNeeded('chatgpt').has(o));
+    aiAccess.chatgpt = false;
+    toast(t('aiSignedOut'));
+    return chrome.permissions.remove({origins}).catch(() => false);
+  }, e => toast(aiErrorText(e, 'chatgpt') || t('aiErrOther'))).then(() => {
+    button.setAttribute('aria-disabled', 'false');
+    paintCloud();
+    $('ai-signin').focus();
+  });
+};
+// the plan signed in while Chrome's access was taken: asked for again
+$('ai-plan-allow').onclick = () => Promise.resolve(chrome.permissions.request({origins: AI_PLAN.origins})).catch(() => false).then(granted => {
+  aiAccess.chatgpt = granted === true;
+  delete aiLists.chatgpt;
+  paintCloud();
+  if (granted) {
+    $('ai-model').focus();
+  }
+});
+// once, after the first sign-in that may use the plan
+const welcome = async () => {
+  const dialog = $('ai-welcome');
+  if (prefs['ai.engine'] !== 'chatgpt' || !aiAccount?.plan || dialog.open || typeof dialog.showModal !== 'function') {
+    return;
+  }
+  const {'ai.chatgpt.welcomed': seen} = await store.get({'ai.chatgpt.welcomed': false});
+  if (!seen && !dialog.open) {
+    dialog.showModal();
+    $('ai-welcome-ok').focus();
+  }
+};
+// Got it, or Esc: seen
+$('ai-welcome').onclose = () => {
+  store.set({'ai.chatgpt.welcomed': true}).catch(() => {});
+  ($('ai-model-row').hidden ? $('ai-signout') : $('ai-model')).focus();
+};
+$('ai-welcome-ok').onclick = () => $('ai-welcome').close?.();
+// what the module says of the plan changed in storage: a sign-in that came back or ended, a
+// refresh, a sign-out in another tab, the usage limit
+const followPlan = () => readAccount().then(() => {
+  if (aiAccount) {
+    aiSigning = false;
+    aiPlanNote = '';
+  }
+  paintCloud();
+  return welcome();
+});
+// The panel's links to an engine (#ai-chatgpt, #ai-openai, #ai-anthropic, #ai-zai, #ai-builtin):
+// that engine picked, the card in view, and its next step focused: the sign-in or the key while
+// there is none, then the model
+const followHash = () => {
+  const engine = /^#ai-([a-z]+)$/.exec(location.hash)?.[1];
+  if (!engine || engine === 'off' || !AI_ENGINES.includes(engine)) {
+    return;
+  }
+  pickEngine(engine);
+  const shown = (...ids) => ids.map($).find(el => !el.hidden);
+  const next = engine === 'builtin' ? document.querySelector('input[name="ai.engine"][value="builtin"]') :
+    engine === 'chatgpt' ? ($('ai-model-row').hidden ? shown('ai-signin', 'ai-plan-allow', 'ai-signout') : $('ai-model')) :
+    !aiKeyOf(engine) ? $('ai-key') : $('ai-model-row').hidden ? shown('ai-allow', 'ai-disconnect') : $('ai-model');
+  $('ai').scrollIntoView({block: 'start'});
+  next?.focus();
+};
+
 $('ai-model').onchange = () => {
   const engine = prefs['ai.engine'];
-  if (AI_PROVIDERS[engine]) {
+  if (AI_PROVIDERS[engine] || engine === 'chatgpt') {
     save({[aiModelKey(engine)]: $('ai-model').value}).then(() => paintModels(engine));
   }
 };
-// what another page changes (another settings tab, a reset): the card follows; a key only as stored
+// what another page changes (another settings tab, a reset): the card follows; a key only as
+// stored, the plan's sign-in only as the module tells it
 const followAI = changes => {
   let changed = false;
+  if ('ai.chatgpt.auth' in changes) {
+    followPlan();
+  }
   for (const [k, change] of Object.entries(changes)) {
-    if (AI_SECRETS.includes(k)) {
+    if (AI_KEYS.includes(k)) {
       const value = change.newValue || '';
       if (aiKeys[k] !== value) {
         aiKeys[k] = value;
@@ -988,11 +1195,13 @@ const followAI = changes => {
     paintAI();
   }
 };
-// what a reset leaves of the AI: no key, no provider's site, no reply marks kept
-const forgetAI = () => Promise.all([
-  store.remove([...AI_SECRETS, 'ai.replies']),
+// What a reset leaves of the AI: no key, no ChatGPT sign-in (revoked first, while its site is
+// given), no provider's site, no reply marks kept. The plan's client and this browser's id stay
+// for a later sign-in.
+const forgetAI = () => Promise.resolve().then(() => aiModule()?.chatgpt?.signOut()).catch(() => null).then(() => Promise.all([
+  store.remove([...AI_KEYS, 'ai.chatgpt.auth', 'ai.replies']),
   chrome.permissions.remove({origins: AI_ORIGINS}).catch(() => false)
-]);
+]));
 
 /* the panel's shortcut: Chrome keeps it, and changes it on chrome://extensions/shortcuts */
 const paintShortcut = () => chrome.commands.getAll(commands => {
@@ -1267,10 +1476,24 @@ const browserChecks = () => Promise.all([
   }),
   aiDiag()
 ]);
-// the AI's line: the engine and whether it works now (a key is asked of its provider), never the key
+// the AI's line: the engine and whether it works now (a key or the plan's sign-in is asked of
+// its provider), never the key, the account or a token
 const aiDiag = () => check('ai', async () => {
   const engine = prefs['ai.engine'];
   const p = AI_PROVIDERS[engine];
+  if (engine === 'chatgpt') {
+    const AI = aiModule();
+    const a = await within(Promise.resolve().then(() => AI?.chatgpt?.account())).catch(() => null);
+    if (!a) {
+      return [false, `${AI_PLAN.name}: ${t('aiDiagSignedOut')}`];
+    }
+    if (!await chrome.permissions.contains({origins: AI_PLAN.origins}).catch(() => false)) {
+      return [false, `${AI_PLAN.name}: ${t('aiDiagNoAccess', AI_PLAN.host)}`];
+    }
+    return within(Promise.resolve().then(() => AI.check('chatgpt'))).then(
+      () => [true, [t('aiPlan'), prefs[aiModelKey(engine)]].filter(Boolean).join(' · ')],
+      e => [false, `${AI_PLAN.name}: ${aiErrorText(e, engine)}`]);
+  }
   if (!p && engine !== 'builtin') {
     return [null, t('aiOff')];
   }
@@ -1379,6 +1602,13 @@ store.get(DEFAULTS).then(stored => {
   // what changes while the page is open: inboxes the background finds, the toolbar menu's
   // switches, a service's sites given or taken on chrome://extensions
   chrome.storage.onChanged.addListener((ps, area) => {
+    // the session: a ChatGPT sign-in underway or over, the plan's pause at its usage limit
+    if (area === 'session' && ('ai.chatgpt.pending' in ps || 'ai.chatgpt.limit' in ps)) {
+      if ('ai.chatgpt.pending' in ps) {
+        aiSigning = Boolean(ps['ai.chatgpt.pending'].newValue);
+      }
+      followPlan();
+    }
     if (area !== 'local') {
       return;
     }
@@ -1397,7 +1627,9 @@ store.get(DEFAULTS).then(stored => {
   };
   chrome.permissions.onAdded?.addListener(followAccess);
   chrome.permissions.onRemoved?.addListener(followAccess);
-  // the AI card: the keys as stored and Chrome's access first, so it shows as it is at once
-  Promise.all([readAIKeys(), syncAIAccess()]).then(paintAI);
+  // the AI card: the keys and the plan's account as stored and Chrome's access first, so it
+  // shows as it is at once; then the engine a link names, and the word after a first sign-in
+  Promise.all([readAIKeys(), syncAIAccess(), readAccount()]).then(paintAI).then(followHash).then(welcome);
+  addEventListener('hashchange', followHash);
   return paintAccounts();
 });

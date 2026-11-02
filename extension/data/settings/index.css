@@ -557,7 +557,7 @@ a:focus-visible,
   }
 }
 
-/* the AI: one engine of four, then what that engine needs, then what the AI does */
+/* the AI: one engine of six, then what that engine needs, then what the AI does */
 /* what the card hides stays hidden, whatever its display: a row, the meter */
 #ai [hidden] {
   display: none !important;
@@ -585,7 +585,7 @@ a:focus-visible,
   background: radial-gradient(circle, var(--accent) 0 5px, transparent 5.5px);
   box-shadow: inset 0 0 0 2px var(--accent);
 }
-/* what the chosen engine needs sits in a tint of its own, under the four */
+/* what the chosen engine needs sits in a tint of its own, under the six */
 .row.sub {
   background: color-mix(in srgb, var(--ink) 3%, var(--card));
 }
@@ -613,6 +613,10 @@ a:focus-visible,
 .state[data-state="wait"]::before {
   background: #d9822b;
 }
+/* an offer, not a status: no dot */
+.state[data-state="none"]::before {
+  display: none;
+}
 .key {
   display: flex;
   flex-wrap: wrap;
@@ -628,6 +632,12 @@ a:focus-visible,
 .row > small.note {
   margin-top: -2px;
   color: var(--danger);
+  font-size: 12.5px;
+}
+/* a word under the key field: which key it takes */
+.row > small.tip {
+  margin-top: -2px;
+  color: var(--muted);
   font-size: 12.5px;
 }
 .meter {
@@ -680,8 +690,39 @@ a:focus-visible,
 }
 /* a status with its buttons: on a narrow page the buttons go under the words, not beside a sliver */
 #ai-connected > .text,
-#ai-builtin > .text {
+#ai-builtin > .text,
+#ai-plan > .text {
   flex: 1 1 260px;
+}
+#ai-plan .inline {
+  flex-wrap: wrap;
+}
+/* the ChatGPT plan's word after the first sign-in: a card over the page */
+.welcome {
+  width: min(400px, calc(100vw - 32px));
+  padding: 26px 24px 22px;
+  border: 0;
+  border-radius: 22px;
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: var(--lift);
+}
+.welcome::backdrop {
+  background: rgba(10, 12, 16, .4);
+}
+.welcome h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -.01em;
+}
+.welcome p {
+  margin: 8px 0 20px;
+  color: var(--muted);
+}
+.welcome .ghost {
+  display: block;
+  margin-inline-start: auto;
 }
 @media (prefers-reduced-motion: reduce) {
   .meter progress:indeterminate {
