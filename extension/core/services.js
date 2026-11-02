@@ -238,12 +238,17 @@
     // Gmail's links go to the offscreen document, a service's to the service
     async dispatch(request) {
       const mine = request.links.filter(link => of(link));
-      const gmail = request.links.filter(link => !of(link));
-      const [a, b] = await Promise.all([
+      // Gmail takes one account's mail a request (its mail/u/N), so mail of several goes in one each
+      const accounts = new Map();
+      for (const link of request.links.filter(link => !of(link))) {
+        const n = (link.match(/u\/(\d+)/) || [])[1] || '0';
+        accounts.set(n, [...accounts.get(n) || [], link]);
+      }
+      const results = await Promise.all([
         mine.length ? action({...request, links: mine}) : true,
-        gmail.length ? offscreen.command({cmd: 'gmail.action', request: {...request, links: gmail}}) : true
+        ...[...accounts.values()].map(links => offscreen.command({cmd: 'gmail.action', request: {...request, links}}))
       ]);
-      return a !== true ? a : b;
+      return results.find(r => r !== true) ?? true;
     },
     // the settings' diagnostics: what the service answers now, read only
     async check(id) {

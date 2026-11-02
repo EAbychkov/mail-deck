@@ -297,6 +297,14 @@ const tests = [
     eq([...t.sent.offscreen[0].links], [gmail]);
     eq(t.sent.action[0].refs.map(r => r.mid), ['1']);
   }],
+  ['Gmail mail of two accounts goes in one request each, a failure of either reported', async () => {
+    const t = setup();
+    const a = ['https://mail.google.com/mail/u/0?message_id=a1', 'https://mail.google.com/mail/u/0?message_id=a2'];
+    const b = ['https://mail.google.com/mail/u/2?message_id=b1'];
+    const r = await t.Services.dispatch({cmd: 'rc_^i', links: [a[0], b[0], a[1]]});
+    assert.strictEqual(r, true);
+    eq(t.sent.offscreen.map(x => [...x.links]), [a, b]);
+  }],
   ['only Gmail: the services are not involved', async () => {
     const t = setup();
     await t.Services.dispatch({cmd: 'rd', links: ['https://mail.google.com/mail/u/1?message_id=x']});
