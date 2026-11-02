@@ -29,7 +29,10 @@
     entry(0, 'c2', 'Банк', 'alerts@bank.test', 'Код подтверждения', 'Ваш код: 7310. Никому его не сообщайте.', 2),
     entry(0, 'c3', 'Stripe', 'billing@stripe.com', 'Invoice #1042 for 2026', 'Questions? Call +1 415 555 0134. Our code of conduct changed.', 3),
     entry(0, 'c4', 'GitHub', 'noreply@github.com', '[GitHub] Please verify your device', 'Verification code: 123-456', 4),
-    entry(0, 'c5', 'Anna', 'anna@figma.com', 'Встреча', 'В 10:30, комната 4815', 5)
+    entry(0, 'c5', 'Anna', 'anna@figma.com', 'Встреча', 'В 10:30, комната 4815', 5),
+    // a code word far from the number, and numbers labelled as something else
+    entry(0, 'c6', 'Amazon Web Services', 'invoicing@aws.com', 'Amazon Web Services Invoice Available [Account: 762728162410] [Invoice ID: 2882561041]',
+      'Never share your password or verification code. Invoice Number: 0801. Tax code 0801, VAT code: 0802', 6)
   ])];
   // ?s=site: mail of github.com (one with a fresh code, one sent through a bulk sender, one in
   // another mailbox), of Amazon under two endings (its code too old), of a generic brand, and others

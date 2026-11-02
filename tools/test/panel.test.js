@@ -160,7 +160,7 @@ const checks = {
     'Esc in the search field gives the focus to the search button': r.focusAfterSearch === 'search'
   }),
   codes: r => ({
-    'a one-time code shows on its line; numbers that are none show nothing': JSON.stringify(r.pills) === '["G-482913","7310","","123-456",""]',
+    'a one-time code shows on its line; numbers that are none show nothing': JSON.stringify(r.pills) === '["G-482913","7310","","123-456","",""]',
     'a click on it copies the digits, and opens, reads or deletes nothing': r.copied === '482913' && r.copiedShown && !r.opened && r.actions === 0 && r.rowsKept,
     'C copies the code of the focused line, and nothing from a line without one': r.copiedByKey === '7310' && r.copiedNone === null,
     'the reader shows the code too, and C copies it there without an action': r.readerPill === '123-456' && r.copiedInReader === '123456' && r.actionsAfter === 0
