@@ -1670,6 +1670,45 @@
     "ai_err_no_access": {
         "message": "اسمح بالوصول إلى المزوّد في الإعدادات ضمن «الذكاء الاصطناعي»."
     },
+    "ai_err_limit": {
+        "message": "بلغت حدّ استخدام ChatGPT."
+    },
+    "ai_err_no_plan": {
+        "message": "لا يمكن استخدام خطة ChatGPT مع هذا الحساب."
+    },
+    "ai_err_signed_out": {
+        "message": "سجّلت الخروج من ChatGPT. سجّل الدخول مجددًا في الإعدادات ضمن «الذكاء الاصطناعي»."
+    },
+    "ai_err_denied": {
+        "message": "لم يُسمح لـ Mail Deck باستخدام خطة ChatGPT الخاصة بك."
+    },
+    "ai_err_sign_in": {
+        "message": "لم يكتمل تسجيل الدخول باستخدام ChatGPT. أعد المحاولة."
+    },
+    "ai_err_other_account": {
+        "message": "ليس هذا حساب ChatGPT الذي أُعدّ به Mail Deck. أعد المحاولة لإعداده بهذا الحساب."
+    },
+    "ai_signin_title": {
+        "message": "تسجيل الدخول باستخدام ChatGPT"
+    },
+    "ai_signin_working": {
+        "message": "جارٍ تسجيل الدخول…"
+    },
+    "ai_signin_done": {
+        "message": "سجّلت الدخول باسم $1"
+    },
+    "ai_signin_done_plain": {
+        "message": "سجّلت الدخول إلى ChatGPT"
+    },
+    "ai_signin_close": {
+        "message": "يمكنك إغلاق علامة التبويب هذه."
+    },
+    "ai_signin_failed": {
+        "message": "تعذّر تسجيل الدخول"
+    },
+    "ai_signin_retry": {
+        "message": "إعادة المحاولة"
+    },
     "ai_note_english": {
         "message": "يجيب النموذج المدمج بالإنجليزية."
     },
@@ -2016,13 +2055,22 @@
         "message": "لا ملخّصات ولا علامات للرد. لا يُرسل أي شيء إلى أي مكان."
     },
     "opt_aiBuiltin": {
-        "message": "على هذا الكمبيوتر"
+        "message": "المدمج في Chrome"
     },
     "opt_aiBuiltinText": {
-        "message": "النموذج المدمج في Chrome. مجاني وخاص، لكنه غير متوفر على كل كمبيوتر."
+        "message": "يعمل على هذا الكمبيوتر: مجاني وخاص، لكنه غير متوفر على كل كمبيوتر."
+    },
+    "opt_aiPlan": {
+        "message": "خطة ChatGPT"
+    },
+    "opt_aiPlanText": {
+        "message": "خطة ChatGPT التي لديك بالفعل، دون مفتاح API."
     },
     "opt_aiCloudText": {
-        "message": "بمفتاح API الخاص بك من $1، والدفع حسب الاستخدام."
+        "message": "نماذج $1، والدفع حسب الاستخدام."
+    },
+    "opt_aiZaiText": {
+        "message": "نماذج GLM، والدفع حسب الاستخدام؛ وبعضها مجاني."
     },
     "opt_aiChecking": {
         "message": "جارٍ التحقق…"
@@ -2049,7 +2097,7 @@
         "message": "غير متاح على هذا الكمبيوتر"
     },
     "opt_aiUnavailableText": {
-        "message": "لا يوفّر Chrome نموذجه هنا. يعمل OpenAI وAnthropic على أي كمبيوتر."
+        "message": "لا يوفّر Chrome نموذجه هنا. تعمل الخيارات الأخرى على أي كمبيوتر."
     },
     "opt_aiOldChrome": {
         "message": "يحتاج إلى Chrome 138 أو أحدث"
@@ -2065,6 +2113,15 @@
     },
     "opt_aiKeyText": {
         "message": "اشتراك $1 لا يشمل الوصول إلى API: تحاسب $2 على المفتاح بشكل منفصل، حسب الاستخدام."
+    },
+    "opt_aiOpenAIHint": {
+        "message": "لديك خطة ChatGPT؟ اختر «خطة ChatGPT» في الأعلى لاستخدامها دون مفتاح."
+    },
+    "opt_aiAnthropicHint": {
+        "message": "لا تسمح قواعد Anthropic باستخدام اشتراكات Claude Pro وMax في تطبيقات أخرى، لذا استخدم مفتاح API من console.anthropic.com."
+    },
+    "opt_aiZaiHint": {
+        "message": "استخدم مفتاح API عاديًا من z.ai. مفتاح GLM Coding Plan يعمل في أدوات البرمجة فقط."
     },
     "opt_aiGetKey": {
         "message": "احصل على مفتاح"
@@ -2099,6 +2156,45 @@
     "opt_aiDisconnected": {
         "message": "أُزيل مفتاح $1"
     },
+    "opt_aiPlanUse": {
+        "message": "استخدام خطة ChatGPT الخاصة بك"
+    },
+    "opt_aiPlanUseText": {
+        "message": "نفّذ طلبات الذكاء الاصطناعي المؤهلة في Mail Deck ضمن الاستخدام المشمول في خطة ChatGPT الخاصة بك."
+    },
+    "opt_aiPlanPlus": {
+        "message": "لـ ChatGPT Plus حدّ استخدام لكل خمس ساعات، تتشاركه كل التطبيقات التي تستخدمه."
+    },
+    "opt_aiSignIn": {
+        "message": "المتابعة باستخدام ChatGPT"
+    },
+    "opt_aiSignInWait": {
+        "message": "أكمل تسجيل الدخول في صفحة ChatGPT التي فُتحت."
+    },
+    "opt_aiSignedIn": {
+        "message": "مسجّل الدخول باسم $1"
+    },
+    "opt_aiSignedInPlain": {
+        "message": "مسجّل الدخول إلى ChatGPT"
+    },
+    "opt_aiPlanUsing": {
+        "message": "تستخدم خطة ChatGPT الخاصة بك"
+    },
+    "opt_aiManageUsage": {
+        "message": "إدارة الاستخدام"
+    },
+    "opt_aiSignOut": {
+        "message": "تسجيل الخروج"
+    },
+    "opt_aiSignedOut": {
+        "message": "تم تسجيل الخروج من ChatGPT"
+    },
+    "opt_aiSignOutUnconfirmed": {
+        "message": "سُجّل الخروج هنا، لكن OpenAI لم تؤكّد ذلك. للتأكّد، ألغِ ربط Mail Deck في إعدادات ChatGPT."
+    },
+    "opt_aiPlanAccess": {
+        "message": "دون الوصول إلى مواقع OpenAI لا يستطيع Mail Deck تسجيل الدخول باستخدام ChatGPT. أعد المحاولة واسمح بالوصول."
+    },
     "opt_aiNoAccess": {
         "message": "لم يعد Chrome يسمح لـ Mail Deck بالوصول إلى $1."
     },
@@ -2123,11 +2219,20 @@
     "opt_aiFast": {
         "message": "الأسرع والأرخص"
     },
+    "opt_aiFree": {
+        "message": "مجاني"
+    },
     "opt_aiModelGone": {
         "message": "لم يعد $1 متاحًا لهذا المفتاح. اختر نموذجًا آخر."
     },
     "opt_aiNoModels": {
         "message": "لا يملك هذا المفتاح نماذج يمكن لـ Mail Deck استخدامها."
+    },
+    "opt_aiPlanModelText": {
+        "message": "النماذج الأكبر تلخّص أفضل، والأصغر تجيب أسرع وتستهلك أقل من خطتك."
+    },
+    "opt_aiPlanNoModels": {
+        "message": "لا تتضمن خطة ChatGPT الخاصة بك نماذج يمكن لـ Mail Deck استخدامها."
     },
     "opt_aiSummary": {
         "message": "ملخّص عند قراءة الرسالة"
@@ -2145,16 +2250,34 @@
         "message": "تلقائيًا للرسائل الطويلة"
     },
     "opt_aiReply": {
-        "message": "بانتظار ردّك"
+        "message": "فرز البريد غير المقروء"
     },
     "opt_aiReplyText": {
-        "message": "يميّز البريد غير المقروء من أشخاص ينتظرون ردًا، ويجمعه في عامل تصفية في اللوحة."
+        "message": "يجد البريد الذي ينتظر ردّك، والبريد المهم، والنشرات الإخبارية التي يمكنك مسحها دفعة واحدة."
+    },
+    "opt_aiButtons": {
+        "message": "إظهار أزرار الذكاء الاصطناعي عندما يكون المساعد متوقفًا"
+    },
+    "opt_aiButtonsText": {
+        "message": "تبقى أزرار الملخّص والرد والمساعد في اللوحة، وتعرض عليك تشغيله."
     },
     "opt_aiPrivacy": {
-        "message": "تذهب الطلبات من متصفحك مباشرة إلى $1، بمفتاحك. ليس لدى Mail Deck خوادم. يُرسل الملخّص نص تلك الرسالة، ويُرسل «بانتظار ردّك» المرسل والموضوع ومقتطف البريد غير المقروء."
+        "message": "تذهب الطلبات من متصفحك مباشرة إلى $1، بمفتاحك. ليس لدى Mail Deck خوادم. يُرسل الملخّص نص تلك الرسالة، ويُرسل «فرز البريد غير المقروء» المرسل والموضوع ومقتطف البريد غير المقروء."
     },
     "opt_aiPrivacyLocal": {
         "message": "يشغّل Chrome النموذج على هذا الكمبيوتر، لذا لا يُرسل بريدك إلى أي مكان."
+    },
+    "opt_aiPrivacyPlan": {
+        "message": "تذهب الطلبات من متصفحك مباشرة إلى OpenAI، بتسجيل دخولك إلى حساب ChatGPT. ليس لدى Mail Deck خوادم. يُرسل الملخّص نص تلك الرسالة، ويُرسل «فرز البريد غير المقروء» المرسل والموضوع ومقتطف البريد غير المقروء."
+    },
+    "opt_aiWelcome": {
+        "message": "أنت تستخدم خطة ChatGPT الخاصة بك"
+    },
+    "opt_aiWelcomeText": {
+        "message": "تستخدم طلبات الذكاء الاصطناعي المؤهلة في Mail Deck الاستخدامَ المشمول في خطة ChatGPT الخاصة بك. يمكنك إدارة الاستخدام في إعدادات ChatGPT."
+    },
+    "opt_aiGotIt": {
+        "message": "حسنًا"
     },
     "opt_aiErrAuth": {
         "message": "رفضت $1 هذا المفتاح. تأكّد من أنك نسخته كاملًا."
@@ -2164,6 +2287,9 @@
     },
     "opt_aiErrOther": {
         "message": "لم ينجح ذلك. أعد المحاولة."
+    },
+    "opt_aiDiagSignedOut": {
+        "message": "تم تسجيل الخروج"
     },
     "opt_aiDiagNoKey": {
         "message": "لا يوجد مفتاح بعد"

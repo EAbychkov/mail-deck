@@ -1502,6 +1502,45 @@
   "ai_err_no_access": {
     "message": "設定 → AI アシスタントでプロバイダへのアクセスを許可してください。"
   },
+  "ai_err_limit": {
+    "message": "ChatGPT の利用上限に達しました。"
+  },
+  "ai_err_no_plan": {
+    "message": "このアカウントでは ChatGPT プランを利用できません。"
+  },
+  "ai_err_signed_out": {
+    "message": "ChatGPT からログアウトしています。設定 → AI アシスタントでもう一度ログインしてください。"
+  },
+  "ai_err_denied": {
+    "message": "Mail Deck による ChatGPT プランの利用が許可されませんでした。"
+  },
+  "ai_err_sign_in": {
+    "message": "ChatGPT でのログインが完了しませんでした。もう一度お試しください。"
+  },
+  "ai_err_other_account": {
+    "message": "これは Mail Deck の設定に使った ChatGPT アカウントではありません。このアカウントで設定し直すには、もう一度お試しください。"
+  },
+  "ai_signin_title": {
+    "message": "ChatGPT でログイン"
+  },
+  "ai_signin_working": {
+    "message": "ログインしています…"
+  },
+  "ai_signin_done": {
+    "message": "$1 としてログインしました"
+  },
+  "ai_signin_done_plain": {
+    "message": "ChatGPT にログインしました"
+  },
+  "ai_signin_close": {
+    "message": "このタブは閉じてかまいません。"
+  },
+  "ai_signin_failed": {
+    "message": "ログインできませんでした"
+  },
+  "ai_signin_retry": {
+    "message": "もう一度試す"
+  },
   "ai_note_english": {
     "message": "内蔵モデルは英語で回答します。"
   },
@@ -1848,13 +1887,22 @@
     "message": "要約も返信マークもありません。どこにも何も送信されません。"
   },
   "opt_aiBuiltin": {
-    "message": "このパソコンで"
+    "message": "Chrome 内蔵"
   },
   "opt_aiBuiltinText": {
-    "message": "Chrome の内蔵モデル。無料でプライベートですが、すべてのパソコンで使えるわけではありません。"
+    "message": "このパソコンで動作します。無料でプライベートですが、すべてのパソコンで使えるわけではありません。"
+  },
+  "opt_aiPlan": {
+    "message": "ChatGPT プラン"
+  },
+  "opt_aiPlanText": {
+    "message": "お持ちの ChatGPT プランをそのまま使います。API キーは不要です。"
   },
   "opt_aiCloudText": {
-    "message": "ご自身の $1 API キーを使用（従量課金）。"
+    "message": "$1 モデル（従量課金）。"
+  },
+  "opt_aiZaiText": {
+    "message": "GLM モデル（従量課金）。一部は無料です。"
   },
   "opt_aiChecking": {
     "message": "確認しています…"
@@ -1881,7 +1929,7 @@
     "message": "このパソコンでは使用できません"
   },
   "opt_aiUnavailableText": {
-    "message": "このパソコンでは Chrome がモデルを提供していません。OpenAI と Anthropic はどのパソコンでも使えます。"
+    "message": "このパソコンでは Chrome がモデルを提供していません。ほかの選択肢はどのパソコンでも使えます。"
   },
   "opt_aiOldChrome": {
     "message": "Chrome 138 以降が必要です"
@@ -1897,6 +1945,15 @@
   },
   "opt_aiKeyText": {
     "message": "$1 のサブスクリプションに API へのアクセスは含まれません。キーの利用料は $2 が別途、従量で請求します。"
+  },
+  "opt_aiOpenAIHint": {
+    "message": "ChatGPT プランをお持ちですか？上の「ChatGPT プラン」を選ぶと、キーなしで使えます。"
+  },
+  "opt_aiAnthropicHint": {
+    "message": "Anthropic の規約により、Claude Pro と Max のサブスクリプションはほかのアプリでは使えません。console.anthropic.com の API キーを使ってください。"
+  },
+  "opt_aiZaiHint": {
+    "message": "z.ai の標準の API キーを使ってください。GLM Coding Plan のキーはコーディングツールでしか使えません。"
   },
   "opt_aiGetKey": {
     "message": "キーを取得"
@@ -1931,6 +1988,45 @@
   "opt_aiDisconnected": {
     "message": "$1 のキーを削除しました"
   },
+  "opt_aiPlanUse": {
+    "message": "ChatGPT プランを使う"
+  },
+  "opt_aiPlanUseText": {
+    "message": "Mail Deck の対象となる AI リクエストを、ChatGPT プランに含まれる利用枠で処理します。"
+  },
+  "opt_aiPlanPlus": {
+    "message": "ChatGPT Plus には 5 時間ごとの利用上限があり、それを使うすべてのアプリで共有されます。"
+  },
+  "opt_aiSignIn": {
+    "message": "ChatGPT で続行"
+  },
+  "opt_aiSignInWait": {
+    "message": "開いた ChatGPT のページでログインを完了してください。"
+  },
+  "opt_aiSignedIn": {
+    "message": "$1 でログイン中"
+  },
+  "opt_aiSignedInPlain": {
+    "message": "ChatGPT にログイン中"
+  },
+  "opt_aiPlanUsing": {
+    "message": "ChatGPT プランを使用中"
+  },
+  "opt_aiManageUsage": {
+    "message": "利用状況を管理"
+  },
+  "opt_aiSignOut": {
+    "message": "ログアウト"
+  },
+  "opt_aiSignedOut": {
+    "message": "ChatGPT からログアウトしました"
+  },
+  "opt_aiSignOutUnconfirmed": {
+    "message": "ここではログアウトしましたが、OpenAI から確認がありませんでした。念のため、ChatGPT の設定で Mail Deck の接続を解除してください。"
+  },
+  "opt_aiPlanAccess": {
+    "message": "OpenAI のサイトへのアクセスがないと、Mail Deck は ChatGPT でログインできません。もう一度試して、アクセスを許可してください。"
+  },
   "opt_aiNoAccess": {
     "message": "Chrome が Mail Deck による $1 へのアクセスを許可しなくなりました。"
   },
@@ -1955,11 +2051,20 @@
   "opt_aiFast": {
     "message": "最速・最安"
   },
+  "opt_aiFree": {
+    "message": "無料"
+  },
   "opt_aiModelGone": {
     "message": "$1 はこのキーで使えなくなりました。別のモデルを選んでください。"
   },
   "opt_aiNoModels": {
     "message": "このキーには Mail Deck で使えるモデルがありません。"
+  },
+  "opt_aiPlanModelText": {
+    "message": "大きいモデルほど要約が上手で、小さいモデルほど速く、プランの消費も少なくなります。"
+  },
+  "opt_aiPlanNoModels": {
+    "message": "お使いの ChatGPT プランには Mail Deck で使えるモデルがありません。"
   },
   "opt_aiSummary": {
     "message": "メールを読むときに要約"
@@ -1977,16 +2082,34 @@
     "message": "長いメールは自動で"
   },
   "opt_aiReply": {
-    "message": "返信待ち"
+    "message": "未読メールの仕分け"
   },
   "opt_aiReplyText": {
-    "message": "返事を待っている人からの未読メールに印を付け、パネルのフィルタにまとめます。"
+    "message": "返信待ちのメール、重要なメール、まとめて片付けられるニュースレターを見つけます。"
+  },
+  "opt_aiButtons": {
+    "message": "アシスタントがオフでも AI ボタンを表示"
+  },
+  "opt_aiButtonsText": {
+    "message": "要約、返信、アシスタントのボタンがパネルに残り、オンにするよう案内します。"
   },
   "opt_aiPrivacy": {
-    "message": "リクエストはお使いのキーで、ブラウザから $1 に直接送られます。Mail Deck にはサーバーがありません。要約ではそのメールの本文を、返信待ちでは未読メールの送信者、件名、冒頭部分を送信します。"
+    "message": "リクエストはお使いのキーで、ブラウザから $1 に直接送られます。Mail Deck にはサーバーがありません。要約ではそのメールの本文を、未読メールの仕分けでは未読メールの送信者、件名、冒頭部分を送信します。"
   },
   "opt_aiPrivacyLocal": {
     "message": "Chrome がこのパソコン上でモデルを動かすため、メールはどこにも送信されません。"
+  },
+  "opt_aiPrivacyPlan": {
+    "message": "リクエストは ChatGPT アカウントでログインした状態で、ブラウザから OpenAI に直接送られます。Mail Deck にはサーバーがありません。要約ではそのメールの本文を、未読メールの仕分けでは未読メールの送信者、件名、冒頭部分を送信します。"
+  },
+  "opt_aiWelcome": {
+    "message": "ChatGPT プランを使用しています"
+  },
+  "opt_aiWelcomeText": {
+    "message": "Mail Deck の対象となる AI リクエストには、ChatGPT プランに含まれる利用枠が使われます。利用状況は ChatGPT の設定で管理できます。"
+  },
+  "opt_aiGotIt": {
+    "message": "わかりました"
   },
   "opt_aiErrAuth": {
     "message": "$1 がこのキーを拒否しました。キー全体をコピーしたか確認してください。"
@@ -1996,6 +2119,9 @@
   },
   "opt_aiErrOther": {
     "message": "うまくいきませんでした。もう一度お試しください。"
+  },
+  "opt_aiDiagSignedOut": {
+    "message": "ログアウト済み"
   },
   "opt_aiDiagNoKey": {
     "message": "キー未設定"

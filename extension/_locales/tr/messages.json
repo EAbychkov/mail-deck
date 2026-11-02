@@ -1670,6 +1670,45 @@
     "ai_err_no_access": {
         "message": "Ayarlar → Yapay zekâ bölümünden sağlayıcıya erişim izni verin."
     },
+    "ai_err_limit": {
+        "message": "ChatGPT kullanım sınırına ulaşıldı."
+    },
+    "ai_err_no_plan": {
+        "message": "Bu hesap için ChatGPT planı kullanımı mevcut değil."
+    },
+    "ai_err_signed_out": {
+        "message": "ChatGPT oturumunuz kapalı. Ayarlar → Yapay zekâ bölümünden yeniden oturum açın."
+    },
+    "ai_err_denied": {
+        "message": "Mail Deck’e ChatGPT planınızı kullanma izni verilmedi."
+    },
+    "ai_err_sign_in": {
+        "message": "ChatGPT ile oturum açma tamamlanmadı. Yeniden deneyin."
+    },
+    "ai_err_other_account": {
+        "message": "Bu, Mail Deck’in kurulduğu ChatGPT hesabı değil. Bu hesapla kurmak için yeniden deneyin."
+    },
+    "ai_signin_title": {
+        "message": "ChatGPT ile oturum aç"
+    },
+    "ai_signin_working": {
+        "message": "Oturum açılıyor…"
+    },
+    "ai_signin_done": {
+        "message": "$1 olarak oturum açıldı"
+    },
+    "ai_signin_done_plain": {
+        "message": "ChatGPT’de oturum açıldı"
+    },
+    "ai_signin_close": {
+        "message": "Bu sekmeyi kapatabilirsiniz."
+    },
+    "ai_signin_failed": {
+        "message": "Oturum açılmadı"
+    },
+    "ai_signin_retry": {
+        "message": "Yeniden dene"
+    },
     "ai_note_english": {
         "message": "Yerleşik model İngilizce yanıt verir."
     },
@@ -2016,13 +2055,22 @@
         "message": "Özet ya da yanıt işareti yok. Hiçbir şey hiçbir yere gönderilmez."
     },
     "opt_aiBuiltin": {
-        "message": "Bu bilgisayarda"
+        "message": "Chrome’un yerleşik modeli"
     },
     "opt_aiBuiltinText": {
-        "message": "Chrome’un yerleşik modeli. Ücretsiz ve gizli, ama her bilgisayarda yok."
+        "message": "Bu bilgisayarda çalışır: ücretsiz ve gizli, ama her bilgisayarda yok."
+    },
+    "opt_aiPlan": {
+        "message": "ChatGPT planı"
+    },
+    "opt_aiPlanText": {
+        "message": "Zaten sahip olduğunuz ChatGPT planı, API anahtarı olmadan."
     },
     "opt_aiCloudText": {
-        "message": "Kendi $1 API anahtarınızla, kullandıkça ödeme."
+        "message": "$1 modelleri, kullandıkça ödeme."
+    },
+    "opt_aiZaiText": {
+        "message": "GLM modelleri, kullandıkça ödeme; bazıları ücretsiz."
     },
     "opt_aiChecking": {
         "message": "Denetleniyor…"
@@ -2049,7 +2097,7 @@
         "message": "Bu bilgisayarda kullanılamıyor"
     },
     "opt_aiUnavailableText": {
-        "message": "Chrome modelini burada sunmuyor. OpenAI ve Anthropic her bilgisayarda çalışır."
+        "message": "Chrome modelini burada sunmuyor. Diğer seçenekler her bilgisayarda çalışır."
     },
     "opt_aiOldChrome": {
         "message": "Chrome 138 veya daha yenisi gerekiyor"
@@ -2065,6 +2113,15 @@
     },
     "opt_aiKeyText": {
         "message": "$1 aboneliği API erişimi içermez: $2 anahtarı ayrıca, kullandıkça faturalandırır."
+    },
+    "opt_aiOpenAIHint": {
+        "message": "ChatGPT planınız mı var? Anahtar olmadan kullanmak için yukarıdan “ChatGPT planı” seçeneğini seçin."
+    },
+    "opt_aiAnthropicHint": {
+        "message": "Anthropic’in kurallarına göre Claude Pro ve Max abonelikleri başka uygulamalarda kullanılamaz; bu yüzden console.anthropic.com adresinden bir API anahtarı kullanın."
+    },
+    "opt_aiZaiHint": {
+        "message": "z.ai adresinden standart bir API anahtarı kullanın. GLM Coding Plan anahtarı yalnızca kodlama araçlarında çalışır."
     },
     "opt_aiGetKey": {
         "message": "Anahtar alın"
@@ -2099,6 +2156,45 @@
     "opt_aiDisconnected": {
         "message": "$1 anahtarı kaldırıldı"
     },
+    "opt_aiPlanUse": {
+        "message": "ChatGPT planınızı kullan"
+    },
+    "opt_aiPlanUseText": {
+        "message": "Mail Deck’teki uygun yapay zekâ istekleri, ChatGPT planınıza dahil kullanımla karşılanır."
+    },
+    "opt_aiPlanPlus": {
+        "message": "ChatGPT Plus’ın beş saatlik bir kullanım sınırı vardır ve bu sınır onu kullanan tüm uygulamalar arasında paylaşılır."
+    },
+    "opt_aiSignIn": {
+        "message": "ChatGPT ile devam et"
+    },
+    "opt_aiSignInWait": {
+        "message": "Açılan ChatGPT sayfasında oturum açmayı tamamlayın."
+    },
+    "opt_aiSignedIn": {
+        "message": "$1 olarak oturum açıldı"
+    },
+    "opt_aiSignedInPlain": {
+        "message": "ChatGPT’de oturum açıldı"
+    },
+    "opt_aiPlanUsing": {
+        "message": "ChatGPT planınız kullanılıyor"
+    },
+    "opt_aiManageUsage": {
+        "message": "Kullanımı yönet"
+    },
+    "opt_aiSignOut": {
+        "message": "Oturumu kapat"
+    },
+    "opt_aiSignedOut": {
+        "message": "ChatGPT oturumu kapatıldı"
+    },
+    "opt_aiSignOutUnconfirmed": {
+        "message": "Burada oturum kapatıldı ama OpenAI bunu onaylamadı. Emin olmak için ChatGPT ayarlarınızda Mail Deck’in bağlantısını kesin."
+    },
+    "opt_aiPlanAccess": {
+        "message": "OpenAI sitelerine erişim olmadan Mail Deck, ChatGPT ile oturum açamaz. Yeniden deneyin ve erişime izin verin."
+    },
     "opt_aiNoAccess": {
         "message": "Chrome artık Mail Deck’in $1 adresine erişmesine izin vermiyor."
     },
@@ -2123,11 +2219,20 @@
     "opt_aiFast": {
         "message": "en hızlı ve en ucuz"
     },
+    "opt_aiFree": {
+        "message": "ücretsiz"
+    },
     "opt_aiModelGone": {
         "message": "$1 artık bu anahtarla kullanılamıyor. Başka bir model seçin."
     },
     "opt_aiNoModels": {
         "message": "Bu anahtarın Mail Deck’in kullanabileceği modeli yok."
+    },
+    "opt_aiPlanModelText": {
+        "message": "Büyük modeller daha iyi özetler; küçükler daha hızlı yanıt verir ve planınızdan daha az harcar."
+    },
+    "opt_aiPlanNoModels": {
+        "message": "ChatGPT planınızda Mail Deck’in kullanabileceği model yok."
     },
     "opt_aiSummary": {
         "message": "Okurken özet"
@@ -2145,16 +2250,34 @@
         "message": "Uzun postalarda otomatik"
     },
     "opt_aiReply": {
-        "message": "Yanıtınızı bekleyenler"
+        "message": "Okunmamış postaları sınıflandır"
     },
     "opt_aiReplyText": {
-        "message": "Yanıt bekleyen kişilerden gelen okunmamış postaları işaretler ve paneldeki bir filtrede toplar."
+        "message": "Yanıtınızı bekleyen postaları, önemli postaları ve tek seferde temizleyebileceğiniz bültenleri bulur."
+    },
+    "opt_aiButtons": {
+        "message": "Asistan kapalıyken yapay zekâ düğmelerini göster"
+    },
+    "opt_aiButtonsText": {
+        "message": "Özet, yanıt ve asistan düğmeleri panelde kalır ve asistanı açmayı önerir."
     },
     "opt_aiPrivacy": {
-        "message": "İstekler tarayıcınızdan doğrudan $1 sunucularına, anahtarınızla gider. Mail Deck’in sunucusu yoktur. Özet o iletinin metnini gönderir; “Yanıtınızı bekleyenler” okunmamış postaların göndereni, konusu ve önizlemesini gönderir."
+        "message": "İstekler tarayıcınızdan doğrudan $1 sunucularına, anahtarınızla gider. Mail Deck’in sunucusu yoktur. Özet o iletinin metnini gönderir; “Okunmamış postaları sınıflandır” okunmamış postaların göndereni, konusu ve önizlemesini gönderir."
     },
     "opt_aiPrivacyLocal": {
         "message": "Chrome modeli bu bilgisayarda çalıştırır, bu yüzden postanız hiçbir yere gönderilmez."
+    },
+    "opt_aiPrivacyPlan": {
+        "message": "İstekler tarayıcınızdan doğrudan OpenAI sunucularına, ChatGPT hesabınızla oturum açılarak gider. Mail Deck’in sunucusu yoktur. Özet o iletinin metnini gönderir; “Okunmamış postaları sınıflandır” okunmamış postaların göndereni, konusu ve önizlemesini gönderir."
+    },
+    "opt_aiWelcome": {
+        "message": "ChatGPT planınızı kullanıyorsunuz"
+    },
+    "opt_aiWelcomeText": {
+        "message": "Mail Deck’teki uygun yapay zekâ istekleri, ChatGPT planınıza dahil kullanımdan düşer. Kullanımı ChatGPT ayarlarınızdan yönetin."
+    },
+    "opt_aiGotIt": {
+        "message": "Anladım"
     },
     "opt_aiErrAuth": {
         "message": "$1 bu anahtarı reddetti. Tamamını kopyaladığınızdan emin olun."
@@ -2164,6 +2287,9 @@
     },
     "opt_aiErrOther": {
         "message": "Olmadı. Yeniden deneyin."
+    },
+    "opt_aiDiagSignedOut": {
+        "message": "oturum kapalı"
     },
     "opt_aiDiagNoKey": {
         "message": "henüz anahtar yok"

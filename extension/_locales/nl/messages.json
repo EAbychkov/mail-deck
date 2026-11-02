@@ -1674,6 +1674,45 @@
     "ai_err_no_access": {
         "message": "Geef toegang tot de aanbieder bij Instellingen → AI."
     },
+    "ai_err_limit": {
+        "message": "Gebruikslimiet van ChatGPT bereikt."
+    },
+    "ai_err_no_plan": {
+        "message": "Gebruik via het ChatGPT-abonnement is niet beschikbaar voor dit account."
+    },
+    "ai_err_signed_out": {
+        "message": "Je bent uitgelogd bij ChatGPT. Log opnieuw in bij Instellingen → AI."
+    },
+    "ai_err_denied": {
+        "message": "Mail Deck kreeg geen toestemming om je ChatGPT-abonnement te gebruiken."
+    },
+    "ai_err_sign_in": {
+        "message": "Inloggen met ChatGPT is niet afgerond. Probeer het opnieuw."
+    },
+    "ai_err_other_account": {
+        "message": "Dit is niet het ChatGPT-account waarmee Mail Deck is ingesteld. Probeer het opnieuw om Mail Deck met dit account in te stellen."
+    },
+    "ai_signin_title": {
+        "message": "Inloggen met ChatGPT"
+    },
+    "ai_signin_working": {
+        "message": "Inloggen…"
+    },
+    "ai_signin_done": {
+        "message": "Ingelogd als $1"
+    },
+    "ai_signin_done_plain": {
+        "message": "Ingelogd bij ChatGPT"
+    },
+    "ai_signin_close": {
+        "message": "Je kunt dit tabblad sluiten."
+    },
+    "ai_signin_failed": {
+        "message": "Niet ingelogd"
+    },
+    "ai_signin_retry": {
+        "message": "Opnieuw proberen"
+    },
     "ai_note_english": {
         "message": "Het ingebouwde model antwoordt in het Engels."
     },
@@ -2020,13 +2059,22 @@
         "message": "Geen samenvattingen of antwoordmarkeringen. Er wordt niets verstuurd."
     },
     "opt_aiBuiltin": {
-        "message": "Op deze computer"
+        "message": "Ingebouwd in Chrome"
     },
     "opt_aiBuiltinText": {
-        "message": "Het ingebouwde model van Chrome. Gratis en privé, maar niet op elke computer."
+        "message": "Draait op deze computer: gratis en privé, maar niet op elke computer."
+    },
+    "opt_aiPlan": {
+        "message": "ChatGPT-abonnement"
+    },
+    "opt_aiPlanText": {
+        "message": "Het ChatGPT-abonnement dat je al hebt, zonder API-sleutel."
     },
     "opt_aiCloudText": {
-        "message": "Met je eigen API-sleutel van $1, betalen per gebruik."
+        "message": "$1-modellen, betalen per gebruik."
+    },
+    "opt_aiZaiText": {
+        "message": "GLM-modellen, betalen per gebruik; sommige zijn gratis."
     },
     "opt_aiChecking": {
         "message": "Controleren…"
@@ -2053,7 +2101,7 @@
         "message": "Niet beschikbaar op deze computer"
     },
     "opt_aiUnavailableText": {
-        "message": "Chrome biedt zijn model hier niet aan. OpenAI en Anthropic werken op elke computer."
+        "message": "Chrome biedt zijn model hier niet aan. De andere opties werken op elke computer."
     },
     "opt_aiOldChrome": {
         "message": "Chrome 138 of nieuwer nodig"
@@ -2069,6 +2117,15 @@
     },
     "opt_aiKeyText": {
         "message": "Een $1-abonnement geeft geen toegang tot de API: $2 rekent de sleutel apart af, per gebruik."
+    },
+    "opt_aiOpenAIHint": {
+        "message": "Heb je een ChatGPT-abonnement? Kies hierboven ‘ChatGPT-abonnement’ om het zonder sleutel te gebruiken."
+    },
+    "opt_aiAnthropicHint": {
+        "message": "Volgens de regels van Anthropic mogen andere apps Claude Pro- en Max-abonnementen niet gebruiken, dus gebruik een API-sleutel van console.anthropic.com."
+    },
+    "opt_aiZaiHint": {
+        "message": "Gebruik een gewone API-sleutel van z.ai. Een sleutel van het GLM Coding Plan werkt alleen in programmeertools."
     },
     "opt_aiGetKey": {
         "message": "Sleutel aanmaken"
@@ -2103,6 +2160,45 @@
     "opt_aiDisconnected": {
         "message": "Sleutel van $1 verwijderd"
     },
+    "opt_aiPlanUse": {
+        "message": "Je ChatGPT-abonnement gebruiken"
+    },
+    "opt_aiPlanUseText": {
+        "message": "Voert geschikte AI-verzoeken in Mail Deck uit met het gebruik dat in je ChatGPT-abonnement zit."
+    },
+    "opt_aiPlanPlus": {
+        "message": "ChatGPT Plus heeft een gebruikslimiet per vijf uur, gedeeld door alle apps die het gebruiken."
+    },
+    "opt_aiSignIn": {
+        "message": "Doorgaan met ChatGPT"
+    },
+    "opt_aiSignInWait": {
+        "message": "Rond het inloggen af op de ChatGPT-pagina die is geopend."
+    },
+    "opt_aiSignedIn": {
+        "message": "Ingelogd als $1"
+    },
+    "opt_aiSignedInPlain": {
+        "message": "Ingelogd bij ChatGPT"
+    },
+    "opt_aiPlanUsing": {
+        "message": "Je ChatGPT-abonnement wordt gebruikt"
+    },
+    "opt_aiManageUsage": {
+        "message": "Gebruik beheren"
+    },
+    "opt_aiSignOut": {
+        "message": "Uitloggen"
+    },
+    "opt_aiSignedOut": {
+        "message": "Uitgelogd bij ChatGPT"
+    },
+    "opt_aiSignOutUnconfirmed": {
+        "message": "Hier uitgelogd, maar OpenAI heeft het niet bevestigd. Ontkoppel Mail Deck voor de zekerheid in je ChatGPT-instellingen."
+    },
+    "opt_aiPlanAccess": {
+        "message": "Zonder toegang tot de sites van OpenAI kan Mail Deck niet inloggen met ChatGPT. Probeer het opnieuw en geef toegang."
+    },
     "opt_aiNoAccess": {
         "message": "Chrome laat Mail Deck $1 niet meer bereiken."
     },
@@ -2127,11 +2223,20 @@
     "opt_aiFast": {
         "message": "snelst en goedkoopst"
     },
+    "opt_aiFree": {
+        "message": "gratis"
+    },
     "opt_aiModelGone": {
         "message": "$1 is niet meer beschikbaar voor deze sleutel. Kies een ander model."
     },
     "opt_aiNoModels": {
         "message": "Deze sleutel heeft geen modellen die Mail Deck kan gebruiken."
+    },
+    "opt_aiPlanModelText": {
+        "message": "Grotere modellen vatten beter samen; kleinere antwoorden sneller en verbruiken minder van je abonnement."
+    },
+    "opt_aiPlanNoModels": {
+        "message": "Je ChatGPT-abonnement heeft geen modellen die Mail Deck kan gebruiken."
     },
     "opt_aiSummary": {
         "message": "Samenvatting in de lezer"
@@ -2149,16 +2254,34 @@
         "message": "Automatisch bij lange mail"
     },
     "opt_aiReply": {
-        "message": "Wacht op je antwoord"
+        "message": "Ongelezen mail sorteren"
     },
     "opt_aiReplyText": {
-        "message": "Markeert ongelezen mail van mensen die een antwoord verwachten en verzamelt die onder een filter in het paneel."
+        "message": "Vindt mail die op je antwoord wacht, belangrijke mail en nieuwsbrieven die je in één keer kunt opruimen."
+    },
+    "opt_aiButtons": {
+        "message": "AI-knoppen tonen als de assistent uit staat"
+    },
+    "opt_aiButtonsText": {
+        "message": "De knoppen voor samenvatting, antwoord en assistent blijven in het paneel en stellen voor de assistent aan te zetten."
     },
     "opt_aiPrivacy": {
-        "message": "Verzoeken gaan vanuit je browser rechtstreeks naar $1, met je sleutel. Mail Deck heeft geen servers. Een samenvatting stuurt de tekst van dat bericht; ‘Wacht op je antwoord’ stuurt de afzender, het onderwerp en het voorbeeld van ongelezen mail."
+        "message": "Verzoeken gaan vanuit je browser rechtstreeks naar $1, met je sleutel. Mail Deck heeft geen servers. Een samenvatting stuurt de tekst van dat bericht; ‘Ongelezen mail sorteren’ stuurt de afzender, het onderwerp en het voorbeeld van ongelezen mail."
     },
     "opt_aiPrivacyLocal": {
         "message": "Chrome draait het model op deze computer, dus je mail wordt nergens heen gestuurd."
+    },
+    "opt_aiPrivacyPlan": {
+        "message": "Verzoeken gaan vanuit je browser rechtstreeks naar OpenAI, ingelogd met je ChatGPT-account. Mail Deck heeft geen servers. Een samenvatting stuurt de tekst van dat bericht; ‘Ongelezen mail sorteren’ stuurt de afzender, het onderwerp en het voorbeeld van ongelezen mail."
+    },
+    "opt_aiWelcome": {
+        "message": "Je gebruikt je ChatGPT-abonnement"
+    },
+    "opt_aiWelcomeText": {
+        "message": "Geschikte AI-verzoeken in Mail Deck gebruiken wat er in je ChatGPT-abonnement zit. Beheer het gebruik in je ChatGPT-instellingen."
+    },
+    "opt_aiGotIt": {
+        "message": "Begrepen"
     },
     "opt_aiErrAuth": {
         "message": "$1 heeft deze sleutel geweigerd. Controleer of je hem helemaal hebt gekopieerd."
@@ -2168,6 +2291,9 @@
     },
     "opt_aiErrOther": {
         "message": "Dat is niet gelukt. Probeer het opnieuw."
+    },
+    "opt_aiDiagSignedOut": {
+        "message": "uitgelogd"
     },
     "opt_aiDiagNoKey": {
         "message": "nog geen sleutel"

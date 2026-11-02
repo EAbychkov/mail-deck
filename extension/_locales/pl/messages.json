@@ -1674,6 +1674,45 @@
     "ai_err_no_access": {
         "message": "Zezwól na dostęp do dostawcy w Ustawienia → AI."
     },
+    "ai_err_limit": {
+        "message": "Osiągnięto limit użycia ChatGPT."
+    },
+    "ai_err_no_plan": {
+        "message": "Użycie planu ChatGPT nie jest dostępne dla tego konta."
+    },
+    "ai_err_signed_out": {
+        "message": "Wylogowano z ChatGPT. Zaloguj się ponownie w Ustawienia → AI."
+    },
+    "ai_err_denied": {
+        "message": "Mail Deck nie otrzymał zgody na korzystanie z twojego planu ChatGPT."
+    },
+    "ai_err_sign_in": {
+        "message": "Logowanie przez ChatGPT nie zostało dokończone. Spróbuj ponownie."
+    },
+    "ai_err_other_account": {
+        "message": "To nie jest konto ChatGPT, z którym skonfigurowano Mail Deck. Spróbuj ponownie, aby skonfigurować go z tym kontem."
+    },
+    "ai_signin_title": {
+        "message": "Zaloguj się przez ChatGPT"
+    },
+    "ai_signin_working": {
+        "message": "Logowanie…"
+    },
+    "ai_signin_done": {
+        "message": "Zalogowano jako $1"
+    },
+    "ai_signin_done_plain": {
+        "message": "Zalogowano do ChatGPT"
+    },
+    "ai_signin_close": {
+        "message": "Możesz zamknąć tę kartę."
+    },
+    "ai_signin_failed": {
+        "message": "Nie zalogowano"
+    },
+    "ai_signin_retry": {
+        "message": "Spróbuj ponownie"
+    },
     "ai_note_english": {
         "message": "Wbudowany model odpowiada po angielsku."
     },
@@ -2020,13 +2059,22 @@
         "message": "Bez streszczeń i oznaczeń odpowiedzi. Nic nie jest nigdzie wysyłane."
     },
     "opt_aiBuiltin": {
-        "message": "Na tym komputerze"
+        "message": "Wbudowana w Chrome"
     },
     "opt_aiBuiltinText": {
-        "message": "Wbudowany model Chrome. Bezpłatny i prywatny, ale nie na każdym komputerze."
+        "message": "Działa na tym komputerze: bezpłatnie i prywatnie, ale nie na każdym komputerze."
+    },
+    "opt_aiPlan": {
+        "message": "Plan ChatGPT"
+    },
+    "opt_aiPlanText": {
+        "message": "Plan ChatGPT, który już masz, bez klucza API."
     },
     "opt_aiCloudText": {
-        "message": "Z własnym kluczem API $1, płatność za użycie."
+        "message": "Modele $1, płatność za użycie."
+    },
+    "opt_aiZaiText": {
+        "message": "Modele GLM, płatność za użycie; niektóre są bezpłatne."
     },
     "opt_aiChecking": {
         "message": "Sprawdzanie…"
@@ -2053,7 +2101,7 @@
         "message": "Niedostępne na tym komputerze"
     },
     "opt_aiUnavailableText": {
-        "message": "Chrome nie oferuje tu swojego modelu. OpenAI i Anthropic działają na każdym komputerze."
+        "message": "Chrome nie oferuje tu swojego modelu. Pozostałe opcje działają na każdym komputerze."
     },
     "opt_aiOldChrome": {
         "message": "Wymaga Chrome 138 lub nowszego"
@@ -2069,6 +2117,15 @@
     },
     "opt_aiKeyText": {
         "message": "Subskrypcja $1 nie obejmuje dostępu do API: $2 rozlicza klucz osobno, za użycie."
+    },
+    "opt_aiOpenAIHint": {
+        "message": "Masz plan ChatGPT? Wybierz powyżej „Plan ChatGPT”, aby używać go bez klucza."
+    },
+    "opt_aiAnthropicHint": {
+        "message": "Zasady Anthropic nie pozwalają innym aplikacjom korzystać z subskrypcji Claude Pro i Max, więc użyj klucza API z console.anthropic.com."
+    },
+    "opt_aiZaiHint": {
+        "message": "Użyj zwykłego klucza API z z.ai. Klucz GLM Coding Plan działa tylko w narzędziach do programowania."
     },
     "opt_aiGetKey": {
         "message": "Zdobądź klucz"
@@ -2103,6 +2160,45 @@
     "opt_aiDisconnected": {
         "message": "Usunięto klucz $1"
     },
+    "opt_aiPlanUse": {
+        "message": "Korzystaj ze swojego planu ChatGPT"
+    },
+    "opt_aiPlanUseText": {
+        "message": "Realizuje kwalifikujące się żądania AI w Mail Deck w ramach limitu użycia zawartego w twoim planie ChatGPT."
+    },
+    "opt_aiPlanPlus": {
+        "message": "ChatGPT Plus ma pięciogodzinny limit użycia, wspólny dla wszystkich aplikacji, które z niego korzystają."
+    },
+    "opt_aiSignIn": {
+        "message": "Kontynuuj z ChatGPT"
+    },
+    "opt_aiSignInWait": {
+        "message": "Dokończ logowanie na otwartej stronie ChatGPT."
+    },
+    "opt_aiSignedIn": {
+        "message": "Zalogowano jako $1"
+    },
+    "opt_aiSignedInPlain": {
+        "message": "Zalogowano do ChatGPT"
+    },
+    "opt_aiPlanUsing": {
+        "message": "Używasz swojego planu ChatGPT"
+    },
+    "opt_aiManageUsage": {
+        "message": "Zarządzaj użyciem"
+    },
+    "opt_aiSignOut": {
+        "message": "Wyloguj się"
+    },
+    "opt_aiSignedOut": {
+        "message": "Wylogowano z ChatGPT"
+    },
+    "opt_aiSignOutUnconfirmed": {
+        "message": "Wylogowano tutaj, ale bez potwierdzenia od OpenAI. Dla pewności odłącz Mail Deck w ustawieniach ChatGPT."
+    },
+    "opt_aiPlanAccess": {
+        "message": "Bez dostępu do stron OpenAI Mail Deck nie może zalogować się przez ChatGPT. Spróbuj ponownie i zezwól na dostęp."
+    },
     "opt_aiNoAccess": {
         "message": "Chrome nie pozwala już Mail Deck łączyć się z $1."
     },
@@ -2127,11 +2223,20 @@
     "opt_aiFast": {
         "message": "najszybszy i najtańszy"
     },
+    "opt_aiFree": {
+        "message": "bezpłatny"
+    },
     "opt_aiModelGone": {
         "message": "$1 nie jest już dostępny dla tego klucza. Wybierz inny model."
     },
     "opt_aiNoModels": {
         "message": "Ten klucz nie ma modeli, których Mail Deck może używać."
+    },
+    "opt_aiPlanModelText": {
+        "message": "Większe modele lepiej streszczają; mniejsze odpowiadają szybciej i mniej obciążają twój plan."
+    },
+    "opt_aiPlanNoModels": {
+        "message": "Twój plan ChatGPT nie ma modeli, których Mail Deck może używać."
     },
     "opt_aiSummary": {
         "message": "Streszczenie w czytniku"
@@ -2149,16 +2254,34 @@
         "message": "Automatycznie dla długich wiadomości"
     },
     "opt_aiReply": {
-        "message": "Czeka na twoją odpowiedź"
+        "message": "Porządkuj nieprzeczytaną pocztę"
     },
     "opt_aiReplyText": {
-        "message": "Oznacza nieprzeczytaną pocztę od ludzi, którzy czekają na odpowiedź, i zbiera ją pod filtrem w panelu."
+        "message": "Znajduje pocztę czekającą na twoją odpowiedź, ważną pocztę i newslettery, które uprzątniesz jednym ruchem."
+    },
+    "opt_aiButtons": {
+        "message": "Pokazuj przyciski AI, gdy asystent jest wyłączony"
+    },
+    "opt_aiButtonsText": {
+        "message": "Przyciski streszczenia, odpowiedzi i asystenta zostają w panelu i proponują włączenie asystenta."
     },
     "opt_aiPrivacy": {
-        "message": "Żądania idą z twojej przeglądarki prosto do $1, z twoim kluczem. Mail Deck nie ma serwerów. Streszczenie wysyła tekst tej wiadomości; „Czeka na twoją odpowiedź” wysyła nadawcę, temat i podgląd nieprzeczytanej poczty."
+        "message": "Żądania idą z twojej przeglądarki prosto do $1, z twoim kluczem. Mail Deck nie ma serwerów. Streszczenie wysyła tekst tej wiadomości; „Porządkuj nieprzeczytaną pocztę” wysyła nadawcę, temat i podgląd nieprzeczytanej poczty."
     },
     "opt_aiPrivacyLocal": {
         "message": "Chrome uruchamia model na tym komputerze, więc twoja poczta nie jest nigdzie wysyłana."
+    },
+    "opt_aiPrivacyPlan": {
+        "message": "Żądania idą z twojej przeglądarki prosto do OpenAI, z twoim zalogowanym kontem ChatGPT. Mail Deck nie ma serwerów. Streszczenie wysyła tekst tej wiadomości; „Porządkuj nieprzeczytaną pocztę” wysyła nadawcę, temat i podgląd nieprzeczytanej poczty."
+    },
+    "opt_aiWelcome": {
+        "message": "Korzystasz ze swojego planu ChatGPT"
+    },
+    "opt_aiWelcomeText": {
+        "message": "Kwalifikujące się żądania AI w Mail Deck korzystają z limitu użycia zawartego w twoim planie ChatGPT. Zarządzaj użyciem w ustawieniach ChatGPT."
+    },
+    "opt_aiGotIt": {
+        "message": "Rozumiem"
     },
     "opt_aiErrAuth": {
         "message": "$1 odrzucił ten klucz. Sprawdź, czy skopiowano go w całości."
@@ -2168,6 +2291,9 @@
     },
     "opt_aiErrOther": {
         "message": "Nie udało się. Spróbuj ponownie."
+    },
+    "opt_aiDiagSignedOut": {
+        "message": "wylogowano"
     },
     "opt_aiDiagNoKey": {
         "message": "jeszcze bez klucza"

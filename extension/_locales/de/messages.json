@@ -1670,6 +1670,45 @@
     "ai_err_no_access": {
         "message": "Den Zugriff auf den Anbieter unter Einstellungen → KI erlauben."
     },
+    "ai_err_limit": {
+        "message": "ChatGPT-Nutzungslimit erreicht."
+    },
+    "ai_err_no_plan": {
+        "message": "Die Nutzung über das ChatGPT-Abo ist für dieses Konto nicht verfügbar."
+    },
+    "ai_err_signed_out": {
+        "message": "Du bist von ChatGPT abgemeldet. Unter Einstellungen → KI erneut anmelden."
+    },
+    "ai_err_denied": {
+        "message": "Mail Deck hat keine Erlaubnis erhalten, dein ChatGPT-Abo zu nutzen."
+    },
+    "ai_err_sign_in": {
+        "message": "Die Anmeldung mit ChatGPT wurde nicht abgeschlossen. Bitte erneut versuchen."
+    },
+    "ai_err_other_account": {
+        "message": "Das ist nicht das ChatGPT-Konto, mit dem Mail Deck eingerichtet wurde. Versuch es noch einmal, um es mit diesem einzurichten."
+    },
+    "ai_signin_title": {
+        "message": "Mit ChatGPT anmelden"
+    },
+    "ai_signin_working": {
+        "message": "Wird angemeldet…"
+    },
+    "ai_signin_done": {
+        "message": "Angemeldet als $1"
+    },
+    "ai_signin_done_plain": {
+        "message": "Bei ChatGPT angemeldet"
+    },
+    "ai_signin_close": {
+        "message": "Du kannst diesen Tab schließen."
+    },
+    "ai_signin_failed": {
+        "message": "Nicht angemeldet"
+    },
+    "ai_signin_retry": {
+        "message": "Erneut versuchen"
+    },
     "ai_note_english": {
         "message": "Das integrierte Modell antwortet auf Englisch."
     },
@@ -2016,13 +2055,22 @@
         "message": "Keine Zusammenfassungen, keine Antwort-Markierungen. Nichts wird irgendwohin gesendet."
     },
     "opt_aiBuiltin": {
-        "message": "Auf diesem Computer"
+        "message": "In Chrome integriert"
     },
     "opt_aiBuiltinText": {
-        "message": "Das integrierte Modell von Chrome. Kostenlos und privat, aber nicht auf jedem Computer."
+        "message": "Läuft auf diesem Computer: kostenlos und privat, aber nicht auf jedem Computer."
+    },
+    "opt_aiPlan": {
+        "message": "ChatGPT-Abo"
+    },
+    "opt_aiPlanText": {
+        "message": "Dein vorhandenes ChatGPT-Abo, ohne API-Schlüssel."
     },
     "opt_aiCloudText": {
-        "message": "Mit deinem eigenen $1-API-Schlüssel, Abrechnung nach Nutzung."
+        "message": "$1-Modelle, Abrechnung nach Nutzung."
+    },
+    "opt_aiZaiText": {
+        "message": "GLM-Modelle, Abrechnung nach Nutzung; einige sind kostenlos."
     },
     "opt_aiChecking": {
         "message": "Wird geprüft…"
@@ -2049,7 +2097,7 @@
         "message": "Auf diesem Computer nicht verfügbar"
     },
     "opt_aiUnavailableText": {
-        "message": "Chrome bietet sein Modell hier nicht an. OpenAI und Anthropic funktionieren auf jedem Computer."
+        "message": "Chrome bietet sein Modell hier nicht an. Die anderen Optionen funktionieren auf jedem Computer."
     },
     "opt_aiOldChrome": {
         "message": "Benötigt Chrome 138 oder neuer"
@@ -2065,6 +2113,15 @@
     },
     "opt_aiKeyText": {
         "message": "Ein $1-Abo enthält keinen API-Zugang: $2 rechnet den Schlüssel separat ab, nach Nutzung."
+    },
+    "opt_aiOpenAIHint": {
+        "message": "Du hast ein ChatGPT-Abo? Wähle oben „ChatGPT-Abo“, um es ohne Schlüssel zu nutzen."
+    },
+    "opt_aiAnthropicHint": {
+        "message": "Abos für Claude Pro und Max dürfen laut den Regeln von Anthropic nicht von anderen Apps genutzt werden, verwende also einen API-Schlüssel von console.anthropic.com."
+    },
+    "opt_aiZaiHint": {
+        "message": "Verwende einen normalen API-Schlüssel von z.ai. Ein Schlüssel für den GLM Coding Plan funktioniert nur in Coding-Tools."
     },
     "opt_aiGetKey": {
         "message": "Schlüssel holen"
@@ -2099,6 +2156,45 @@
     "opt_aiDisconnected": {
         "message": "$1-Schlüssel entfernt"
     },
+    "opt_aiPlanUse": {
+        "message": "Dein ChatGPT-Abo nutzen"
+    },
+    "opt_aiPlanUseText": {
+        "message": "Führe berechtigte KI-Anfragen in Mail Deck mit dem Nutzungskontingent deines ChatGPT-Abos aus."
+    },
+    "opt_aiPlanPlus": {
+        "message": "ChatGPT Plus hat ein Fünf-Stunden-Nutzungslimit, das sich alle Apps teilen, die es nutzen."
+    },
+    "opt_aiSignIn": {
+        "message": "Weiter mit ChatGPT"
+    },
+    "opt_aiSignInWait": {
+        "message": "Schließe die Anmeldung auf der geöffneten ChatGPT-Seite ab."
+    },
+    "opt_aiSignedIn": {
+        "message": "Angemeldet als $1"
+    },
+    "opt_aiSignedInPlain": {
+        "message": "Bei ChatGPT angemeldet"
+    },
+    "opt_aiPlanUsing": {
+        "message": "Dein ChatGPT-Abo wird genutzt"
+    },
+    "opt_aiManageUsage": {
+        "message": "Nutzung verwalten"
+    },
+    "opt_aiSignOut": {
+        "message": "Abmelden"
+    },
+    "opt_aiSignedOut": {
+        "message": "Von ChatGPT abgemeldet"
+    },
+    "opt_aiSignOutUnconfirmed": {
+        "message": "Hier abgemeldet, aber OpenAI hat es nicht bestätigt. Trenne Mail Deck zur Sicherheit in deinen ChatGPT-Einstellungen."
+    },
+    "opt_aiPlanAccess": {
+        "message": "Ohne Zugriff auf die Websites von OpenAI kann sich Mail Deck nicht mit ChatGPT anmelden. Versuch es noch einmal und erlaube den Zugriff."
+    },
     "opt_aiNoAccess": {
         "message": "Chrome lässt Mail Deck nicht mehr auf $1 zugreifen."
     },
@@ -2123,11 +2219,20 @@
     "opt_aiFast": {
         "message": "am schnellsten und günstigsten"
     },
+    "opt_aiFree": {
+        "message": "kostenlos"
+    },
     "opt_aiModelGone": {
         "message": "$1 ist für diesen Schlüssel nicht mehr verfügbar. Wähle ein anderes Modell."
     },
     "opt_aiNoModels": {
         "message": "Dieser Schlüssel hat keine Modelle, die Mail Deck nutzen kann."
+    },
+    "opt_aiPlanModelText": {
+        "message": "Größere Modelle fassen besser zusammen; kleinere antworten schneller und verbrauchen weniger von deinem Kontingent."
+    },
+    "opt_aiPlanNoModels": {
+        "message": "Dein ChatGPT-Abo hat keine Modelle, die Mail Deck nutzen kann."
     },
     "opt_aiSummary": {
         "message": "Zusammenfassung beim Lesen"
@@ -2145,16 +2250,34 @@
         "message": "Automatisch bei langen Mails"
     },
     "opt_aiReply": {
-        "message": "Wartet auf deine Antwort"
+        "message": "Ungelesene Mails sortieren"
     },
     "opt_aiReplyText": {
-        "message": "Markiert ungelesene Mails von Menschen, die eine Antwort erwarten, und sammelt sie unter einem Filter im Panel."
+        "message": "Findet Mails, die auf deine Antwort warten, wichtige Mails und Newsletter, die du auf einmal aufräumen kannst."
+    },
+    "opt_aiButtons": {
+        "message": "KI-Schaltflächen zeigen, wenn der Assistent aus ist"
+    },
+    "opt_aiButtonsText": {
+        "message": "Die Schaltflächen für Zusammenfassung, Antwort und Assistent bleiben im Panel und bieten an, ihn einzuschalten."
     },
     "opt_aiPrivacy": {
-        "message": "Anfragen gehen direkt von deinem Browser an $1, mit deinem Schlüssel. Mail Deck hat keine Server. Eine Zusammenfassung sendet den Text dieser Nachricht; „Wartet auf deine Antwort“ sendet Absender, Betreff und Vorschau ungelesener Mails."
+        "message": "Anfragen gehen direkt von deinem Browser an $1, mit deinem Schlüssel. Mail Deck hat keine Server. Eine Zusammenfassung sendet den Text dieser Nachricht; „Ungelesene Mails sortieren“ sendet Absender, Betreff und Vorschau ungelesener Mails."
     },
     "opt_aiPrivacyLocal": {
         "message": "Chrome führt das Modell auf diesem Computer aus, deine Mails werden also nirgendwohin gesendet."
+    },
+    "opt_aiPrivacyPlan": {
+        "message": "Anfragen gehen direkt von deinem Browser an OpenAI, angemeldet mit deinem ChatGPT-Konto. Mail Deck hat keine Server. Eine Zusammenfassung sendet den Text dieser Nachricht; „Ungelesene Mails sortieren“ sendet Absender, Betreff und Vorschau ungelesener Mails."
+    },
+    "opt_aiWelcome": {
+        "message": "Du nutzt dein ChatGPT-Abo"
+    },
+    "opt_aiWelcomeText": {
+        "message": "Berechtigte KI-Anfragen in Mail Deck nutzen das Kontingent deines ChatGPT-Abos. Die Nutzung verwaltest du in deinen ChatGPT-Einstellungen."
+    },
+    "opt_aiGotIt": {
+        "message": "Verstanden"
     },
     "opt_aiErrAuth": {
         "message": "$1 hat diesen Schlüssel abgelehnt. Prüfe, ob du ihn vollständig kopiert hast."
@@ -2164,6 +2287,9 @@
     },
     "opt_aiErrOther": {
         "message": "Das hat nicht geklappt. Versuch es noch einmal."
+    },
+    "opt_aiDiagSignedOut": {
+        "message": "abgemeldet"
     },
     "opt_aiDiagNoKey": {
         "message": "noch kein Schlüssel"

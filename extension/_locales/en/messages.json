@@ -1532,6 +1532,45 @@
   "ai_err_no_access": {
     "message": "Allow access to the provider in Settings → AI."
   },
+  "ai_err_limit": {
+    "message": "ChatGPT usage limit reached."
+  },
+  "ai_err_no_plan": {
+    "message": "ChatGPT plan usage is not available for this account."
+  },
+  "ai_err_signed_out": {
+    "message": "You are signed out of ChatGPT. Sign in again in Settings → AI."
+  },
+  "ai_err_denied": {
+    "message": "Mail Deck was not allowed to use your ChatGPT plan."
+  },
+  "ai_err_sign_in": {
+    "message": "Signing in with ChatGPT did not finish. Try again."
+  },
+  "ai_err_other_account": {
+    "message": "This is not the ChatGPT account Mail Deck was set up with. Try again to set it up with this one."
+  },
+  "ai_signin_title": {
+    "message": "Sign in with ChatGPT"
+  },
+  "ai_signin_working": {
+    "message": "Signing in…"
+  },
+  "ai_signin_done": {
+    "message": "Signed in as $1"
+  },
+  "ai_signin_done_plain": {
+    "message": "Signed in to ChatGPT"
+  },
+  "ai_signin_close": {
+    "message": "You can close this tab."
+  },
+  "ai_signin_failed": {
+    "message": "Not signed in"
+  },
+  "ai_signin_retry": {
+    "message": "Try again"
+  },
   "ai_note_english": {
     "message": "The built-in model answers in English."
   },
@@ -1878,13 +1917,22 @@
     "message": "No summaries or reply marks. Nothing is sent anywhere."
   },
   "opt_aiBuiltin": {
-    "message": "On this computer"
+    "message": "Chrome built-in"
   },
   "opt_aiBuiltinText": {
-    "message": "Chrome’s built-in model. Free and private, but not on every computer."
+    "message": "Runs on this computer: free and private, but not on every computer."
+  },
+  "opt_aiPlan": {
+    "message": "ChatGPT plan"
+  },
+  "opt_aiPlanText": {
+    "message": "The ChatGPT plan you already have, with no API key."
   },
   "opt_aiCloudText": {
-    "message": "With your own $1 API key, paid per use."
+    "message": "$1 models, paid per use."
+  },
+  "opt_aiZaiText": {
+    "message": "GLM models, paid per use; some are free."
   },
   "opt_aiChecking": {
     "message": "Checking…"
@@ -1911,7 +1959,7 @@
     "message": "Not available on this computer"
   },
   "opt_aiUnavailableText": {
-    "message": "Chrome does not offer its model here. OpenAI and Anthropic work on any computer."
+    "message": "Chrome does not offer its model here. The other choices work on any computer."
   },
   "opt_aiOldChrome": {
     "message": "Needs Chrome 138 or newer"
@@ -1927,6 +1975,15 @@
   },
   "opt_aiKeyText": {
     "message": "A $1 subscription does not include API access: $2 bills the key separately, per use."
+  },
+  "opt_aiOpenAIHint": {
+    "message": "Have a ChatGPT plan? Choose ChatGPT plan above to use it without a key."
+  },
+  "opt_aiAnthropicHint": {
+    "message": "Claude Pro and Max subscriptions can’t be used by other apps under Anthropic’s rules, so use an API key from console.anthropic.com."
+  },
+  "opt_aiZaiHint": {
+    "message": "Use a standard API key from z.ai. A GLM Coding Plan key works only in coding tools."
   },
   "opt_aiGetKey": {
     "message": "Get a key"
@@ -1961,6 +2018,45 @@
   "opt_aiDisconnected": {
     "message": "$1 key removed"
   },
+  "opt_aiPlanUse": {
+    "message": "Use your ChatGPT plan"
+  },
+  "opt_aiPlanUseText": {
+    "message": "Complete eligible AI requests in Mail Deck with usage included in your ChatGPT plan."
+  },
+  "opt_aiPlanPlus": {
+    "message": "ChatGPT Plus has a five-hour usage limit, shared across all the apps that use it."
+  },
+  "opt_aiSignIn": {
+    "message": "Continue with ChatGPT"
+  },
+  "opt_aiSignInWait": {
+    "message": "Finish signing in on the ChatGPT page that opened."
+  },
+  "opt_aiSignedIn": {
+    "message": "Signed in as $1"
+  },
+  "opt_aiSignedInPlain": {
+    "message": "Signed in to ChatGPT"
+  },
+  "opt_aiPlanUsing": {
+    "message": "Using your ChatGPT plan"
+  },
+  "opt_aiManageUsage": {
+    "message": "Manage usage"
+  },
+  "opt_aiSignOut": {
+    "message": "Sign out"
+  },
+  "opt_aiSignedOut": {
+    "message": "Signed out of ChatGPT"
+  },
+  "opt_aiSignOutUnconfirmed": {
+    "message": "Signed out here, but OpenAI did not confirm it. To be sure, disconnect Mail Deck in your ChatGPT settings."
+  },
+  "opt_aiPlanAccess": {
+    "message": "Without access to OpenAI’s sites, Mail Deck cannot sign in with ChatGPT. Try again and allow it."
+  },
   "opt_aiNoAccess": {
     "message": "Chrome no longer lets Mail Deck reach $1."
   },
@@ -1985,11 +2081,20 @@
   "opt_aiFast": {
     "message": "fastest, cheapest"
   },
+  "opt_aiFree": {
+    "message": "free"
+  },
   "opt_aiModelGone": {
     "message": "$1 is no longer available to this key. Pick another model."
   },
   "opt_aiNoModels": {
     "message": "This key has no models Mail Deck can use."
+  },
+  "opt_aiPlanModelText": {
+    "message": "Larger models summarize better; smaller ones answer faster and use less of your plan."
+  },
+  "opt_aiPlanNoModels": {
+    "message": "Your ChatGPT plan has no models Mail Deck can use."
   },
   "opt_aiSummary": {
     "message": "Summary in the reader"
@@ -2007,16 +2112,34 @@
     "message": "Automatically for long mail"
   },
   "opt_aiReply": {
-    "message": "Waiting for your reply"
+    "message": "Sort unread mail"
   },
   "opt_aiReplyText": {
-    "message": "Marks unread mail from people who expect an answer and gathers it under a chip in the panel."
+    "message": "Finds mail waiting for your reply, important mail, and newsletters you can clear in one go."
+  },
+  "opt_aiButtons": {
+    "message": "Show AI buttons while the assistant is off"
+  },
+  "opt_aiButtonsText": {
+    "message": "The summary, reply and assistant buttons stay in the panel and offer to turn it on."
   },
   "opt_aiPrivacy": {
-    "message": "Requests go from your browser straight to $1, with your key. Mail Deck has no servers. A summary sends that message’s text; Waiting for your reply sends the sender, subject and preview of unread mail."
+    "message": "Requests go from your browser straight to $1, with your key. Mail Deck has no servers. A summary sends that message’s text; Sort unread mail sends the sender, subject and preview of unread mail."
   },
   "opt_aiPrivacyLocal": {
     "message": "Chrome runs the model on this computer, so your mail is not sent anywhere."
+  },
+  "opt_aiPrivacyPlan": {
+    "message": "Requests go from your browser straight to OpenAI, signed in with your ChatGPT account. Mail Deck has no servers. A summary sends that message’s text; Sort unread mail sends the sender, subject and preview of unread mail."
+  },
+  "opt_aiWelcome": {
+    "message": "You’re using your ChatGPT plan"
+  },
+  "opt_aiWelcomeText": {
+    "message": "Eligible AI requests in Mail Deck use the usage included in your ChatGPT plan. Manage usage in your ChatGPT settings."
+  },
+  "opt_aiGotIt": {
+    "message": "Got it"
   },
   "opt_aiErrAuth": {
     "message": "$1 refused this key. Check that you copied all of it."
@@ -2026,6 +2149,9 @@
   },
   "opt_aiErrOther": {
     "message": "That did not work. Try again."
+  },
+  "opt_aiDiagSignedOut": {
+    "message": "signed out"
   },
   "opt_aiDiagNoKey": {
     "message": "no key yet"

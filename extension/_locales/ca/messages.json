@@ -1674,6 +1674,45 @@
     "ai_err_no_access": {
         "message": "Permet l'accés al proveïdor a Opcions → IA."
     },
+    "ai_err_limit": {
+        "message": "S’ha arribat al límit d’ús de ChatGPT."
+    },
+    "ai_err_no_plan": {
+        "message": "L’ús del pla de ChatGPT no està disponible per a aquest compte."
+    },
+    "ai_err_signed_out": {
+        "message": "La sessió de ChatGPT està tancada. Torna a iniciar-la a Opcions → IA."
+    },
+    "ai_err_denied": {
+        "message": "No s’ha permès que Mail Deck faci servir el teu pla de ChatGPT."
+    },
+    "ai_err_sign_in": {
+        "message": "L’inici de sessió amb ChatGPT no s’ha completat. Torna-ho a provar."
+    },
+    "ai_err_other_account": {
+        "message": "Aquest no és el compte de ChatGPT amb què es va configurar Mail Deck. Torna-ho a provar per configurar-lo amb aquest."
+    },
+    "ai_signin_title": {
+        "message": "Inicia la sessió amb ChatGPT"
+    },
+    "ai_signin_working": {
+        "message": "S’està iniciant la sessió…"
+    },
+    "ai_signin_done": {
+        "message": "Sessió iniciada com a $1"
+    },
+    "ai_signin_done_plain": {
+        "message": "Sessió iniciada a ChatGPT"
+    },
+    "ai_signin_close": {
+        "message": "Ja pots tancar aquesta pestanya."
+    },
+    "ai_signin_failed": {
+        "message": "No s’ha iniciat la sessió"
+    },
+    "ai_signin_retry": {
+        "message": "Torna-ho a provar"
+    },
     "ai_note_english": {
         "message": "El model integrat respon en anglès."
     },
@@ -2020,13 +2059,22 @@
         "message": "Sense resums ni marques de resposta. No s’envia res enlloc."
     },
     "opt_aiBuiltin": {
-        "message": "En aquest ordinador"
+        "message": "Integrat a Chrome"
     },
     "opt_aiBuiltinText": {
-        "message": "El model integrat de Chrome. Gratuït i privat, però no és a tots els ordinadors."
+        "message": "Funciona en aquest ordinador: gratuït i privat, però no a tots els ordinadors."
+    },
+    "opt_aiPlan": {
+        "message": "Pla de ChatGPT"
+    },
+    "opt_aiPlanText": {
+        "message": "El pla de ChatGPT que ja tens, sense clau d’API."
     },
     "opt_aiCloudText": {
-        "message": "Amb la teva pròpia clau d’API de $1, de pagament per ús."
+        "message": "Models de $1, de pagament per ús."
+    },
+    "opt_aiZaiText": {
+        "message": "Models GLM, de pagament per ús; alguns són gratuïts."
     },
     "opt_aiChecking": {
         "message": "S’està comprovant…"
@@ -2053,7 +2101,7 @@
         "message": "No disponible en aquest ordinador"
     },
     "opt_aiUnavailableText": {
-        "message": "Chrome no ofereix el seu model aquí. OpenAI i Anthropic funcionen en qualsevol ordinador."
+        "message": "Chrome no ofereix el seu model aquí. Les altres opcions funcionen en qualsevol ordinador."
     },
     "opt_aiOldChrome": {
         "message": "Cal Chrome 138 o posterior"
@@ -2069,6 +2117,15 @@
     },
     "opt_aiKeyText": {
         "message": "Una subscripció a $1 no inclou accés a l’API: $2 cobra la clau a part, per ús."
+    },
+    "opt_aiOpenAIHint": {
+        "message": "Tens un pla de ChatGPT? Tria «Pla de ChatGPT» més amunt per fer-lo servir sense clau."
+    },
+    "opt_aiAnthropicHint": {
+        "message": "Les normes d’Anthropic no permeten que altres aplicacions facin servir les subscripcions Claude Pro i Max, així que fes servir una clau d’API de console.anthropic.com."
+    },
+    "opt_aiZaiHint": {
+        "message": "Fes servir una clau d’API estàndard de z.ai. Una clau del GLM Coding Plan només funciona en eines de programació."
     },
     "opt_aiGetKey": {
         "message": "Obtén una clau"
@@ -2103,6 +2160,45 @@
     "opt_aiDisconnected": {
         "message": "S’ha suprimit la clau de $1"
     },
+    "opt_aiPlanUse": {
+        "message": "Fes servir el teu pla de ChatGPT"
+    },
+    "opt_aiPlanUseText": {
+        "message": "Completa les sol·licituds d’IA aptes a Mail Deck amb l’ús inclòs al teu pla de ChatGPT."
+    },
+    "opt_aiPlanPlus": {
+        "message": "ChatGPT Plus té un límit d’ús cada cinc hores, compartit entre totes les aplicacions que el fan servir."
+    },
+    "opt_aiSignIn": {
+        "message": "Continua amb ChatGPT"
+    },
+    "opt_aiSignInWait": {
+        "message": "Acaba d’iniciar la sessió a la pàgina de ChatGPT que s’ha obert."
+    },
+    "opt_aiSignedIn": {
+        "message": "Sessió iniciada com a $1"
+    },
+    "opt_aiSignedInPlain": {
+        "message": "Sessió iniciada a ChatGPT"
+    },
+    "opt_aiPlanUsing": {
+        "message": "S’està fent servir el teu pla de ChatGPT"
+    },
+    "opt_aiManageUsage": {
+        "message": "Gestiona l’ús"
+    },
+    "opt_aiSignOut": {
+        "message": "Tanca la sessió"
+    },
+    "opt_aiSignedOut": {
+        "message": "S’ha tancat la sessió de ChatGPT"
+    },
+    "opt_aiSignOutUnconfirmed": {
+        "message": "S’ha tancat la sessió aquí, però OpenAI no ho ha confirmat. Per assegurar-te’n, desconnecta Mail Deck a la configuració de ChatGPT."
+    },
+    "opt_aiPlanAccess": {
+        "message": "Sense accés als llocs d’OpenAI, Mail Deck no pot iniciar la sessió amb ChatGPT. Torna-ho a provar i permet l’accés."
+    },
     "opt_aiNoAccess": {
         "message": "Chrome ja no permet que Mail Deck accedeixi a $1."
     },
@@ -2127,11 +2223,20 @@
     "opt_aiFast": {
         "message": "el més ràpid i barat"
     },
+    "opt_aiFree": {
+        "message": "gratuït"
+    },
     "opt_aiModelGone": {
         "message": "$1 ja no està disponible per a aquesta clau. Tria un altre model."
     },
     "opt_aiNoModels": {
         "message": "Aquesta clau no té cap model que Mail Deck pugui fer servir."
+    },
+    "opt_aiPlanModelText": {
+        "message": "Els models grans resumeixen millor; els petits responen més de pressa i gasten menys del teu pla."
+    },
+    "opt_aiPlanNoModels": {
+        "message": "El teu pla de ChatGPT no té cap model que Mail Deck pugui fer servir."
     },
     "opt_aiSummary": {
         "message": "Resum al lector"
@@ -2149,16 +2254,34 @@
         "message": "Automàtic als correus llargs"
     },
     "opt_aiReply": {
-        "message": "Esperen la teva resposta"
+        "message": "Ordena el correu no llegit"
     },
     "opt_aiReplyText": {
-        "message": "Marca el correu no llegit de persones que esperen resposta i l’agrupa sota un filtre al tauler."
+        "message": "Troba el correu que espera la teva resposta, el correu important i els butlletins que pots netejar de cop."
+    },
+    "opt_aiButtons": {
+        "message": "Mostra els botons d’IA amb l’assistent desactivat"
+    },
+    "opt_aiButtonsText": {
+        "message": "Els botons de resum, resposta i assistent es queden al tauler i ofereixen activar-lo."
     },
     "opt_aiPrivacy": {
-        "message": "Les sol·licituds van del teu navegador directament a $1, amb la teva clau. Mail Deck no té servidors. Un resum envia el text d’aquell missatge; «Esperen la teva resposta» envia el remitent, l’assumpte i la previsualització del correu no llegit."
+        "message": "Les sol·licituds van del teu navegador directament a $1, amb la teva clau. Mail Deck no té servidors. Un resum envia el text d’aquell missatge; «Ordena el correu no llegit» envia el remitent, l’assumpte i la previsualització del correu no llegit."
     },
     "opt_aiPrivacyLocal": {
         "message": "Chrome executa el model en aquest ordinador, així que el teu correu no s’envia enlloc."
+    },
+    "opt_aiPrivacyPlan": {
+        "message": "Les sol·licituds van del teu navegador directament a OpenAI, amb la sessió del teu compte de ChatGPT. Mail Deck no té servidors. Un resum envia el text d’aquell missatge; «Ordena el correu no llegit» envia el remitent, l’assumpte i la previsualització del correu no llegit."
+    },
+    "opt_aiWelcome": {
+        "message": "Estàs fent servir el teu pla de ChatGPT"
+    },
+    "opt_aiWelcomeText": {
+        "message": "Les sol·licituds d’IA aptes a Mail Deck consumeixen l’ús inclòs al teu pla de ChatGPT. Gestiona l’ús a la configuració de ChatGPT."
+    },
+    "opt_aiGotIt": {
+        "message": "Entesos"
     },
     "opt_aiErrAuth": {
         "message": "$1 ha rebutjat aquesta clau. Comprova que l’has copiada sencera."
@@ -2168,6 +2291,9 @@
     },
     "opt_aiErrOther": {
         "message": "No ha funcionat. Torna-ho a provar."
+    },
+    "opt_aiDiagSignedOut": {
+        "message": "sessió tancada"
     },
     "opt_aiDiagNoKey": {
         "message": "encara no hi ha clau"

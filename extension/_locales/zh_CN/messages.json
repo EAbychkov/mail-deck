@@ -1674,6 +1674,45 @@
     "ai_err_no_access": {
         "message": "请在“设置 → AI 助手”中允许访问服务商。"
     },
+    "ai_err_limit": {
+        "message": "已达到 ChatGPT 的用量上限。"
+    },
+    "ai_err_no_plan": {
+        "message": "此账号无法使用 ChatGPT 套餐的额度。"
+    },
+    "ai_err_signed_out": {
+        "message": "你已退出 ChatGPT。请在“设置 → AI 助手”中重新登录。"
+    },
+    "ai_err_denied": {
+        "message": "Mail Deck 未获准使用你的 ChatGPT 套餐。"
+    },
+    "ai_err_sign_in": {
+        "message": "ChatGPT 登录未完成。请重试。"
+    },
+    "ai_err_other_account": {
+        "message": "这不是设置 Mail Deck 时使用的 ChatGPT 账号。请重试，改用此账号进行设置。"
+    },
+    "ai_signin_title": {
+        "message": "使用 ChatGPT 登录"
+    },
+    "ai_signin_working": {
+        "message": "正在登录…"
+    },
+    "ai_signin_done": {
+        "message": "已以 $1 身份登录"
+    },
+    "ai_signin_done_plain": {
+        "message": "已登录 ChatGPT"
+    },
+    "ai_signin_close": {
+        "message": "你可以关闭此标签页了。"
+    },
+    "ai_signin_failed": {
+        "message": "未能登录"
+    },
+    "ai_signin_retry": {
+        "message": "重试"
+    },
     "ai_note_english": {
         "message": "内置模型会用英语回答。"
     },
@@ -2020,13 +2059,22 @@
         "message": "没有摘要和回复标记。不会向任何地方发送任何内容。"
     },
     "opt_aiBuiltin": {
-        "message": "在这台电脑上"
+        "message": "Chrome 内置"
     },
     "opt_aiBuiltinText": {
-        "message": "Chrome 的内置模型。免费且私密，但并非每台电脑都有。"
+        "message": "在这台电脑上运行：免费且私密，但并非每台电脑都有。"
+    },
+    "opt_aiPlan": {
+        "message": "ChatGPT 套餐"
+    },
+    "opt_aiPlanText": {
+        "message": "使用你已有的 ChatGPT 套餐，无需 API 密钥。"
     },
     "opt_aiCloudText": {
-        "message": "使用你自己的 $1 API 密钥，按用量付费。"
+        "message": "$1 模型，按用量付费。"
+    },
+    "opt_aiZaiText": {
+        "message": "GLM 模型，按用量付费；部分免费。"
     },
     "opt_aiChecking": {
         "message": "正在检查…"
@@ -2053,7 +2101,7 @@
         "message": "在这台电脑上不可用"
     },
     "opt_aiUnavailableText": {
-        "message": "Chrome 未在这台电脑上提供其模型。OpenAI 和 Anthropic 在任何电脑上都能使用。"
+        "message": "Chrome 未在这台电脑上提供其模型。其他选项在任何电脑上都能使用。"
     },
     "opt_aiOldChrome": {
         "message": "需要 Chrome 138 或更高版本"
@@ -2069,6 +2117,15 @@
     },
     "opt_aiKeyText": {
         "message": "$1 订阅不包含 API 访问权限：$2 会按用量单独为密钥计费。"
+    },
+    "opt_aiOpenAIHint": {
+        "message": "有 ChatGPT 套餐？在上方选择“ChatGPT 套餐”，无需密钥即可使用。"
+    },
+    "opt_aiAnthropicHint": {
+        "message": "根据 Anthropic 的规定，Claude Pro 和 Max 订阅不能用于其他应用，因此请使用 console.anthropic.com 提供的 API 密钥。"
+    },
+    "opt_aiZaiHint": {
+        "message": "请使用 z.ai 的标准 API 密钥。GLM Coding Plan 的密钥只能在编程工具中使用。"
     },
     "opt_aiGetKey": {
         "message": "获取密钥"
@@ -2103,6 +2160,45 @@
     "opt_aiDisconnected": {
         "message": "已删除 $1 密钥"
     },
+    "opt_aiPlanUse": {
+        "message": "使用你的 ChatGPT 套餐"
+    },
+    "opt_aiPlanUseText": {
+        "message": "Mail Deck 中符合条件的 AI 请求将使用你的 ChatGPT 套餐所含的额度完成。"
+    },
+    "opt_aiPlanPlus": {
+        "message": "ChatGPT Plus 有每五小时的用量上限，由所有使用它的应用共享。"
+    },
+    "opt_aiSignIn": {
+        "message": "使用 ChatGPT 继续"
+    },
+    "opt_aiSignInWait": {
+        "message": "请在打开的 ChatGPT 页面上完成登录。"
+    },
+    "opt_aiSignedIn": {
+        "message": "已以 $1 身份登录"
+    },
+    "opt_aiSignedInPlain": {
+        "message": "已登录 ChatGPT"
+    },
+    "opt_aiPlanUsing": {
+        "message": "正在使用你的 ChatGPT 套餐"
+    },
+    "opt_aiManageUsage": {
+        "message": "管理用量"
+    },
+    "opt_aiSignOut": {
+        "message": "退出登录"
+    },
+    "opt_aiSignedOut": {
+        "message": "已退出 ChatGPT"
+    },
+    "opt_aiSignOutUnconfirmed": {
+        "message": "已在此处退出，但 OpenAI 没有确认。为确保退出，请在 ChatGPT 设置中断开与 Mail Deck 的连接。"
+    },
+    "opt_aiPlanAccess": {
+        "message": "没有 OpenAI 网站的访问权限，Mail Deck 无法使用 ChatGPT 登录。请重试并允许访问。"
+    },
     "opt_aiNoAccess": {
         "message": "Chrome 已不再允许 Mail Deck 访问 $1。"
     },
@@ -2127,11 +2223,20 @@
     "opt_aiFast": {
         "message": "最快、最便宜"
     },
+    "opt_aiFree": {
+        "message": "免费"
+    },
     "opt_aiModelGone": {
         "message": "此密钥已无法使用 $1。请另选一个模型。"
     },
     "opt_aiNoModels": {
         "message": "此密钥没有 Mail Deck 可用的模型。"
+    },
+    "opt_aiPlanModelText": {
+        "message": "较大的模型摘要更好；较小的模型回答更快，占用的套餐额度也更少。"
+    },
+    "opt_aiPlanNoModels": {
+        "message": "你的 ChatGPT 套餐没有 Mail Deck 可用的模型。"
     },
     "opt_aiSummary": {
         "message": "阅读时显示摘要"
@@ -2149,16 +2254,34 @@
         "message": "长邮件自动显示"
     },
     "opt_aiReply": {
-        "message": "等待你回复"
+        "message": "整理未读邮件"
     },
     "opt_aiReplyText": {
-        "message": "标记来自真人、等待你回复的未读邮件，并在面板中集中到一个筛选条件下。"
+        "message": "找出等待你回复的邮件、重要邮件，以及可一次清理掉的订阅邮件。"
+    },
+    "opt_aiButtons": {
+        "message": "AI 助手关闭时也显示 AI 按钮"
+    },
+    "opt_aiButtonsText": {
+        "message": "摘要、回复和助手按钮会保留在面板中，并提示你开启 AI 助手。"
     },
     "opt_aiPrivacy": {
-        "message": "请求从你的浏览器直接发送到 $1，使用你的密钥。Mail Deck 没有服务器。摘要会发送该邮件的正文；“等待你回复”会发送未读邮件的发件人、主题和预览。"
+        "message": "请求从你的浏览器直接发送到 $1，使用你的密钥。Mail Deck 没有服务器。摘要会发送该邮件的正文；“整理未读邮件”会发送未读邮件的发件人、主题和预览。"
     },
     "opt_aiPrivacyLocal": {
         "message": "Chrome 在这台电脑上运行模型，所以你的邮件不会被发送到任何地方。"
+    },
+    "opt_aiPrivacyPlan": {
+        "message": "请求从你的浏览器直接发送到 OpenAI，并使用你登录的 ChatGPT 账号。Mail Deck 没有服务器。摘要会发送该邮件的正文；“整理未读邮件”会发送未读邮件的发件人、主题和预览。"
+    },
+    "opt_aiWelcome": {
+        "message": "你正在使用 ChatGPT 套餐"
+    },
+    "opt_aiWelcomeText": {
+        "message": "Mail Deck 中符合条件的 AI 请求会使用你的 ChatGPT 套餐所含的额度。可在 ChatGPT 设置中管理用量。"
+    },
+    "opt_aiGotIt": {
+        "message": "知道了"
     },
     "opt_aiErrAuth": {
         "message": "$1 拒绝了此密钥。请确认已完整复制。"
@@ -2168,6 +2291,9 @@
     },
     "opt_aiErrOther": {
         "message": "没有成功。请重试。"
+    },
+    "opt_aiDiagSignedOut": {
+        "message": "已退出登录"
     },
     "opt_aiDiagNoKey": {
         "message": "尚无密钥"

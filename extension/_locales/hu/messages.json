@@ -1490,6 +1490,45 @@
   "ai_err_no_access": {
     "message": "Engedélyezze a hozzáférést a szolgáltatóhoz a Beállítások → Mesterséges intelligencia részben."
   },
+  "ai_err_limit": {
+    "message": "Betelt a ChatGPT használati kerete."
+  },
+  "ai_err_no_plan": {
+    "message": "Ennél a fióknál nem érhető el a ChatGPT-előfizetés használata."
+  },
+  "ai_err_signed_out": {
+    "message": "Kijelentkezett a ChatGPT-ből. Jelentkezzen be újra a Beállítások → Mesterséges intelligencia részben."
+  },
+  "ai_err_denied": {
+    "message": "A Mail Deck nem kapott engedélyt a ChatGPT-előfizetés használatára."
+  },
+  "ai_err_sign_in": {
+    "message": "A ChatGPT-vel való bejelentkezés nem fejeződött be. Próbálja újra."
+  },
+  "ai_err_other_account": {
+    "message": "Ez nem az a ChatGPT-fiók, amellyel a Mail Deck be lett állítva. Próbálja újra, hogy ezzel a fiókkal állítsa be."
+  },
+  "ai_signin_title": {
+    "message": "Bejelentkezés ChatGPT-vel"
+  },
+  "ai_signin_working": {
+    "message": "Bejelentkezés…"
+  },
+  "ai_signin_done": {
+    "message": "Bejelentkezve: $1"
+  },
+  "ai_signin_done_plain": {
+    "message": "Bejelentkezve a ChatGPT-be"
+  },
+  "ai_signin_close": {
+    "message": "Ezt a lapot bezárhatja."
+  },
+  "ai_signin_failed": {
+    "message": "Nincs bejelentkezve"
+  },
+  "ai_signin_retry": {
+    "message": "Próbálja újra"
+  },
   "ai_note_english": {
     "message": "A beépített modell angolul válaszol."
   },
@@ -1836,13 +1875,22 @@
     "message": "Nincs összefoglaló és válaszjelölés. Semmi nem megy sehova."
   },
   "opt_aiBuiltin": {
-    "message": "Ezen a számítógépen"
+    "message": "Beépített Chrome-modell"
   },
   "opt_aiBuiltinText": {
-    "message": "A Chrome beépített modellje. Ingyenes és privát, de nem minden számítógépen érhető el."
+    "message": "Ezen a számítógépen fut: ingyenes és privát, de nem minden számítógépen érhető el."
+  },
+  "opt_aiPlan": {
+    "message": "ChatGPT-előfizetés"
+  },
+  "opt_aiPlanText": {
+    "message": "A meglévő ChatGPT-előfizetésed, API-kulcs nélkül."
   },
   "opt_aiCloudText": {
-    "message": "Saját $1 API-kulccsal, használat szerinti díjjal."
+    "message": "$1-modellek, használat szerinti díjjal."
+  },
+  "opt_aiZaiText": {
+    "message": "GLM-modellek, használat szerinti díjjal; némelyik ingyenes."
   },
   "opt_aiChecking": {
     "message": "Ellenőrzés…"
@@ -1869,7 +1917,7 @@
     "message": "Ezen a számítógépen nem érhető el"
   },
   "opt_aiUnavailableText": {
-    "message": "A Chrome itt nem kínálja a modelljét. Az OpenAI és az Anthropic bármelyik számítógépen működik."
+    "message": "A Chrome itt nem kínálja a modelljét. A többi lehetőség bármelyik számítógépen működik."
   },
   "opt_aiOldChrome": {
     "message": "Chrome 138 vagy újabb kell"
@@ -1885,6 +1933,15 @@
   },
   "opt_aiKeyText": {
     "message": "Egy $1-előfizetés nem tartalmaz API-hozzáférést: a kulcsot az $2 külön, használat szerint számlázza."
+  },
+  "opt_aiOpenAIHint": {
+    "message": "Van ChatGPT-előfizetésed? Válaszd fent a „ChatGPT-előfizetés” lehetőséget, hogy kulcs nélkül használd."
+  },
+  "opt_aiAnthropicHint": {
+    "message": "Az Anthropic szabályai szerint a Claude Pro- és Max-előfizetés más alkalmazásokban nem használható, ezért használj API-kulcsot a console.anthropic.com oldalról."
+  },
+  "opt_aiZaiHint": {
+    "message": "Használj normál API-kulcsot a z.ai oldaláról. A GLM Coding Plan kulcsa csak programozási eszközökben működik."
   },
   "opt_aiGetKey": {
     "message": "Kulcs igénylése"
@@ -1919,6 +1976,45 @@
   "opt_aiDisconnected": {
     "message": "$1-kulcs eltávolítva"
   },
+  "opt_aiPlanUse": {
+    "message": "A ChatGPT-előfizetésed használata"
+  },
+  "opt_aiPlanUseText": {
+    "message": "A Mail Deck jogosult MI-kérései a ChatGPT-előfizetésedben foglalt keretből teljesülnek."
+  },
+  "opt_aiPlanPlus": {
+    "message": "A ChatGPT Plus ötórás használati korláttal jár, amelyen az azt használó összes alkalmazás osztozik."
+  },
+  "opt_aiSignIn": {
+    "message": "Folytatás a ChatGPT-vel"
+  },
+  "opt_aiSignInWait": {
+    "message": "Fejezd be a bejelentkezést a megnyílt ChatGPT-oldalon."
+  },
+  "opt_aiSignedIn": {
+    "message": "Bejelentkezve: $1"
+  },
+  "opt_aiSignedInPlain": {
+    "message": "Bejelentkezve a ChatGPT-be"
+  },
+  "opt_aiPlanUsing": {
+    "message": "ChatGPT-előfizetésed használatban"
+  },
+  "opt_aiManageUsage": {
+    "message": "Használat kezelése"
+  },
+  "opt_aiSignOut": {
+    "message": "Kijelentkezés"
+  },
+  "opt_aiSignedOut": {
+    "message": "Kijelentkezve a ChatGPT-ből"
+  },
+  "opt_aiSignOutUnconfirmed": {
+    "message": "Itt kijelentkeztél, de az OpenAI ezt nem erősítette meg. A biztonság kedvéért válaszd le a Mail Deck-et a ChatGPT-beállításaidban."
+  },
+  "opt_aiPlanAccess": {
+    "message": "Az OpenAI oldalaihoz való hozzáférés nélkül a Mail Deck nem tud bejelentkezni a ChatGPT-vel. Próbáld újra, és engedélyezd a hozzáférést."
+  },
   "opt_aiNoAccess": {
     "message": "A Chrome már nem engedi, hogy a Mail Deck elérje ezt: $1."
   },
@@ -1943,11 +2039,20 @@
   "opt_aiFast": {
     "message": "a leggyorsabb és legolcsóbb"
   },
+  "opt_aiFree": {
+    "message": "ingyenes"
+  },
   "opt_aiModelGone": {
     "message": "A(z) $1 már nem érhető el ezzel a kulccsal. Válassz másik modellt."
   },
   "opt_aiNoModels": {
     "message": "Ehhez a kulcshoz nincs olyan modell, amelyet a Mail Deck használni tud."
+  },
+  "opt_aiPlanModelText": {
+    "message": "A nagyobb modellek jobban foglalnak össze; a kisebbek gyorsabban válaszolnak, és kevesebbet fogyasztanak az előfizetésed keretéből."
+  },
+  "opt_aiPlanNoModels": {
+    "message": "A ChatGPT-előfizetésedben nincs olyan modell, amelyet a Mail Deck használni tud."
   },
   "opt_aiSummary": {
     "message": "Összefoglaló olvasás közben"
@@ -1965,16 +2070,34 @@
     "message": "Hosszú leveleknél automatikusan"
   },
   "opt_aiReply": {
-    "message": "Válaszodra vár"
+    "message": "Olvasatlan levelek szétválogatása"
   },
   "opt_aiReplyText": {
-    "message": "Megjelöli a választ váró emberektől érkezett olvasatlan leveleket, és egy szűrőbe gyűjti őket a panelen."
+    "message": "Megtalálja a válaszodra váró és a fontos leveleket, valamint a hírleveleket, amelyeket egy mozdulattal eltakaríthatsz."
+  },
+  "opt_aiButtons": {
+    "message": "MI-gombok mutatása, amikor az asszisztens ki van kapcsolva"
+  },
+  "opt_aiButtonsText": {
+    "message": "Az összefoglaló, a válasz és az asszisztens gombja a panelen marad, és felajánlja az asszisztens bekapcsolását."
   },
   "opt_aiPrivacy": {
-    "message": "A kérések a böngésződből egyenesen ide mennek: $1, a kulcsoddal. A Mail Deck-nek nincsenek szerverei. Az összefoglaló az adott levél szövegét küldi el; a „Válaszodra vár” az olvasatlan levelek feladóját, tárgyát és előnézetét."
+    "message": "A kérések a böngésződből egyenesen ide mennek: $1, a kulcsoddal. A Mail Deck-nek nincsenek szerverei. Az összefoglaló az adott levél szövegét küldi el; az „Olvasatlan levelek szétválogatása” az olvasatlan levelek feladóját, tárgyát és előnézetét."
   },
   "opt_aiPrivacyLocal": {
     "message": "A Chrome ezen a számítógépen futtatja a modellt, így a leveleid sehova nem kerülnek."
+  },
+  "opt_aiPrivacyPlan": {
+    "message": "A kérések a böngésződből egyenesen az OpenAI-hoz mennek, a ChatGPT-fiókoddal bejelentkezve. A Mail Deck-nek nincsenek szerverei. Az összefoglaló az adott levél szövegét küldi el; az „Olvasatlan levelek szétválogatása” az olvasatlan levelek feladóját, tárgyát és előnézetét."
+  },
+  "opt_aiWelcome": {
+    "message": "A ChatGPT-előfizetésedet használod"
+  },
+  "opt_aiWelcomeText": {
+    "message": "A Mail Deck jogosult MI-kérései a ChatGPT-előfizetésedben foglalt keretet használják. A használatot a ChatGPT-beállításaidban kezelheted."
+  },
+  "opt_aiGotIt": {
+    "message": "Értem"
   },
   "opt_aiErrAuth": {
     "message": "A(z) $1 elutasította ezt a kulcsot. Ellenőrizd, hogy a teljes kulcsot másoltad-e."
@@ -1984,6 +2107,9 @@
   },
   "opt_aiErrOther": {
     "message": "Nem sikerült. Próbáld újra."
+  },
+  "opt_aiDiagSignedOut": {
+    "message": "kijelentkezve"
   },
   "opt_aiDiagNoKey": {
     "message": "még nincs kulcs"

@@ -1670,6 +1670,45 @@
     "ai_err_no_access": {
         "message": "אפשר גישה לספק בהגדרות, תחת ״בינה מלאכותית״."
     },
+    "ai_err_limit": {
+        "message": "הגעת למגבלת השימוש של ChatGPT."
+    },
+    "ai_err_no_plan": {
+        "message": "לא ניתן להשתמש בתוכנית ChatGPT בחשבון הזה."
+    },
+    "ai_err_signed_out": {
+        "message": "התנתקת מ-ChatGPT. התחבר שוב בהגדרות, תחת ״בינה מלאכותית״."
+    },
+    "ai_err_denied": {
+        "message": "Mail Deck לא קיבל הרשאה להשתמש בתוכנית ה-ChatGPT שלך."
+    },
+    "ai_err_sign_in": {
+        "message": "ההתחברות עם ChatGPT לא הושלמה. נסה שוב."
+    },
+    "ai_err_other_account": {
+        "message": "זה לא חשבון ה-ChatGPT ש-Mail Deck הוגדר איתו. נסה שוב כדי להגדיר אותו עם החשבון הזה."
+    },
+    "ai_signin_title": {
+        "message": "התחברות עם ChatGPT"
+    },
+    "ai_signin_working": {
+        "message": "מתחבר…"
+    },
+    "ai_signin_done": {
+        "message": "מחובר בתור $1"
+    },
+    "ai_signin_done_plain": {
+        "message": "מחובר ל-ChatGPT"
+    },
+    "ai_signin_close": {
+        "message": "אפשר לסגור את הכרטיסייה הזו."
+    },
+    "ai_signin_failed": {
+        "message": "ההתחברות לא הצליחה"
+    },
+    "ai_signin_retry": {
+        "message": "נסה שוב"
+    },
     "ai_note_english": {
         "message": "המודל המובנה עונה באנגלית."
     },
@@ -2016,13 +2055,22 @@
         "message": "בלי סיכומים ובלי סימוני תשובה. שום דבר לא נשלח לשום מקום."
     },
     "opt_aiBuiltin": {
-        "message": "במחשב הזה"
+        "message": "מובנה ב-Chrome"
     },
     "opt_aiBuiltinText": {
-        "message": "המודל המובנה של Chrome. חינמי ופרטי, אבל לא קיים בכל מחשב."
+        "message": "רץ במחשב הזה: חינמי ופרטי, אבל לא קיים בכל מחשב."
+    },
+    "opt_aiPlan": {
+        "message": "תוכנית ChatGPT"
+    },
+    "opt_aiPlanText": {
+        "message": "תוכנית ה-ChatGPT שכבר יש לך, בלי מפתח API."
     },
     "opt_aiCloudText": {
-        "message": "עם מפתח API משלך של $1, בתשלום לפי שימוש."
+        "message": "מודלים של $1, בתשלום לפי שימוש."
+    },
+    "opt_aiZaiText": {
+        "message": "מודלים של GLM, בתשלום לפי שימוש; חלקם בחינם."
     },
     "opt_aiChecking": {
         "message": "בודק…"
@@ -2049,7 +2097,7 @@
         "message": "לא זמין במחשב הזה"
     },
     "opt_aiUnavailableText": {
-        "message": "Chrome לא מציע כאן את המודל שלו. OpenAI ו-Anthropic עובדים בכל מחשב."
+        "message": "Chrome לא מציע כאן את המודל שלו. האפשרויות האחרות עובדות בכל מחשב."
     },
     "opt_aiOldChrome": {
         "message": "נדרש Chrome 138 ומעלה"
@@ -2065,6 +2113,15 @@
     },
     "opt_aiKeyText": {
         "message": "מנוי $1 לא כולל גישה ל-API: ‏$2 מחייבת על המפתח בנפרד, לפי שימוש."
+    },
+    "opt_aiOpenAIHint": {
+        "message": "יש לך תוכנית ChatGPT? בחר למעלה ב״תוכנית ChatGPT״ כדי להשתמש בה בלי מפתח."
+    },
+    "opt_aiAnthropicHint": {
+        "message": "לפי הכללים של Anthropic, אפליקציות אחרות לא יכולות להשתמש במנויי Claude Pro ו-Max, לכן השתמש במפתח API מ-console.anthropic.com."
+    },
+    "opt_aiZaiHint": {
+        "message": "השתמש במפתח API רגיל מ-z.ai. מפתח של GLM Coding Plan עובד רק בכלי תכנות."
     },
     "opt_aiGetKey": {
         "message": "השג מפתח"
@@ -2099,6 +2156,45 @@
     "opt_aiDisconnected": {
         "message": "המפתח של $1 הוסר"
     },
+    "opt_aiPlanUse": {
+        "message": "שימוש בתוכנית ה-ChatGPT שלך"
+    },
+    "opt_aiPlanUseText": {
+        "message": "ביצוע בקשות בינה מלאכותית מתאימות ב-Mail Deck במסגרת השימוש הכלול בתוכנית ה-ChatGPT שלך."
+    },
+    "opt_aiPlanPlus": {
+        "message": "ל-ChatGPT Plus יש מגבלת שימוש לכל חמש שעות, המשותפת לכל האפליקציות שמשתמשות בו."
+    },
+    "opt_aiSignIn": {
+        "message": "המשך עם ChatGPT"
+    },
+    "opt_aiSignInWait": {
+        "message": "סיים את ההתחברות בדף ChatGPT שנפתח."
+    },
+    "opt_aiSignedIn": {
+        "message": "מחובר בתור $1"
+    },
+    "opt_aiSignedInPlain": {
+        "message": "מחובר ל-ChatGPT"
+    },
+    "opt_aiPlanUsing": {
+        "message": "בשימוש: תוכנית ה-ChatGPT שלך"
+    },
+    "opt_aiManageUsage": {
+        "message": "ניהול השימוש"
+    },
+    "opt_aiSignOut": {
+        "message": "התנתק"
+    },
+    "opt_aiSignedOut": {
+        "message": "התנתקת מ-ChatGPT"
+    },
+    "opt_aiSignOutUnconfirmed": {
+        "message": "התנתקת כאן, אבל OpenAI לא אישרה זאת. ליתר ביטחון, נתק את Mail Deck בהגדרות של ChatGPT."
+    },
+    "opt_aiPlanAccess": {
+        "message": "בלי גישה לאתרים של OpenAI, Mail Deck לא יכול להתחבר עם ChatGPT. נסה שוב ואפשר את הגישה."
+    },
     "opt_aiNoAccess": {
         "message": "Chrome כבר לא מאפשר ל-Mail Deck לגשת אל $1."
     },
@@ -2123,11 +2219,20 @@
     "opt_aiFast": {
         "message": "המהיר והזול ביותר"
     },
+    "opt_aiFree": {
+        "message": "חינם"
+    },
     "opt_aiModelGone": {
         "message": "$1 כבר לא זמין למפתח הזה. בחר מודל אחר."
     },
     "opt_aiNoModels": {
         "message": "למפתח הזה אין מודלים ש-Mail Deck יכול להשתמש בהם."
+    },
+    "opt_aiPlanModelText": {
+        "message": "מודלים גדולים מסכמים טוב יותר; קטנים עונים מהר יותר ומנצלים פחות מהתוכנית שלך."
+    },
+    "opt_aiPlanNoModels": {
+        "message": "בתוכנית ה-ChatGPT שלך אין מודלים ש-Mail Deck יכול להשתמש בהם."
     },
     "opt_aiSummary": {
         "message": "סיכום בזמן קריאת ההודעה"
@@ -2145,16 +2250,34 @@
         "message": "אוטומטית להודעות ארוכות"
     },
     "opt_aiReply": {
-        "message": "מחכים לתשובה שלך"
+        "message": "מיון דואר שלא נקרא"
     },
     "opt_aiReplyText": {
-        "message": "מסמן דואר שלא נקרא מאנשים שמצפים לתשובה, ומרכז אותו תחת מסנן בחלונית."
+        "message": "מוצא דואר שמחכה לתשובה שלך, דואר חשוב וניוזלטרים שאפשר לנקות בבת אחת."
+    },
+    "opt_aiButtons": {
+        "message": "הצג כפתורי בינה מלאכותית כשהעוזר כבוי"
+    },
+    "opt_aiButtonsText": {
+        "message": "כפתורי הסיכום, התשובה והעוזר נשארים בחלונית ומציעים להפעיל אותו."
     },
     "opt_aiPrivacy": {
-        "message": "הבקשות עוברות מהדפדפן שלך ישירות אל $1, עם המפתח שלך. ל-Mail Deck אין שרתים. סיכום שולח את הטקסט של אותה הודעה; ״מחכים לתשובה שלך״ שולח את השולח, הנושא והתצוגה המקדימה של דואר שלא נקרא."
+        "message": "הבקשות עוברות מהדפדפן שלך ישירות אל $1, עם המפתח שלך. ל-Mail Deck אין שרתים. סיכום שולח את הטקסט של אותה הודעה; ״מיון דואר שלא נקרא״ שולח את השולח, הנושא והתצוגה המקדימה של דואר שלא נקרא."
     },
     "opt_aiPrivacyLocal": {
         "message": "Chrome מריץ את המודל במחשב הזה, כך שהדואר שלך לא נשלח לשום מקום."
+    },
+    "opt_aiPrivacyPlan": {
+        "message": "הבקשות עוברות מהדפדפן שלך ישירות אל OpenAI, כשאתה מחובר עם חשבון ה-ChatGPT שלך. ל-Mail Deck אין שרתים. סיכום שולח את הטקסט של אותה הודעה; ״מיון דואר שלא נקרא״ שולח את השולח, הנושא והתצוגה המקדימה של דואר שלא נקרא."
+    },
+    "opt_aiWelcome": {
+        "message": "אתה משתמש בתוכנית ה-ChatGPT שלך"
+    },
+    "opt_aiWelcomeText": {
+        "message": "בקשות בינה מלאכותית מתאימות ב-Mail Deck מנצלות את השימוש הכלול בתוכנית ה-ChatGPT שלך. אפשר לנהל את השימוש בהגדרות של ChatGPT."
+    },
+    "opt_aiGotIt": {
+        "message": "הבנתי"
     },
     "opt_aiErrAuth": {
         "message": "$1 דחתה את המפתח הזה. ודא שהעתקת את כולו."
@@ -2164,6 +2287,9 @@
     },
     "opt_aiErrOther": {
         "message": "זה לא הצליח. נסה שוב."
+    },
+    "opt_aiDiagSignedOut": {
+        "message": "מנותק"
     },
     "opt_aiDiagNoKey": {
         "message": "עדיין אין מפתח"
