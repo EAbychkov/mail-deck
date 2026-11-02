@@ -1,13 +1,14 @@
 # Mail Deck: privacy policy
 
-Last updated: 2026-11-01
+Last updated: 2026-11-02
 
-Mail Deck has no servers, no analytics and no tracking. Nothing it reads leaves your browser except the requests it sends to the mail services themselves: to Google for Gmail, and to each other mail service you turn on. If you turn on the AI assistant with your own OpenAI or Anthropic key, the mail you ask about also goes to that provider, as described below.
+Mail Deck has no servers, no analytics and no tracking. Nothing it reads leaves your browser except the requests it sends to the mail services themselves: to Google for Gmail, and to each other mail service you turn on. If you turn on the AI assistant with your ChatGPT plan or your own Anthropic, OpenAI or Z.ai key, the mail it works on also goes to that provider, as described below.
 
 ## What it reads from Gmail
 
 - **Unread mail.** Mail Deck reads the Gmail Atom feed (`mail.google.com/mail/u/N/feed/atom`) for each Google account you are signed in to in this browser. The browser sends your existing Google session cookies with those requests. Mail Deck never asks for, sees or stores your password.
 - **Message text.** When you open a message in the panel, or point at it, Mail Deck loads that conversation's print view from `mail.google.com` and shows it in the panel, with links to its attachments.
+- **Attachments.** To show a message's files on its line in the list before you open it, Mail Deck loads the print view of each Gmail conversation the list shows, two at a time, and reads only the names and links of its attachments. Loading it does not mark the mail as read, and its pictures are not loaded. The names and links are kept in session storage until the browser closes.
 - **Gmail search.** When the panel opens, Mail Deck asks Gmail's own search on `mail.google.com` for the unread mail of each inbox, to show which mail is starred and the mail past the 20 the feed lists. When you type in the panel's search field, that query goes to the same search of each of your inboxes.
 - **Account pictures.** About once a week Mail Deck loads each signed-in account's Gmail page from `mail.google.com` to find that account's own picture, which the panel then shows from Google's image server (`lh3.googleusercontent.com`).
 - **Gmail's action token.** To mark mail as read, archive, delete or report spam, Mail Deck reads the `GMAIL_AT` cookie that Gmail sets for `mail.google.com` and sends it back to `mail.google.com` with the action, the same way the Gmail web page does.
@@ -34,16 +35,37 @@ When you open the panel with its toolbar button or its keyboard shortcut, Chrome
 
 ## AI assistant
 
-The AI assistant is off until you turn it on in Settings → AI. It can summarize the conversation you are reading, with its key points, what it asks of you and its dates (with links that open Google Calendar's own "new event" page), and it can mark unread mail that waits for your reply. You choose where it runs:
+The AI assistant is off until you turn it on. Its buttons show in the panel from the start and, while it is off, only offer to turn it on (Settings → AI can hide them): nothing is sent to any provider before you choose one. Once on, it can:
 
-- **On this computer.** Chrome's built-in model runs on your device, and nothing is sent anywhere. Chrome downloads the model from Google once, when you press Download.
-- **OpenAI or Anthropic, with your own API key.** When you connect a provider, Chrome asks you to allow its site (`api.openai.com` or `api.anthropic.com`); until then Mail Deck sends it nothing. Requests go from your browser straight to that provider, with your key; Mail Deck has no servers in between. A summary sends the text of that conversation (sender names, dates and message text) with its subject, and the current date, time and time zone so that dates such as "tomorrow at 3" can be read. It is sent when you press Summary, or by itself for long mail if you chose that. "Waiting for your reply" sends the sender, subject and preview of unread mail from the last 14 days, up to 20 messages at a time, and leaves out mail from automated senders such as no-reply addresses. The provider handles this data under its own terms for API use: [OpenAI](https://openai.com/policies/row-privacy-policy/), [Anthropic](https://www.anthropic.com/legal/privacy).
+- summarize the conversation you are reading, with its key points, what it asks of you and its dates (with links that open Google Calendar's own "new event" page);
+- draft a reply to it, answer a question about it, or translate it;
+- take a request in your own words in the assistant ("when is my flight?", "invoices from October", "write to Anna that…"): find the mail with Gmail's search in your accounts and among the other services' unread mail, answer from what it found, sum up your unread mail, or draft a new mail;
+- sort unread mail into mail waiting for your reply, important mail, and newsletters you can clear without reading.
 
-Your API key is kept only in this browser's extension storage on your device (`chrome.storage.local`). It is never part of a settings backup or of Chrome sync, and it is sent only to its own provider. Disconnect removes the key and Chrome's access to the provider. Summaries are kept in session storage, in memory only, until the browser closes. Whether a mail waits for your reply (yes or no, and a few words why) is kept on your device for 30 days, so the same mail is not sent again.
+A draft only ever opens in your mail service's compose window, or is copied: the assistant never sends mail for you.
+
+You choose where it runs:
+
+- **On this computer.** Chrome's built-in model runs on your device, and nothing is sent anywhere. Chrome downloads the model from Google once, from your click.
+- **Your ChatGPT plan.** **Continue with ChatGPT** signs in with OpenAI's official "Sign in with ChatGPT" for open-source apps (OAuth with PKCE). Chrome first asks you to allow `auth.openai.com` and `api.openai.com`, and `127.0.0.1`; until then Mail Deck sends OpenAI nothing. OpenAI sends you back to `http://127.0.0.1:1455/auth/callback` after you sign in, an address on your own computer where nothing listens: a Chrome rule (`declarativeNetRequest`, for that one address, removed when the sign-in ends or after 15 minutes) takes that visit to Mail Deck's own page instead, so the sign-in code never reaches the network or any program on your computer, and Mail Deck then gives back its access to `127.0.0.1`. Mail Deck checks the identity token against OpenAI's published keys and keeps the tokens OpenAI issues (an access token renewed every hour, a refresh token and the identity token), with your account's email address, shown to say which account is signed in, and an account id it does not show. Requests then go to `api.openai.com` with them, and use the usage included in your ChatGPT plan, which you manage in ChatGPT's settings. Signing out revokes the sign-in at OpenAI, deletes the tokens here and gives back Chrome's access to `auth.openai.com` (and to `api.openai.com`, unless an OpenAI key still uses it); if OpenAI does not confirm the revocation, Mail Deck says so, and you can disconnect it in your ChatGPT settings.
+- **Anthropic, OpenAI or Z.ai, with your own API key.** When you connect a provider, Chrome asks you to allow its site (`api.anthropic.com`, `api.openai.com` or `api.z.ai`); until then Mail Deck sends it nothing.
+
+Requests go from your browser straight to that provider; Mail Deck has no servers in between. Each request sends only what it needs, with the current date, time and time zone so that dates such as "tomorrow at 3" can be read:
+
+- a summary, a reply, a translation or a question about a mail: the text of that conversation (sender names, dates and message text) and its subject, when you ask (or, for summaries, by itself for long mail if you chose that);
+- a request to the assistant: your words, then the sender, subject, date and text of the first few mails the search found and the sender, subject and preview of the rest, up to 30;
+- "what's important": the sender, subject and preview of your unread mail, up to 60;
+- sorting: the sender, subject and preview of unread mail from the last 14 days, 20 messages at a time, from senders other than your own addresses.
+
+The provider handles this data under its own terms: [OpenAI](https://openai.com/policies/row-privacy-policy/), [Anthropic](https://www.anthropic.com/legal/privacy), [Z.ai](https://docs.z.ai/legal-agreement/privacy-policy).
+
+Your API keys and the ChatGPT sign-in (its tokens, the app id OpenAI issued to this browser, an anonymous random id of this browser that OpenAI asks for, and your account's email address) are kept only in this browser's extension storage on your device (`chrome.storage.local`). They are never part of a settings backup or of Chrome sync, never shown in diagnostics, and sent only to their own provider. Disconnect removes them and Chrome's access to the provider. Summaries are kept in session storage, in memory only, until the browser closes, and so is the assistant's conversation. How a mail was sorted (waiting for a reply, important or newsletter, and a few words why) is kept on your device for 30 days, so the same mail is not sent again.
+
+Translation by Chrome's own translator (**Translate from …** in an open message) runs on your computer and needs no assistant: Chrome may download a language pack from Google once, from your click, and nothing of the mail leaves your device.
 
 ## Where it goes
 
-To the mail services themselves: `mail.google.com` for Gmail, and the sites above for each other service you turn on. A service's mail, addresses and tokens go only to that service. To the AI provider you connected, if you did, as described above. And to Google in two more cases:
+To the mail services themselves: `mail.google.com` for Gmail, and the sites above for each other service you turn on. A service's mail, addresses and tokens go only to that service. To the AI provider you chose, if you did, as described above. And to Google in two more cases:
 
 - **Sender icons.** For mail in your Gmail inboxes, the panel shows the sender's site icon from Google's icon service (`www.google.com/s2/favicons`), which receives the sender's domain, such as `github.com`, never an address or a message. Like any request your browser makes to Google, it may carry your Google cookies. Mail of the other services gets no icon from Google. "Show sender logos" in settings turns this off.
 - **Chrome sync.** If you turn on the settings copy in Chrome sync, your Mail Deck settings are stored with `chrome.storage.sync`, which Chrome keeps in your Google account like your other synced data. It is off by default.

@@ -28,8 +28,9 @@ Gmail, Yahoo Mail, AOL Mail, Proton Mail, Yandex Mail and Mail.ru. Read, archive
 - **Fast.** Every mailbox is checked at the same time, a Gmail message is fetched while you point at it, and the panel opens again without asking any mail service anything.
 - **Read in place.** Click a message to read it in the panel: a Gmail conversation whole, attachments included, and mail from Yahoo, AOL, Yandex and Mail.ru too. Proton mail opens on Proton's site. <kbd>J</kbd> and <kbd>K</kbd> go to the next and previous message without going back to the list.
 - **Mail from this site.** Open the panel on a web page and that site's unread mail is at the top, from every inbox, with a fresh sign-in code ready to copy. [More below](#mail-from-this-site).
+- **Attachments in plain sight.** A Gmail message's files show on its line before you open it, each with a coloured tag of its kind (PDF, sheet, picture…); a click opens the file without the mail. The open message lists them under the sender, with Download.
 - **Sign-in codes.** A mail that carries a one-time code shows it as a pill before the subject and in the open message. A click or <kbd>C</kbd> copies the digits; the mail is not opened, marked or moved.
-- **AI assistant, if you want one.** A summary of the conversation you are reading, and a chip that gathers the mail waiting for your reply. It runs with Chrome's built-in model on this computer, or with your own OpenAI or Anthropic API key, and is off until you turn it on. [More below](#ai-assistant).
+- **AI assistant, if you want one.** Ask your mail anything in plain words (“when is my flight?”, “invoices from October”), get what is important in your unread mail, have replies and new mail drafted, mail translated and summarized, and unread mail sorted into waiting for your reply, important and newsletters to clear at once. It runs with Chrome's built-in model on this computer, your ChatGPT plan, or your own Anthropic, OpenAI or Z.ai API key, and stays off until you turn it on. [More below](#ai-assistant).
 - **Search every Gmail inbox.** One search runs in all your Google accounts at once.
 - **Later.** Put a message away until this evening, tomorrow or next week; it comes back with a notification.
 - **One key per action.** Mark as read, archive, delete or report spam from the list, from the open message or from a notification. If you like, the next message opens by itself after an action.
@@ -39,7 +40,7 @@ Gmail, Yahoo Mail, AOL Mail, Proton Mail, Yandex Mail and Mail.ru. Read, archive
 - **Notifications and sound.** A desktop notification and an optional sound for new mail. A notification about one inbox has its address as the title, and your own notification text can name it with `[account]`. It can come back every 5 to 60 minutes while the mail stays unread. Mute an inbox while it stays in the panel, set quiet hours and a quiet weekend, or notify only for, or never for, chosen senders and subjects.
 - **Your count.** Leave an inbox out of the number on the toolbar icon while it stays in the panel, or have the number count only the mail that came since you last opened the panel.
 - **Side panel and keyboard.** Keep the deck open beside the page, or open it with Alt+Shift+M. Text size is yours to set.
-- **Backup.** Export your settings to a file, or keep a copy in Chrome sync. An AI key is never in either.
+- **Backup.** Export your settings to a file, or keep a copy in Chrome sync. An AI key or sign-in is never in either.
 - **Light and dark.** The panel and the settings follow your system theme.
 - **Nothing in between.** No servers, no analytics. The extension talks only to Google and to the mail services you turn on, with the session your browser already has, and never sees your password. The AI assistant adds the one provider you connect, if you connect one.
 
@@ -60,15 +61,19 @@ Chrome lets the panel read the tab's address when you open it (the `activeTab` p
 
 ## AI assistant
 
-Off until you turn it on in **Settings → AI**. It does two things:
+Its buttons are in view from the start (the ✨ in the header, **Sort with AI**, and **Summary**, **Reply with AI** and **Ask** in an open message), and the first click offers to turn it on. Nothing is sent anywhere until you do. **Settings → AI** has a switch to hide the buttons while it is off.
 
-- **Summary.** In an open message, **Summary** (or <kbd>I</kbd>) puts a card above the conversation: its key points, what it asks of you, and its dates, each with an **Add to Google Calendar** link. It fills in as the answer arrives, can be copied, asked again or hidden, and is kept for the session, so the same mail shows it at once next time. A long conversation is summarized from its newest messages, and the card says so. Summaries come on click (the default) or by themselves for long mail. Proton mail, which opens on Proton's site, has none.
-- **Waiting for your reply.** Unread mail from people who expect an answer from you gets a mark, with the reason in its tooltip, and a **Reply** chip, first among the chips, narrows the list to it. Mail from no-reply and other automated addresses or from your own, and mail older than 14 days, are left out. Each answer is kept on this computer for 30 days, so a mail is asked about once.
+- **Ask your mail.** The ✨ button (or <kbd>A</kbd>) opens the assistant. Type a question or a search in plain words: “when is my flight to Rome?”, “what did Anna say about the budget?”, “invoices from October”, “mail with attachments this week”. It turns that into a Gmail search across all your accounts (and looks through the other services' unread mail), reads the first few mails it finds, and answers with numbered references; a number opens its mail, and <kbd>J</kbd>/<kbd>K</kbd> walk the mail it found. “What's important?” sums up your unread mail: what needs you soon first, newsletters in one line. The search field has **Ask AI** for the same.
+- **Write.** “Write to Anna that the meeting moves to Friday” drafts a new mail with its address, subject and text, to change and then open in Gmail's compose window. In an open message, **Reply with AI** drafts a reply in the thread's language and tone, from a quick choice (Yes, Decline politely, Ask for details, Thank them) or your own words; **Open in Gmail** puts it in the compose window, ready to send. Nothing is ever sent for you.
+- **Summary.** **Summary** (or <kbd>I</kbd>) puts a card above the conversation: its key points, what it asks of you, and its dates, each with an **Add to Google Calendar** link. It fills in as the answer arrives, can be copied, asked again or hidden, and is kept for the session. Summaries come on click (the default) or by themselves for long mail.
+- **Ask about this mail.** **Ask** (or <kbd>A</kbd> in an open message) answers a question about the conversation you are reading.
+- **Translate.** A message in another language than Chrome's gets **Translate from …**: Chrome's own translator turns it into your language where it stands, on this computer and free, with **Show original** to go back; it needs no engine. Where Chrome has no translator for that language, the assistant translates it.
+- **Sort unread mail.** Unread mail gets chips: **Reply** (people who expect an answer from you, each marked with the reason), **Important** (deadlines, payments, travel, alerts about your accounts) and **Newsletters** (mail you can clear without reading). A chip narrows the list to that mail, with **Mark all read** and **Archive all** above it. Mail from your own addresses and mail older than 14 days are left out; each answer is kept on this computer for 30 days, so a mail is asked about once.
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/images/ai-dark.png">
-    <img src="docs/images/ai-light.png" alt="Settings → AI: Off, On this computer (chosen, and ready), or your own OpenAI or Anthropic API key; the summary comes on click, and Waiting for your reply is on" width="520">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/assist-dark.png">
+    <img src="docs/images/assist-light.png" alt="The AI assistant: what is important in the unread mail, with numbered references to each mail, and an answer about the Q4 plan review" width="620">
   </picture>
 </p>
 
@@ -76,11 +81,13 @@ Choose where it runs:
 
 | Engine | Cost | What leaves this computer |
 |---|---|---|
-| **On this computer**: Chrome's built-in model | free | nothing: the model runs in Chrome, offline. Chrome downloads it once (a few gigabytes) when you press Download. It needs Chrome 138 or newer and a computer that can run it; Settings → AI says whether yours can. Where it does not support your language yet, it answers in English. |
-| **OpenAI**, with your own API key | billed by OpenAI, per use | a summary sends that conversation's text and subject; Waiting for your reply sends the sender, subject and preview of unread mail, up to 20 at a time. Straight from your browser to `api.openai.com`. |
-| **Anthropic**, with your own API key | billed by Anthropic, per use | the same, to `api.anthropic.com`. |
+| **On this computer**: Chrome's built-in model | free | nothing: the model runs in Chrome, offline. Chrome downloads it once (a few gigabytes) from your click, in the panel or in Settings. It needs Chrome 138 or newer and a computer that can run it; Mail Deck says whether yours can. Where it does not support your language yet, it answers in English. |
+| **ChatGPT plan**: Plus or Pro | included in your plan | **Continue with ChatGPT** signs in with OpenAI's official [Sign in with ChatGPT](https://developers.openai.com/siwc) for open-source apps; requests then use the usage included in your plan (on Plus, its five-hour limit is shared with ChatGPT's other apps; **Manage usage** opens it). What a request needs goes to `api.openai.com`. |
+| **Anthropic**, **OpenAI** or **Z.ai** (GLM), with your own API key | billed by the provider, per use | what a request needs, straight from your browser to `api.anthropic.com`, `api.openai.com` or `api.z.ai`. |
 
-A ChatGPT Plus or Claude Pro subscription does not include API access: a key comes from [platform.openai.com](https://platform.openai.com/api-keys) or [console.anthropic.com](https://console.anthropic.com/settings/keys) and is billed separately. **Connect** asks Chrome for that provider's site alone, checks the key and lists its models, the recommended ones first. **Disconnect** forgets the key and gives the access back. The key stays in this browser's extension storage: never in a backup, in Chrome sync or in diagnostics. There are no servers of ours in between, and the answer is shown as plain text. The details are in the [privacy policy](PRIVACY.md#ai-assistant).
+What a request needs: a summary, a reply, a translation or a question about a mail sends that conversation's text and subject; a question to the assistant sends your words, then the sender, subject, date and text of the first few mails the search found (the rest by their preview); “what's important” sends the sender, subject and preview of your unread mail; sorting sends the sender, subject and preview of unread mail, 20 at a time.
+
+A Claude Pro or Max subscription cannot be used here: Anthropic allows it only in its own apps, so Claude takes an API key from [console.anthropic.com](https://console.anthropic.com/settings/keys). A Z.ai key comes from [z.ai](https://docs.z.ai/guides/overview/quick-start) (a GLM Coding Plan key works only in coding tools). **Connect** asks Chrome for that provider's site alone, checks the key and lists its models, the recommended ones first; **Disconnect** forgets the key, or signs out of ChatGPT, and gives the access back. Keys and the ChatGPT sign-in stay in this browser's extension storage: never in a backup, in Chrome sync or in diagnostics. There are no servers of ours in between, and answers are shown as plain text. The details are in the [privacy policy](PRIVACY.md#ai-assistant).
 
 ## Other mail services
 
@@ -165,6 +172,7 @@ None of these services has a public interface for this, so Mail Deck follows the
 | <kbd>C</kbd> | <kbd>C</kbd> | Copy the one-time code: the open message's, the focused line's, or else the site's at the top |
 | | <kbd>S</kbd> | Star (Gmail) |
 | | <kbd>I</kbd> | Show or hide the summary (AI assistant) |
+| | <kbd>A</kbd> | The AI assistant; in an open message, a question about it |
 | <kbd>Z</kbd> | <kbd>Z</kbd> | Undo the last action |
 | <kbd>/</kbd> | | Search every Gmail inbox |
 | <kbd>Alt</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd> | | Move the inbox of the focused line up or down |
@@ -192,7 +200,8 @@ extension/            the extension (load this folder unpacked)
   core/services/      the other mail services, one file each: Yahoo, AOL, Proton, Yandex, Mail.ru
   core/services.js    runs them: their permissions, the Origin rules, their mailboxes in the check
   data/panel/         the toolbar panel
-  data/ai/ai.js       the AI assistant: the three engines, summaries, waiting for your reply
+  data/ai/ai.js       the AI assistant: the engines, summaries, sorting, the assistant's plans, answers, drafts and translations
+  data/ai/callback.*  where Sign in with ChatGPT comes back to
   data/settings/      the settings page
   _locales/           translations
 store/                Chrome Web Store listing text and images
@@ -208,7 +217,7 @@ Mail comes from Gmail's Atom feed of each signed-in account, the full text from 
 
 Each of the other services is one file in `extension/core/services/` with the same shape: its `name`, the sites it needs (`origins`), its `signIn` and `compose` links, what it `can` do (`archive`, `spam`, `body`), and `collect`, `action` and `body`, which talk to the service the way its web app does. `extension/core/services.js` checks only the services turned on and granted, sets the Origin rules and hands their mailboxes to the check, so the panel takes them like Gmail's. `tools/test/services.test.js` tests that runner, and `tools/test/services/` has one test per service against a fake of it, so no account is needed.
 
-The AI assistant is `extension/data/ai/ai.js` (`self.AI`), loaded by the panel and the settings page. It calls Chrome's Prompt API or each provider's HTTP API with `fetch` and streaming, with no SDK, and turns every failure into a short `AIError`. `tools/test/ai.test.js` tests it against mocked streams, with no network.
+The AI assistant is `extension/data/ai/ai.js` (`self.AI`), loaded by the panel and the settings page. It calls Chrome's Prompt API or each provider's HTTP API with `fetch` and streaming, with no SDK, and turns every failure into a short `AIError`. Sign in with ChatGPT is OAuth with PKCE: its loopback callback never reaches the network, a session rule of `declarativeNetRequest` sends it to `data/ai/callback.html`. `tools/test/ai.test.js` tests it all against mocked streams, with no network.
 
 There is no build step: edit a file, then reload the extension on `chrome://extensions`.
 
@@ -222,4 +231,4 @@ tools/package.sh      # dist/mail-deck-<version>.zip
 
 [Mozilla Public License 1.1](LICENSE). Mail Deck grew out of Notifier for Gmail by InBasic; see [NOTICE.md](extension/NOTICE.md). The mail services in `extension/core/services/` adapt code from other open-source projects under MPL-2.0, MIT and Apache-2.0; each file names its sources and their licence at the top.
 
-Mail Deck is not made by or affiliated with Google, Yahoo, AOL, Proton, Yandex, VK, OpenAI or Anthropic. Gmail is a trademark of Google LLC; the other names belong to their owners.
+Mail Deck is not made by or affiliated with Google, Yahoo, AOL, Proton, Yandex, VK, OpenAI, Anthropic or Z.ai. Gmail is a trademark of Google LLC; the other names belong to their owners.

@@ -121,9 +121,9 @@
     <section class="block wrap">
       <h2>A closer look</h2>
       <div class="screens">
-        <img src="images/screens/2-summary.webp" width="1280" height="800" loading="lazy" alt="An open message with its AI summary above it: the key points, a thing to do, and two dates, each with Add to Google Calendar">
-        <img src="images/screens/3-site.webp" width="1280" height="800" loading="lazy" alt="The panel opened over a website: that site’s mail on top, from two inboxes, with its sign-in code ready to copy">
-        <img src="images/screens/4-later.webp" width="1280" height="800" loading="lazy" alt="The Remind me later menu over a message">
+        <img src="images/screens/2-assistant.webp" width="1280" height="800" loading="lazy" alt="The AI assistant: what is important in the unread mail, with a numbered link to each mail, and an answer about a plan review">
+        <img src="images/screens/3-reply.webp" width="1280" height="800" loading="lazy" alt="An open message with Reply with AI: quick choices and a drafted reply, ready to open in Gmail">
+        <img src="images/screens/4-site.webp" width="1280" height="800" loading="lazy" alt="The panel opened over a website: that site’s mail on top, from two inboxes, with its sign-in code ready to copy">
       </div>
     </section>
 
@@ -137,6 +137,10 @@
         <li>
           <h3>Read in place</h3>
           <p>A Gmail conversation opens whole in the panel, attachments included. Mail from Yahoo, AOL, Yandex and Mail.ru opens there too; Proton’s opens on Proton’s site.</p>
+        </li>
+        <li>
+          <h3>Attachments you can’t miss</h3>
+          <p>A Gmail message’s files show on its line before you open it, tagged PDF, sheet or picture; a click opens the file alone. The open message lists them under the sender, with Download.</p>
         </li>
         <li>
           <h3>Mail from the site you’re on</h3>
@@ -186,14 +190,16 @@
       <div class="works">
         <ul class="services">
           <li>Chrome’s built-in model</li>
-          <li>OpenAI</li>
+          <li>ChatGPT plan</li>
           <li>Anthropic</li>
+          <li>OpenAI</li>
+          <li>Z.ai GLM</li>
         </ul>
-        <p>Off until you turn it on in Settings → AI. In an open message, Summary puts the conversation in a few lines above it: the key points, what it asks of you, and its dates, each with a link that adds it to Google Calendar. Waiting for your reply gathers, under one chip, the unread mail from people who expect an answer.</p>
-        <p>Chrome’s built-in model is free and runs on your computer, so your mail stays there; not every computer can run it. Or connect your own OpenAI or Anthropic API key, billed by the provider per use: a ChatGPT Plus or Claude Pro subscription does not include API access. Requests then go from your browser straight to that provider, with no servers of ours in between, and the key stays on this computer.</p>
+        <p>Ask your mail in plain words: “when is my flight?”, “what did Anna say about the budget?”, “invoices from October”. The assistant searches every Gmail account, reads what it finds and answers with numbered references to each mail. “What’s important?” sums up your unread mail, and “write to Anna that…” drafts a new mail to open in Gmail. In an open message it summarizes the conversation with its dates for Google Calendar, drafts a reply in the thread’s language, and answers questions about it. Unread mail is sorted into waiting for your reply, important, and newsletters you can clear in one go.</p>
+        <p>Its buttons are there from the start and offer to turn it on; nothing is sent until you do. Chrome’s built-in model is free and runs on your computer, so your mail stays there. Or sign in with your ChatGPT plan through OpenAI’s official Sign in with ChatGPT, or use your own Anthropic, OpenAI or Z.ai API key. Requests go from your browser straight to that provider, with no servers of ours in between, and keys and sign-ins stay on this computer. A foreign-language message gets Translate, by Chrome’s own translator, with no assistant needed.</p>
         <picture class="shot">
-          <source media="(prefers-color-scheme: dark)" srcset="images/ai-dark.webp">
-          <img src="images/ai-light.webp" width="1472" height="1372" loading="lazy" decoding="async" alt="Settings → AI: Off, On this computer (chosen, and ready), or your own OpenAI or Anthropic API key; the summary comes on click, and Waiting for your reply is on">
+          <source media="(prefers-color-scheme: dark)" srcset="images/assist-dark.webp">
+          <img src="images/assist-light.webp" width="1712" height="1312" loading="lazy" decoding="async" alt="The AI assistant: what is important in the unread mail, with numbered references to each mail, and an answer about the Q4 plan review">
         </picture>
       </div>
     </section>
@@ -210,6 +216,7 @@
         <li><kbd>B</kbd>Remind me later</li>
         <li><kbd>C</kbd>Copy the code</li>
         <li><kbd>I</kbd>Summary</li>
+        <li><kbd>A</kbd>Ask the assistant</li>
         <li><kbd>/</kbd>Search</li>
         <li><kbd>O</kbd>Open in the web app</li>
         <li><kbd>J</kbd>Next message</li>
