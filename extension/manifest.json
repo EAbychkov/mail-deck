@@ -31,7 +31,10 @@
     "https://portal.mail.ru/*",
     "https://e.mail.ru/*",
     "https://api.openai.com/*",
-    "https://api.anthropic.com/*"
+    "https://auth.openai.com/*",
+    "http://127.0.0.1/*",
+    "https://api.anthropic.com/*",
+    "https://api.z.ai/*"
   ],
   "action": {
     "default_icon": {
@@ -41,6 +44,12 @@
       "32": "/data/icons/blue/32.png"
     }
   },
+  "web_accessible_resources": [
+    {
+      "resources": ["data/ai/callback.html", "data/ai/callback.js"],
+      "matches": ["https://auth.openai.com/*", "https://chatgpt.com/*"]
+    }
+  ],
   "side_panel": {
     "default_path": "/data/panel/side.html"
   },

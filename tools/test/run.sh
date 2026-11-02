@@ -1,6 +1,7 @@
 #!/bin/sh
 # Runs every test and exits non-zero when one fails. CHROME names the browser for the
-# panel test (default: Google Chrome on macOS, google-chrome elsewhere).
+# panel test (default: Google Chrome on macOS, google-chrome elsewhere); CHROME_EXT one that
+# loads an unpacked extension, for the sign-in test (default: Playwright's Chrome for Testing).
 cd "$(dirname "$0")/../.." || exit 1
 status=0
 run() {
@@ -23,5 +24,6 @@ for t in tools/test/services/*.test.js; do
   run "mail service $(basename "$t" .test.js)" node "$t"
 done
 run 'AI assistant: providers, streaming, summaries, waiting for reply' node tools/test/ai.test.js
+run 'ChatGPT sign-in coming back to the extension in a real Chrome' node tools/test/callback.test.js
 run 'panel in headless Chrome' node tools/test/panel.test.js
 exit $status

@@ -1,17 +1,23 @@
 'use strict';
 // The AI assistant (Settings → AI): a summary of the mail open in the reader, and which unread
-// mail waits for a reply. Three engines: Chrome's built-in model, or OpenAI or Anthropic with
-// the user's own key. A request goes from this page straight to the provider, there is no
-// server of ours in between, and nothing at all is sent while the engine or the feature is
-// off. Loaded by the panel and the settings page; it needs nothing else. Every failure comes
-// out as an AIError with a code and a short text the page can show as it is.
+// mail waits for a reply. Five engines: Chrome's built-in model, the user's ChatGPT plan (signed
+// in with ChatGPT), or OpenAI, Anthropic or Z.ai with the user's own key. A request goes from
+// this page straight to the provider, there is no server of ours in between, and nothing at
+// all is sent while the engine or the feature is off. Loaded by the panel, the settings page
+// and the page a ChatGPT sign-in comes back to; it needs nothing else. Every failure comes out
+// as an AIError with a code and a short text the page can show as it is.
 
 {
-  const ENGINES = ['off', 'builtin', 'openai', 'anthropic'];
+  const ENGINES = ['off', 'builtin', 'chatgpt', 'openai', 'anthropic', 'zai'];
   const CLOUD = {
-    openai: {origin: 'https://api.openai.com/*', base: 'https://api.openai.com/v1/'},
-    anthropic: {origin: 'https://api.anthropic.com/*', base: 'https://api.anthropic.com/v1/'}
+    // the ChatGPT plan: OpenAI's API with the tokens of a sign-in, renewed at auth.openai.com
+    chatgpt: {origins: ['https://api.openai.com/*', 'https://auth.openai.com/*'], base: 'https://api.openai.com/v1/'},
+    openai: {origins: ['https://api.openai.com/*'], base: 'https://api.openai.com/v1/'},
+    anthropic: {origins: ['https://api.anthropic.com/*'], base: 'https://api.anthropic.com/v1/'},
+    zai: {origins: ['https://api.z.ai/*'], base: 'https://api.z.ai/api/paas/v4/'}
   };
+  // the engines that take the user's own key; the ChatGPT plan signs in instead
+  const KEYED = ['openai', 'anthropic', 'zai'];
   const ANTHROPIC_VERSION = '2026-10-21';
   const FALLBACK_BETA = 'server-side-fallback-2026-07-01';
   const LOCAL_MODEL = 'gemini-nano';
@@ -62,6 +68,14 @@
     'bad-output': [() => chrome.i18n.getMessage('ai_err_bad_output'), 'The answer could not be read. Try again.'],
     'server': [() => chrome.i18n.getMessage('ai_err_server'), 'The provider did not answer. Try again later.'],
     'no-access': [() => chrome.i18n.getMessage('ai_err_no_access'), 'Allow access to the provider in Settings → AI.'],
+    // the ChatGPT plan: its usage spent for now, not this account's, the sign-in gone
+    'limit': [() => chrome.i18n.getMessage('ai_err_limit'), 'ChatGPT usage limit reached.'],
+    'no-plan': [() => chrome.i18n.getMessage('ai_err_no_plan'), 'ChatGPT plan usage is not available for this account.'],
+    'signed-out': [() => chrome.i18n.getMessage('ai_err_signed_out'), 'You are signed out of ChatGPT. Sign in again in Settings → AI.'],
+    // a sign-in with ChatGPT that did not end in one: refused, broken off, another account
+    'denied': [() => chrome.i18n.getMessage('ai_err_denied'), 'Mail Deck was not allowed to use your ChatGPT plan.'],
+    'sign-in': [() => chrome.i18n.getMessage('ai_err_sign_in'), 'Signing in with ChatGPT did not finish. Try again.'],
+    'other-account': [() => chrome.i18n.getMessage('ai_err_other_account'), 'This is not the ChatGPT account Mail Deck was set up with. Try again to set it up with this one.'],
     // never shown: the page that stopped a request knows why
     'aborted': [() => '', 'Stopped.']
   };
@@ -74,8 +88,13 @@
       return en;
     }
   };
-  // what a provider says may quote the start or the end of a key
-  const redact = s => String(s ?? '').replace(/\b(sk|key)-[\w*.-]+/gi, '$1-…').slice(0, 500);
+  // what a provider says may quote the start or the end of a key, a bearer token or a JWT (an
+  // ID token, an access token)
+  const redact = s => String(s ?? '')
+    .replace(/\b(sk|key)-[\w*.-]+/gi, '$1-…')
+    .replace(/\b(bearer)\s+[\w.~+/=-]+/gi, '$1 …')
+    .replace(/\beyJ[\w-]*\.[\w-]*(\.[\w-]*)?/g, '…')
+    .slice(0, 500);
 
   class AIError extends Error {
     constructor(code, detail = '', extra = {}) {
@@ -615,7 +634,8 @@
     const err = j?.error && typeof j.error === 'object' ? j.error : {};
     const type = String(err.type || '');
     const code = String(err.code || '');
-    const message = String(err.message || (typeof j?.error === 'string' ? j.error : '') || (j ? '' : text) || '');
+    const message = String(err.message || (typeof j?.error === 'string' ? j.error : '') ||
+      (typeof j?.detail === 'string' ? j.detail : '') || (j ? '' : text) || '');
     const all = `${type} ${code} ${message}`.toLowerCase();
     const extra = {status, type: type || code, param: String(err.param || ''), retryAfter: waitOf(headers)};
     let c = 'model';
@@ -660,8 +680,9 @@
     return new AIError(otherwise, e?.message || String(e));
   };
 
-  // one request to a provider: the answer when it is a 200, an AIError otherwise
-  const call = async (url, init, signal, ms) => {
+  // one request to a provider: the answer when it is a 200, an AIError otherwise (refuse reads
+  // a provider's own words for the refusal)
+  const call = async (url, init, signal, ms, refuse = refused) => {
     if (signal?.aborted) {
       throw aborted();
     }
@@ -683,7 +704,7 @@
       if (w.signal.aborted) {
         throw lost(null, w, 'network');
       }
-      throw refused(r.status, text, r.headers);
+      throw refuse(r.status, text, r.headers);
     }
     return {r, w};
   };
@@ -931,7 +952,8 @@
     }
     return false;
   };
-  const openaiStream = async (r, w, model, onText) => {
+  // the stream of a chat completion, OpenAI's or one in its form (Z.ai's: fail reads its errors)
+  const openaiStream = async (r, w, model, onText, fail = failed) => {
     let text = '';
     let stop = '';
     let refusal = false;
@@ -944,7 +966,7 @@
         return false;
       }
       if (j.error) {
-        throw failed(j.error);
+        throw fail(j.error);
       }
       model = j.model || model;
       const c = Array.isArray(j.choices) ? j.choices[0] : null;
@@ -1004,6 +1026,780 @@
     }
   };
 
+  /* Z.ai: GLM models, with OpenAI's form of a chat completion */
+
+  // the models (Z.ai lists none): the best and the fastest first, then the older ones; two are free
+  const ZAI_MODELS = [
+    ['glm-5.3', 'GLM-5.3', 'best'], ['glm-5.3-flash', 'GLM-5.3-Flash', 'fast'], ['glm-5.3-flashx', 'GLM-5.3-FlashX'],
+    ['glm-5.2', 'GLM-5.2'], ['glm-5.1', 'GLM-5.1'], ['glm-5', 'GLM-5'], ['glm-4.7', 'GLM-4.7'], ['glm-4.6', 'GLM-4.6'],
+    ['glm-4.7-flash', 'GLM-4.7-Flash', 'free'], ['glm-4.5-flash', 'GLM-4.5-Flash', 'free']
+  ];
+  const ZAI_DEFAULT = 'glm-5.3';
+  // the free model a key is checked with
+  const ZAI_CHECK = 'glm-4.7-flash';
+  // what an answer may take, and what a model that always thinks is given for its thinking
+  const ZAI_MAX = 131072;
+  const THINKING = 4000;
+  // Z.ai's own error codes (a string in error.code) as ours; 1113, the balance, comes as a 429
+  const ZAI_ERRORS = {
+    '1000': 'auth', '1001': 'auth', '1003': 'auth', '1005': 'auth',
+    '1113': 'quota', '1308': 'quota', '1309': 'quota', '1310': 'quota', '1316': 'quota', '1317': 'quota',
+    '1318': 'quota', '1319': 'quota', '1320': 'quota', '1321': 'quota',
+    '1301': 'refusal', '1302': 'rate', '1305': 'rate', '1211': 'model', '1261': 'too-long',
+    '1200': 'server', '1230': 'server', '1234': 'server'
+  };
+  // the other codes of a parameter Z.ai did not take
+  const ZAI_PARAM = /^121[02-5]$/;
+  const zaiModels = () => ZAI_MODELS.map(([id, name, tag]) => ({
+    id, name, ...(tag ? {tag} : {}), ...(tag === 'best' || tag === 'fast' ? {recommended: true} : {}), ...(id === ZAI_DEFAULT ? {default: true} : {})
+  }));
+  // GLM-5.3 and its Flash models always think: told to think briefly, with room for it in the
+  // answer's tokens; the older ones are told not to think at all
+  const thinksAlways = model => {
+    const m = /^glm-(\d+)(?:\.(\d+))?/i.exec(model);
+    return Boolean(m) && (Number(m[1]) > 5 || (Number(m[1]) === 5 && Number(m[2] || 0) >= 3));
+  };
+  const zaiRefused = (status, text, headers) => {
+    const e = refused(status, text, headers);
+    const code = String(parse(text)?.error?.code ?? '');
+    const c = ZAI_ERRORS[code] || (ZAI_PARAM.test(code) ? 'model' : '');
+    return c ? new AIError(c, e.detail, {status, type: code, param: e.param, retryAfter: e.retryAfter}) : e;
+  };
+  // an error inside a stream, which comes after the 200
+  const zaiFailed = err => zaiRefused(STATUS[err?.type] || 500, JSON.stringify({error: err || {}}), null);
+  // the ways an answer stops that are no answer: a filter, the model's window, its own network
+  const zaiDone = answer => {
+    if (answer.stop === 'sensitive') {
+      throw new AIError('refusal', 'sensitive');
+    }
+    if (answer.stop === 'model_context_window_exceeded') {
+      throw new AIError('too-long', answer.stop);
+    }
+    if (answer.stop === 'network_error') {
+      throw new AIError('server', answer.stop);
+    }
+    return answer;
+  };
+  // a parameter Z.ai did not take: the one its message names, else the first optional one left
+  const lessZai = (e, body) => {
+    if (!ZAI_PARAM.test(e.type)) {
+      return false;
+    }
+    const m = (e.param + ' ' + e.detail).toLowerCase();
+    const optional = ['reasoning_effort', 'thinking', 'response_format'].filter(k => k in body);
+    const k = optional.find(f => m.includes(f)) || optional[0];
+    if (!k) {
+      return false;
+    }
+    delete body[k];
+    return true;
+  };
+  const zai = async ({key, model, system, user, max, schema, signal, onText}) => {
+    const thinks = thinksAlways(model);
+    // no temperature: what the model does by default suits these tasks
+    const body = {
+      model,
+      messages: [{role: 'system', content: system}, {role: 'user', content: user}],
+      max_tokens: Math.min(ZAI_MAX, max + (thinks ? THINKING : 0)),
+      thinking: {type: thinks ? 'enabled' : 'disabled'}
+    };
+    if (thinks) {
+      body.reasoning_effort = 'low';
+    }
+    // JSON, but no schema: the prompt describes its shape
+    if (schema) {
+      body.response_format = {type: 'json_object'};
+    }
+    if (onText) {
+      body.stream = true;
+    }
+    for (let attempt = 0; ; attempt += 1) {
+      try {
+        const {r, w} = await call(CLOUD.zai.base + 'chat/completions', {
+          method: 'POST',
+          headers: {'content-type': 'application/json', 'authorization': 'Bearer ' + key},
+          body: JSON.stringify(body)
+        }, signal, onText ? STALL : WAIT, zaiRefused);
+        return zaiDone(onText ? await openaiStream(r, w, model, onText, zaiFailed) : await openaiOnce(r, w, model));
+      }
+      catch (e) {
+        if (!(e.code === 'model' && attempt < 3 && lessZai(e, body))) {
+          throw e;
+        }
+      }
+    }
+  };
+  // A key's check, with no model list to ask for: the smallest answer of a free model. Only a
+  // key refused fails it, or no answer at all; a model gone, a balance spent or a busy minute
+  // say nothing against the key.
+  const zaiCheck = async (key, signal) => {
+    try {
+      const {r, w} = await call(CLOUD.zai.base + 'chat/completions', {
+        method: 'POST',
+        headers: {'content-type': 'application/json', 'authorization': 'Bearer ' + key},
+        body: JSON.stringify({model: ZAI_CHECK, messages: [{role: 'user', content: 'Hi'}], max_tokens: 1, thinking: {type: 'disabled'}})
+      }, signal, WAIT_LIST, zaiRefused);
+      await readJSON(r, w);
+    }
+    catch (e) {
+      if (['auth', 'network', 'server', 'aborted'].includes(e.code)) {
+        throw e;
+      }
+    }
+  };
+
+  /* the ChatGPT plan: Sign in with ChatGPT, OpenAI's protocol for open-source apps */
+
+  // where the sign-in happens, and the issuer of its ID tokens
+  const AUTH = 'https://auth.openai.com';
+  const PLAN_API = 'https://api.openai.com/v1';
+  const PLAN_SCOPE = 'openid profile email offline_access resource.invoke chatgpt.tokens.use.direct';
+  // the scope without which the sign-in stays, but its plan cannot be used
+  const DIRECT = 'chatgpt.tokens.use.direct';
+  // a first sign-in registers Mail Deck with the account, which gives it a client id of its own
+  const DYNAMIC = 'dynamic_agent_client';
+  const AGENT = 'Mail Deck';
+  // Where a sign-in comes back to. Nothing listens there: while one is underway a session rule
+  // turns the visit into one of callback.html, the query kept. 127.0.0.1, never "localhost".
+  const REDIRECT = 'http://127.0.0.1:1455/auth/callback';
+  const CALLBACK = '/data/ai/callback.html';
+  // the sites a sign-in needs: the API, its tokens, and the loopback address for the rule
+  const SIGN_IN = [...CLOUD.chatgpt.origins, 'http://127.0.0.1/*'];
+  const USAGE = 'https://chatgpt.com/settings/usage';
+  // Local: the sign-in with its tokens, the client id it was given with its account (kept after
+  // a sign-out, for the next one) and this browser's host id (kept for ever). The session: the
+  // sign-in underway, and the pause after the plan's usage limit.
+  const AUTH_KEY = 'ai.chatgpt.auth';
+  const CLIENT_KEY = 'ai.chatgpt.client';
+  const HOST_KEY = 'ai.chatgpt.host';
+  const PENDING = 'ai.chatgpt.pending';
+  const PAUSE = 'ai.chatgpt.limit';
+  // what the settings page last heard of each engine's models, for their names elsewhere
+  const NAMES = 'ai.models';
+  const PENDING_MAX = 15 * 60000;
+  // an access token is renewed when less than this is left of it
+  const EARLY = 2 * 60000;
+  // the slack in an ID token's times, in seconds
+  const LEEWAY = 5;
+  // the session rule that brings a sign-in back: below core/services.js's, which takes every
+  // session rule from 1000 up as its own
+  const RULE = 900;
+  // what a refresh says of a refresh token that will never work again: the sign-in is over
+  const SPENT = ['invalid_grant', 'invalid_refresh_token', 'token_expired', 'refresh_token_expired',
+    'refresh_token_invalidated', 'refresh_token_reused'];
+
+  /* its sign-in */
+  const b64url = bytes => btoa(String.fromCharCode(...new Uint8Array(bytes))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const unb64url = s => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - s.length % 4) % 4)), c => c.charCodeAt(0));
+  const random = () => b64url(crypto.getRandomValues(new Uint8Array(32)));
+  // PKCE: the verifier's SHA-256, base64url without padding
+  const challengeOf = async verifier => b64url(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)));
+  const form = values => new URLSearchParams(values).toString();
+  const FORM = {'content-type': 'application/x-www-form-urlencoded'};
+
+  // A first sign-in registers with a name; a later one names the client it was given and, when
+  // known, the account (the last ID token, the address) so ChatGPT need not ask which one.
+  const authorizeUrl = ({client_id, first, state, nonce, challenge, host, idToken, email}) => {
+    const q = [
+      ['client_id', client_id],
+      ...(first ? [['agent_name_hint', AGENT]] : []),
+      ['ext_agent_host_id', host],
+      ['response_type', 'code'],
+      ['redirect_uri', REDIRECT],
+      ['scope', PLAN_SCOPE],
+      ['resource', PLAN_API],
+      ['state', state],
+      ['nonce', nonce],
+      ['code_challenge', challenge],
+      ['code_challenge_method', 'S256'],
+      ...(!first && idToken ? [['id_token_hint', idToken]] : []),
+      ...(!first && email ? [['login_hint', email]] : [])
+    ];
+    return AUTH + '/api/accounts/authorize?' + q.map(([k, v]) => k + '=' + encodeURIComponent(v)).join('&');
+  };
+  // this browser's id for OpenAI: made once, kept for ever, and nothing of the user's in it
+  const hostId = async () => {
+    const {[HOST_KEY]: had} = await chrome.storage.local.get(HOST_KEY);
+    if (typeof had === 'string' && /^urn:uuid:[0-9a-f-]{36}$/i.test(had)) {
+      return had;
+    }
+    const id = 'urn:uuid:' + crypto.randomUUID();
+    await chrome.storage.local.set({[HOST_KEY]: id});
+    return id;
+  };
+  // the sign-in kept: with a refresh token, or none
+  const signedIn = async () => {
+    try {
+      const {[AUTH_KEY]: a} = await chrome.storage.local.get(AUTH_KEY);
+      return a && typeof a === 'object' && typeof a.refresh_token === 'string' && a.refresh_token &&
+        typeof a.access_token === 'string' ? a : null;
+    }
+    catch (e) {
+      return null;
+    }
+  };
+  const planOf = a => Boolean(a) && a.plan !== false && Array.isArray(a.scopes) && a.scopes.includes(DIRECT);
+  const paused = async () => {
+    try {
+      return Boolean((await chrome.storage.session.get(PAUSE))?.[PAUSE]);
+    }
+    catch (e) {
+      return false;
+    }
+  };
+  const pause = () => chrome.storage.session.set({[PAUSE]: {at: Date.now()}}).catch(() => {});
+  const resume = () => chrome.storage.session.remove(PAUSE).catch(() => {});
+
+  // the rule that turns the visit to REDIRECT into one of callback.html, while a sign-in is underway
+  const dnr = () => self.chrome?.declarativeNetRequest;
+  const callbackRule = () => ({
+    id: RULE,
+    priority: 1,
+    action: {type: 'redirect', redirect: {transform: {scheme: 'chrome-extension', host: chrome.runtime.id, port: '', path: CALLBACK}}},
+    condition: {regexFilter: '^' + REDIRECT.replace(/\./g, '\\.') + '(\\?.*)?$', resourceTypes: ['main_frame']}
+  });
+  const rule = async on => {
+    if (dnr()?.updateSessionRules) {
+      await dnr().updateSessionRules({removeRuleIds: [RULE], ...(on ? {addRules: [callbackRule()]} : {})});
+    }
+  };
+  // a sign-in over, however it went: no record of it, no rule, and the loopback address given back
+  const over = async () => {
+    await Promise.all([
+      chrome.storage.session.remove(PENDING).catch(() => {}),
+      rule(false).catch(() => {}),
+      chrome.permissions?.remove?.({origins: ['http://127.0.0.1/*']})?.catch?.(() => false)
+    ]);
+  };
+  // a sign-in left unfinished: its rule goes once it is too old to finish
+  const tidy = async () => {
+    try {
+      const {[PENDING]: p} = await chrome.storage.session.get(PENDING);
+      if (p && Date.now() - p.created < PENDING_MAX) {
+        return;
+      }
+      if (p || (await dnr().getSessionRules()).some(r => r.id === RULE)) {
+        await over();
+      }
+    }
+    catch (e) {}
+  };
+
+  // Open ChatGPT's sign-in: the record of it in this browser session, then the rule that
+  // brings it back, then the page. open(url, tab) shows the page (a tab next to this one).
+  const begin = async (open = (url, tab) => chrome.tabs.create({url, ...(tab?.id ? {openerTabId: tab.id} : {})})) => {
+    const host = await hostId();
+    const {[CLIENT_KEY]: client, [AUTH_KEY]: had} = await chrome.storage.local.get([CLIENT_KEY, AUTH_KEY]);
+    const known = typeof client?.id === 'string' && client.id && client.id !== DYNAMIC ? client : null;
+    const tab = await Promise.resolve(chrome.tabs?.getCurrent?.()).catch(() => null);
+    const pending = {
+      state: random(),
+      verifier: random(),
+      nonce: random(),
+      client_id: known ? known.id : DYNAMIC,
+      first: !known,
+      redirect_uri: REDIRECT,
+      created: Date.now(),
+      ...(tab?.id ? {tab: tab.id} : {})
+    };
+    await chrome.storage.session.set({[PENDING]: pending});
+    await rule(true);
+    setTimeout(tidy, PENDING_MAX + 1000);
+    const url = authorizeUrl({
+      ...pending,
+      challenge: await challengeOf(pending.verifier),
+      host,
+      // the sign-in kept, when it is signed in again to allow the plan; after a sign-out, none
+      idToken: had?.client_id === pending.client_id ? had.id_token : '',
+      email: had?.email || known?.email || ''
+    });
+    await open(url, tab);
+    return true;
+  };
+  // the sites first, asked from the click itself before anything is awaited; then the sign-in
+  const signIn = (o = {}) => {
+    let asked;
+    try {
+      asked = chrome.permissions.request({origins: SIGN_IN});
+    }
+    catch (e) {
+      asked = Promise.reject(e);
+    }
+    return Promise.resolve(asked).catch(() => false).then(ok => {
+      if (!ok) {
+        throw new AIError('no-access', 'the sites were not given');
+      }
+      return begin(o.open);
+    });
+  };
+
+  // What the token endpoint said. OAuth's error is a string ({error, error_description}), or an
+  // object with a code: either way the error's type, for the caller to tell what it means.
+  const oauthRefused = (status, text) => {
+    const j = parse(text);
+    const type = String((typeof j?.error === 'string' ? j.error : j?.error?.code || j?.error?.type) || j?.code || '');
+    const detail = String(j?.error_description || j?.error?.message || j?.detail || type || 'HTTP ' + status);
+    const c = status >= 500 ? 'server' : status === 429 ? 'rate' : 'sign-in';
+    return new AIError(c, detail, {status, type});
+  };
+  const token = async (values, signal) => {
+    const {r, w} = await call(AUTH + '/api/accounts/oauth/token', {method: 'POST', headers: FORM, body: form(values)},
+      signal, WAIT_LIST, oauthRefused);
+    const j = await readJSON(r, w);
+    if (typeof j?.access_token !== 'string' || !j.access_token) {
+      throw new AIError('sign-in', 'no access token');
+    }
+    return j;
+  };
+
+  // OpenAI's signing keys, asked once a page, and again for a key id they do not have
+  let jwks = null;
+  const signingKey = async (kid, signal) => {
+    for (let fresh = false; ; fresh = true) {
+      if (!jwks || fresh) {
+        const p = jwks = call(AUTH + '/.well-known/jwks.json', {}, signal, WAIT_LIST).then(({r, w}) => readJSON(r, w));
+        p.catch(() => jwks === p && (jwks = null));
+      }
+      const keys = (await jwks)?.keys;
+      const k = Array.isArray(keys) ? keys.find(x => x?.kid === kid && x.kty === 'RSA') : null;
+      if (k) {
+        return crypto.subtle.importKey('jwk', {kty: 'RSA', n: k.n, e: k.e, ext: true},
+          {name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256'}, false, ['verify']);
+      }
+      if (fresh) {
+        throw new AIError('sign-in', 'no signing key ' + kid);
+      }
+    }
+  };
+  // the ID token's claims, once its signature, issuer, audience, times and nonce are what they must be
+  const verifyIdToken = async (jwt, {aud, nonce}, signal) => {
+    const parts = String(jwt ?? '').split('.');
+    let head;
+    let claims;
+    let signature;
+    try {
+      head = JSON.parse(new TextDecoder().decode(unb64url(parts[0])));
+      claims = JSON.parse(new TextDecoder().decode(unb64url(parts[1])));
+      signature = unb64url(parts[2]);
+    }
+    catch (e) {
+      throw new AIError('sign-in', 'no ID token');
+    }
+    if (parts.length !== 3 || head?.alg !== 'RS256' || !claims || typeof claims !== 'object') {
+      throw new AIError('sign-in', 'not an RS256 ID token');
+    }
+    const key = await signingKey(head.kid, signal);
+    const signed = new TextEncoder().encode(parts[0] + '.' + parts[1]);
+    if (!await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, signature, signed)) {
+      throw new AIError('sign-in', 'ID token signature');
+    }
+    const now = Date.now() / 1000;
+    const problem =
+      claims.iss !== AUTH ? 'issuer' :
+      !(Array.isArray(claims.aud) ? claims.aud.includes(aud) : claims.aud === aud) ? 'audience' :
+      !Number.isFinite(claims.exp) || claims.exp + LEEWAY < now ? 'expired' :
+      !Number.isFinite(claims.iat) || claims.iat - LEEWAY > now ? 'issued later' :
+      typeof claims.sub !== 'string' || !claims.sub ? 'subject' :
+      claims.nonce !== nonce ? 'nonce' : '';
+    if (problem) {
+      throw new AIError('sign-in', 'ID token ' + problem);
+    }
+    return claims;
+  };
+
+  /*
+   * The sign-in comes back (callback.html, with the query of its visit): its state is checked
+   * against the one underway, its code exchanged for tokens, the ID token verified, and the
+   * sign-in kept. Its {email, plan, tab} (the tab it was started from), or an AIError.
+   */
+  const complete = async (query, signal) => {
+    const q = new URLSearchParams(query);
+    const {[PENDING]: p} = await chrome.storage.session.get(PENDING);
+    if (!p || typeof p !== 'object') {
+      await over();
+      throw new AIError('sign-in', 'no sign-in underway');
+    }
+    // a visit without the state of the sign-in underway is no answer to it: that one goes on
+    if (!q.get('state') || q.get('state') !== p.state) {
+      throw new AIError('sign-in', 'another state');
+    }
+    try {
+      if (Date.now() - p.created > PENDING_MAX) {
+        throw new AIError('sign-in', 'too late');
+      }
+      const error = q.get('error');
+      if (error) {
+        throw new AIError(error === 'access_denied' ? 'denied' : 'sign-in', q.get('error_description') || error);
+      }
+      // a first sign-in brings the client id it registered, kept at once for the next try; a
+      // later one may bring none, but never another
+      const issued = q.get('client_id');
+      let client = p.client_id;
+      if (p.first) {
+        if (!issued || issued === DYNAMIC) {
+          throw new AIError('sign-in', 'no client id issued');
+        }
+        client = issued;
+        await chrome.storage.local.set({[CLIENT_KEY]: {id: client}});
+      }
+      else if (issued && issued !== p.client_id) {
+        throw new AIError('sign-in', 'another client id');
+      }
+      if (!q.get('code')) {
+        throw new AIError('sign-in', 'no code');
+      }
+      const t = await token({
+        grant_type: 'authorization_code',
+        client_id: client,
+        code: q.get('code'),
+        code_verifier: p.verifier,
+        redirect_uri: p.redirect_uri || REDIRECT,
+        resource: PLAN_API
+      }, signal);
+      if (typeof t.refresh_token !== 'string' || !t.refresh_token) {
+        throw new AIError('sign-in', 'no refresh token');
+      }
+      const claims = await verifyIdToken(t.id_token, {aud: client, nonce: p.nonce}, signal);
+      // the account the client and the sign-in kept belong to, and no other
+      const {[CLIENT_KEY]: known} = await chrome.storage.local.get(CLIENT_KEY);
+      const had = await signedIn();
+      if ((known?.sub && known.sub !== claims.sub) || (had?.sub && had.sub !== claims.sub)) {
+        // with no sign-in kept, the next try registers anew, for whichever account it is
+        if (!had?.sub) {
+          await chrome.storage.local.remove(CLIENT_KEY);
+        }
+        throw new AIError('other-account', 'another subject');
+      }
+      const scopes = String(t.scope ?? q.get('scope') ?? '').split(/\s+/).filter(Boolean);
+      const email = typeof claims.email === 'string' ? claims.email : '';
+      await chrome.storage.local.set({
+        [AUTH_KEY]: {
+          client_id: client,
+          email,
+          sub: claims.sub,
+          access_token: t.access_token,
+          refresh_token: t.refresh_token,
+          id_token: t.id_token,
+          expires_at: Date.now() + (Number(t.expires_in) > 0 ? Number(t.expires_in) * 1000 : 3600000),
+          scopes
+        },
+        [CLIENT_KEY]: {id: client, sub: claims.sub, email}
+      });
+      await resume();
+      return {email, plan: scopes.includes(DIRECT), ...(p.tab ? {tab: p.tab} : {})};
+    }
+    finally {
+      await over();
+    }
+  };
+
+  // The tokens of a sign-in that is over go; its account, the client and the host stay for the
+  // next one (and a client the token endpoint does not know goes too), only if the tokens are
+  // still the ones kept. Unlike a sign-out it stops nothing: what asked is told why.
+  const forget = async (a, client) => {
+    const now = await signedIn();
+    if (now?.refresh_token === a.refresh_token) {
+      await chrome.storage.local.set({[AUTH_KEY]: {client_id: now.client_id, email: now.email, sub: now.sub, scopes: now.scopes}});
+      if (client) {
+        await chrome.storage.local.remove(CLIENT_KEY);
+      }
+    }
+  };
+  const renew = async stale => {
+    const a = await signedIn();
+    if (!a) {
+      throw new AIError('signed-out', 'not signed in');
+    }
+    // another page renewed it meanwhile
+    if (a.access_token !== stale && a.expires_at - Date.now() > EARLY) {
+      return a;
+    }
+    let t;
+    try {
+      // no scope: the grant stays as it was
+      t = await token({grant_type: 'refresh_token', client_id: a.client_id, refresh_token: a.refresh_token, resource: PLAN_API});
+    }
+    catch (e) {
+      if (SPENT.includes(e.type) || e.type === 'invalid_client') {
+        await forget(a, e.type === 'invalid_client');
+        throw new AIError('signed-out', e.detail, {type: e.type});
+      }
+      // a refusal no one names: signed out as far as this page can tell, but nothing is erased;
+      // no connection or a server that failed keeps the sign-in as it is
+      throw e.code === 'sign-in' ? new AIError('signed-out', e.detail, {type: e.type, status: e.status}) : e;
+    }
+    const next = {
+      ...a,
+      access_token: t.access_token,
+      refresh_token: typeof t.refresh_token === 'string' && t.refresh_token ? t.refresh_token : a.refresh_token,
+      expires_at: Date.now() + (Number(t.expires_in) > 0 ? Number(t.expires_in) * 1000 : 3600000),
+      scopes: typeof t.scope === 'string' ? t.scope.split(/\s+/).filter(Boolean) : a.scopes
+    };
+    await chrome.storage.local.set({[AUTH_KEY]: next});
+    return next;
+  };
+  // One refresh at a time, in this page and in Mail Deck's others: each gives a new refresh token,
+  // and one used twice is spent. A caller joins the one underway, or starts its own.
+  let renewing = null;
+  const locked = fn => self.navigator?.locks?.request ? self.navigator.locks.request('ai.chatgpt.refresh', fn) : fn();
+  const renewal = (stale, own) => {
+    if (!renewing || own) {
+      const p = renewing = Promise.resolve(locked(() => renew(stale)));
+      p.catch(() => {}).then(() => renewing === p && (renewing = null));
+    }
+    return renewing;
+  };
+  // the sign-in with an access token that works for a while yet; stale: one the API refused.
+  // A refresh joined for another caller may leave that one as it was: then one of its own.
+  const access = async (signal, stale = '') => {
+    const a = await signedIn();
+    if (!a) {
+      throw new AIError('signed-out', 'not signed in');
+    }
+    if (a.access_token !== stale && a.expires_at - Date.now() > EARLY) {
+      return a;
+    }
+    for (const own of [false, true]) {
+      const b = await abortable(renewal(stale, own), signal);
+      if (b.access_token !== stale) {
+        return b;
+      }
+    }
+    throw new AIError('signed-out', 'no new token');
+  };
+  // the server said the plan is not this account's: no request goes until it is checked again
+  const unplan = async a => {
+    const now = await signedIn();
+    if (now?.sub === a.sub) {
+      await chrome.storage.local.set({[AUTH_KEY]: {...now, plan: false}});
+    }
+  };
+
+  // The end of the sign-in at OpenAI, then here: the refresh token is revoked where the discovery
+  // document says, tried twice when there is no answer; the tokens go here whatever came of it.
+  const revoke = async a => {
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        const d = await call(AUTH + '/.well-known/openid-configuration', {}, null, WAIT_LIST);
+        const url = String((await readJSON(d.r, d.w))?.revocation_endpoint || '');
+        if (!url.startsWith(AUTH + '/')) {
+          return false;
+        }
+        const {r, w} = await call(url, {
+          method: 'POST',
+          headers: FORM,
+          body: form({token: a.refresh_token, token_type_hint: 'refresh_token', client_id: a.client_id})
+        }, null, WAIT_LIST);
+        await r.text().catch(() => '');
+        w.done();
+        return true;
+      }
+      catch (e) {
+        if (attempt || !['network', 'server'].includes(e.code)) {
+          return false;
+        }
+        await sleep(1000);
+      }
+    }
+    return false;
+  };
+  // what runs on the plan in this page stops first; the others stop as the tokens go
+  const signOut = async () => {
+    restart();
+    const {[AUTH_KEY]: a} = await chrome.storage.local.get(AUTH_KEY);
+    const revoked = a?.refresh_token ? await revoke(a) : true;
+    await chrome.storage.local.remove(AUTH_KEY);
+    await resume();
+    return {revoked};
+  };
+  // the account as a page may show it: its address, whether the plan works, the pause; no token
+  const account = async () => {
+    const a = await signedIn();
+    return a ? {email: String(a.email || ''), plan: planOf(a), limit: await paused()} : null;
+  };
+
+  /* its requests: OpenAI's Responses API, streamed */
+
+  // the plan's own error codes as ours. A route, a scope or a grant the plan does not take is
+  // said as the plan not being this account's: no retry or new sign-in on its own helps, and the
+  // user may sign in again from Settings → AI.
+  const PLAN_ERRORS = {
+    subscription_sharing_usage_limit_exceeded: 'limit',
+    subscription_sharing_user_not_eligible: 'no-plan',
+    subscription_sharing_route_not_supported: 'no-plan',
+    chatpass_v2_scope_not_authorized: 'no-plan',
+    chatpass_v2_invalid_authorization_context: 'no-plan',
+    subscription_sharing_invalid_user: 'signed-out',
+    subscription_sharing_usage_unavailable: 'server',
+    subscription_sharing_user_unavailable: 'server',
+    // error.param names what to leave out
+    subscription_sharing_unsupported_capability: 'model'
+  };
+  const PLAN_STATUS = {'limit': 429, 'no-plan': 403, 'signed-out': 401, 'server': 503, 'model': 400};
+  const planRefused = (status, text, headers) => {
+    const j = parse(text);
+    const err = j?.error && typeof j.error === 'object' ? j.error : {};
+    const code = String(err.code || '');
+    const message = String(err.message || (typeof j?.detail === 'string' ? j.detail : '') || '');
+    const extra = {status, type: code, param: String(err.param || ''), retryAfter: waitOf(headers)};
+    const c = PLAN_ERRORS[code] || (status === 401 ? 'signed-out' : status === 503 ? 'server' : '');
+    if (c) {
+      return new AIError(c, message || code || 'HTTP ' + status, extra);
+    }
+    // a policy that keeps the request out (the user's region, say): said in the provider's words
+    if (status === 403) {
+      const e = new AIError('auth', message || 'HTTP 403', extra);
+      e.message = e.detail || e.message;
+      return e;
+    }
+    return refused(status, text, headers);
+  };
+  const planFailed = err => planRefused(PLAN_STATUS[PLAN_ERRORS[err?.code]] || STATUS[err?.type] || STATUS[err?.code] || 500,
+    JSON.stringify({error: err || {}}), null);
+  // the stream: text in output_text deltas; only response.completed (or incomplete, its text
+  // cut short) ends it well
+  const planStream = async (r, w, model, onText) => {
+    let text = '';
+    let stop = '';
+    let ended = false;
+    await sse(r, w, (event, data) => {
+      const j = parse(data);
+      const type = j?.type || event;
+      model = j?.response?.model || model;
+      if (type === 'response.output_text.delta' && typeof j?.delta === 'string') {
+        text += j.delta;
+        onText(text);
+      }
+      else if (type === 'response.refusal.delta' || type === 'response.refusal.done') {
+        throw new AIError('refusal');
+      }
+      else if (type === 'response.completed') {
+        ended = true;
+      }
+      else if (type === 'response.incomplete') {
+        if (j?.response?.incomplete_details?.reason === 'content_filter') {
+          throw new AIError('refusal', 'content_filter');
+        }
+        ended = true;
+        stop = 'length';
+      }
+      else if (type === 'response.failed') {
+        throw planFailed(j?.response?.error);
+      }
+      else if (type === 'error') {
+        throw planFailed(j?.error || j);
+      }
+      return ended;
+    });
+    if (!ended) {
+      throw new AIError('server', 'the stream ended before response.completed');
+    }
+    return {text, model, stop};
+  };
+  // what the plan may not take, as error.param names it (or the message, without one): left out
+  const lessPlan = (e, use) => {
+    const p = e.param.toLowerCase();
+    const m = e.detail.toLowerCase();
+    if (use.format && (p ? p.startsWith('text') : /text\.format|json_schema/.test(m))) {
+      use.format = false;
+      return true;
+    }
+    if (use.reasoning && (p ? p.startsWith('reasoning') : /reasoning/.test(m))) {
+      use.reasoning = false;
+      return true;
+    }
+    return false;
+  };
+  const chatgpt = async ({model, system, user, schema, signal, onText = () => {}}) => {
+    // none of max_output_tokens, temperature, top_p, user, metadata, previous_response_id or
+    // truncation: the plan refuses them. A schema and the effort may not be taken either.
+    const use = {reasoning: true, format: Boolean(schema)};
+    let stale = '';
+    let waited = false;
+    for (let attempt = 0; ; attempt += 1) {
+      const a = await access(signal, stale);
+      const body = {model, instructions: system, input: [{role: 'user', content: user}], store: false, stream: true};
+      if (use.reasoning) {
+        body.reasoning = {effort: 'low'};
+      }
+      if (use.format) {
+        body.text = {format: {type: 'json_schema', name: 'results', schema, strict: true}};
+      }
+      try {
+        const {r, w} = await call(CLOUD.chatgpt.base + 'responses', {
+          method: 'POST',
+          headers: {'content-type': 'application/json', 'authorization': 'Bearer ' + a.access_token},
+          body: JSON.stringify(body)
+        }, signal, STALL, planRefused);
+        const answer = await planStream(r, w, model, onText);
+        // an answer: the usage limit, if there was one, is over
+        resume();
+        return answer;
+      }
+      catch (e) {
+        // a token refused: renewed once, and asked again
+        if (e.code === 'signed-out' && !stale) {
+          stale = a.access_token;
+          continue;
+        }
+        // the plan's usage could not be told: asked again once, after a short wait
+        const wait = e.retryAfter ?? RETRY;
+        if (e.code === 'server' && e.status === 503 && !waited && wait <= RETRY_MAX) {
+          waited = true;
+          await sleep(wait, signal);
+          continue;
+        }
+        if (e.code === 'model' && e.status === 400 && attempt < 3 && lessPlan(e, use)) {
+          continue;
+        }
+        if (e.code === 'limit') {
+          await pause();
+        }
+        if (e.code === 'no-plan') {
+          await unplan(a);
+        }
+        throw e;
+      }
+    }
+  };
+  // the models of the account's plan: those it lists, in its order, the first one by default
+  const planModels = j => {
+    const list = Array.isArray(j?.models) ? j.models : null;
+    if (!list) {
+      return null;
+    }
+    const out = list.filter(m => m?.visibility === 'list' && typeof m.slug === 'string' && m.slug)
+      .map(m => ({id: m.slug, name: String(m.display_name || m.slug)}));
+    if (out[0]) {
+      out[0].default = true;
+    }
+    return out;
+  };
+  const planList = async signal => {
+    let stale = '';
+    for (;;) {
+      const a = await access(signal, stale);
+      try {
+        const {r, w} = await call(CLOUD.chatgpt.base + 'models', {headers: {authorization: 'Bearer ' + a.access_token}}, signal, WAIT_LIST, planRefused);
+        const list = planModels(await readJSON(r, w));
+        if (!list) {
+          throw new AIError('server', 'no model list');
+        }
+        return list;
+      }
+      catch (e) {
+        if (e.code === 'signed-out' && !stale) {
+          stale = a.access_token;
+          continue;
+        }
+        if (e.code === 'no-plan') {
+          await unplan(a);
+        }
+        throw e;
+      }
+    }
+  };
+
   /* the models a key can use */
   const OPENAI_CHAT = /^(gpt-|o\d)/;
   const OPENAI_OTHER = /audio|realtime|tts|transcribe|image|search|embedding|moderation|instruct|dall-e|whisper|codex|deep-research|computer-use|(^|-)pro(-|$)/;
@@ -1049,11 +1845,17 @@
 
   const granted = async engine => {
     try {
-      return chrome.permissions?.contains ? await chrome.permissions.contains({origins: [CLOUD[engine].origin]}) : true;
+      return chrome.permissions?.contains ? await chrome.permissions.contains({origins: CLOUD[engine].origins}) : true;
     }
     catch (e) {
       return false;
     }
+  };
+  // the models' names as a list gave them, kept for the session: the panel shows a name, not an id
+  const named = (engine, list) => {
+    const keep = list.map(m => ({id: m.id, name: m.name, ...(m.default ? {default: true} : {})}));
+    chrome.storage.session.get(NAMES).then(r => chrome.storage.session.set({[NAMES]: {...r?.[NAMES], [engine]: keep}})).catch(() => {});
+    return list;
   };
   // a key goes into a header: one with spaces or letters a header cannot carry is no key
   const keyOf = key => {
@@ -1063,15 +1865,24 @@
     }
     return k;
   };
+  // the models a key, or the ChatGPT plan's sign-in (key unused), may use
   const models = async (engine, key, signal) => {
     if (!CLOUD[engine]) {
       return [];
     }
-    key = keyOf(key);
+    if (engine !== 'chatgpt') {
+      key = keyOf(key);
+    }
     if (!await granted(engine)) {
       throw new AIError('no-access');
     }
+    if (engine === 'zai') {
+      return named(engine, zaiModels());
+    }
     try {
+      if (engine === 'chatgpt') {
+        return named(engine, await planList(signal));
+      }
       const {r, w} = engine === 'openai' ?
         await call(CLOUD.openai.base + 'models', {headers: {authorization: 'Bearer ' + key}}, signal, WAIT_LIST) :
         await call(CLOUD.anthropic.base + 'models?limit=100', {headers: anthropicHeaders(key)}, signal, WAIT_LIST);
@@ -1079,7 +1890,7 @@
       if (!Array.isArray(j?.data)) {
         throw new AIError('server', 'no model list');
       }
-      return engine === 'openai' ? openaiModels(j.data) : anthropicModels(j.data);
+      return named(engine, engine === 'openai' ? openaiModels(j.data) : anthropicModels(j.data));
     }
     catch (e) {
       // a fetch fails, not refuses, once the permission is taken back in chrome://extensions
@@ -1089,7 +1900,7 @@
       throw e;
     }
   };
-  // the model when the user has not picked one, asked once a page
+  // the model when the user has not picked one, asked once a page (key: the plan's account)
   const defaults = new Map();
   const defaultModel = (engine, key, signal) => {
     const id = engine + '\n' + key;
@@ -1311,22 +2122,29 @@
       }
     };
   };
+  // a fetch fails, not refuses, once the permission is taken back in chrome://extensions
+  const guarded = async (engine, run) => {
+    try {
+      return await run();
+    }
+    catch (e) {
+      if (e.code === 'network' && !await granted(engine)) {
+        throw new AIError('no-access', e.detail);
+      }
+      throw e;
+    }
+  };
   const openCloud = async (prefs, system, signal) => {
     const {engine} = prefs;
-    const key = keyOf(prefs.key);
-    const model = prefs.model || await defaultModel(engine, key, signal);
-    const ask = engine === 'openai' ? openai : anthropic;
-    const guard = async run => {
-      try {
-        return await run();
-      }
-      catch (e) {
-        if (e.code === 'network' && !await granted(engine)) {
-          throw new AIError('no-access', e.detail);
-        }
-        throw e;
-      }
-    };
+    // the ChatGPT plan: the account signed in instead of a key; its answers always stream
+    const a = engine === 'chatgpt' ? await signedIn() : null;
+    if (engine === 'chatgpt' && !a) {
+      throw new AIError('signed-out', 'not signed in');
+    }
+    const key = a ? '' : keyOf(prefs.key);
+    const model = prefs.model || await defaultModel(engine, a ? a.sub : key, signal);
+    const ask = {chatgpt, openai, anthropic, zai}[engine];
+    const guard = run => guarded(engine, run);
     return {
       engine,
       model,
@@ -1341,21 +2159,22 @@
     openLocal(st.lang, task, system, signal) : openCloud(prefs, system, signal);
 
   /* settings and state */
+  // the ChatGPT plan has a model but no key: its sign-in stays in storage, read where it is used
   const prefs = async () => {
     let p = {};
     try {
-      p = await chrome.storage.local.get(['ai.engine', 'ai.openai.key', 'ai.anthropic.key', 'ai.openai.model',
-        'ai.anthropic.model', 'ai.summary', 'ai.reply']) || {};
+      p = await chrome.storage.local.get(['ai.engine', ...KEYED.map(e => `ai.${e}.key`),
+        ...Object.keys(CLOUD).map(e => `ai.${e}.model`), 'ai.summary', 'ai.reply', 'ai.buttons']) || {};
     }
     catch (e) {}
     const engine = ENGINES.includes(p['ai.engine']) ? p['ai.engine'] : 'off';
-    const cloud = Boolean(CLOUD[engine]);
     return {
       engine,
-      model: cloud ? String(p['ai.' + engine + '.model'] || '') : '',
+      model: CLOUD[engine] ? String(p['ai.' + engine + '.model'] || '') : '',
       summary: ['off', 'click', 'auto'].includes(p['ai.summary']) ? p['ai.summary'] : 'click',
       reply: p['ai.reply'] !== false,
-      ...(cloud ? {key: String(p['ai.' + engine + '.key'] || '').trim()} : {})
+      buttons: p['ai.buttons'] !== false,
+      ...(KEYED.includes(engine) ? {key: String(p['ai.' + engine + '.key'] || '').trim()} : {})
     };
   };
   const englishNote = () => {
@@ -1370,7 +2189,7 @@
     const lang = ui();
     try {
       p = p || await prefs();
-      if (CLOUD[p.engine]) {
+      if (KEYED.includes(p.engine)) {
         if (!p.key) {
           return {ok: false, reason: 'no-key', lang};
         }
@@ -1378,6 +2197,13 @@
           return {ok: false, reason: 'no-access', lang};
         }
         return {ok: true, lang};
+      }
+      // the plan: signed in, its sites given, its use allowed and not paused at the usage limit
+      if (p.engine === 'chatgpt') {
+        const a = await signedIn();
+        const reason = !a ? 'signed-out' : !await granted('chatgpt') ? 'no-access' : !planOf(a) ? 'no-plan' :
+          await paused() ? 'limit' : '';
+        return reason ? {ok: false, reason, lang} : {ok: true, lang};
       }
       if (p.engine !== 'builtin') {
         return {ok: false, reason: 'off', lang};
@@ -1394,10 +2220,11 @@
       return {ok: false, reason: 'unavailable', lang};
     }
   };
-  const REASONS = {'no-key': 'auth', 'no-access': 'no-access'};
-  const ready = async p => {
+  const REASONS = {'no-key': 'auth', 'no-access': 'no-access', 'signed-out': 'signed-out', 'no-plan': 'no-plan', 'limit': 'limit'};
+  // anyway: the reasons a request goes all the same
+  const ready = async (p, anyway = []) => {
     const st = await state(p);
-    if (!st.ok) {
+    if (!st.ok && !anyway.includes(st.reason)) {
       throw new AIError(REASONS[st.reason] || 'unavailable', st.reason);
     }
     return st;
@@ -1409,7 +2236,8 @@
     if (p.summary === 'off') {
       throw new AIError('unavailable', 'summary is off');
     }
-    const st = await ready(p);
+    // a summary is asked for: the plan's pause at its usage limit holds back only what runs on its own
+    const st = await ready(p, ['limit']);
     if (!line(subject) && !(Array.isArray(messages) && messages.some(m => body(m?.text)))) {
       throw new AIError('bad-output', 'nothing to summarize');
     }
@@ -2091,10 +2919,56 @@
       }
       return true;
     }
+    // the plan, checked again by the user: the pause and the server's "not this account's" go,
+    // and its models are asked for with the sign-in. A scope never given needs a new sign-in.
+    if (engine === 'chatgpt') {
+      const a = await signedIn();
+      if (!a) {
+        throw new AIError('signed-out', 'not signed in');
+      }
+      if (!a.scopes?.includes(DIRECT)) {
+        throw new AIError('no-plan', 'the plan was not allowed');
+      }
+      await resume();
+      if (a.plan === false) {
+        const again = {...a};
+        delete again.plan;
+        await chrome.storage.local.set({[AUTH_KEY]: again});
+      }
+      await models(engine, '', signal);
+      return true;
+    }
+    if (engine === 'zai') {
+      key = keyOf(key);
+      if (!await granted(engine)) {
+        throw new AIError('no-access');
+      }
+      await guarded(engine, () => zaiCheck(key, signal));
+      return true;
+    }
     if (CLOUD[engine]) {
       await models(engine, key, signal);
     }
     return true;
+  };
+
+  /* what a page says of the engine: "ChatGPT plan · GPT-5.5", "Built-in · on this computer" */
+  const PROVIDERS = {builtin: 'Chrome', chatgpt: 'ChatGPT', openai: 'OpenAI', anthropic: 'Anthropic', zai: 'Z.ai'};
+  const describe = async p => {
+    p = p || await prefs();
+    const engine = ENGINES.includes(p?.engine) ? p.engine : 'off';
+    let model = engine === 'builtin' ? 'Gemini Nano' : CLOUD[engine] ? String(p.model || '') : '';
+    if (CLOUD[engine]) {
+      let list = engine === 'zai' ? zaiModels() : [];
+      try {
+        list = list.length ? list : (await chrome.storage.session.get(NAMES))?.[NAMES]?.[engine] || [];
+      }
+      catch (e) {}
+      // a model not picked yet: the one the list marks
+      const m = list.find(x => x?.id === model) || (model ? null : list.find(x => x?.default));
+      model = String(m?.name || model);
+    }
+    return {engine, provider: PROVIDERS[engine] || '', model, plan: engine === 'chatgpt', local: engine === 'builtin'};
   };
 
   /* Google Calendar */
@@ -2139,17 +3013,28 @@
     return 'https://calendar.google.com/calendar/render?' + parts.join('&');
   };
 
-  // a change in Settings → AI stops what runs for the old engine, key or model
+  // A change in Settings → AI stops what runs for the old engine, key, model or account: a
+  // sign-out, another account. A refresh that renews the plan's tokens is none, nor is one that
+  // found them spent (its request says so), nor a mark on the same account.
+  const restarts = (k, c) => /^ai\.(engine|openai\.|anthropic\.|zai\.)/.test(k) || k === 'ai.chatgpt.model' ||
+    (k === AUTH_KEY && (!c?.newValue || c.oldValue?.sub !== c.newValue.sub));
+  const restart = () => {
+    epoch.abort();
+    epoch = new AbortController();
+    defaults.clear();
+  };
   try {
     chrome.storage.onChanged.addListener((changes, area) => {
-      if (area === 'local' && Object.keys(changes).some(k => /^ai\.(engine|openai\.|anthropic\.)/.test(k))) {
-        epoch.abort();
-        epoch = new AbortController();
-        defaults.clear();
+      if (area === 'local' && Object.entries(changes).some(([k, c]) => restarts(k, c))) {
+        restart();
       }
     });
   }
   catch (e) {}
+  // a sign-in an earlier page left unfinished
+  if (dnr()?.getSessionRules) {
+    tidy();
+  }
 
   self.AIError = AIError;
   self.AI = {
@@ -2157,6 +3042,7 @@
     AIError,
     prefs,
     state,
+    describe,
     summarize,
     cached,
     needsReply,
@@ -2168,9 +3054,12 @@
     models,
     check,
     builtin,
+    // the ChatGPT plan: signIn() from a click, complete() on the page the sign-in comes back to
+    chatgpt: {signIn, signOut, account, complete, resume, usage: USAGE},
     calendarUrl,
     // for the tests
     _internal: {readSummary, fit, candidate, sortable, prune, jsonOf, sse, watch, summarySystem, replySystem, readPlan, fitMail,
-      citesOf, readEmail, planSystem, answerSystem, draftSystem, composeSystem}
+      citesOf, readEmail, planSystem, answerSystem, draftSystem, composeSystem, authorizeUrl, challengeOf, verifyIdToken, begin,
+      access, thinksAlways}
   };
 }

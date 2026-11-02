@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in with ChatGPT</title>
+  <link rel="icon" href="/data/icons/options/32.png">
+  <link rel="stylesheet" href="/data/panel/tokens.css">
+  <link rel="stylesheet" href="callback.css">
+</head>
+<body>
+  <main class="card" id="card" data-state="wait">
+    <img src="/data/icons/red/128.png" alt="" width="56" height="56">
+    <div aria-live="polite">
+      <h1 id="title">Signing in…</h1>
+      <p id="text" hidden></p>
+    </div>
+    <p class="buttons"><button type="button" class="ghost primary" id="retry" hidden>Try again</button></p>
+  </main>
+  <script src="ai.js"></script>
+  <script src="callback.js"></script>
+</body>
+</html>

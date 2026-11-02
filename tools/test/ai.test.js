@@ -16,10 +16,17 @@ const unhandled = [];
 process.on('unhandledRejection', e => unhandled.push(e));
 
 /* a page with the module */
-const load = ({lang = 'en', local = {}, session = {}, LanguageModel, userAgent = 'Mozilla/5.0 Chrome/142.0.0.0', online = true} = {}) => {
-  const store = {local: structuredClone(local), session};
-  const listeners = [];
-  const perm = {granted: true, asked: []};
+// with: another page's {store, rules, listeners, requests, answers}, which this one shares, as
+// the panel and the settings page share chrome.storage and the network; locks: navigator.locks
+const load = ({lang = 'en', local = {}, session = {}, LanguageModel, userAgent = 'Mozilla/5.0 Chrome/142.0.0.0', online = true,
+  with: other, locks} = {}) => {
+  const store = other?.store || {local: structuredClone(local), session};
+  const listeners = other?.listeners || [];
+  // the session rules of declarativeNetRequest, and the tabs opened
+  const rules = other?.rules || [];
+  const tabs = {created: [], current: {id: 7}};
+  const perm = {granted: true, asked: [], grant: true, requested: [], removed: []};
+  const tell = (changes, name) => listeners.forEach(fn => fn(changes, name));
   const area = name => ({
     get: async keys => {
       const s = store[name];
@@ -41,17 +48,27 @@ const load = ({lang = 'en', local = {}, session = {}, LanguageModel, userAgent =
         changes[k] = {oldValue: store[name][k], newValue: v};
         store[name][k] = structuredClone(v);
       }
-      if (name === 'local') {
-        listeners.forEach(fn => fn(changes, 'local'));
-      }
+      tell(changes, name);
     },
-    remove: async keys => [].concat(keys).forEach(k => delete store[name][k])
+    remove: async keys => {
+      const changes = {};
+      for (const k of [].concat(keys).filter(k => k in store[name])) {
+        changes[k] = {oldValue: store[name][k]};
+        delete store[name][k];
+      }
+      if (Object.keys(changes).length) {
+        tell(changes, name);
+      }
+    }
   });
-  const requests = [];
-  const answers = [];
+  const requests = other?.requests || [];
+  const answers = other?.answers || [];
   const fetch = async (url, init = {}) => {
     const headers = Object.fromEntries(Object.entries(init.headers || {}).map(([k, v]) => [k.toLowerCase(), v]));
-    const req = {url, method: init.method || 'GET', headers, body: init.body ? JSON.parse(init.body) : null, signal: init.signal, init};
+    // a JSON body as an object; a form as its fields
+    const body = typeof init.body !== 'string' ? null : /^\s*[{[]/.test(init.body) ? JSON.parse(init.body) :
+      Object.fromEntries(new URLSearchParams(init.body));
+    const req = {url, method: init.method || 'GET', headers, body, signal: init.signal, init};
     requests.push(req);
     const next = answers.shift();
     if (!next) {
@@ -62,20 +79,60 @@ const load = ({lang = 'en', local = {}, session = {}, LanguageModel, userAgent =
   const chrome = {
     i18n: {getMessage: () => '', getUILanguage: () => lang},
     storage: {local: area('local'), session: area('session'), onChanged: {addListener: fn => listeners.push(fn)}},
-    permissions: {contains: async ({origins}) => {
-      perm.asked.push(...origins);
-      return perm.granted;
-    }}
+    permissions: {
+      contains: async ({origins}) => {
+        perm.asked.push(...origins);
+        return perm.granted;
+      },
+      // written down as it is asked, before anything is awaited: that is what Chrome takes as the click's
+      request: ({origins}) => {
+        perm.requested.push(origins);
+        return Promise.resolve(perm.grant);
+      },
+      remove: async ({origins}) => {
+        perm.removed.push(...origins);
+        return true;
+      }
+    },
+    declarativeNetRequest: {
+      getSessionRules: async () => structuredClone(rules),
+      updateSessionRules: async ({removeRuleIds = [], addRules = []}) => {
+        for (const id of [...removeRuleIds, ...addRules.map(r => r.id)]) {
+          const i = rules.findIndex(r => r.id === id);
+          if (i >= 0) {
+            rules.splice(i, 1);
+          }
+        }
+        rules.push(...structuredClone(addRules));
+      }
+    },
+    tabs: {
+      getCurrent: async () => tabs.current,
+      create: async o => {
+        tabs.created.push(o);
+        return {id: 99};
+      }
+    },
+    runtime: {id: 'maildeckmaildeckmaildeckmaildeck'}
   };
-  const ctx = {chrome, fetch, navigator: {onLine: online, userAgent}, setTimeout, clearTimeout, TextDecoder, TextEncoder,
-    AbortController, AbortSignal, Intl, console, DOMException, ReadableStream};
+  // a long wait (a sign-in's 15 minutes) does not keep node running once the checks are done
+  const later = (fn, ms, ...args) => {
+    const id = setTimeout(fn, ms, ...args);
+    if (ms > 60000) {
+      id.unref?.();
+    }
+    return id;
+  };
+  const ctx = {chrome, fetch, navigator: {onLine: online, userAgent, ...(locks ? {locks} : {})}, setTimeout: later, clearTimeout,
+    TextDecoder, TextEncoder, AbortController, AbortSignal, Intl, console, DOMException, ReadableStream, URLSearchParams, URL,
+    crypto: globalThis.crypto, btoa, atob};
   if (LanguageModel) {
     ctx.LanguageModel = LanguageModel;
   }
   ctx.self = ctx;
   vm.createContext(ctx);
   vm.runInContext(SOURCE, ctx, {filename: 'ai.js'});
-  return {AI: ctx.AI, ctx, store, requests, answers, perm, set: values => chrome.storage.local.set(values)};
+  return {AI: ctx.AI, ctx, store, rules, listeners, requests, answers, perm, tabs, set: values => chrome.storage.local.set(values)};
 };
 
 /* answers */
@@ -696,11 +753,20 @@ check('models: with no model picked, the default of the list is used', async () 
 /* settings and state */
 check('prefs and state: defaults, the key only for a cloud engine, the reasons', async () => {
   const t = load({lang: 'he'});
-  assert.deepStrictEqual(plain(await t.AI.prefs()), {engine: 'off', model: '', summary: 'click', reply: true});
+  assert.deepStrictEqual(plain(await t.AI.prefs()), {engine: 'off', model: '', summary: 'click', reply: true, buttons: true});
   assert.deepStrictEqual(plain(await t.AI.state()), {ok: false, reason: 'off', lang: 'he'});
-  assert.deepStrictEqual(plain(t.AI.ENGINES), ['off', 'builtin', 'openai', 'anthropic']);
-  const b = load({local: {'ai.engine': 'builtin', 'ai.openai.key': 'sk-x', 'ai.summary': 'auto', 'ai.reply': false}});
-  assert.deepStrictEqual(plain(await b.AI.prefs()), {engine: 'builtin', model: '', summary: 'auto', reply: false});
+  assert.deepStrictEqual(plain(t.AI.ENGINES), ['off', 'builtin', 'chatgpt', 'openai', 'anthropic', 'zai']);
+  const b = load({local: {'ai.engine': 'builtin', 'ai.openai.key': 'sk-x', 'ai.summary': 'auto', 'ai.reply': false, 'ai.buttons': false}});
+  assert.deepStrictEqual(plain(await b.AI.prefs()), {engine: 'builtin', model: '', summary: 'auto', reply: false, buttons: false});
+  // the plan has a model, but no key: its sign-in is read where it is used
+  const g = load({local: {'ai.engine': 'chatgpt', 'ai.chatgpt.model': 'gpt-5.5', 'ai.openai.key': 'sk-x'}});
+  assert.deepStrictEqual(plain(await g.AI.prefs()), {engine: 'chatgpt', model: 'gpt-5.5', summary: 'click', reply: true, buttons: true});
+  assert.strictEqual((await g.AI.state()).reason, 'signed-out');
+  await failsWith(g.AI.summarize(THREAD), 'signed-out');
+  const z = load({local: {'ai.engine': 'zai', 'ai.zai.key': ' zkey.SECRET ', 'ai.zai.model': 'glm-4.7'}});
+  assert.deepStrictEqual(plain(await z.AI.prefs()), {engine: 'zai', model: 'glm-4.7', summary: 'click', reply: true, buttons: true, key: 'zkey.SECRET'});
+  assert.deepStrictEqual(plain(await z.AI.state()), {ok: true, lang: 'en'});
+  assert.strictEqual((await load({local: {'ai.engine': 'zai'}}).AI.state()).reason, 'no-key');
   const c = load({local: {...ANTHROPIC, 'ai.summary': 'nonsense', 'ai.engine': 'anthropic'}});
   const p = await c.AI.prefs();
   assert.strictEqual(p.key, 'sk-ant-api03-SECRETSECRET');
@@ -1153,6 +1219,954 @@ check('built-in: too long once is cut in half; refusal, and a stop', async () =>
   await failsWith(q1, 'aborted');
   await failsWith(q2, 'aborted');
   assert.strictEqual(e.log.destroyed, 2, 'the clones let go');
+});
+
+/* Z.ai */
+const ZAI = {'ai.engine': 'zai', 'ai.zai.key': 'zkey.SECRETSECRET', 'ai.zai.model': 'glm-5.3'};
+// its stream: OpenAI's form, with the thinking in reasoning_content first
+const zaiEvents = (text, {model = 'glm-5.3', finish = 'stop', thinking = true} = {}) => {
+  const ev = o => `data: ${JSON.stringify({id: 'z1', created: 1, model, ...o})}\n\n`;
+  let s = thinking ? ev({choices: [{index: 0, delta: {role: 'assistant', reasoning_content: 'POINTS\n- a secret thought\n'}}]}) : '';
+  for (const p of parts(text)) {
+    s += ev({choices: [{index: 0, delta: {role: 'assistant', content: p}}]});
+  }
+  return s + ev({choices: [{index: 0, finish_reason: finish, delta: {role: 'assistant', content: ''}}]}) + 'data: [DONE]\n\n';
+};
+const zaiJSON = (content, {finish = 'stop'} = {}) => json(200, {id: 'z2', model: 'glm-5.3',
+  choices: [{index: 0, finish_reason: finish, message: {role: 'assistant', content, reasoning_content: 'hmm'}}]});
+const zaiError = (status, code, message = 'x') => json(status, {error: {code, message}});
+
+check('zai: a summary streams; GLM-5.3 thinks briefly, with room for it; its thinking is left out', async () => {
+  const t = load({lang: 'de', local: ZAI});
+  t.answers.push(stream(zaiEvents(SUMMARY), {size: 4}));
+  const updates = [];
+  const s = await t.AI.summarize({...THREAD, onUpdate: u => updates.push(plain(u))});
+  const r = t.requests[0];
+  assert.strictEqual(r.url, 'https://api.z.ai/api/paas/v4/chat/completions');
+  assert.strictEqual(r.method, 'POST');
+  assert.strictEqual(r.headers.authorization, 'Bearer zkey.SECRETSECRET');
+  assert.strictEqual(r.init.credentials, 'omit');
+  assert.strictEqual(r.body.model, 'glm-5.3');
+  assert.deepStrictEqual(r.body.thinking, {type: 'enabled'});
+  assert.strictEqual(r.body.reasoning_effort, 'low');
+  assert.strictEqual(r.body.max_tokens, 2000 + 4000);
+  assert.strictEqual(r.body.stream, true);
+  for (const k of ['temperature', 'response_format', 'max_completion_tokens']) {
+    assert.ok(!(k in r.body), k);
+  }
+  assert.strictEqual(r.body.messages[0].role, 'system');
+  assert.match(r.body.messages[0].content, /Write in German/);
+  assert.strictEqual(r.body.messages[1].role, 'user');
+  assert.ok(updates.map(u => u.points.length).includes(1));
+  assert.ok(!JSON.stringify(updates).includes('secret thought'));
+  assert.deepStrictEqual(plain(s.points), ['Анна просит бюджет к пятнице 🎉', 'The offsite moved']);
+  assert.strictEqual(s.events.length, 2);
+  assert.strictEqual(s.engine, 'zai');
+  assert.strictEqual(s.model, 'glm-5.3');
+});
+
+check('zai: older models think not at all; JSON is asked as json_object, without a schema', async () => {
+  const t = load({local: {...ZAI, 'ai.zai.model': 'glm-4.7'}});
+  t.answers.push(stream(zaiEvents(SUMMARY, {thinking: false})));
+  await t.AI.summarize(THREAD);
+  assert.deepStrictEqual(t.requests[0].body.thinking, {type: 'disabled'});
+  assert.ok(!('reasoning_effort' in t.requests[0].body));
+  assert.strictEqual(t.requests[0].body.max_tokens, 2000);
+  // the prompt carries the JSON's shape; prose around the JSON is read past
+  const u = load({local: {...ZAI, 'ai.zai.model': 'glm-5.3-flash'}});
+  u.answers.push(zaiJSON('Here you are: {"results": [{"i": 1, "reply": true, "why": "Asks for the file"}]} Done.'));
+  const out = await u.AI.needsReply({items: [person('a', 'anna@work.test')]});
+  const r = u.requests[0];
+  assert.deepStrictEqual(r.body.response_format, {type: 'json_object'});
+  assert.ok(!('stream' in r.body));
+  assert.deepStrictEqual(r.body.thinking, {type: 'enabled'});
+  assert.strictEqual(r.body.reasoning_effort, 'low');
+  assert.strictEqual(r.body.max_tokens, 1500 + 4000);
+  assert.match(r.body.messages[0].content, /Answer with JSON only, exactly like \{"results"/);
+  assert.deepStrictEqual(plain(out.get('a')), {reply: true, important: false, bulk: false, why: 'Asks for the file'});
+  const {thinksAlways} = u.AI._internal;
+  assert.deepStrictEqual(['glm-5.3', 'glm-5.3-flash', 'glm-5.3-flashx', 'glm-5.4', 'glm-6'].map(thinksAlways), [true, true, true, true, true]);
+  assert.deepStrictEqual(['glm-5', 'glm-5.2', 'glm-5.1', 'glm-4.7', 'glm-4.7-flash', 'glm-4.5-flash', 'other'].map(thinksAlways),
+    [false, false, false, false, false, false, false]);
+});
+
+check('zai: how an answer stops: sensitive is a refusal, the window too long, network_error the server\'s, length cut short', async () => {
+  for (const [finish, code] of [['sensitive', 'refusal'], ['model_context_window_exceeded', 'too-long'], ['network_error', 'server']]) {
+    const t = load({local: ZAI});
+    t.answers.push(stream(zaiEvents('POINTS\n- one\n', {finish})));
+    await failsWith(t.AI.summarize(THREAD), code);
+    const u = load({local: ZAI});
+    u.answers.push(zaiJSON('{"results": [{"i": 1, "reply": true, "why": "x"}]}', {finish}));
+    await failsWith(u.AI.needsReply({items: [person('a', 'anna@work.test')]}), code);
+  }
+  // cut short with nothing to show: bad-output; with points: what came
+  const t = load({local: ZAI});
+  t.answers.push(stream(zaiEvents('', {finish: 'length'})));
+  const e = await failsWith(t.AI.summarize(THREAD), 'bad-output');
+  assert.strictEqual(e.detail, 'cut short');
+  const u = load({local: ZAI});
+  u.answers.push(stream(zaiEvents('POINTS\n- one\n- two', {finish: 'length'})));
+  assert.strictEqual((await u.AI.summarize(THREAD)).points.length, 2);
+});
+
+check('zai: its error codes, a string in error.code, as ours; the key never in the detail', async () => {
+  const cases = [
+    [401, '1000', 'auth'], [401, '1001', 'auth'], [401, '1003', 'auth'], [401, '1005', 'auth'],
+    // insufficient balance comes as a 429: it is no busy minute
+    [429, '1113', 'quota'], [429, '1308', 'quota'], [429, '1309', 'quota'], [429, '1310', 'quota'], [429, '1316', 'quota'],
+    [429, '1318', 'quota'], [429, '1321', 'quota'],
+    [400, '1301', 'refusal'], [429, '1302', 'rate'], [429, '1305', 'rate'],
+    [400, '1211', 'model'], [400, '1261', 'too-long'],
+    [500, '1234', 'server'], [500, '1200', 'server'], [500, '1230', 'server'],
+    // a code it does not document: by the status
+    [403, '1999', 'auth'], [503, '', 'server']
+  ];
+  for (const [status, code, want] of cases) {
+    const t = load({local: ZAI});
+    t.answers.push(zaiError(status, code, 'Problem with key zkey.SECRETSECRET'));
+    const e = await failsWith(t.AI.summarize(THREAD), want);
+    assert.strictEqual(e.type, code, code);
+    assert.strictEqual(t.requests.length, 1, 'a summary is not retried: ' + code);
+  }
+  // inside a stream
+  const t = load({local: ZAI});
+  t.answers.push(stream('data: {"error": {"code": "1301", "message": "unsafe content"}}\n\n'));
+  await failsWith(t.AI.summarize(THREAD), 'refusal');
+  // a busy minute: waited for once in waiting for a reply, as with the others
+  const u = load({local: ZAI});
+  u.answers.push(json(429, {error: {code: '1302', message: 'High concurrency'}}, {'retry-after': '0'}), zaiJSON('{"results": [{"i": 1, "reply": false, "why": "x"}]}'));
+  assert.strictEqual((await u.AI.needsReply({items: [person('a', 'anna@work.test')]})).get('a').reply, false);
+  assert.strictEqual(u.requests.length, 2);
+});
+
+check('zai: a parameter it did not take (1210, 1212-1215) is left out once: the one named, else the first', async () => {
+  const t = load({local: ZAI});
+  t.answers.push(zaiError(400, '1213', 'Parameter reasoning_effort is invalid'), stream(zaiEvents(SUMMARY)));
+  await t.AI.summarize(THREAD);
+  assert.strictEqual(t.requests.length, 2);
+  assert.ok(!('reasoning_effort' in t.requests[1].body));
+  assert.deepStrictEqual(t.requests[1].body.thinking, {type: 'enabled'});
+  // none named: reasoning_effort, then thinking, then response_format; then no more
+  const u = load({local: ZAI});
+  const bad = zaiError(400, '1210', 'Invalid API parameter');
+  u.answers.push(bad, bad, bad, bad);
+  await failsWith(u.AI.needsReply({items: [person('a', 'anna@work.test')]}), 'model');
+  assert.deepStrictEqual(u.requests.map(r => ['reasoning_effort', 'thinking', 'response_format'].filter(k => k in r.body).join()),
+    ['reasoning_effort,thinking,response_format', 'thinking,response_format', 'response_format', '']);
+  // an unknown model is not asked again
+  const v = load({local: ZAI});
+  v.answers.push(zaiError(400, '1211', 'Unknown Model'));
+  await failsWith(v.AI.summarize(THREAD), 'model');
+  assert.strictEqual(v.requests.length, 1);
+});
+
+check('zai: the models are Z.ai\'s, listed here; a key is checked with the smallest answer of a free model', async () => {
+  const t = load();
+  const list = plain(await t.AI.models('zai', ' zkey.SECRETSECRET '));
+  assert.strictEqual(t.requests.length, 0);
+  assert.deepStrictEqual(list.map(m => m.id), ['glm-5.3', 'glm-5.3-flash', 'glm-5.3-flashx', 'glm-5.2', 'glm-5.1', 'glm-5',
+    'glm-4.7', 'glm-4.6', 'glm-4.7-flash', 'glm-4.5-flash']);
+  assert.deepStrictEqual(list.filter(m => m.default).map(m => m.id), ['glm-5.3']);
+  assert.deepStrictEqual(list.filter(m => m.recommended).map(m => m.id + ':' + m.tag), ['glm-5.3:best', 'glm-5.3-flash:fast']);
+  assert.deepStrictEqual(list.filter(m => m.tag === 'free').map(m => m.name), ['GLM-4.7-Flash', 'GLM-4.5-Flash']);
+  assert.ok(list.every(m => m.name.startsWith('GLM-')));
+  t.perm.granted = false;
+  await failsWith(t.AI.models('zai', 'zkey.x'), 'no-access');
+  t.perm.granted = true;
+  await failsWith(t.AI.models('zai', ' '), 'auth');
+  // the check
+  t.answers.push(zaiJSON('H'));
+  assert.strictEqual(await t.AI.check('zai', 'zkey.SECRETSECRET'), true);
+  const r = t.requests[0];
+  assert.strictEqual(r.url, 'https://api.z.ai/api/paas/v4/chat/completions');
+  assert.strictEqual(r.headers.authorization, 'Bearer zkey.SECRETSECRET');
+  assert.deepStrictEqual(r.body, {model: 'glm-4.7-flash', messages: [{role: 'user', content: 'Hi'}], max_tokens: 1, thinking: {type: 'disabled'}});
+  // a refused key fails it, and so does no answer at all
+  for (const [answer, code] of [[zaiError(401, '1001'), 'auth'], [zaiError(500, '1234'), 'server'], [() => {
+    throw new TypeError('Failed to fetch');
+  }, 'network']]) {
+    t.answers.push(answer);
+    await failsWith(t.AI.check('zai', 'zkey.SECRETSECRET'), code);
+  }
+  // the free model gone or busy, or a balance spent, say nothing against the key
+  for (const answer of [zaiError(400, '1211', 'Unknown Model'), zaiError(400, '1214'), zaiError(429, '1113'), zaiError(429, '1302'), zaiError(400, '1301')]) {
+    t.answers.push(answer);
+    assert.strictEqual(await t.AI.check('zai', 'zkey.SECRETSECRET'), true);
+  }
+  // the site taken back while it asked: no access, not "no connection"
+  t.answers.push(() => {
+    t.perm.granted = false;
+    throw new TypeError('Failed to fetch');
+  });
+  await failsWith(t.AI.check('zai', 'zkey.SECRETSECRET'), 'no-access');
+  t.perm.granted = true;
+  const n = t.requests.length;
+  await failsWith(t.AI.check('zai', ''), 'auth');
+  assert.strictEqual(t.requests.length, n, 'no key, no request');
+  // no model picked: GLM-5.3, with no request for a list
+  const u = load({local: {...ZAI, 'ai.zai.model': ''}});
+  u.answers.push(stream(zaiEvents(SUMMARY)));
+  await u.AI.summarize(THREAD);
+  assert.deepStrictEqual(u.requests.map(x => x.body.model), ['glm-5.3']);
+});
+
+/* the ChatGPT plan */
+const ISSUER = 'https://auth.openai.com';
+const SCOPES = 'openid profile email offline_access resource.invoke chatgpt.tokens.use.direct';
+const SIGN_IN = ['https://api.openai.com/*', 'https://auth.openai.com/*', 'http://127.0.0.1/*'];
+const HOST = 'urn:uuid:0b8f8a52-1d8a-4f0e-9a43-6c2f27c3c9d1';
+const planAuth = (extra = {}) => ({client_id: 'oaiapp_test', email: 'me@example.com', sub: 'user-1', access_token: 'at-SECRET',
+  refresh_token: 'rt-SECRET', id_token: 'eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyLTEifQ.c2ln', expires_at: Date.now() + 3600000,
+  scopes: SCOPES.split(' '), ...extra});
+const PLAN = (auth = {}) => ({'ai.engine': 'chatgpt', 'ai.chatgpt.model': 'gpt-5.5', 'ai.chatgpt.auth': planAuth(auth),
+  'ai.chatgpt.client': {id: 'oaiapp_test', sub: 'user-1', email: 'me@example.com'}, 'ai.chatgpt.host': HOST});
+// OpenAI's signing keys, made once: two RSA pairs, k1 and k2
+const RSA = {name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256'};
+let made;
+const signingKeys = () => made ||= Promise.all(['k1', 'k2'].map(async kid => {
+  const pair = await crypto.subtle.generateKey(RSA, true, ['sign', 'verify']);
+  return {pair, jwk: {...await crypto.subtle.exportKey('jwk', pair.publicKey), kid, alg: 'RS256', use: 'sig'}};
+}));
+const b64u = x => Buffer.from(typeof x === 'string' ? x : new Uint8Array(x)).toString('base64url');
+const signJWT = async (claims, key, kid = key.jwk.kid) => {
+  const head = b64u(JSON.stringify({alg: 'RS256', kid, typ: 'JWT'}));
+  const body = b64u(JSON.stringify(claims));
+  return head + '.' + body + '.' + b64u(await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key.pair.privateKey, Buffer.from(head + '.' + body)));
+};
+const jwks = (...which) => async () => {
+  const keys = await signingKeys();
+  return json(200, {keys: (which.length ? which : [0]).map(i => keys[i].jwk)})();
+};
+// the token endpoint's answer to the code: an ID token signed with k1 unless told otherwise
+const exchanged = (p, {client = 'oaiapp_new', sub = 'user-1', email = 'me@example.com', nonce = p.nonce, aud = client, iat, exp,
+  scope = SCOPES, key = 0, kid, iss = ISSUER, refresh = 'rt-1'} = {}) => async () => {
+  const now = Math.floor(Date.now() / 1000);
+  const keys = await signingKeys();
+  const id_token = await signJWT({iss, aud, sub, email, nonce, iat: iat ?? now, exp: exp ?? now + 3600}, keys[key], kid);
+  return json(200, {access_token: 'at-1', ...(refresh ? {refresh_token: refresh} : {}), id_token, token_type: 'Bearer', expires_in: 3600,
+    scope, earliest_refresh_at: now + 60})();
+};
+// a sign-in started from a click, with the page it opens written down
+const started = async t => {
+  const opened = [];
+  await t.AI.chatgpt.signIn({open: url => opened.push(url)});
+  return {p: t.store.session['ai.chatgpt.pending'], url: new URL(opened[0]), raw: opened[0]};
+};
+const callback = (p, extra = '', {client = 'oaiapp_new'} = {}) =>
+  `?code=c-1&state=${encodeURIComponent(p.state)}&scope=${encodeURIComponent(SCOPES)}${client ? '&client_id=' + client : ''}${extra}`;
+// the Responses API's stream
+const planEvents = (text, {model = 'gpt-5.5-2026-10-01', failed, incomplete, end = true} = {}) => {
+  const ev = (type, data = {}) => `event: ${type}\ndata: ${JSON.stringify({type, ...data})}\n\n`;
+  const resp = status => ({id: 'resp_1', object: 'response', model, status});
+  let s = ev('response.created', {response: resp('in_progress')}) + ev('response.in_progress', {response: resp('in_progress')}) +
+    ev('response.output_item.added', {output_index: 0, item: {type: 'reasoning', id: 'rs_1'}}) +
+    ev('response.reasoning_summary_text.delta', {item_id: 'rs_1', delta: 'POINTS\n- a secret thought\n'}) +
+    ev('response.output_item.added', {output_index: 1, item: {type: 'message', id: 'msg_1', role: 'assistant'}});
+  for (const p of parts(text)) {
+    s += ev('response.output_text.delta', {item_id: 'msg_1', output_index: 1, content_index: 0, delta: p});
+  }
+  if (failed) {
+    s += ev('response.failed', {response: {...resp('failed'), error: failed}});
+  }
+  else if (incomplete) {
+    s += ev('response.incomplete', {response: {...resp('incomplete'), incomplete_details: {reason: incomplete}}});
+  }
+  else if (end) {
+    s += ev('response.output_text.done', {item_id: 'msg_1', text}) + ev('response.completed', {response: resp('completed')});
+  }
+  return s;
+};
+const planError = (status, code, {param = null, message = 'x'} = {}) => json(status, {error: {message, type: 'invalid_request_error', param, code}});
+const resultsJSON = n => JSON.stringify({results: Array.from({length: n}, (_, i) => ({i: i + 1, reply: true, why: 'Asks'}))});
+
+check('chatgpt: the first sign-in: its sites from the click, PKCE, the rule, then ChatGPT\'s page, every value encoded', async () => {
+  const t = load();
+  const p = t.AI.chatgpt.signIn({open: () => {}});
+  // asked from the click itself, before anything was awaited
+  assert.deepStrictEqual(t.perm.requested.map(o => [...o]), [SIGN_IN]);
+  assert.strictEqual(await p, true);
+  const t2 = load();
+  const {p: pending, url, raw} = await started(t2);
+  assert.strictEqual(url.origin + url.pathname, 'https://auth.openai.com/api/accounts/authorize');
+  const q = Object.fromEntries(url.searchParams);
+  const host = t2.store.local['ai.chatgpt.host'];
+  assert.match(host, /^urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+  assert.deepStrictEqual(Object.keys(q), ['client_id', 'agent_name_hint', 'ext_agent_host_id', 'response_type', 'redirect_uri', 'scope',
+    'resource', 'state', 'nonce', 'code_challenge', 'code_challenge_method']);
+  assert.deepStrictEqual({...q, state: '', nonce: '', code_challenge: ''}, {
+    client_id: 'dynamic_agent_client', agent_name_hint: 'Mail Deck', ext_agent_host_id: host, response_type: 'code',
+    redirect_uri: 'http://127.0.0.1:1455/auth/callback', scope: SCOPES, resource: 'https://api.openai.com/v1',
+    state: '', nonce: '', code_challenge: '', code_challenge_method: 'S256'
+  });
+  // URL-encoded, spaces as %20
+  assert.ok(raw.includes('&redirect_uri=http%3A%2F%2F127.0.0.1%3A1455%2Fauth%2Fcallback&'));
+  assert.ok(raw.includes('&scope=openid%20profile%20email%20offline_access%20resource.invoke%20chatgpt.tokens.use.direct&'));
+  assert.ok(raw.includes('agent_name_hint=Mail%20Deck&') && raw.includes('ext_agent_host_id=urn%3Auuid%3A'));
+  // PKCE: base64url SHA-256 of the verifier, no padding; fresh, random values
+  assert.match(pending.verifier, /^[\w-]{43}$/);
+  assert.strictEqual(q.code_challenge, require('crypto').createHash('sha256').update(pending.verifier).digest('base64url'));
+  assert.strictEqual(await t2.AI._internal.challengeOf('dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk'), 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM');
+  assert.strictEqual(q.state, pending.state);
+  assert.strictEqual(q.nonce, pending.nonce);
+  assert.ok(new Set([pending.state, pending.nonce, pending.verifier]).size === 3 && pending.state.length >= 43);
+  assert.deepStrictEqual({...pending, state: '', nonce: '', verifier: '', created: 0}, {
+    state: '', verifier: '', nonce: '', client_id: 'dynamic_agent_client', first: true, redirect_uri: 'http://127.0.0.1:1455/auth/callback',
+    created: 0, tab: 7
+  });
+  assert.ok(Math.abs(pending.created - Date.now()) < 5000);
+  // the rule: the loopback callback, a main frame, to callback.html with the query kept; only that address
+  const [rule] = t2.rules;
+  assert.strictEqual(t2.rules.length, 1);
+  assert.ok(rule.id < 1000, 'below the rules core/services.js takes as its own');
+  assert.deepStrictEqual(plain(rule.action), {type: 'redirect', redirect: {transform: {scheme: 'chrome-extension',
+    host: 'maildeckmaildeckmaildeckmaildeck', port: '', path: '/data/ai/callback.html'}}});
+  assert.deepStrictEqual(plain(rule.condition.resourceTypes), ['main_frame']);
+  const re = new RegExp(rule.condition.regexFilter);
+  assert.ok(re.test('http://127.0.0.1:1455/auth/callback?code=x&state=y') && re.test('http://127.0.0.1:1455/auth/callback'));
+  assert.ok(!['http://localhost:1455/auth/callback?code=x', 'http://127.0.0.1:1456/auth/callback?code=x', 'http://127.0.0.1:1455/auth/callbacks',
+    'http://127.0.0.1:1455/callback?code=x', 'https://127.0.0.1:1455/auth/callback'].some(u => re.test(u)));
+  // the default opens a tab next to this one
+  const t3 = load();
+  await t3.AI.chatgpt.signIn();
+  assert.strictEqual(t3.tabs.created.length, 1);
+  assert.ok(t3.tabs.created[0].url.startsWith('https://auth.openai.com/api/accounts/authorize?client_id=dynamic_agent_client&'));
+  assert.strictEqual(t3.tabs.created[0].openerTabId, 7);
+  // the sites refused: nothing started
+  const t4 = load();
+  t4.perm.grant = false;
+  await failsWith(t4.AI.chatgpt.signIn({open: () => assert.fail('opened')}), 'no-access');
+  assert.ok(!('ai.chatgpt.pending' in t4.store.session) && t4.rules.length === 0);
+});
+
+check('chatgpt: a later sign-in: the client it was given and the same host, no name; the account named when known', async () => {
+  const t = load({local: PLAN()});
+  const first = await started(t);
+  const q = Object.fromEntries(first.url.searchParams);
+  assert.strictEqual(q.client_id, 'oaiapp_test');
+  assert.strictEqual(q.ext_agent_host_id, HOST);
+  assert.ok(!('agent_name_hint' in q));
+  assert.strictEqual(q.id_token_hint, planAuth().id_token);
+  assert.strictEqual(q.login_hint, 'me@example.com');
+  assert.strictEqual(t.store.session['ai.chatgpt.pending'].first, false);
+  // another one: fresh state, nonce and PKCE
+  const second = await started(t);
+  assert.notStrictEqual(second.p.state, first.p.state);
+  assert.notStrictEqual(second.p.verifier, first.p.verifier);
+  assert.strictEqual(t.rules.length, 1);
+  // after a sign-out: the client and the address, no ID token
+  const u = load({local: {'ai.chatgpt.client': {id: 'oaiapp_test', sub: 'user-1', email: 'me@example.com'}, 'ai.chatgpt.host': HOST}});
+  const q2 = Object.fromEntries((await started(u)).url.searchParams);
+  assert.strictEqual(q2.client_id, 'oaiapp_test');
+  assert.ok(!('id_token_hint' in q2) && q2.login_hint === 'me@example.com' && !('agent_name_hint' in q2));
+  assert.strictEqual(u.store.local['ai.chatgpt.host'], HOST, 'the host id stays');
+});
+
+check('chatgpt: the callback: code exchanged with the verifier, the ID token verified, the sign-in kept, the rule gone', async () => {
+  const t = load();
+  const {p} = await started(t);
+  t.answers.push(exchanged(p), jwks(0));
+  const r = await t.AI.chatgpt.complete(callback(p));
+  assert.deepStrictEqual(plain(r), {email: 'me@example.com', plan: true, tab: 7});
+  const [exchange, keys] = t.requests;
+  assert.strictEqual(exchange.url, 'https://auth.openai.com/api/accounts/oauth/token');
+  assert.strictEqual(exchange.method, 'POST');
+  assert.strictEqual(exchange.headers['content-type'], 'application/x-www-form-urlencoded');
+  assert.deepStrictEqual(exchange.body, {grant_type: 'authorization_code', client_id: 'oaiapp_new', code: 'c-1', code_verifier: p.verifier,
+    redirect_uri: 'http://127.0.0.1:1455/auth/callback', resource: 'https://api.openai.com/v1'});
+  assert.strictEqual(keys.url, 'https://auth.openai.com/.well-known/jwks.json');
+  const a = t.store.local['ai.chatgpt.auth'];
+  assert.deepStrictEqual({...a, id_token: '', expires_at: 0}, {client_id: 'oaiapp_new', email: 'me@example.com', sub: 'user-1',
+    access_token: 'at-1', refresh_token: 'rt-1', id_token: '', expires_at: 0, scopes: SCOPES.split(' ')});
+  assert.ok(Math.abs(a.expires_at - Date.now() - 3600000) < 5000);
+  assert.deepStrictEqual(t.store.local['ai.chatgpt.client'], {id: 'oaiapp_new', sub: 'user-1', email: 'me@example.com'});
+  assert.ok(!('ai.chatgpt.pending' in t.store.session) && t.rules.length === 0);
+  assert.ok(t.perm.removed.includes('http://127.0.0.1/*'), 'the loopback address given back');
+  assert.deepStrictEqual(plain(await t.AI.chatgpt.account()), {email: 'me@example.com', plan: true, limit: false});
+  // the plan's sign-in is all the engine needs
+  await t.set({'ai.engine': 'chatgpt'});
+  assert.deepStrictEqual(plain(await t.AI.state()), {ok: true, lang: 'en'});
+  // a reauthorization may bring no client id: the one of the sign-in underway
+  const u = load({local: PLAN()});
+  const s = await started(u);
+  u.answers.push(exchanged(s.p, {client: 'oaiapp_test'}), jwks(0));
+  assert.strictEqual((await u.AI.chatgpt.complete(callback(s.p, '', {client: ''}))).plan, true);
+  assert.strictEqual(u.requests[0].body.client_id, 'oaiapp_test');
+  assert.strictEqual(u.store.local['ai.chatgpt.auth'].access_token, 'at-1');
+});
+
+check('chatgpt: the callback refuses another state, a refusal, another client id, no code; nothing is exchanged', async () => {
+  // another state: no answer to this sign-in, which goes on
+  const t = load();
+  const {p} = await started(t);
+  await failsWith(t.AI.chatgpt.complete(callback({...p, state: 'forged'})), 'sign-in');
+  await failsWith(t.AI.chatgpt.complete('?code=c-1'), 'sign-in');
+  assert.strictEqual(t.requests.length, 0);
+  assert.deepStrictEqual(t.store.session['ai.chatgpt.pending'], p);
+  assert.strictEqual(t.rules.length, 1);
+  // access_denied: the state checked, nothing exchanged, the sign-in over
+  await failsWith(t.AI.chatgpt.complete(`?error=access_denied&error_description=The+user+declined&state=${p.state}`), 'denied');
+  assert.strictEqual(t.requests.length, 0);
+  assert.ok(!('ai.chatgpt.pending' in t.store.session) && t.rules.length === 0 && !('ai.chatgpt.auth' in t.store.local));
+  // no sign-in underway at all
+  await failsWith(t.AI.chatgpt.complete(callback(p)), 'sign-in');
+  // a later sign-in, and the callback names another client
+  const u = load({local: PLAN()});
+  const s = await started(u);
+  await failsWith(u.AI.chatgpt.complete(callback(s.p, '', {client: 'oaiapp_other'})), 'sign-in');
+  assert.strictEqual(u.requests.length, 0);
+  assert.strictEqual(u.store.local['ai.chatgpt.auth'].access_token, 'at-SECRET', 'the sign-in kept stays');
+  // a first one without the client id it registered, or with the dynamic one
+  for (const client of ['', 'dynamic_agent_client']) {
+    const v = load();
+    const w = await started(v);
+    await failsWith(v.AI.chatgpt.complete(callback(w.p, '', {client})), 'sign-in');
+    assert.strictEqual(v.requests.length, 0);
+  }
+  // no code
+  const x = load();
+  const y = await started(x);
+  await failsWith(x.AI.chatgpt.complete(`?state=${y.p.state}&client_id=oaiapp_new`), 'sign-in');
+  assert.strictEqual(x.requests.length, 0);
+  // too late: 15 minutes
+  const z = load();
+  const zz = await started(z);
+  z.store.session['ai.chatgpt.pending'].created -= 16 * 60000;
+  await failsWith(z.AI.chatgpt.complete(callback(zz.p)), 'sign-in');
+  assert.strictEqual(z.requests.length, 0);
+  assert.ok(z.rules.length === 0);
+});
+
+check('chatgpt: the ID token: signature, issuer, audience, nonce and times, else no sign-in is kept', async () => {
+  const cases = [
+    ['bad signature', {key: 1, kid: 'k1'}],
+    ['wrong audience', {aud: 'oaiapp_someone_else'}],
+    ['wrong nonce', {nonce: 'another'}],
+    ['expired', {exp: Math.floor(Date.now() / 1000) - 60}],
+    ['issued in the future', {iat: Math.floor(Date.now() / 1000) + 600}],
+    ['another issuer', {iss: 'https://evil.example'}],
+    ['no subject', {sub: ''}]
+  ];
+  for (const [name, o] of cases) {
+    const t = load();
+    const {p} = await started(t);
+    t.answers.push(exchanged(p, o), jwks(0));
+    await failsWith(t.AI.chatgpt.complete(callback(p)), 'sign-in');
+    assert.ok(!('ai.chatgpt.auth' in t.store.local), name);
+    assert.ok(t.rules.length === 0, name);
+  }
+  // within the slack of 5 s it is fine
+  const t = load();
+  const {p} = await started(t);
+  t.answers.push(exchanged(p, {exp: Math.floor(Date.now() / 1000) - 2}), jwks(0));
+  assert.strictEqual((await t.AI.chatgpt.complete(callback(p))).email, 'me@example.com');
+  // a key id the keys do not have: asked again once, then found
+  const u = load();
+  const s = await started(u);
+  u.answers.push(exchanged(s.p, {key: 1}), jwks(0), jwks(0, 1));
+  assert.strictEqual((await u.AI.chatgpt.complete(callback(s.p))).plan, true);
+  assert.deepStrictEqual(u.requests.map(r => r.url.split('/').pop()), ['token', 'jwks.json', 'jwks.json']);
+  // and not found again: no sign-in
+  const v = load();
+  const w = await started(v);
+  v.answers.push(exchanged(w.p, {key: 1}), jwks(0), jwks(0));
+  await failsWith(v.AI.chatgpt.complete(callback(w.p)), 'sign-in');
+  const {verifyIdToken} = v.AI._internal;
+  for (const junk of ['', 'a.b', 'not.a.jwt', 'eyJhbGciOiJub25lIn0.eyJzdWIiOiJ4In0.']) {
+    await failsWith(verifyIdToken(junk, {aud: 'x', nonce: 'y'}), 'sign-in');
+  }
+});
+
+check('chatgpt: the exchange refused, another account, no plan scope, no refresh token', async () => {
+  // invalid_grant: the code goes; the client id issued stays for the next try
+  const t = load();
+  const {p} = await started(t);
+  t.answers.push(json(400, {error: 'invalid_grant', error_description: 'Invalid authorization code'}));
+  const e = await failsWith(t.AI.chatgpt.complete(callback(p)), 'sign-in');
+  assert.strictEqual(e.type, 'invalid_grant');
+  assert.deepStrictEqual(t.store.local['ai.chatgpt.client'], {id: 'oaiapp_new'});
+  assert.ok(!('ai.chatgpt.auth' in t.store.local));
+  const next = Object.fromEntries((await started(t)).url.searchParams);
+  assert.strictEqual(next.client_id, 'oaiapp_new');
+  // the token endpoint down: the server's
+  const u = load();
+  const s = await started(u);
+  u.answers.push(json(503, {error: 'temporarily_unavailable'}));
+  await failsWith(u.AI.chatgpt.complete(callback(s.p)), 'server');
+  // another account than the client's: refused; the next try registers anew
+  const v = load({local: {'ai.chatgpt.client': {id: 'oaiapp_test', sub: 'user-1', email: 'me@example.com'}, 'ai.chatgpt.host': HOST}});
+  const w = await started(v);
+  v.answers.push(exchanged(w.p, {client: 'oaiapp_test', sub: 'user-2', email: 'other@example.com'}), jwks(0));
+  await failsWith(v.AI.chatgpt.complete(callback(w.p, '', {client: ''})), 'other-account');
+  assert.ok(!('ai.chatgpt.auth' in v.store.local) && !('ai.chatgpt.client' in v.store.local));
+  assert.strictEqual(Object.fromEntries((await started(v)).url.searchParams).client_id, 'dynamic_agent_client');
+  // signed in, and the account comes back as another: the sign-in kept stays as it is
+  const x = load({local: PLAN()});
+  const y = await started(x);
+  x.answers.push(exchanged(y.p, {client: 'oaiapp_test', sub: 'user-2'}), jwks(0));
+  await failsWith(x.AI.chatgpt.complete(callback(y.p, '', {client: ''})), 'other-account');
+  assert.strictEqual(x.store.local['ai.chatgpt.auth'].sub, 'user-1');
+  assert.deepStrictEqual(x.store.local['ai.chatgpt.client'], PLAN()['ai.chatgpt.client']);
+  // the plan's use not allowed: signed in all the same, its use not
+  const z = load({local: {'ai.engine': 'chatgpt'}});
+  const zz = await started(z);
+  z.answers.push(exchanged(zz.p, {scope: 'openid profile email offline_access resource.invoke'}), jwks(0));
+  assert.deepStrictEqual(plain(await z.AI.chatgpt.complete(callback(zz.p))), {email: 'me@example.com', plan: false, tab: 7});
+  assert.deepStrictEqual(plain(await z.AI.chatgpt.account()), {email: 'me@example.com', plan: false, limit: false});
+  assert.strictEqual((await z.AI.state()).reason, 'no-plan');
+  await failsWith(z.AI.check('chatgpt'), 'no-plan');
+  const n = z.requests.length;
+  await failsWith(z.AI.summarize(THREAD), 'no-plan');
+  assert.strictEqual(z.requests.length, n, 'nothing is sent');
+  // no refresh token: no sign-in that lasts
+  const q = load();
+  const qq = await started(q);
+  q.answers.push(exchanged(qq.p, {refresh: ''}));
+  await failsWith(q.AI.chatgpt.complete(callback(qq.p)), 'sign-in');
+  assert.ok(!('ai.chatgpt.auth' in q.store.local));
+});
+
+check('chatgpt: a token near its end is renewed first; the refresh token rotates; no scope is sent', async () => {
+  const t = load({local: PLAN({expires_at: Date.now() + 60000})});
+  t.answers.push(json(200, {access_token: 'at-2', refresh_token: 'rt-2', id_token: 'x.y.z', token_type: 'Bearer', expires_in: 3600, scope: SCOPES}));
+  t.answers.push(stream(planEvents(SUMMARY)));
+  await t.AI.summarize(THREAD);
+  const [refresh, ask] = t.requests;
+  assert.strictEqual(refresh.url, 'https://auth.openai.com/api/accounts/oauth/token');
+  assert.deepStrictEqual(refresh.body, {grant_type: 'refresh_token', client_id: 'oaiapp_test', refresh_token: 'rt-SECRET', resource: 'https://api.openai.com/v1'});
+  assert.strictEqual(ask.headers.authorization, 'Bearer at-2');
+  const a = t.store.local['ai.chatgpt.auth'];
+  assert.strictEqual(a.refresh_token, 'rt-2');
+  assert.strictEqual(a.access_token, 'at-2');
+  assert.ok(a.expires_at - Date.now() > 3500000);
+  assert.strictEqual(a.id_token, planAuth().id_token, 'the ID token of the sign-in stays');
+  // more than two minutes left: no refresh
+  const u = load({local: PLAN({expires_at: Date.now() + 5 * 60000})});
+  u.answers.push(stream(planEvents(SUMMARY)));
+  await u.AI.summarize(THREAD);
+  assert.strictEqual(u.requests.length, 1);
+  // an answer without a new refresh token keeps the old one
+  const v = load({local: PLAN({expires_at: Date.now() - 1000})});
+  v.answers.push(json(200, {access_token: 'at-3', expires_in: 3600}), stream(planEvents(SUMMARY)));
+  await v.AI.summarize(THREAD);
+  assert.strictEqual(v.store.local['ai.chatgpt.auth'].refresh_token, 'rt-SECRET');
+  assert.deepStrictEqual(v.store.local['ai.chatgpt.auth'].scopes, SCOPES.split(' '));
+  // a rotation is no change of account: what runs goes on
+  const w = load({local: PLAN()});
+  const cut = planEvents(SUMMARY);
+  w.answers.push(stream(cut.slice(0, cut.indexOf('event: response.output_text.done')), {hang: true, size: 30}));
+  const p = w.AI.summarize({...THREAD, key: 'k'});
+  await new Promise(r => setTimeout(r, 5));
+  await w.set({'ai.chatgpt.auth': planAuth({access_token: 'at-9', refresh_token: 'rt-9'})});
+  await new Promise(r => setTimeout(r, 5));
+  assert.ok(!w.requests[0].signal.aborted);
+  // a sign-out is
+  await w.ctx.chrome.storage.local.remove('ai.chatgpt.auth');
+  await failsWith(p, 'aborted');
+});
+
+check('chatgpt: one refresh at a time, in a page and across pages, with a rotating refresh token', async () => {
+  // one page, three callers at once
+  const t = load({local: PLAN({expires_at: Date.now() + 1000})});
+  t.answers.push(json(200, {access_token: 'at-2', refresh_token: 'rt-2', expires_in: 3600}));
+  const got = await Promise.all([1, 2, 3].map(() => t.AI._internal.access()));
+  assert.deepStrictEqual(got.map(a => a.access_token), ['at-2', 'at-2', 'at-2']);
+  assert.strictEqual(t.requests.length, 1);
+  // two pages: navigator.locks keeps the second waiting, and it finds the token renewed
+  const chain = {last: Promise.resolve(), held: 0, most: 0};
+  const locks = {request: (name, fn) => {
+    const run = chain.last.then(async () => {
+      chain.most = Math.max(chain.most, ++chain.held);
+      try {
+        return await fn();
+      }
+      finally {
+        chain.held -= 1;
+      }
+    });
+    chain.last = run.catch(() => {});
+    return run;
+  }};
+  const a = load({local: PLAN({expires_at: Date.now() + 1000}), locks});
+  const b = load({with: a, locks});
+  a.answers.push(async () => {
+    await new Promise(r => setTimeout(r, 10));
+    return json(200, {access_token: 'at-2', refresh_token: 'rt-2', expires_in: 3600})();
+  });
+  const [x, y] = await Promise.all([a.AI._internal.access(), b.AI._internal.access()]);
+  assert.deepStrictEqual([x.access_token, y.access_token], ['at-2', 'at-2']);
+  assert.strictEqual(a.requests.length, 1, 'one refresh for both pages');
+  assert.strictEqual(chain.most, 1);
+  assert.strictEqual(a.store.local['ai.chatgpt.auth'].refresh_token, 'rt-2');
+  // a token the API refused is renewed even with time left on it
+  const c = load({local: PLAN()});
+  c.answers.push(json(200, {access_token: 'at-2', refresh_token: 'rt-2', expires_in: 3600}));
+  assert.strictEqual((await c.AI._internal.access(null, 'at-SECRET')).access_token, 'at-2');
+  assert.strictEqual((await c.AI._internal.access(null, 'at-SECRET')).access_token, 'at-2', 'renewed meanwhile: no second refresh');
+  assert.strictEqual(c.requests.length, 1);
+});
+
+check('chatgpt: a refresh token that will never work signs out; a failure for now keeps the sign-in', async () => {
+  for (const error of ['invalid_grant', 'invalid_refresh_token', 'token_expired', 'refresh_token_expired', 'refresh_token_invalidated', 'refresh_token_reused']) {
+    const t = load({local: {...PLAN({expires_at: Date.now() - 1}), 'ai.replies': {}}});
+    t.answers.push(json(400, {error, error_description: 'no'}));
+    // said as what it is, not stopped by its own tokens going
+    await failsWith(t.AI.summarize(THREAD), 'signed-out');
+    assert.deepStrictEqual(t.store.local['ai.chatgpt.auth'], {client_id: 'oaiapp_test', email: 'me@example.com', sub: 'user-1',
+      scopes: SCOPES.split(' ')}, 'the tokens go: ' + error);
+    assert.deepStrictEqual(t.store.local['ai.chatgpt.client'], PLAN()['ai.chatgpt.client'], 'the client stays: ' + error);
+    assert.strictEqual(t.store.local['ai.chatgpt.host'], HOST);
+    assert.strictEqual((await t.AI.state()).reason, 'signed-out');
+    assert.strictEqual(await t.AI.chatgpt.account(), null);
+  }
+  // the code as an object, as OpenAI's own errors give it
+  const o = load({local: PLAN({expires_at: Date.now() - 1})});
+  o.answers.push(json(401, {error: {code: 'refresh_token_reused', message: 'reused'}}));
+  await failsWith(o.AI.summarize(THREAD), 'signed-out');
+  assert.ok(!o.store.local['ai.chatgpt.auth'].refresh_token);
+  // a client the endpoint does not know: the client goes too
+  const c = load({local: PLAN({expires_at: Date.now() - 1})});
+  c.answers.push(json(401, {error: 'invalid_client'}));
+  await failsWith(c.AI.summarize(THREAD), 'signed-out');
+  assert.ok(!c.store.local['ai.chatgpt.auth'].access_token && !('ai.chatgpt.client' in c.store.local));
+  assert.strictEqual(c.store.local['ai.chatgpt.host'], HOST);
+  // the next sign-in after it: the client kept, no ID token for a hint, a new account may come
+  const n = load({local: {...PLAN(), 'ai.chatgpt.auth': {client_id: 'oaiapp_test', email: 'me@example.com', sub: 'user-1', scopes: []}}});
+  const s = await started(n);
+  assert.ok(!s.url.searchParams.has('id_token_hint') && s.url.searchParams.get('login_hint') === 'me@example.com');
+  n.answers.push(exchanged(s.p, {client: 'oaiapp_test', sub: 'user-2', email: 'two@example.com'}), jwks(0));
+  await failsWith(n.AI.chatgpt.complete(callback(s.p, '', {client: ''})), 'other-account');
+  assert.ok(!('ai.chatgpt.client' in n.store.local), 'with no sign-in kept, the next try registers anew');
+  // the server down, no connection, a refusal no one names: the sign-in stays
+  for (const [answer, code] of [[json(503, {error: 'server_error'}), 'server'], [json(500, {}), 'server'], [json(429, {error: 'slow_down'}), 'rate'],
+    [() => {
+      throw new TypeError('Failed to fetch');
+    }, 'network'], [json(400, {error: 'invalid_request', error_description: 'odd'}), 'signed-out']]) {
+    const t = load({local: PLAN({expires_at: Date.now() - 1})});
+    t.answers.push(answer);
+    await failsWith(t.AI.summarize(THREAD), code);
+    assert.strictEqual(t.store.local['ai.chatgpt.auth'].refresh_token, 'rt-SECRET', code);
+  }
+});
+
+check('chatgpt: a summary streams from the Responses API: instructions, store false, stream true, nothing it refuses', async () => {
+  const t = load({lang: 'fr', local: PLAN()});
+  t.answers.push(stream(planEvents(SUMMARY), {size: 7}));
+  const updates = [];
+  const s = await t.AI.summarize({...THREAD, onUpdate: u => updates.push(plain(u))});
+  const r = t.requests[0];
+  assert.strictEqual(r.url, 'https://api.openai.com/v1/responses');
+  assert.strictEqual(r.method, 'POST');
+  assert.strictEqual(r.headers.authorization, 'Bearer at-SECRET');
+  assert.strictEqual(r.headers['content-type'], 'application/json');
+  assert.strictEqual(r.init.credentials, 'omit');
+  assert.deepStrictEqual(Object.keys(r.body).sort(), ['input', 'instructions', 'model', 'reasoning', 'store', 'stream']);
+  assert.strictEqual(r.body.model, 'gpt-5.5');
+  assert.strictEqual(r.body.store, false);
+  assert.strictEqual(r.body.stream, true);
+  assert.deepStrictEqual(r.body.reasoning, {effort: 'low'});
+  assert.match(r.body.instructions, /Write in French/);
+  assert.strictEqual(r.body.input.length, 1);
+  assert.strictEqual(r.body.input[0].role, 'user');
+  assert.match(r.body.input[0].content, /<email_thread>/);
+  assert.ok(updates.map(u => u.points.length).includes(1) && updates.every(u => u.partial));
+  assert.ok(!JSON.stringify(updates).includes('secret thought'));
+  assert.deepStrictEqual(plain(s.points), ['Анна просит бюджет к пятнице 🎉', 'The offsite moved']);
+  assert.strictEqual(s.events.length, 2);
+  assert.strictEqual(s.engine, 'chatgpt');
+  assert.strictEqual(s.model, 'gpt-5.5-2026-10-01');
+  // waiting for a reply: the same stream, read whole, with a strict JSON schema
+  const u = load({local: PLAN()});
+  u.answers.push(stream(planEvents(resultsJSON(2))));
+  const out = await u.AI.needsReply({items: [person('a', 'anna@work.test'), person('b', 'boris@work.test', 2)]});
+  const j = u.requests[0];
+  assert.strictEqual(j.body.stream, true);
+  assert.strictEqual(j.body.text.format.type, 'json_schema');
+  assert.strictEqual(j.body.text.format.strict, true);
+  assert.strictEqual(j.body.text.format.name, 'results');
+  assert.deepStrictEqual(j.body.text.format.schema.required, ['results']);
+  for (const k of ['max_output_tokens', 'temperature', 'top_p', 'user', 'metadata', 'previous_response_id', 'truncation', 'max_tokens']) {
+    assert.ok(!(k in j.body) && !(k in r.body), k);
+  }
+  assert.strictEqual(out.size, 2);
+});
+
+check('chatgpt: a stream must end in response.completed; failed, incomplete and error events say why', async () => {
+  const t = load({local: PLAN()});
+  t.answers.push(stream(planEvents('POINTS\n- one\n', {end: false})));
+  const e = await failsWith(t.AI.summarize(THREAD), 'server');
+  assert.match(e.detail, /response\.completed/);
+  // the plan's usage limit, after the stream began: limit, and a pause
+  const u = load({local: PLAN()});
+  u.answers.push(stream(planEvents('POINTS\n- one\n', {failed: {code: 'subscription_sharing_usage_limit_exceeded', message: 'Usage limit reached'}})));
+  await failsWith(u.AI.summarize(THREAD), 'limit');
+  assert.ok(u.store.session['ai.chatgpt.limit']);
+  // cut short: what came; filtered: a refusal
+  const v = load({local: PLAN()});
+  v.answers.push(stream(planEvents('POINTS\n- one\n- two', {incomplete: 'max_output_tokens'})));
+  assert.strictEqual((await v.AI.summarize(THREAD)).points.length, 2);
+  const w = load({local: PLAN()});
+  w.answers.push(stream(planEvents('POINTS\n- one', {incomplete: 'content_filter'})));
+  await failsWith(w.AI.summarize(THREAD), 'refusal');
+  const x = load({local: PLAN()});
+  x.answers.push(stream('event: response.refusal.delta\ndata: {"type": "response.refusal.delta", "delta": "I cannot"}\n\n'));
+  await failsWith(x.AI.summarize(THREAD), 'refusal');
+  const y = load({local: PLAN()});
+  y.answers.push(stream('event: error\ndata: {"type": "error", "code": "server_error", "message": "boom"}\n\n'));
+  await failsWith(y.AI.summarize(THREAD), 'server');
+  const z = load({local: PLAN()});
+  z.answers.push(stream(planEvents('', {failed: {code: 'context_length_exceeded', message: 'Your input exceeds the context window'}})));
+  await failsWith(z.AI.summarize(THREAD), 'too-long');
+});
+
+check('chatgpt: the usage limit pauses what runs on its own until the user acts; Manage usage is OpenAI\'s page', async () => {
+  const t = load({local: PLAN()});
+  t.answers.push(planError(429, 'subscription_sharing_usage_limit_exceeded', {message: 'You have hit your usage limit'}));
+  const e = await failsWith(t.AI.needsReply({items: [person('a', 'anna@work.test')]}), 'limit');
+  assert.strictEqual(e.message, 'ChatGPT usage limit reached.');
+  assert.strictEqual(t.requests.length, 1, 'no retry');
+  assert.strictEqual(t.AI.chatgpt.usage, 'https://chatgpt.com/settings/usage');
+  assert.strictEqual((await t.AI.state()).reason, 'limit');
+  assert.strictEqual((await t.AI.chatgpt.account()).limit, true);
+  // the sorting, which runs on its own, waits: nothing is sent
+  await failsWith(t.AI.needsReply({items: [person('b', 'boris@work.test')]}), 'limit');
+  assert.strictEqual(t.requests.length, 1);
+  // a summary is asked for: it goes, and an answer ends the pause
+  t.answers.push(stream(planEvents(SUMMARY)));
+  assert.strictEqual((await t.AI.summarize(THREAD)).points.length, 2);
+  assert.strictEqual((await t.AI.state()).ok, true);
+  // or the user, from Manage usage or a check
+  await t.ctx.chrome.storage.session.set({'ai.chatgpt.limit': {at: Date.now()}});
+  await t.AI.chatgpt.resume();
+  assert.strictEqual((await t.AI.state()).ok, true);
+});
+
+check('chatgpt: the plan\'s errors before a stream: each its code, a token refused renewed once, a busy plan waited for once', async () => {
+  const cases = [
+    [planError(403, 'subscription_sharing_user_not_eligible'), 'no-plan'],
+    [planError(403, 'subscription_sharing_route_not_supported'), 'no-plan'],
+    [planError(403, 'chatpass_v2_scope_not_authorized'), 'no-plan'],
+    [planError(403, 'chatpass_v2_invalid_authorization_context'), 'no-plan'],
+    [planError(400, 'context_length_exceeded', {message: 'maximum context length'}), 'too-long'],
+    [planError(429, 'rate_limit_exceeded', {message: 'Rate limit reached'}), 'rate'],
+    [planError(404, 'model_not_found', {message: 'The model does not exist'}), 'model'],
+    [json(500, {error: {message: 'boom', type: 'server_error'}}), 'server']
+  ];
+  for (const [answer, code] of cases) {
+    const t = load({local: PLAN()});
+    t.answers.push(answer);
+    await failsWith(t.AI.summarize(THREAD), code);
+    assert.strictEqual(t.requests.length, 1, code);
+  }
+  // not this account's plan: marked, so nothing more goes until it is checked again
+  const n = load({local: PLAN()});
+  n.answers.push(planError(403, 'subscription_sharing_user_not_eligible'));
+  await failsWith(n.AI.needsReply({items: [person('a', 'anna@work.test')]}), 'no-plan');
+  assert.strictEqual(n.store.local['ai.chatgpt.auth'].plan, false);
+  assert.strictEqual((await n.AI.state()).reason, 'no-plan');
+  await failsWith(n.AI.summarize(THREAD), 'no-plan');
+  assert.strictEqual(n.requests.length, 1);
+  n.answers.push(json(200, {models: [{slug: 'gpt-5.5', display_name: 'GPT-5.5', visibility: 'list'}]}));
+  assert.strictEqual(await n.AI.check('chatgpt'), true);
+  assert.ok(!('plan' in n.store.local['ai.chatgpt.auth']));
+  assert.strictEqual((await n.AI.state()).ok, true);
+  // a policy that keeps it out (a region): in the provider's words
+  const p = load({local: PLAN()});
+  p.answers.push(json(403, {detail: 'Country, region, or territory not supported'}));
+  const e = await failsWith(p.AI.summarize(THREAD), 'auth');
+  assert.strictEqual(e.message, 'Country, region, or territory not supported');
+  // 401, the user's token or the plain one: renewed once and asked again
+  for (const refused of [planError(401, 'subscription_sharing_invalid_user'), json(401, {detail: 'Unauthorized'})]) {
+    const t = load({local: PLAN()});
+    t.answers.push(refused, json(200, {access_token: 'at-2', refresh_token: 'rt-2', expires_in: 3600}), stream(planEvents(SUMMARY)));
+    assert.strictEqual((await t.AI.summarize(THREAD)).points.length, 2);
+    assert.deepStrictEqual(t.requests.map(r => r.headers.authorization || r.body?.grant_type), ['Bearer at-SECRET', 'refresh_token', 'Bearer at-2']);
+  }
+  // and refused again: signed out as far as it can tell, the sign-in not erased
+  const s = load({local: PLAN()});
+  s.answers.push(json(401, {detail: 'x'}), json(200, {access_token: 'at-2', refresh_token: 'rt-2', expires_in: 3600}), json(401, {detail: 'x'}));
+  await failsWith(s.AI.summarize(THREAD), 'signed-out');
+  assert.strictEqual(s.requests.length, 3);
+  assert.strictEqual(s.store.local['ai.chatgpt.auth'].refresh_token, 'rt-2');
+  // usage that cannot be told now: waited for once, then asked again
+  for (const busy of [planError(503, 'subscription_sharing_usage_unavailable'), planError(503, 'subscription_sharing_user_unavailable'),
+    json(503, {detail: 'Direct routing unavailable'}, {'retry-after': '0'})]) {
+    const t = load({local: PLAN()});
+    t.answers.push(busy, stream(planEvents(SUMMARY)));
+    assert.strictEqual((await t.AI.summarize(THREAD)).points.length, 2);
+    assert.strictEqual(t.requests.length, 2);
+  }
+  const b = load({local: PLAN()});
+  const busy = json(503, {detail: 'Direct routing unavailable'}, {'retry-after': '0'});
+  b.answers.push(busy, busy);
+  await failsWith(b.AI.summarize(THREAD), 'server');
+  assert.strictEqual(b.requests.length, 2, 'once');
+  // a long "try again in" is not waited for
+  const l = load({local: PLAN()});
+  l.answers.push(json(503, {detail: 'x'}, {'retry-after': '120'}));
+  await failsWith(l.AI.summarize(THREAD), 'server');
+  assert.strictEqual(l.requests.length, 1);
+});
+
+check('chatgpt: what the plan does not take (unsupported_capability, error.param) is left out once', async () => {
+  const t = load({local: PLAN()});
+  t.answers.push(planError(400, 'subscription_sharing_unsupported_capability', {param: 'text'}));
+  t.answers.push(planError(400, 'subscription_sharing_unsupported_capability', {param: 'reasoning.effort'}));
+  t.answers.push(stream(planEvents(resultsJSON(1))));
+  const out = await t.AI.needsReply({items: [person('a', 'anna@work.test')]});
+  assert.strictEqual(out.get('a').reply, true);
+  assert.deepStrictEqual(t.requests.map(r => ['text', 'reasoning'].filter(k => k in r.body).join()), ['text,reasoning', 'reasoning', '']);
+  // OpenAI's own word for a parameter it does not take
+  const u = load({local: PLAN()});
+  u.answers.push(json(400, {error: {message: 'Unsupported parameter: \'reasoning.effort\'', type: 'invalid_request_error', param: 'reasoning.effort', code: 'unsupported_parameter'}}));
+  u.answers.push(stream(planEvents(SUMMARY)));
+  await u.AI.summarize(THREAD);
+  assert.ok(!('reasoning' in u.requests[1].body));
+  // something else it does not take: not the same body again
+  const v = load({local: PLAN()});
+  v.answers.push(planError(400, 'subscription_sharing_unsupported_capability', {param: 'input'}));
+  await failsWith(v.AI.summarize(THREAD), 'model');
+  assert.strictEqual(v.requests.length, 1);
+});
+
+check('chatgpt: the plan\'s models: those it lists, in its order, the first by default; the names for the panel', async () => {
+  const t = load({local: {...PLAN(), 'ai.chatgpt.model': ''}});
+  t.answers.push(json(200, {models: [
+    {slug: 'gpt-5.5', display_name: 'GPT-5.5', visibility: 'list'},
+    {slug: 'gpt-5.5-hidden', display_name: 'Hidden', visibility: 'hide'},
+    {slug: 'gpt-5.5-mini', display_name: 'GPT-5.5 mini', visibility: 'list'},
+    {slug: 'codex-auto-review', display_name: 'Review', visibility: 'none'},
+    {display_name: 'No slug', visibility: 'list'}
+  ]}));
+  const list = plain(await t.AI.models('chatgpt'));
+  const r = t.requests[0];
+  assert.strictEqual(r.url, 'https://api.openai.com/v1/models');
+  assert.strictEqual(r.method, 'GET');
+  assert.strictEqual(r.headers.authorization, 'Bearer at-SECRET');
+  assert.deepStrictEqual(list, [{id: 'gpt-5.5', name: 'GPT-5.5', default: true}, {id: 'gpt-5.5-mini', name: 'GPT-5.5 mini'}]);
+  // no model picked: the first, and the panel's words for it
+  assert.deepStrictEqual(plain(await t.AI.describe()), {engine: 'chatgpt', provider: 'ChatGPT', model: 'GPT-5.5', plan: true, local: false});
+  await t.set({'ai.chatgpt.model': 'gpt-5.5-mini'});
+  assert.strictEqual((await t.AI.describe()).model, 'GPT-5.5 mini');
+  t.answers.push(stream(planEvents(SUMMARY)));
+  await t.AI.summarize(THREAD);
+  assert.strictEqual(t.requests.at(-1).body.model, 'gpt-5.5-mini');
+  // an empty list, or none
+  const u = load({local: PLAN()});
+  u.answers.push(json(200, {models: []}), json(200, {data: []}));
+  assert.deepStrictEqual(plain(await u.AI.models('chatgpt')), []);
+  await failsWith(u.AI.models('chatgpt'), 'server');
+  const v = load({local: {...PLAN(), 'ai.chatgpt.model': ''}});
+  v.answers.push(json(200, {models: [{slug: 'x', visibility: 'hide'}]}));
+  await failsWith(v.AI.summarize(THREAD), 'model');
+  // signed out, or its sites taken back
+  await failsWith(load().AI.models('chatgpt'), 'signed-out');
+  const w = load({local: PLAN()});
+  w.perm.granted = false;
+  await failsWith(w.AI.models('chatgpt'), 'no-access');
+  assert.ok(w.perm.asked.includes('https://auth.openai.com/*') && w.perm.asked.includes('https://api.openai.com/*'));
+  assert.strictEqual((await w.AI.state()).reason, 'no-access');
+});
+
+check('chatgpt: sign-out revokes the refresh token where OpenAI says, and forgets the tokens whatever came of it', async () => {
+  const t = load({local: PLAN()});
+  t.answers.push(json(200, {issuer: ISSUER, revocation_endpoint: 'https://auth.openai.com/oauth/revoke'}), () => new Response('', {status: 200}));
+  assert.deepStrictEqual(plain(await t.AI.chatgpt.signOut()), {revoked: true});
+  const [discovery, revoke] = t.requests;
+  assert.strictEqual(discovery.url, 'https://auth.openai.com/.well-known/openid-configuration');
+  assert.strictEqual(revoke.url, 'https://auth.openai.com/oauth/revoke');
+  assert.strictEqual(revoke.method, 'POST');
+  assert.strictEqual(revoke.headers['content-type'], 'application/x-www-form-urlencoded');
+  assert.deepStrictEqual(revoke.body, {token: 'rt-SECRET', token_type_hint: 'refresh_token', client_id: 'oaiapp_test'});
+  assert.ok(!('ai.chatgpt.auth' in t.store.local));
+  assert.deepStrictEqual(t.store.local['ai.chatgpt.client'], PLAN()['ai.chatgpt.client'], 'kept for the next sign-in');
+  assert.strictEqual(t.store.local['ai.chatgpt.host'], HOST);
+  assert.strictEqual((await t.AI.state()).reason, 'signed-out');
+  // not confirmed: the server twice, a refusal, a revocation endpoint elsewhere; the tokens go all the same
+  for (const answers of [
+    [json(200, {revocation_endpoint: 'https://auth.openai.com/oauth/revoke'}), json(500, {}), json(200, {revocation_endpoint: 'https://auth.openai.com/oauth/revoke'}), json(502, {})],
+    [json(200, {revocation_endpoint: 'https://auth.openai.com/oauth/revoke'}), json(400, {error: 'unsupported_token_type'})],
+    [json(200, {revocation_endpoint: 'https://evil.example/revoke'})]
+  ]) {
+    const u = load({local: PLAN()});
+    u.answers.push(...answers);
+    assert.deepStrictEqual(plain(await u.AI.chatgpt.signOut()), {revoked: false});
+    assert.strictEqual(u.requests.length, answers.length);
+    assert.ok(!u.requests.some(r => r.url.startsWith('https://evil.example')));
+    assert.ok(!('ai.chatgpt.auth' in u.store.local));
+  }
+  // signed out already: nothing to revoke
+  const v = load();
+  assert.deepStrictEqual(plain(await v.AI.chatgpt.signOut()), {revoked: true});
+  assert.strictEqual(v.requests.length, 0);
+});
+
+check('chatgpt: a sign-in left unfinished: its rule goes once it is too old, when a page loads', async () => {
+  const session = {'ai.chatgpt.pending': {state: 's', created: Date.now() - 20 * 60000}};
+  const t = load({session});
+  t.rules.push({id: 900, priority: 1, action: {type: 'redirect'}, condition: {}});
+  const u = load({with: t});
+  await new Promise(r => setTimeout(r, 5));
+  assert.strictEqual(u.rules.length, 0);
+  assert.ok(!('ai.chatgpt.pending' in u.store.session));
+  // a fresh one stays
+  const v = load({session: {'ai.chatgpt.pending': {state: 's', created: Date.now()}}});
+  v.rules.push({id: 900});
+  load({with: v});
+  await new Promise(r => setTimeout(r, 5));
+  assert.strictEqual(v.rules.length, 1);
+  // a rule with nothing underway goes as well
+  const w = load();
+  w.rules.push({id: 900});
+  load({with: w});
+  await new Promise(r => setTimeout(r, 5));
+  assert.strictEqual(w.rules.length, 0);
+});
+
+check('describe: the engine, its provider and model as a page names them', async () => {
+  const cases = [
+    [{}, {engine: 'off', provider: '', model: '', plan: false, local: false}],
+    [{'ai.engine': 'builtin'}, {engine: 'builtin', provider: 'Chrome', model: 'Gemini Nano', plan: false, local: true}],
+    [{'ai.engine': 'zai', 'ai.zai.model': 'glm-4.7-flash'}, {engine: 'zai', provider: 'Z.ai', model: 'GLM-4.7-Flash', plan: false, local: false}],
+    [{'ai.engine': 'zai'}, {engine: 'zai', provider: 'Z.ai', model: 'GLM-5.3', plan: false, local: false}],
+    [{'ai.engine': 'openai', 'ai.openai.model': 'gpt-5-mini'}, {engine: 'openai', provider: 'OpenAI', model: 'gpt-5-mini', plan: false, local: false}],
+    [{'ai.engine': 'chatgpt', 'ai.chatgpt.model': 'gpt-5.5'}, {engine: 'chatgpt', provider: 'ChatGPT', model: 'gpt-5.5', plan: true, local: false}]
+  ];
+  for (const [local, want] of cases) {
+    assert.deepStrictEqual(plain(await load({local}).AI.describe()), want);
+  }
+  // the names an anthropic list gave, and prefs given
+  const t = load({local: ANTHROPIC});
+  t.answers.push(json(200, {data: [{id: 'claude-opus-5-5', display_name: 'Claude Opus 5.5'}]}));
+  await t.AI.models('anthropic', 'k');
+  assert.strictEqual((await t.AI.describe()).model, 'Claude Opus 5.5');
+  assert.strictEqual((await t.AI.describe({engine: 'anthropic', model: 'claude-x'})).model, 'claude-x');
+});
+
+check('the detail of an error never carries a key, a bearer token or a JWT', async () => {
+  const t = load({local: PLAN()});
+  t.answers.push(json(400, {error: {message: 'Bad header Authorization: Bearer at-SECRET.tok; id eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ4In0.c2ln and sk-proj-SECRETSECRET', type: 'invalid_request_error'}}));
+  const e = await failsWith(t.AI.summarize(THREAD), 'model');
+  assert.ok(!/SECRET|eyJ/.test(e.detail), e.detail);
+  assert.ok(e.detail.includes('Bearer …'));
+});
+
+check('the page a sign-in comes back to: its strings, the module before it, reachable from OpenAI\'s pages only', async () => {
+  const dir = path.join(__dirname, '../../extension');
+  const en = JSON.parse(fs.readFileSync(path.join(dir, '_locales/en/messages.json'), 'utf8'));
+  const js = fs.readFileSync(path.join(dir, 'data/ai/callback.js'), 'utf8');
+  const keys = [...js.matchAll(/say\('([a-z_]+)'/g)].map(m => m[1]);
+  assert.ok(keys.length >= 7);
+  assert.deepStrictEqual(keys.filter(k => !en[k]?.message), []);
+  const html = fs.readFileSync(path.join(dir, 'data/ai/callback.html'), 'utf8');
+  assert.ok(html.indexOf('src="ai.js"') > 0 && html.indexOf('src="ai.js"') < html.indexOf('src="callback.js"'));
+  const manifest = JSON.parse(fs.readFileSync(path.join(dir, 'manifest.json'), 'utf8'));
+  const war = manifest.web_accessible_resources.find(w => w.resources.includes('data/ai/callback.html'));
+  assert.deepStrictEqual(war.matches, ['https://auth.openai.com/*', 'https://chatgpt.com/*']);
+  assert.ok(!war.use_dynamic_url);
+  for (const o of [...SIGN_IN, 'https://api.z.ai/*']) {
+    assert.ok(manifest.optional_host_permissions.includes(o) && !manifest.host_permissions.includes(o), o);
+  }
+  assert.ok(manifest.permissions.includes('declarativeNetRequestWithHostAccess'));
 });
 
 /* Google Calendar */
