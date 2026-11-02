@@ -3,6 +3,23 @@
 Each version that reaches `main` is released on GitHub with the notes of its section here
 (`.github/workflows/release.yml`), and goes to the Chrome Web Store with `tools/publish.py submit`.
 
+## 1.5.0
+
+Mail Deck 1.5.0 turns the AI assistant into one you can ask anything, adds your ChatGPT plan and Z.ai's GLM as ways to run it, and puts attachments in plain sight. It includes everything of 1.4.0, which did not reach the store on its own.
+
+**New**
+- **Ask your mail.** The ✨ button (or <kbd>A</kbd>) opens the assistant: ask in plain words (“when is my flight?”, “invoices from October”, “what did Anna say about the budget?”). It searches every Gmail account and the other services' unread mail, reads what it finds and answers with numbered references that open each mail. “What's important?” sums up your unread mail. The search field has **Ask AI** too.
+- **Write with it.** “Write to Anna that…” drafts a new mail with its address and subject; **Reply with AI** in an open message drafts a reply in the thread's language and tone from a quick choice or your own words. Both open in Gmail's compose window, ready for you to send.
+- **Ask about this mail**, and **Translate from …**: Chrome's own translator turns a foreign-language message into yours where it stands, on your computer, with no assistant needed.
+- **Sorting** adds **Important** and **Newsletters** to **Reply**: a chip narrows the list, with **Mark all read** and **Archive all** above it.
+- **Your ChatGPT plan**: **Continue with ChatGPT** signs in through OpenAI's official Sign in with ChatGPT, and requests use your plan. **Z.ai (GLM)** works with your own API key, next to Anthropic and OpenAI. A Claude Pro or Max subscription cannot be used by other apps under Anthropic's rules, so Claude stays with an API key.
+- **The AI buttons are in view from the start** and offer to turn it on; Chrome's built-in model turns on right in the panel. Settings → AI can hide them.
+- **Attachments on the line**: a Gmail message's files show before you open it, tagged PDF, sheet or picture; a click opens the file alone. The open message lists them under the sender, with Download.
+
+**Fixed**
+- An invoice or tax number in a mail that mentions a verification code somewhere no longer shows as a one-time code.
+- Mark all read or archive on mail of several Gmail accounts at once now reaches each account.
+
 ## 1.4.0
 
 Mail Deck 1.4.0 brings an optional AI assistant, the mail of the site you're on, and a new icon.
