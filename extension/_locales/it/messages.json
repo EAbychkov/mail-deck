@@ -1556,6 +1556,12 @@
   "panel_codeCopied": {
     "message": "Codice copiato"
   },
+  "panel_openFile": {
+    "message": "Apri file"
+  },
+  "panel_attachments": {
+    "message": "Allegati: $1"
+  },
   "opt_ai": {
     "message": "IA"
   },

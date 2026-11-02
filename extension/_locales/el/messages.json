@@ -1724,6 +1724,12 @@
     "panel_codeCopied": {
         "message": "Ο κωδικός αντιγράφηκε"
     },
+    "panel_openFile": {
+        "message": "Άνοιγμα αρχείου"
+    },
+    "panel_attachments": {
+        "message": "Συνημμένα: $1"
+    },
     "opt_ai": {
         "message": "Τεχνητή νοημοσύνη"
     },

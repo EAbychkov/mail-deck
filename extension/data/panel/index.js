@@ -28,6 +28,8 @@ const ICONS = {
   clock: ['M12 20.5a8.5 8.5 0 1 0 0-17a8.5 8.5 0 0 0 0 17Z', 'M12 7.5V12l3 2'],
   side: ['M4.5 4h15A1.5 1.5 0 0 1 21 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5v-13A1.5 1.5 0 0 1 4.5 4Z', 'M15 4v16'],
   grip: ['M9 6h.01', 'M9 12h.01', 'M9 18h.01', 'M15 6h.01', 'M15 12h.01', 'M15 18h.01'],
+  attach: ['M20 11.5l-7.8 7.8a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8'],
+  download: ['M12 4v11', 'M7.5 10.5L12 15l4.5-4.5', 'M5 19.5h14'],
   sparkle: ['M11 3.5l1.9 4.6 4.6 1.9-4.6 1.9L11 16.5l-1.9-4.6L4.5 10l4.6-1.9Z', 'M18.5 14.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9Z'],
   calendar: ['M5.5 5.5h13A1.5 1.5 0 0 1 20 7v11.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5V7a1.5 1.5 0 0 1 1.5-1.5Z', 'M4 10h16', 'M8.5 3.5v4', 'M15.5 3.5v4']
 };
@@ -76,6 +78,7 @@ const state = {
   replyOnly: false, // the list narrowed to that mail ("Reply · N")
   replyError: null, // the assistant's last failure in that, shown as a dot on its chip
   rows: new Map(), // link -> {e, o}
+  files: new Map(), // link#version -> [{name, view, download}]: a Gmail thread's attachments, read ahead
   pending: null, // the action waiting for its Undo: {cmd, links, ready, timer}
   // threads with a star; the feed does not tell, Gmail's search does
   starred: new Set(),
@@ -815,6 +818,85 @@ const searchList = () => {
   ].filter(Boolean);
 };
 
+/* attachments: on a mail's line before it is opened, and over the message once it is */
+// a file's kind by its ending, for the colour of its tag
+const KINDS = [
+  ['pdf', /^pdf$/], ['doc', /^(docx?|odt|rtf|pages|txt|md)$/], ['sheet', /^(xlsx?|xlsm|csv|ods|numbers|tsv)$/],
+  ['slides', /^(pptx?|odp|key)$/], ['image', /^(jpe?g|png|gif|webp|heic|heif|svg|bmp|tiff?)$/],
+  ['archive', /^(zip|rar|7z|tar|gz|tgz|bz2|xz)$/], ['calendar', /^(ics|vcs)$/], ['audio', /^(mp3|m4a|wav|ogg|flac|aac)$/],
+  ['video', /^(mp4|mov|avi|mkv|webm)$/]
+];
+const extOf = name => (/\.([a-z0-9]{1,8})$/i.exec(name || '') || [])[1]?.toLowerCase() || '';
+const kindOf = name => KINDS.find(([, re]) => re.test(extOf(name)))?.[0] || 'file';
+// the pictures a signature carries along (image001.png, Outlook-abc.png) are no files to show
+const INLINE = /^(image\d{3}|outlook-[\w-]+|logo|banner|spacer|icon)\.(png|jpe?g|gif)$/i;
+const realFiles = list => (list || []).filter(f => f.name && !INLINE.test(f.name));
+const fileChip = (f, big = false) => h('button', {
+  'class': 'file-chip' + (big ? ' big' : ''),
+  'type': 'button',
+  'title': f.name + (big ? '' : ' (' + t('openFile') + ')'),
+  'aria-label': t('openFile') + ': ' + f.name,
+  'data-kind': kindOf(f.name),
+  // a file is not the mail: a click on it opens the file alone
+  'onclick': ev => {
+    ev.stopPropagation();
+    openUrl(f.view || f.download);
+  }
+}, h('span', {class: 'kind', 'aria-hidden': 'true'}, extOf(f.name) ? extOf(f.name).slice(0, 4).toUpperCase() : icon('attach')),
+h('span', {class: 'name'}, f.name));
+// the line's files: two of them and how many more
+const rowFiles = list => {
+  const shown = realFiles(list);
+  return shown.length > 0 && h('div', {class: 'row-files', title: shown.map(f => f.name).join('\n')},
+    h('span', {class: 'clip', role: 'img', 'aria-label': t('attachments', shown.length)}, icon('attach')),
+    shown.slice(0, 2).map(f => fileChip(f)),
+    shown.length > 2 && h('span', {class: 'more-files'}, '+' + (shown.length - 2)));
+};
+// the files of the open thread, from the chips its messages carry
+const filesIn = node => [...node.querySelectorAll('.files a.file')].map(a => ({
+  name: a.textContent.replace(/^📎\s*/u, '').trim(),
+  view: a.href,
+  download: a.parentElement?.querySelector(':scope > .download')?.href || ''
+}));
+const paintReaderFiles = list => {
+  const el = $('reader-files');
+  const shown = realFiles(list);
+  el.hidden = shown.length === 0;
+  el.replaceChildren(...(shown.length ? [
+    h('span', {class: 'files-head'}, icon('attach'), t('attachments', shown.length)),
+    ...shown.map(f => h('span', {class: 'file-pair'}, fileChip(f, true),
+      f.view && f.download && btn('download', t('download') + ': ' + f.name, () => openUrl(f.download), 'file-dl')))
+  ] : []));
+};
+const fileKey = e => e.link.replace('http://', 'https://') + '#' + (e.modified || '');
+// a Gmail line asks for its files once; they come onto the line as they are known
+const filesFor = (e, o) => {
+  if (serviceOf(o) || state.files.has(fileKey(e))) {
+    return state.files.get(fileKey(e));
+  }
+  state.files.set(fileKey(e), undefined);
+  gmail.files(e.link, e.modified).then(list => {
+    state.files.set(fileKey(e), list);
+    paintFiles(e.link);
+  }, () => state.files.delete(fileKey(e)));
+  return undefined;
+};
+const paintFiles = link => {
+  const el = rowOf(link);
+  const r = state.rows.get(link);
+  if (!el || !r) {
+    return;
+  }
+  const made = rowFiles(state.files.get(fileKey(r.e)));
+  const old = el.querySelector('.row-files');
+  if (old) {
+    old.replaceWith(made || '');
+  }
+  else if (made) {
+    el.querySelector('.snippet').after(made);
+  }
+};
+
 /* list */
 // a mail pointed at, or reached with the keys, is likely the next one opened: its
 // print view comes meanwhile, so the reader shows it at once
@@ -852,6 +934,7 @@ const row = (e, o) => {
     code && codePill(code),
     e.title || t('noSubject')),
   h('span', {class: 'snippet'}, e.summary),
+  rowFiles(filesFor(e, o)),
   h('div', {class: 'acts'},
     ['rd', 'rc_^i', 'tr'].filter(cmd => cmd !== 'rc_^i' || can(o, 'archive'))
       .map(cmd => btn(ACTIONS[cmd].icon, ACTIONS[cmd].title, () => act(cmd, [e.link]), ACTIONS[cmd].danger ? 'danger' : '')),
@@ -1399,6 +1482,8 @@ const read = async (e, o) => {
   $('reader-name').textContent = e.author_name;
   $('reader-addr').replaceChildren(h('span', {}, e.author_email), copyBtn(e.author_email));
   $('reader-date').textContent = fullDate(e.modified);
+  // the files the line knew of show at once; the message's own replace them
+  paintReaderFiles(state.files.get(fileKey(e)));
   $('app').classList.add('reading');
   shade(true);
   // the keys and a screen reader follow the reader
@@ -1420,6 +1505,7 @@ const read = async (e, o) => {
     }
     doc.body.className = '';
     doc.body.replaceChildren(node);
+    paintReaderFiles(filesIn(node));
     // a service's remote pictures, sounds and videos load only when asked for
     if (gmail.render.held(doc.body)) {
       const bar = h('p', {class: 'pictures'}, h('button', {type: 'button', onclick: () => {

@@ -1724,6 +1724,12 @@
     "panel_codeCopied": {
         "message": "تم نسخ رمز التحقق"
     },
+    "panel_openFile": {
+        "message": "فتح الملف"
+    },
+    "panel_attachments": {
+        "message": "المرفقات: $1"
+    },
     "opt_ai": {
         "message": "الذكاء الاصطناعي"
     },

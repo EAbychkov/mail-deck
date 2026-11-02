@@ -1544,6 +1544,12 @@
   "panel_codeCopied": {
     "message": "Kód másolva"
   },
+  "panel_openFile": {
+    "message": "Fájl megnyitása"
+  },
+  "panel_attachments": {
+    "message": "Mellékletek: $1"
+  },
   "opt_ai": {
     "message": "Mesterséges intelligencia"
   },

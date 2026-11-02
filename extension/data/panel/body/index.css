@@ -146,11 +146,13 @@ body.summary,
   display: inline-flex;
 }
 .files a {
-  padding: 4px 10px;
-  border: 1px solid #dcdcd8;
-  border-radius: 8px;
+  padding: 6px 12px;
+  border: 1px solid #d2d4cf;
+  border-radius: 9px;
+  background: #f7f7f4;
   color: #1b1f24;
-  font-size: 12.5px;
+  font-size: 13px;
+  font-weight: 600;
   text-decoration: none;
 }
 .file-pair .file {

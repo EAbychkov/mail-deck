@@ -211,7 +211,9 @@
     i18n: {getUILanguage: () => lang, getMessage: (k, subs = []) => { const m = msgs[k]; return m ? m.message.replace(/\$(\d)/g, (_, i) => subs[i - 1] ?? '') : ''; }},
     runtime: {sendMessage: respond, onMessage: {addListener() {}}, openOptionsPage() {}, getURL: p => location.origin + p},
     storage: {
-      session: (() => { const area = {'cached-objects': objs, 'resolved.links': []}; return {get: store(area), set: o => { Object.assign(area, o); return Promise.resolve(); }, remove: k => { [k].flat().forEach(x => delete area[x]); return Promise.resolve(); }, area}; })(),
+      // the files of every line are known already (none), so the print views stay the reader's,
+      // as the other scenarios count them; ?scenario=files reads them ahead
+      session: (() => { const area = {'cached-objects': objs, 'resolved.links': [], ...(q.get('scenario') === 'files' ? {} : {'files.index': new Proxy({}, {get: (o, k) => typeof k === 'string' && k.includes('#') ? o[k] ?? [] : o[k], has: () => true})})}; return {get: store(area), set: o => { Object.assign(area, o); return Promise.resolve(); }, remove: k => { [k].flat().forEach(x => delete area[x]); return Promise.resolve(); }, area}; })(),
       local: {get: store(local), set: (o) => { window.__set.push(o); Object.assign(local, o); return Promise.resolve(); }},
       onChanged: {addListener() {}}
     },
@@ -249,5 +251,6 @@
 </font></div></td></tr></table></td></tr></table></body></html>`;
   const realFetch = window.fetch;
   window.__prints = 0;
-  window.fetch = (url, o) => String(url).includes('view=pt') && ++window.__prints ? Promise.resolve(new Response(q.get('wide') ? wide : window.__printLong ? long : page, {status: window.__printStatus || 200})) : realFetch(url, o);
+  window.__printed = [];
+  window.fetch = (url, o) => String(url).includes('view=pt') && window.__printed.push(String(url)) && ++window.__prints ? Promise.resolve(new Response(q.get('wide') ? wide : window.__printLong ? long : page, {status: window.__printStatus || 200})) : realFetch(url, o);
 })();

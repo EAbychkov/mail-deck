@@ -56,13 +56,69 @@ gmail.get = {
   }).catch(() => {});
   const kept = key => chrome.storage.session.get(STORE + key).then(prefs => prefs[STORE + key], () => null);
 
-  // one request per mail and panel, however many times it is pointed at or opened
+  // The print views this panel fetched, the last few, by thread and version: a mail's files,
+  // read ahead for its line, and its body, opened later, take one request. The ones read ahead
+  // wait in line, a few at a time, so a long list does not flood Gmail; a mail pointed at or
+  // opened goes first.
+  const PAGES = 30;
+  const AT_ONCE = 2;
+  const pages = new Map();
+  const waiting = [];
+  let running = 0;
+  const next = () => {
+    while (running < AT_ONCE && waiting.length) {
+      const job = waiting.shift();
+      running += 1;
+      job.run().finally(() => {
+        running -= 1;
+        next();
+      });
+    }
+  };
+  const page = (link, version, urgent) => {
+    const key = link + '#' + version;
+    let p = pages.get(key);
+    if (!p) {
+      let start;
+      const ready = new Promise(resolve => start = resolve);
+      p = (async () => {
+        const saved = version ? await kept(key) : null;
+        if (saved) {
+          return {...saved, saved: true};
+        }
+        await ready;
+        return print(gmail.get.base(link), gmail.get.id(link));
+      })();
+      p.catch(() => pages.get(key) === p && pages.delete(key));
+      const job = {key, run: () => (start(), p.catch(() => {}))};
+      if (urgent) {
+        job.run();
+      }
+      else {
+        p.job = job;
+        waiting.push(job);
+        next();
+      }
+    }
+    // a mail opened while its turn has not come is fetched now
+    else if (urgent && p.job && waiting.includes(p.job)) {
+      waiting.splice(waiting.indexOf(p.job), 1);
+      p.job.run();
+    }
+    pages.delete(key);
+    pages.set(key, p);
+    while (pages.size > PAGES) {
+      pages.delete(pages.keys().next().value);
+    }
+    return p;
+  };
+
+  // one rendering per mail and panel, however many times it is pointed at or opened
   const cache = {};
 
   gmail.body = (link, mode, version = '') => {
     link = link.replace('http://', 'https://');
 
-    const url = gmail.get.base(link);
     const thread = gmail.get.id(link);
 
     if (!thread) {
@@ -72,16 +128,55 @@ gmail.get = {
     const id = key + (mode ? '#html' : '#text');
     if (!cache[id]) {
       cache[id] = (async () => {
-        const saved = version ? await kept(key) : null;
-        const page = saved || await print(url, thread);
-        if (version && !saved) {
-          keep(key, page);
+        const got = await page(link, version, true);
+        // the mails pointed at or opened are the ones kept for the session
+        if (version && !got.saved) {
+          keep(key, got);
         }
-        return gmail.render[mode ? 'getHTMLText' : 'getPlainText'](page.content, page.href);
+        return gmail.render[mode ? 'getHTMLText' : 'getPlainText'](got.content, got.href);
       })();
       cache[id].catch(() => delete cache[id]);
     }
     return cache[id];
+  };
+
+  // The files of a thread, for its line in the list before it is opened: [{name, view,
+  // download}]. The answers stay for the browser session, by thread and version.
+  const FILES = 'files.index';
+  const FILES_MAX = 400;
+  let index = null;
+  const files = {};
+  const loadIndex = () => index ||= chrome.storage.session.get(FILES).then(prefs => prefs[FILES] || {}, () => ({}));
+  let saving = Promise.resolve();
+  const save = () => saving = saving.then(async () => {
+    const all = await loadIndex();
+    const keys = Object.keys(all);
+    // the oldest answers go first
+    keys.slice(0, Math.max(0, keys.length - FILES_MAX)).forEach(k => delete all[k]);
+    await chrome.storage.session.set({[FILES]: all});
+  }).catch(() => {});
+  gmail.files = (link, version = '') => {
+    link = link.replace('http://', 'https://');
+    const key = link + '#' + version;
+    if (!files[key]) {
+      files[key] = (async () => {
+        const all = await loadIndex();
+        if (all[key]) {
+          return all[key];
+        }
+        if (!gmail.get.id(link)) {
+          return [];
+        }
+        const got = await page(link, version, false);
+        const list = gmail.render.fileList(got.content, got.href);
+        delete all[key];
+        all[key] = list;
+        save();
+        return list;
+      })();
+      files[key].catch(() => delete files[key]);
+    }
+    return files[key];
   };
 
   // A mail of another service (core/services/): the background asks the service for its
@@ -183,7 +278,7 @@ gmail.get = {
     }).filter(Boolean);
   };
   // Gmail lists a file with a View and a Download link, its name in bold next to them
-  const attachments = body => {
+  const collect = body => {
     const found = new Map();
     for (const a of body.querySelectorAll('a[href*="view=att"]')) {
       let url;
@@ -205,7 +300,11 @@ gmail.get = {
       }
       found.set(id, o);
     }
-    if (found.size) {
+    return [...found.values()];
+  };
+  const attachments = body => {
+    const found = collect(body);
+    if (found.length) {
       // their links are on the chips now
       for (const table of body.querySelectorAll('table.att')) {
         if (table.previousElementSibling?.tagName === 'HR') {
@@ -214,7 +313,7 @@ gmail.get = {
         table.remove();
       }
     }
-    return [...found.values()];
+    return found;
   };
 
   const root = (body, el) => {
@@ -405,6 +504,15 @@ gmail.get = {
         files: (m.files || []).filter(f => f?.url).map(f => ({name: f.name, view: f.url})),
         body: sanitize(m.html, href, doc)
       })), maker(doc));
+    },
+    // the files of every message of a print view, the page left as it is: [{name, view, download}]
+    fileList(content, href) {
+      const doc = new DOMParser().parseFromString(content, 'text/html');
+      const base = doc.createElement('base');
+      base.href = href;
+      doc.head.prepend(base);
+      return [...doc.querySelectorAll('table.message')].flatMap(table => collect(table))
+        .map(f => ({name: f.name || '', view: f.view || '', download: f.download || ''}));
     },
     held: node => Boolean(node.querySelector(HELD_SELECTOR)),
     // Show pictures: everything held loads now

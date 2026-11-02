@@ -1724,6 +1724,12 @@
     "panel_codeCopied": {
         "message": "Код скопійовано"
     },
+    "panel_openFile": {
+        "message": "Відкрити файл"
+    },
+    "panel_attachments": {
+        "message": "Вкладення: $1"
+    },
     "opt_ai": {
         "message": "ШІ"
     },

@@ -1724,6 +1724,12 @@
     "panel_codeCopied": {
         "message": "Code kopiert"
     },
+    "panel_openFile": {
+        "message": "Datei öffnen"
+    },
+    "panel_attachments": {
+        "message": "Anhänge: $1"
+    },
     "opt_ai": {
         "message": "KI"
     },

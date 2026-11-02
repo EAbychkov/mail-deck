@@ -159,6 +159,13 @@ const checks = {
     'search: an account that did not answer says so; the result is said to a screen reader': r.searchFailedLine && r.searchFoundLine && r.searchSaid,
     'Esc in the search field gives the focus to the search button': r.focusAfterSearch === 'search'
   }),
+  files: r => ({
+    'a mail\'s files show on its line before it is opened, with their kind': JSON.stringify(r.lineFiles) === '["Макеты-v3.pdf"]' && r.kind === 'pdf' && r.everyLine,
+    'each line\'s print view is fetched once for it': r.onePrintEach,
+    'a click on a file opens the file alone, not the mail': r.fileOpened.includes('view=att') && r.fileOpened.includes('disp=safe') && !r.readingAfterFile,
+    'the open mail shows its files over the message, at once and with Download, with no second request': r.stripAtOnce && JSON.stringify(r.stripFiles) === '["Макеты-v3.pdf"]' && r.download.startsWith(T('download')) && r.noSecondPrint,
+    'the files found stay for the session': r.kept > 0
+  }),
   codes: r => ({
     'a one-time code shows on its line; numbers that are none show nothing': JSON.stringify(r.pills) === '["G-482913","7310","","123-456","",""]',
     'a click on it copies the digits, and opens, reads or deletes nothing': r.copied === '482913' && r.copiedShown && !r.opened && r.actions === 0 && r.rowsKept,
@@ -238,7 +245,7 @@ server.listen(0, '127.0.0.1', async () => {
   const {port} = server.address();
   let failed = 0;
   for (const [scenario, query, frame] of [['main', ''], ['speed', ''], ['services', '&s=services'], ['wide', '&wide=1'], ['keys', ''], ['narrow', '&side', 320],
-    ['codes', '&s=codes'], ['advance', '&advance=1'], ['readnext', '&read=1'], ['seen', '&badge=new'],
+    ['files', ''], ['codes', '&s=codes'], ['advance', '&advance=1'], ['readnext', '&read=1'], ['seen', '&badge=new'],
     ['site', '&s=site&url=' + encodeURIComponent('https://github.com/login?return_to=%2Fsettings')],
     ['ai', '&ai=on'], ['aiauto', '&ai=on&summary=auto'], ['aioff', '&ai=off'], ['aireal', '&ai=real']]) {
     const r = await run(port, scenario, query, frame);

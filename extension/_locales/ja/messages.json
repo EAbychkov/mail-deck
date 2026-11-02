@@ -1556,6 +1556,12 @@
   "panel_codeCopied": {
     "message": "コードをコピーしました"
   },
+  "panel_openFile": {
+    "message": "ファイルを開く"
+  },
+  "panel_attachments": {
+    "message": "添付ファイル: $1"
+  },
   "opt_ai": {
     "message": "AI アシスタント"
   },

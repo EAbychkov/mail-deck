@@ -1728,6 +1728,12 @@
     "panel_codeCopied": {
         "message": "Skopiowano kod"
     },
+    "panel_openFile": {
+        "message": "Otwórz plik"
+    },
+    "panel_attachments": {
+        "message": "Załączniki: $1"
+    },
     "opt_ai": {
         "message": "AI"
     },

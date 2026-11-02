@@ -1724,6 +1724,12 @@
     "panel_codeCopied": {
         "message": "הקוד הועתק"
     },
+    "panel_openFile": {
+        "message": "פתיחת הקובץ"
+    },
+    "panel_attachments": {
+        "message": "קבצים מצורפים: $1"
+    },
     "opt_ai": {
         "message": "בינה מלאכותית"
     },

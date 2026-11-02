@@ -1728,6 +1728,12 @@
     "panel_codeCopied": {
         "message": "S'ha copiat el codi"
     },
+    "panel_openFile": {
+        "message": "Obre el fitxer"
+    },
+    "panel_attachments": {
+        "message": "Fitxers adjunts: $1"
+    },
     "opt_ai": {
         "message": "IA"
     },

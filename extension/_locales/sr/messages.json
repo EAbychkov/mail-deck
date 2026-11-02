@@ -1728,6 +1728,12 @@
     "panel_codeCopied": {
         "message": "Код је копиран"
     },
+    "panel_openFile": {
+        "message": "Отвори датотеку"
+    },
+    "panel_attachments": {
+        "message": "Прилози: $1"
+    },
     "opt_ai": {
         "message": "Вештачка интелигенција"
     },

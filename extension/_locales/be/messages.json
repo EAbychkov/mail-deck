@@ -1583,6 +1583,12 @@
   "panel_codeCopied": {
     "message": "Код скапіяваны"
   },
+  "panel_openFile": {
+    "message": "Адкрыць файл"
+  },
+  "panel_attachments": {
+    "message": "Далучаныя файлы: $1"
+  },
   "opt_ai": {
     "message": "ШІ"
   },

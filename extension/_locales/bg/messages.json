@@ -1724,6 +1724,12 @@
     "panel_codeCopied": {
         "message": "Кодът е копиран"
     },
+    "panel_openFile": {
+        "message": "Отваряне на файла"
+    },
+    "panel_attachments": {
+        "message": "Прикачени файлове: $1"
+    },
     "opt_ai": {
         "message": "ИИ"
     },

@@ -1724,6 +1724,12 @@
     "panel_codeCopied": {
         "message": "Kod kopyalandı"
     },
+    "panel_openFile": {
+        "message": "Dosyayı aç"
+    },
+    "panel_attachments": {
+        "message": "Ekler: $1"
+    },
     "opt_ai": {
         "message": "Yapay zekâ"
     },

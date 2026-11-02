@@ -126,17 +126,19 @@
       out.extraBack = [...state.extra.values()].flat().length;
 
       // pointing at a mail fetches it; opening it then needs no second request
+      // (the other lines' print views come too, for their files: only this one's are counted)
       const row = document.querySelector('#list .row');
+      const printsOf = () => window.__printed.filter(u => u.endsWith('=' + gmail.get.id(row.dataset.link))).length;
       row.dispatchEvent(new MouseEvent('mouseenter'));
-      await until(() => window.__prints > 0, 1500);
-      out.printsAfterHover = window.__prints;
+      await until(() => printsOf() > 0, 1500);
+      out.printsAfterHover = printsOf();
       // it is built ahead of the click, yet its pictures wait for the reader
       await wait(400);
       out.picturesAfterHover = (await pixels('speed-gmail'))['speed-gmail'] || 0;
       row.click();
       const doc = document.getElementById('body').contentDocument;
       await until(() => doc.querySelector('.thread'));
-      out.printsAfterOpen = window.__prints;
+      out.printsAfterOpen = printsOf();
       for (const end = Date.now() + 2000; Date.now() < end && !out.picturesAfterOpen; await wait(50)) {
         out.picturesAfterOpen = (await pixels('speed-gmail'))['speed-gmail'] || 0;
       }
@@ -469,6 +471,34 @@
       key($('search-input'), 'Escape');
       await wait(50);
       out.focusAfterSearch = focus();
+    }
+
+    if (scenario === 'files') {
+      // each line's files come from its print view, read ahead a few at a time
+      await until(() => document.querySelector('#list .row .row-files'));
+      const first = document.querySelector('#list .row');
+      const printsOf = () => window.__printed.filter(u => u.endsWith('=' + gmail.get.id(first.dataset.link))).length;
+      out.lineFiles = [...first.querySelectorAll('.row-files .file-chip .name')].map(n => n.textContent);
+      out.kind = first.querySelector('.file-chip')?.dataset.kind;
+      await until(() => [...document.querySelectorAll('#list .row')].every(r => r.querySelector('.row-files')));
+      out.everyLine = [...document.querySelectorAll('#list .row')].every(r => r.querySelector('.row-files'));
+      out.onePrintEach = window.__prints === document.querySelectorAll('#list .row').length;
+      // a click on a file opens the file alone, not the mail
+      first.querySelector('.file-chip').click();
+      await wait(50);
+      out.fileOpened = sent('open').at(-1)?.url || '';
+      out.readingAfterFile = document.getElementById('app').classList.contains('reading');
+      // the open mail shows its files over the message: from the line at once, then from the
+      // message itself, with no second request for it
+      const before = printsOf();
+      first.click();
+      out.stripAtOnce = !document.getElementById('reader-files').hidden;
+      const doc = document.getElementById('body').contentDocument;
+      await until(() => doc.querySelector('.thread'));
+      out.stripFiles = [...document.querySelectorAll('#reader-files .file-chip .name')].map(n => n.textContent);
+      out.download = document.querySelector('#reader-files .file-dl')?.title || '';
+      out.noSecondPrint = printsOf() === before;
+      out.kept = Object.keys(chrome.storage.session.area['files.index'] || {}).length;
     }
 
     if (scenario === 'codes') {

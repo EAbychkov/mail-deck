@@ -1728,6 +1728,12 @@
     "panel_codeCopied": {
         "message": "已复制验证码"
     },
+    "panel_openFile": {
+        "message": "打开文件"
+    },
+    "panel_attachments": {
+        "message": "附件：$1"
+    },
     "opt_ai": {
         "message": "AI 助手"
     },

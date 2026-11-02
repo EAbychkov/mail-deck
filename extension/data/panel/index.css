@@ -427,6 +427,105 @@ h1 {
   width: 16px;
   height: 16px;
 }
+/* a mail's files, on its line before it is opened: a tag of the kind, then the name */
+.row-files {
+  grid-area: files;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  margin-top: 6px;
+}
+.row-files .clip {
+  display: grid;
+  flex: none;
+  color: var(--muted);
+}
+.row-files .clip svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.file-chip {
+  --k: #6b7480;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 220px;
+  height: 26px;
+  padding: 0 9px 0 3px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--soft);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 550;
+  cursor: pointer;
+  transition: border-color .12s, background .12s;
+}
+.file-chip:hover {
+  border-color: color-mix(in srgb, var(--k) 45%, var(--line));
+  background: color-mix(in srgb, var(--k) 7%, var(--card));
+}
+.file-chip:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+.file-chip .kind {
+  display: grid;
+  flex: none;
+  place-items: center;
+  min-width: 30px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 5px;
+  background: var(--k);
+  color: #fff;
+  font-size: 9.5px;
+  font-weight: 750;
+  letter-spacing: .02em;
+}
+.file-chip .kind svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+.file-chip .name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.file-chip[data-kind="pdf"] { --k: #d23f3a; }
+.file-chip[data-kind="doc"] { --k: #3567e6; }
+.file-chip[data-kind="sheet"] { --k: #169b62; }
+.file-chip[data-kind="slides"] { --k: #d9822b; }
+.file-chip[data-kind="image"] { --k: #8b55d9; }
+.file-chip[data-kind="archive"] { --k: #7a6a4f; }
+.file-chip[data-kind="calendar"] { --k: #138fa8; }
+.file-chip[data-kind="audio"],
+.file-chip[data-kind="video"] { --k: #c9447f; }
+.more-files {
+  flex: none;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+.row:has(.row-files) {
+  grid-template-areas:
+    "av from when"
+    "av subj subj"
+    "av snip snip"
+    "av files files";
+}
+
 .row:hover .acts,
 .row:focus-within .acts {
   opacity: 1;
@@ -1500,4 +1599,67 @@ kbd {
 }
 .acc .dot {
   margin-inline: 6.5px;
+}
+
+/* the open thread's files, over the message */
+.reader-files {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.reader-files[hidden] {
+  display: none;
+}
+.files-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-inline-end: 2px;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.files-head svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.reader-files .file-pair {
+  display: inline-flex;
+  min-width: 0;
+}
+.file-chip.big {
+  max-width: 300px;
+  height: 34px;
+  padding: 0 12px 0 4px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+.file-chip.big .kind {
+  min-width: 36px;
+  height: 24px;
+  border-radius: 7px;
+  font-size: 10.5px;
+}
+.reader-files .file-pair:has(.file-dl) .file-chip {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+.reader-files .file-dl {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-inline-start: 0;
+  border-radius: 0 10px 10px 0;
+}
+.reader-files .file-dl:dir(rtl) {
+  border-radius: 10px 0 0 10px;
 }
